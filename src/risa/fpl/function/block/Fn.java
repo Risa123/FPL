@@ -10,6 +10,8 @@ import risa.fpl.env.Modifier;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
+import risa.fpl.function.exp.ValueExp;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -41,7 +43,9 @@ public final class Fn extends AFunctionBlock{
 		writer.write(cID);
 		writer.write('(');
 		var fnEnv = new FnEnv(env,returnType);
-		env.addFunction(id.value,new Function(returnType,cID,parseArguments(writer,it,fnEnv),env.hasModifier(Modifier.NATIVE)));
+		var args = parseArguments(writer,it,fnEnv);
+		env.addFunction(id.value,new Function(returnType,cID,args,env.hasModifier(Modifier.NATIVE)));
+		env.addFunction("&" + id,new ValueExp(new PointerInfo(id.value,cID,returnType,args),"&" + cID));
 		writer.write(')');
 		if(it.hasNext()) {
 			writer.write("{\n");

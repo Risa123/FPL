@@ -22,7 +22,7 @@ public final class ModuleBlock {
    private ModuleEnv env;
    public ModuleBlock(FPL lang,Path sourceFile) throws IOException, CompilerException {
 	   this.lang = lang;
-	   this.sourceFile = sourceFile.toString();
+	   this.sourceFile = sourceFile.subpath(2,sourceFile.getNameCount()).toString();
 	   cfile = lang.outputDirectory + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
 		var name = new StringBuilder();
 		for(int i = 2;i < sourceFile.getNameCount() - 1;++i) {

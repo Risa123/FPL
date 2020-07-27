@@ -40,6 +40,6 @@ public final class ProgramEnv extends AEnv {
 	  addType("double",NumberInfo.DOUBLE);
 	  addType("char",TypeInfo.CHAR);
 	  addFunction("void",null);
-	  addFunction("null",new ValueExp(TypeInfo.NULL,"0"));
+	  addFunction("nil",new ValueExp(TypeInfo.NULL,"0"));
   }
 }

@@ -2,10 +2,7 @@ package risa.fpl.info;
 
 import java.util.HashMap;
 
-import risa.fpl.function.exp.AField;
-import risa.fpl.function.exp.AsByte;
-import risa.fpl.function.exp.GetIndex;
-import risa.fpl.function.exp.UnaryOperator;
+import risa.fpl.function.exp.*;
 
 public class TypeInfo {
   public static final TypeInfo VOID = new TypeInfo("void","void");
@@ -18,6 +15,8 @@ public class TypeInfo {
 	  CHAR.addField("asByte",new AsByte());
 	  STRING.addField("get",new GetIndex(CHAR));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
+	  NULL.addField("==",new BinaryOperator(BOOL,NULL,"=="));
+      NULL.addField("!=",new BinaryOperator(BOOL,NULL,"!="));
   }
   public final String name,cname,declaration;
   private final HashMap<String,AField>fields = new HashMap<>();

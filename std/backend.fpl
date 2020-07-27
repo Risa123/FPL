@@ -1,0 +1,10 @@
+native {
+ fn int puts string str
+ fn void fclose void* file
+ fn void* malloc ulong size
+ fn void free void* p
+ fn void exit int exitCode
+ fn int system string cmd
+ fn void* fopen string name string mode
+ fn ulong fread void* p ulong size ulong msize void* file
+}
