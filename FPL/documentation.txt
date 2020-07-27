@@ -1,0 +1,92 @@
+1 ITRODUCTION
+Name of this language is FPL(Function processing Language). Reason for this name is, than is was original meant as Lisp dialect. So the syntax can be diveded to lists and atoms. One of problems of lisp is a large amount of parathesises. This language has two types of lists. Block lists and statement lists. The block list is written inside of curly brackets. Statement lit is by new line.
+Example:
+{ <statement list>}
+{
+ <statement list>
+ <statement list>
+}
+The reason why this is not a Lisp dialect is that one list does'nt equal one function. When list is translated one atom is taken as function. The function will take its arguents and then the cycle repeats.
+2 COMMENTS
+There are two types of comments. One line comment is ended by a new line and multi-line comment which is written inside of parentheses.
+3. ATOM TYPES
+3.1 IDENTIFIER
+Identifier is anything which is not a white character or any other type of atom.
+3.2 CHARACTER STRING
+Is written inside of commas.
+3.3 NUMBERS
+Integer numbers without and with sign are literals of type uint and sint respectively.
+3.4 BOOL
+true and false functions (see 4.8)
+3.5 SPECIAL ATOMS
+These are END_ARGS(written as ;) and ARG_SEPARATORR (written as,).
+3.6 CHARACTERS
+Written as $c.
+4.1 BUILD-IN FUNCTIONS
+4.2 FN
+Its purpose is a function declaration.
+Written as fn <return type> <name><list of parameters written as <type><name>><block>. The last parameters can be left out when native modifier is applied.
+4.3 MODIFICATORS
+Modificators are functions which have one parameter. This parameter is name of other function or a block on which a modifier is applied. Currently there are two modifier native and const. Const is used for constant declaration. Native can be used on variable or function declaration. In both cases it will be transpiled to C code with extern modifier and name mangling will not be used.  C identifier will also be enforced. Native function will not need last parameter. Variable can only have declaration.
+4.4 USE
+It is used for module importing. A module is one source file. It can be written in many ways. Module names are written as directory.file .
+use <names>
+use {
+ <names>
+ <names>
+} 
+4.5 HELLO WORLD
+Now we have enough knowledge to write this traditional program.
+
+use std.backend #imports puts
+
+native fn void main {
+ puts "Hello World!"
+}
+4.6 RETURN
+Use for returning.
+4.7 VAR
+Used for variable declaration. Format is var <name> <definition>.
+It is possible to declare variables of multiple types at the same time. 
+Example:
+var x 0,y 9
+4.8 TRUE AND FALSE
+Return there respective bool values.
+4.9 BUILD-IN FUNCTIONS CREATED BY COMPILER
+4.9.1 <DATE TYPE>
+These are used for variable declaration. Format is <date type><name><optional definiton>. Pointer is part of type declaration.
+4.9.2 <VARIABLE>
+Methods can be called on these. Method name is only separated by a space. "Variable methods" can be called. These are =,& for pointer creation. Number variable can have +=,-=,*=,/= and integer numbers %=.
+4.9.3 <DECLARED FUNCTION>
+Arguments can be separated by ARG_SEPARATOR and ended by ARGS_EN D.
+4.9.4 <CLASS>
+In this version it can only be declared.
+4.10 CLASS
+In this version the arguments which is one block can only contain variable (field) declaratins.
+4.11 IF
+Use as condition. It is written in format if <condition> <block> <optionally block or another if>
+4.12 WHILE
+Written as while <condition> <block>.
+4.13 []
+Declares static array. Parameters are <type><length><name>.
+5 DATA TYPES
+5.1 VOID
+no methods
+5.2 NUMBERS
+byte ubyte sbyte
+short ushort sshort
+int uint sint
+long ulong slong
+float
+double
+All have methods as operators.
+5.3 BOOL
+Method ! for negating.
+5.4 STRING
+Method get for indexing.
+5.5 POINTER
+This type is created dynamically be compiler. 
+Supports pointer arithmetic.
+5.6 CHAR
+Can contain code points from 0-255. 
+Method asByte translates to byte.

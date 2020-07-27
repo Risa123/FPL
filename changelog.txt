@@ -1,0 +1,14 @@
+0.0.0 
+initial version
+0.0.1
+++ and -- bug fixed
+NPE fixed
++=,*=,/=,-= added
+get and set methods added to pointer
+static array added
+0.0.2
+fixed wrong arguments message
+output directory not requied
+stdc functions exit and system added to backend
+null added
+var statement sets variable type to null fixed
