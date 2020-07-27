@@ -66,7 +66,7 @@ public final class FPL {
     }
 	public static void main(String[] args) throws IOException {
 		if(args.length != 3) {
-			System.err.println("<project directory><c compiler><output file> expected");
+			System.err.println("expected <project directory><c compiler><output file>");
 			System.exit(1);
 		}
 		try {
