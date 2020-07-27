@@ -10,3 +10,4 @@ Example:
 }
 Arguments for compiler are <project directory><C compiler><output file>.
 C compiler is actually command line command, so you can add arguments for it.
+License is MIT.
