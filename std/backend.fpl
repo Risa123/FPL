@@ -7,4 +7,5 @@ native {
  fn int system string cmd
  fn void* fopen string name string mode
  fn ulong fread void* p ulong size ulong msize void* file
+ fn void* realloc void* p ulong size
 }
