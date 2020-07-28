@@ -14,8 +14,8 @@ import risa.fpl.tokenizer.TokenType;
 
 public class Function extends TypeInfo implements IFunction {
 	public final String declaration;
-	private final TypeInfo returnType;
-	private final TypeInfo[]args;
+	public final TypeInfo returnType;
+	public final TypeInfo[]args;
     public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern) {
        super(cname,name);
        this.returnType = returnType;

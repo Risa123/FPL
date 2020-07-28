@@ -44,7 +44,7 @@ public final class Fn extends AFunctionBlock{
 		writer.write('(');
 		var fnEnv = new FnEnv(env,returnType);
 		var f = new Function(id.value,returnType,cID, parseArguments(writer,it,fnEnv),env.hasModifier(Modifier.NATIVE));
-		env.addType("*" + id.value,f);
+		env.addFunction("&" + id.value,new ValueExp(f,"&" + cID));
 		env.addFunction(id.value,f);
 		writer.write(')');
 		if(it.hasNext()) {

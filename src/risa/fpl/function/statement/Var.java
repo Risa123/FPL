@@ -10,6 +10,7 @@ import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
@@ -25,7 +26,7 @@ public final class Var implements IFunction {
 		if(env.hasModifier(Modifier.NATIVE)) {
 			writer.write("extern ");
 		}
-		if(type != null) {
+		if(type != null && !(type instanceof Function)) {
 			if(env.hasModifier(Modifier.CONST)) {
 				writer.write("const ");
 			}
@@ -62,7 +63,10 @@ public final class Var implements IFunction {
 			}
 			var declaredOnly = true;
 			if(type != null) {
-				writer.write(cID);	
+			    if(type instanceof Function f){
+			       cID = createFunctionPointer(cID,f);
+                }
+				writer.write(cID);
 			}
             var type = this.type;
 			if(it.hasNext()) {
@@ -86,12 +90,16 @@ public final class Var implements IFunction {
 						if(env.hasModifier(Modifier.CONST)) {
 							writer.write("const ");
 						}
-						writer.write(expType.cname);
-						writer.write(' ');
+						if(expType  instanceof Function f){
+						    cID = createFunctionPointer(cID,f);
+                        }else{
+                            writer.write(expType.cname);
+                            writer.write(' ');
+                        }
 						writer.write(cID);
 					}
 					type = expType;
-					writer.write(b.getText());	
+					writer.write(b.getText());
 				}
 			}else if(type == null) {
 				throw new CompilerException(id,"cannot infer type");
@@ -104,4 +112,21 @@ public final class Var implements IFunction {
 		}
 		return TypeInfo.VOID;
 	}
+	private String createFunctionPointer(String cID,Function f){
+        var b = new StringBuilder(f.returnType.cname);
+        b.append("(*");
+        b.append(cID);
+        b.append(")(");
+        var firstArg = true;
+        for(var arg:f.args){
+            if(firstArg){
+                firstArg = false;
+            }else{
+                b.append(',');
+            }
+            b.append(arg);
+        }
+        b.append(")");
+        return b.toString();
+    }
 }
