@@ -10,13 +10,13 @@ public class TypeInfo {
   public static final TypeInfo BOOL = new TypeInfo("bool","char");
   public static final TypeInfo STRING = new TypeInfo("string","char*");
   public static final TypeInfo CHAR = new TypeInfo("char","char");
-  public static final TypeInfo NULL = new TypeInfo("null","");
+  public static final TypeInfo NIL = new TypeInfo("nil","");
   static {
 	  CHAR.addField("asByte",new AsByte());
 	  STRING.addField("get",new GetIndex(CHAR));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
-	  NULL.addField("==",new BinaryOperator(BOOL,NULL,"=="));
-      NULL.addField("!=",new BinaryOperator(BOOL,NULL,"!="));
+	  NIL.addField("==",new BinaryOperator(BOOL, NIL,"=="));
+      NIL.addField("!=",new BinaryOperator(BOOL, NIL,"!="));
   }
   public final String name,cname,declaration;
   private final HashMap<String,AField>fields = new HashMap<>();

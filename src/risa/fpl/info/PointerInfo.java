@@ -8,14 +8,7 @@ import risa.fpl.function.exp.UnaryOperator;
 public final class PointerInfo extends TypeInfo {
 	private final TypeInfo type;
 	public PointerInfo(TypeInfo type) {
-	    this(type,type.name +"*",type.cname + "*");
-	}
-	//function pointer constructor
-	public PointerInfo(String cname,String name,TypeInfo returnType,TypeInfo[]args){
-	    this(null,name + "*",returnType.cname + "(*" + cname + ")(" + argsToString(args)  +")");
-    }
-    private PointerInfo(TypeInfo type,String name,String cname){
-	    super(name,cname);
+	    super(type.name +"*",type.cname + "*");
         this.type = type;
         addField("++",new UnaryOperator(this,"++",false));
         addField("--",new UnaryOperator(this,"--",false));
@@ -28,12 +21,12 @@ public final class PointerInfo extends TypeInfo {
         addField("set",new SetIndex());
         addField("==",new BinaryOperator(BOOL,this,"=="));
         addField("!=",new BinaryOperator(BOOL,this,"!="));
-    }
+	}
 	@Override
 	public boolean equals(Object o) {
 		if(o instanceof PointerInfo p) {
 			return type.equals(p.type);
-		}else return o == TypeInfo.NULL;
+		}else return o == TypeInfo.NIL;
     }
     private static String argsToString(TypeInfo[]args){
 	    var b = new StringBuilder();

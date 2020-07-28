@@ -12,14 +12,13 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
-public class Function implements IFunction {
+public class Function extends TypeInfo implements IFunction {
 	public final String declaration;
 	private final TypeInfo returnType;
-	private final String cname;
 	private final TypeInfo[]args;
-    public Function(TypeInfo returnType,String cname,TypeInfo[] args,boolean extern) {
-       this.returnType = returnType;	
-       this.cname = cname;
+    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern) {
+       super(cname,name);
+       this.returnType = returnType;
        this.args = args;
        var b = new StringBuilder();
        if(extern) {

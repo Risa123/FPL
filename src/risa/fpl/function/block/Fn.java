@@ -43,9 +43,9 @@ public final class Fn extends AFunctionBlock{
 		writer.write(cID);
 		writer.write('(');
 		var fnEnv = new FnEnv(env,returnType);
-		var args = parseArguments(writer,it,fnEnv);
-		env.addFunction(id.value,new Function(returnType,cID,args,env.hasModifier(Modifier.NATIVE)));
-		env.addFunction("&" + id,new ValueExp(new PointerInfo(id.value,cID,returnType,args),"&" + cID));
+		var f = new Function(id.value,returnType,cID, parseArguments(writer,it,fnEnv),env.hasModifier(Modifier.NATIVE));
+		env.addType("*" + id.value,f);
+		env.addFunction(id.value,f);
 		writer.write(')');
 		if(it.hasNext()) {
 			writer.write("{\n");
