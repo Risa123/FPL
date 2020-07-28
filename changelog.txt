@@ -13,5 +13,5 @@ stdc functions exit and system added to backend
 null added
 var statement sets variable type to null fixed
 0.0.3
-added nil reference
+renamed null to nil reference
 added function pointer
