@@ -22,3 +22,5 @@ void pointer cannot use arithmetic
 fixed use not working
 fixed typo in exception message in Fn
 fixed function importing
+function pointers can be used as arguments
+pointer dereference added

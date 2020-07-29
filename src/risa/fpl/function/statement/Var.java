@@ -12,6 +12,7 @@ import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
@@ -63,8 +64,8 @@ public final class Var implements IFunction {
 			}
 			var declaredOnly = true;
 			if(type != null) {
-			    if(type instanceof Function f){
-			       cID = createFunctionPointer(cID,f);
+			    if(type instanceof PointerInfo p && p.isFunctionPointer()){
+			       cID = p.getFunctionPointerDeclaration(cID);
                 }
 				writer.write(cID);
 			}
@@ -90,8 +91,8 @@ public final class Var implements IFunction {
 						if(env.hasModifier(Modifier.CONST)) {
 							writer.write("const ");
 						}
-						if(expType  instanceof Function f){
-						    cID = createFunctionPointer(cID,f);
+						if(expType  instanceof PointerInfo p && p.isFunctionPointer()){
+						    cID = p.getFunctionPointerDeclaration(cID);
                         }else{
                             writer.write(expType.cname);
                             writer.write(' ');
@@ -116,21 +117,5 @@ public final class Var implements IFunction {
 		}
 		return TypeInfo.VOID;
 	}
-	private String createFunctionPointer(String cID,Function f){
-        var b = new StringBuilder(f.returnType.cname);
-        b.append("(*");
-        b.append(cID);
-        b.append(")(");
-        var firstArg = true;
-        for(var arg:f.args){
-            if(firstArg){
-                firstArg = false;
-            }else{
-                b.append(',');
-            }
-            b.append(arg);
-        }
-        b.append(")");
-        return b.toString();
-    }
+
 }

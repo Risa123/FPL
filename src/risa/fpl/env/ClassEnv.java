@@ -3,11 +3,11 @@ package risa.fpl.env;
 import java.util.HashMap;
 
 import risa.fpl.function.IFunction;
-import risa.fpl.function.exp.AField;
+import risa.fpl.function.exp.IField;
 import risa.fpl.info.TypeInfo;
 
 public final class ClassEnv extends SubEnv {
-	private final HashMap<String,AField>fields = new HashMap<>();
+	private final HashMap<String, IField>fields = new HashMap<>();
 	private final StringBuilder constructor = new StringBuilder();
 	private final String cname;
 	public ClassEnv(AEnv superEnv,String cname) {
@@ -19,7 +19,7 @@ public final class ClassEnv extends SubEnv {
 	}
 	@Override
 	public void addFunction(String name,IFunction value) {
-		if(value instanceof AField field) {
+		if(value instanceof IField field) {
 			fields.put(name,field);
 		}
 		super.addFunction(name, value);
@@ -32,7 +32,7 @@ public final class ClassEnv extends SubEnv {
 	}
 	public String getDefaultConstructor(){
 	    var b = new StringBuilder(cname);
-	    b.append("_init(");
+	    b.append("__init(");
 	    b.append(cname);
 	    b.append("* this){\n");
 	    b.append(constructor);

@@ -19,7 +19,7 @@ public class TypeInfo {
       NIL.addField("!=",new BinaryOperator(BOOL, NIL,"!="));
   }
   public final String name,cname,declaration;
-  private final HashMap<String,AField>fields = new HashMap<>();
+  private final HashMap<String, IField>fields = new HashMap<>();
   public TypeInfo(String name,String cname,String declaration) {
 	  this.name = name;
 	  this.cname = cname;
@@ -32,10 +32,10 @@ public class TypeInfo {
   public String toString() {
 	  return name;
   }
-  public void addField(String name,AField value) {
+  public void addField(String name, IField value) {
 	  fields.put(name, value);
   }
-  public AField getField(String name) {
+  public IField getField(String name) {
 	  return fields.get(name);
   }
 }

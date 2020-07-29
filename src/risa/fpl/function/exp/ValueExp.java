@@ -52,7 +52,8 @@ public class ValueExp extends AField {
 			   selector = ".";
 		   }
 		}
-		field.prev_code = code + selector;
+		field.setPrevCode(code + selector);
 		return field.compile(writer, env, it, line, charNum);
 	}
+
 }

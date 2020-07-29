@@ -1,9 +1,6 @@
 package risa.fpl.info;
 
-import risa.fpl.function.exp.BinaryOperator;
-import risa.fpl.function.exp.GetIndex;
-import risa.fpl.function.exp.SetIndex;
-import risa.fpl.function.exp.UnaryOperator;
+import risa.fpl.function.exp.*;
 
 public final class PointerInfo extends TypeInfo {
 	private final TypeInfo type;
@@ -22,6 +19,11 @@ public final class PointerInfo extends TypeInfo {
             addField("set",new SetIndex());
             addField("==",new BinaryOperator(BOOL,this,"=="));
             addField("!=",new BinaryOperator(BOOL,this,"!="));
+            if(type instanceof Function){
+                addField("drf",(Function)type);
+            }else{
+                addField("drf",new UnaryOperator(type,"*",false));
+            }
         }
 	}
 	@Override
@@ -29,5 +31,26 @@ public final class PointerInfo extends TypeInfo {
 		if(o instanceof PointerInfo p) {
 			return type.equals(p.type);
 		}else return o == TypeInfo.NIL;
+    }
+    public boolean isFunctionPointer(){
+	    return type instanceof Function;
+    }
+    public String getFunctionPointerDeclaration(String cID){
+	    var f = (Function)type;
+        var b = new StringBuilder(f.returnType.cname);
+        b.append("(*");
+        b.append(cID);
+        b.append(")(");
+        var firstArg = true;
+        for(var arg:f.args){
+            if(firstArg){
+                firstArg = false;
+            }else{
+                b.append(',');
+            }
+            b.append(arg);
+        }
+        b.append(")");
+        return b.toString();
     }
 }

@@ -70,7 +70,7 @@ public class Variable extends ValueExp {
 		if(onlyDeclared) {
 			throw new CompilerException(line,charNum,"variable " + id + " was not defined");
 		}
-		if(prev_code == null && classAttribute){
+		if(getPrevCode() == null && classAttribute){
 		    writer.write("this->");
         }
 		return super.compile(writer, env, it, line, charNum);

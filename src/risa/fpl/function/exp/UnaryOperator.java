@@ -8,7 +8,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
-public final class UnaryOperator extends AField{
+public final class UnaryOperator extends AField {
 	private final TypeInfo returnType;
 	private final String operator;
 	private final boolean postfix;
@@ -17,7 +17,6 @@ public final class UnaryOperator extends AField{
 		this.operator = operator;
 		this.postfix = postfix;
 	}
-
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNm) throws IOException, CompilerException {
 		if(postfix) {

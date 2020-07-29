@@ -8,6 +8,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.FnEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
@@ -26,11 +27,16 @@ public abstract class AFunctionBlock extends ABlock {
 			  writer.write(',');
 		  }
 		  var argType = env.getType(it.nextID());
-		  writer.write(argType.cname);
-		  writer.write(' ');
 		  args.add(argType);
 		  var argName = it.nextID();
-		  writer.write(IFunction.toCId(argName.value));
+		  var argNameCID = IFunction.toCId(argName.value);
+          if(argType instanceof PointerInfo p && p.isFunctionPointer()){
+              writer.write(p.getFunctionPointerDeclaration(argNameCID));
+          }else{
+              writer.write(argType.cname);
+              writer.write(' ');
+              writer.write(argNameCID);
+          }
 		  if(env.hasFunctionInCurrentEnv(argName.value)) {
 			  throw new CompilerException(argName,"there is already argument called " + argName);
 		  }

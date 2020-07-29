@@ -14,7 +14,7 @@ import risa.fpl.parser.ExpIterator;
 public final class ConstructorCall extends Function {
    private final TypeInfo type;
    public ConstructorCall(TypeInfo type,TypeInfo[]args) {
-       super("constructor",TypeInfo.VOID,type.cname + "_init",args,false,type);
+       super("constructor",TypeInfo.VOID,type.cname + "__init",args,false,type);
 	   this.type = type;
    }
 	@Override
@@ -22,8 +22,10 @@ public final class ConstructorCall extends Function {
 		writer.write(type.cname);
 		writer.write(' ');
 		var id = it.nextID();
-		writer.write(IFunction.toCId(id.value));
+		var cID = IFunction.toCId(id.value);
+		writer.write(cID);
 		writer.write(";\n");
+		setPrevCode(cID);
 		super.compile(writer,env,it,line,charNum);
 		env.addFunction(id.value,new Variable(type,IFunction.toCId(id.value),id.value));
 		return TypeInfo.VOID;

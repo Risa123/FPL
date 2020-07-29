@@ -12,10 +12,11 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
-public class Function extends TypeInfo implements IFunction {
+public class Function extends TypeInfo implements IFunction,IField {
 	public final TypeInfo returnType;
 	public final TypeInfo[]args;
 	private final boolean method;
+	private String prev_code;
     public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner) {
        super(name,cname,buildDeclaration(cname, returnType,args,extern,methodOwner));
        this.returnType = returnType;
@@ -29,7 +30,8 @@ public class Function extends TypeInfo implements IFunction {
 		var args = new ArrayList<TypeInfo>(this.args.length);
 		var first = !method;
 		if(method){
-
+		    writer.write('&');
+		    writePrev(writer);
         }
 		while(it.hasNext()) {
 		   var exp = it.nextAtom();
@@ -76,5 +78,21 @@ public class Function extends TypeInfo implements IFunction {
         }
         b.append(");\n");
         return b.toString();
+    }
+
+    @Override
+    public void setPrevCode(String code) {
+        prev_code = code;
+    }
+    @Override
+    public void writePrev(BufferedWriter writer) throws IOException {
+        if(prev_code != null){
+            writer.write(prev_code);
+            prev_code = null;
+        }
+    }
+    @Override
+    public String getPrevCode() {
+        return prev_code;
     }
 }

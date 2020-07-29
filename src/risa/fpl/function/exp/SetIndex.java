@@ -10,7 +10,6 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
 public final class SetIndex extends AField {
-
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum)throws IOException, CompilerException {
 		writePrev(writer);

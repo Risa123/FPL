@@ -21,7 +21,7 @@ public final class ProgramEnv extends AEnv {
 	  addFunction("class",new ClassBlock());
 	  addFunction("var",new Var(null));
 	  addFunction("[]",new Array());
-	  addType("void",TypeInfo.VOID);
+	  addType("void",TypeInfo.VOID,false);
 	  addType("byte",NumberInfo.BYTE);
 	  addType("sbyte",NumberInfo.SBYTE);
 	  addType("ubyte",NumberInfo.UBYTE);
@@ -39,7 +39,6 @@ public final class ProgramEnv extends AEnv {
 	  addType("float",NumberInfo.FLOAT);
 	  addType("double",NumberInfo.DOUBLE);
 	  addType("char",TypeInfo.CHAR);
-	  addFunction("void",null);
 	  addFunction("nil",new ValueExp(TypeInfo.NIL,"0"));
   }
 }

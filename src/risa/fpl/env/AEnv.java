@@ -79,8 +79,13 @@ public abstract class AEnv {
 	  return type;
   }
   public void addType(String name,TypeInfo type) {
-	  types.put(name,type);
-	  addFunction(name,new Var(type));
+	  addType(name,type,true);
+  }
+  public void addType(String name,TypeInfo type,boolean declaration){
+      types.put(name,type);
+      if(declaration){
+          addFunction(name,new Var(type));
+      }
   }
   public boolean hasModifier(Modifier mod) {
 	 return mods.contains(mod);
