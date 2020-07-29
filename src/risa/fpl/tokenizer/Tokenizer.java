@@ -148,7 +148,9 @@ public final class Tokenizer {
 				  b.appendCodePoint(c);
 			  }while(c != '"');
 			  return new Token(line,charNum,b.toString(),TokenType.STRING);
-		  } else  if(!isSeparator(c)) {
+		  }else if(c == ':'){
+		      return new Token(line,charNum,":",TokenType.CLASS_SELECTOR);
+          } else  if(!isSeparator(c)) {
 			  var b = new StringBuilder();
 			  readNext = false;
 			  while(hasNext() && !isSeparator(read())) {

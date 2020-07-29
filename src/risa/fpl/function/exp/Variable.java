@@ -42,7 +42,13 @@ public class Variable extends ValueExp {
 			writer.write('&');
 			writer.write(code);
 			return new PointerInfo(type);
-		}else if(type instanceof NumberInfo n) {
+		}else if(value.equals("drf=") && type instanceof PointerInfo p && !p.isFunctionPointer()){
+            writer.write('*');
+            writer.write(code);
+            writer.write('=');
+            it.nextAtom().compile(writer,env,it);
+            return TypeInfo.VOID;
+        }else if(type instanceof NumberInfo n) {
 			if(constant) {
 				throw new CompilerException(line,charNum,"constant cannot be redefined");
 			}

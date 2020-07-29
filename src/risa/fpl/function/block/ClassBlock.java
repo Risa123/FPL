@@ -9,7 +9,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.statement.ConstructorCall;
+import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -39,10 +39,10 @@ public final class ClassBlock implements IFunction {
 	    writer.write(b.getText());
         writer.write(cEnv.getDefaultConstructor());
 	    var type = new TypeInfo(id.value,cID,b.getText());
+	    var classType = new TypeInfo(id.value,"");
 	    cEnv.addFields(type);
 	    env.addType(id.value,type);
-	    env.addFunction(id.value,new ConstructorCall(type,new TypeInfo[]{}));
+	    env.addFunction(id.value,new ClassVariable(type,classType,new TypeInfo[]{}));
 		return TypeInfo.VOID;
 	}
-
 }
