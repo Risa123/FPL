@@ -10,35 +10,24 @@ public final class PointerInfo extends TypeInfo {
 	public PointerInfo(TypeInfo type) {
 	    super(type.name +"*",type.cname + "*");
         this.type = type;
-        addField("++",new UnaryOperator(this,"++",false));
-        addField("--",new UnaryOperator(this,"--",false));
-        addField("+",new BinaryOperator(this,this,"+"));
-        addField("-",new BinaryOperator(this,this,"-"));
-        addField("*",new BinaryOperator(this,this,"*"));
-        addField("/",new BinaryOperator(this,this,"/"));
-        addField("%",new BinaryOperator(this,this,"%"));
-        addField("get",new GetIndex(this));
-        addField("set",new SetIndex());
-        addField("==",new BinaryOperator(BOOL,this,"=="));
-        addField("!=",new BinaryOperator(BOOL,this,"!="));
+        if(type != TypeInfo.VOID){
+            addField("++",new UnaryOperator(this,"++",false));
+            addField("--",new UnaryOperator(this,"--",false));
+            addField("+",new BinaryOperator(this,this,"+"));
+            addField("-",new BinaryOperator(this,this,"-"));
+            addField("*",new BinaryOperator(this,this,"*"));
+            addField("/",new BinaryOperator(this,this,"/"));
+            addField("%",new BinaryOperator(this,this,"%"));
+            addField("get",new GetIndex(this));
+            addField("set",new SetIndex());
+            addField("==",new BinaryOperator(BOOL,this,"=="));
+            addField("!=",new BinaryOperator(BOOL,this,"!="));
+        }
 	}
 	@Override
 	public boolean equals(Object o) {
 		if(o instanceof PointerInfo p) {
 			return type.equals(p.type);
 		}else return o == TypeInfo.NIL;
-    }
-    private static String argsToString(TypeInfo[]args){
-	    var b = new StringBuilder();
-	    var first = true;
-	    for(var arg:args){
-	        if(first){
-	            first = false;
-            }else{
-	            b.append(',');
-            }
-	        b.append(arg.cname);
-        }
-	    return b.toString();
     }
 }

@@ -10,6 +10,7 @@ public abstract class AField implements IFunction{
   protected void writePrev(BufferedWriter writer) throws IOException {
 	  if(prev_code != null) {
 		  writer.write(prev_code);
+		  prev_code = null;
 	  }
   }
 }

@@ -9,8 +9,10 @@ import risa.fpl.info.TypeInfo;
 public final class ClassEnv extends SubEnv {
 	private final HashMap<String,AField>fields = new HashMap<>();
 	private final StringBuilder constructor = new StringBuilder();
-	public ClassEnv(AEnv superEnv) {
+	private final String cname;
+	public ClassEnv(AEnv superEnv,String cname) {
 		super(superEnv);
+		this.cname = cname;
 	}
 	public void addFields(TypeInfo type) {
 		fields.forEach(type::addField);
@@ -28,4 +30,13 @@ public final class ClassEnv extends SubEnv {
 	public String getDefaultConstructorCode() {
 		return constructor.toString();
 	}
+	public String getDefaultConstructor(){
+	    var b = new StringBuilder(cname);
+	    b.append("_init(");
+	    b.append(cname);
+	    b.append("* this){\n");
+	    b.append(constructor);
+	    b.append("}\n");
+	    return b.toString();
+    }
 }

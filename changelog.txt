@@ -15,3 +15,10 @@ var statement sets variable type to null fixed
 0.0.3
 renamed null to nil reference
 added function pointer
+0.0.4
+added default constructor
+classes now can be native
+void pointer cannot use arithmetic
+fixed use not working
+fixed typo in exception message in Fn
+fixed function importing

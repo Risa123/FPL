@@ -13,39 +13,24 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
 public class Function extends TypeInfo implements IFunction {
-	public final String declaration;
 	public final TypeInfo returnType;
 	public final TypeInfo[]args;
-    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern) {
-       super(cname,name);
+	private final boolean method;
+    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner) {
+       super(name,cname,buildDeclaration(cname, returnType,args,extern,methodOwner));
        this.returnType = returnType;
        this.args = args;
-       var b = new StringBuilder();
-       if(extern) {
-    	   b.append("extern ");
-       }
-       b.append(returnType.cname);
-       b.append(' ');
-       b.append(cname);
-       b.append('(');
-       var first = true;
-       for(var arg:args) {
-    	   if(first) {
-    		   first = false;
-    	   }else {
-    		   b.append(',');
-    	   }
-    	   b.append(arg.cname);
-       }
-       b.append(");\n");
-       declaration = b.toString();
+       this.method = methodOwner != null;
     }
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
 		writer.write(cname);
 		writer.write('(');
 		var args = new ArrayList<TypeInfo>(this.args.length);
-		var first = true;
+		var first = !method;
+		if(method){
+
+        }
 		while(it.hasNext()) {
 		   var exp = it.nextAtom();
 		   if(exp.type == TokenType.ARG_SEPARATOR) {
@@ -67,4 +52,29 @@ public class Function extends TypeInfo implements IFunction {
 		writer.write(')');
 		return returnType;
 	}
+	private static String buildDeclaration(String cname,TypeInfo returnType,TypeInfo[]args,boolean extern,TypeInfo methodOwner){
+        var b = new StringBuilder();
+        if(extern) {
+            b.append("extern ");
+        }
+        b.append(returnType.cname);
+        b.append(' ');
+        b.append(cname);
+        b.append('(');
+        var first = methodOwner == null;
+        if(methodOwner != null){
+            b.append(methodOwner.cname);
+            b.append("* this");
+        }
+        for(var arg:args) {
+            if(first) {
+                first = false;
+            }else {
+                b.append(',');
+            }
+            b.append(arg.cname);
+        }
+        b.append(");\n");
+        return b.toString();
+    }
 }

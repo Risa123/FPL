@@ -15,14 +15,16 @@ public class Variable extends ValueExp {
 	public boolean onlyDeclared;
 	private final String id;
 	public final boolean constant;
-	public Variable(TypeInfo type, String code,boolean onlyDeclared,String id,boolean constant) {
+	private final boolean classAttribute;
+	public Variable(TypeInfo type, String code,boolean onlyDeclared,String id,boolean constant,boolean classAttribute) {
 		super(type, code);
 		this.onlyDeclared = onlyDeclared;
 		this.id = id;
 		this.constant = constant;
+		this.classAttribute = classAttribute;
 	}
     public Variable(TypeInfo type,String code,String id) {
-       this(type,code,false,id,false);
+       this(type,code,false,id,false,false);
     }
 	@Override
 	protected TypeInfo onField(Atom atom, BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws CompilerException, IOException {
@@ -68,6 +70,9 @@ public class Variable extends ValueExp {
 		if(onlyDeclared) {
 			throw new CompilerException(line,charNum,"variable " + id + " was not defined");
 		}
+		if(prev_code == null && classAttribute){
+		    writer.write("this->");
+        }
 		return super.compile(writer, env, it, line, charNum);
 	}
 	

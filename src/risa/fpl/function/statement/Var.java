@@ -99,7 +99,11 @@ public final class Var implements IFunction {
 						writer.write(cID);
 					}
 					type = expType;
-					writer.write(b.getText());
+					if(env instanceof  ClassEnv e){
+					    e.appendToDefaultConstructor("this->" + cID + b.getText() + ";\n");
+                    }else{
+                        writer.write(b.getText());
+                    }
 				}
 			}else if(type == null) {
 				throw new CompilerException(id,"cannot infer type");
@@ -108,7 +112,7 @@ public final class Var implements IFunction {
 					declaredOnly = false;
 				}
 			}
-			env.addFunction(id.value, new Variable(type,cID,declaredOnly,id.value,env.hasModifier(Modifier.CONST)));
+			env.addFunction(id.value, new Variable(type,cID,declaredOnly,id.value,env.hasModifier(Modifier.CONST),env instanceof ClassEnv));
 		}
 		return TypeInfo.VOID;
 	}

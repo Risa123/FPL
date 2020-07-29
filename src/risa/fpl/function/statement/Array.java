@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
@@ -46,7 +47,7 @@ public final class Array implements IFunction {
 	    }
 	    int count = 0;
 	    var first = true;
-	    env.addFunction(id.value,new Variable(new PointerInfo(type),cID,false,id.value,env.hasModifier(Modifier.CONST)));
+	    env.addFunction(id.value,new Variable(new PointerInfo(type),cID,false,id.value,env.hasModifier(Modifier.CONST),env instanceof ClassEnv));
 	    if(it.hasNext()) {
 	    	while(it.hasNext()) {
 		    	var exp = it.next();

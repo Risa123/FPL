@@ -7,6 +7,7 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
+import risa.fpl.env.Modifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.statement.ConstructorCall;
 import risa.fpl.info.TypeInfo;
@@ -17,10 +18,18 @@ public final class ClassBlock implements IFunction {
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
 		var id = it.nextID();
-		var cEnv = new ClassEnv(env);
+        String cID;
+        if(env.hasModifier(Modifier.NATIVE)){
+            cID = id.value;
+            if(!IFunction.isCId(cID)){
+                throw new CompilerException(id,"invalid C identifier");
+            }
+        }else{
+            cID = IFunction.toCId(id.value);
+        }
+		var cEnv = new ClassEnv(env,cID);
 		var b = new BuilderWriter(writer);
 		b.write("typedef struct ");
-		var cID = IFunction.toCId(id.value);
 	    b.write(IFunction.toCId(id.value));
 	    b.write("{\n");
 		it.nextList().compile(b,cEnv, it);
@@ -28,11 +37,11 @@ public final class ClassBlock implements IFunction {
 	    b.write(IFunction.toCId(id.value));
 	    b.write(";\n");
 	    writer.write(b.getText());
+        writer.write(cEnv.getDefaultConstructor());
 	    var type = new TypeInfo(id.value,cID,b.getText());
 	    cEnv.addFields(type);
-	    
 	    env.addType(id.value,type);
-	    env.addFunction(id.value,new ConstructorCall(type));
+	    env.addFunction(id.value,new ConstructorCall(type,new TypeInfo[]{}));
 		return TypeInfo.VOID;
 	}
 

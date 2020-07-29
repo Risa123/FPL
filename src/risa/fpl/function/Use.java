@@ -38,13 +38,9 @@ public final class Use implements IFunction{
 				modules.add(it.nextID());
 			}
 		}
-		if(env instanceof ModuleEnv modEnv) {
 		   for(var mod:modules) {
-			  modEnv.importModule(mod,writer);
+               ((ModuleEnv)env).importModule(mod,writer);
 		   }
-		}else {
-			throw new CompilerException(line,charNum,"can only be used on module level");
-		}
 		return TypeInfo.VOID;
 	}
 	private void addFromList(AExp exp,ArrayList<Atom>modules) throws CompilerException {
@@ -54,6 +50,7 @@ public final class Use implements IFunction{
 				if(atom.type != TokenType.ID) {
 					throw new CompilerException(atom,"identifier expected");
 				}
+				modules.add(atom);
 			}else {
 				addFromList(mod,modules);
 			}

@@ -6,13 +6,15 @@ import java.io.IOException;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
-public final class ConstructorCall implements IFunction {
+public final class ConstructorCall extends Function {
    private final TypeInfo type;
-   public ConstructorCall(TypeInfo type) {
+   public ConstructorCall(TypeInfo type,TypeInfo[]args) {
+       super("constructor",TypeInfo.VOID,type.cname + "_init",args,false,type);
 	   this.type = type;
    }
 	@Override
@@ -21,7 +23,9 @@ public final class ConstructorCall implements IFunction {
 		writer.write(' ');
 		var id = it.nextID();
 		writer.write(IFunction.toCId(id.value));
-		env.addFunction(id.value,new Variable(type,IFunction.toCId(id.value),false,id.value,false));
+		writer.write(";\n");
+		super.compile(writer,env,it,line,charNum);
+		env.addFunction(id.value,new Variable(type,IFunction.toCId(id.value),id.value));
 		return TypeInfo.VOID;
 	}
 

@@ -11,7 +11,6 @@ import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.ValueExp;
-import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -43,7 +42,7 @@ public final class Fn extends AFunctionBlock{
 		writer.write(cID);
 		writer.write('(');
 		var fnEnv = new FnEnv(env,returnType);
-		var f = new Function(id.value,returnType,cID, parseArguments(writer,it,fnEnv),env.hasModifier(Modifier.NATIVE));
+		var f = new Function(id.value,returnType,cID, parseArguments(writer,it,fnEnv),env.hasModifier(Modifier.NATIVE),null);
 		env.addFunction("&" + id.value,new ValueExp(f,"&" + cID));
 		env.addFunction(id.value,f);
 		writer.write(')');
@@ -52,7 +51,7 @@ public final class Fn extends AFunctionBlock{
 			var block = it.nextList();
 			block.compile(writer,fnEnv,it);
 			if(!fnEnv.isReturnUsed() && returnType != TypeInfo.VOID) {
-				throw new CompilerException(block,"there is no return in this block and this function doesnt return void");
+				throw new CompilerException(block,"there is no return in this block and this function doesn't return void");
 			}
 			writer.write("}\n");
 		}else {
