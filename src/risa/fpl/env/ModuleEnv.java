@@ -14,9 +14,11 @@ import risa.fpl.parser.Atom;
 public final class ModuleEnv extends SubEnv{
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
+	private final String nameSpace;
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
+		nameSpace = IFunction.toCId(moduleBlock.name.replace('.','_'));
 	}
 	public void  importModule(Atom name,BufferedWriter writer) throws CompilerException, IOException {
 		var mod = moduleBlock.getModule(name);
@@ -51,6 +53,6 @@ public final class ModuleEnv extends SubEnv{
 		return super.getFunction(name);
 	}
 	public String getNameSpace() {
-		return moduleBlock.name.replace('.','_');
+		return nameSpace;
 	}
 }

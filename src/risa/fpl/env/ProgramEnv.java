@@ -39,6 +39,7 @@ public final class ProgramEnv extends AEnv {
 	  addType("float",NumberInfo.FLOAT);
 	  addType("double",NumberInfo.DOUBLE);
 	  addType("char",TypeInfo.CHAR);
+	  addType("memory",NumberInfo.MEMORY);
 	  addFunction("nil",new ValueExp(TypeInfo.NIL,"0"));
   }
 }

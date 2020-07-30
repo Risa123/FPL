@@ -156,13 +156,14 @@ public final class Tokenizer {
 			  while(hasNext() && !isSeparator(read())) {
 				  b.appendCodePoint(c);
 			  }
-			  return new Token(line,charNum,b.toString(),TokenType.ID);
+			  var str = b.toString();
+			  return new Token(line,charNum,str,TokenType.ID);
 		  }
 		  return null;
 	  }
 	  public Token next() throws IOException, CompilerException {
 		  Token token;
-		  while((token = nextPrivate()) == null);
+		  while((token = nextPrivate()) == null || token.value.isEmpty() || token.value.isBlank());
 		  return token;
 	  }
 	  private int read() throws IOException {
@@ -180,11 +181,11 @@ public final class Tokenizer {
 		  return c;
 	  }
 	  private boolean isSeparator(int c) {
+          if( c == '#' || c == '{' || c == ',' || c == ';' || c == '(' || c == '\n' || c == ':') {
+              readNext = false;
+              return true;
+          }
 		  if(Character.isWhitespace(c)) {
-			  return true;
-		  }
-		  if( c == '#' || c == '(' || c == '{' || c == ',' || c == ';') {
-			  readNext = false;
 			  return true;
 		  }
 		  return false;

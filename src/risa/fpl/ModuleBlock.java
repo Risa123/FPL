@@ -31,8 +31,7 @@ public final class ModuleBlock {
 		}
 		name.append(sourceFile.getFileName().toString().split("\\.")[0]);
 		this.name = name.toString();
-	   var parser = new Parser(Files.newBufferedReader(sourceFile));
-	   try {
+	   try (var parser = new Parser(Files.newBufferedReader(sourceFile))){
 		   exps = parser.parse();
 	   }catch(CompilerException e) {
 		   e.setSourceFile(this.sourceFile);
@@ -100,7 +99,7 @@ public final class ModuleBlock {
 	   }
 	   return mod.env;
    }
-   private class ExpInfo{
+   private static class ExpInfo{
 	   AExp exp;
 	   CompilerException lastEx;
 	   boolean attemptedToCompile;

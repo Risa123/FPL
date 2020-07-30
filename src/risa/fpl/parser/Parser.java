@@ -9,11 +9,12 @@ import risa.fpl.tokenizer.Token;
 import risa.fpl.tokenizer.TokenType;
 import risa.fpl.tokenizer.Tokenizer;
 
-public final class Parser {
+public final class Parser implements AutoCloseable{
  private final Tokenizer tokenizer;
  public Parser(Reader reader) {
 	 tokenizer = new Tokenizer(reader);
  }
+ @Override
  public void close() throws IOException {
 	 tokenizer.close();
  }
@@ -38,7 +39,7 @@ public final class Parser {
 		 if(token.type == TokenType.NEW_LINE) {
 			 break;
 		 }else if(token.type == TokenType.END_BLOCK) {
-			 throw new CompilerException(token.line,token.charNum,"unexpected token");
+		     throw new CompilerException(token.line,token.charNum,"unexpected }");
 		 }else if(token.type == TokenType.BEGIN_BLOCK) {
 			 list.add(parseBlock(token));
 		 }else {

@@ -25,4 +25,12 @@ fixed function importing
 function pointers can be used as arguments
 pointer dereference added
 0.0.5
-dereference equals "variable method"(drf=) added
+dereference and define "variable method"(drf=) added
+0.0.6
+fix classes can only be declared on module level
+fix module names now may not be valid c identifiers
+fix multi-line comment causing empty identifier
+unexpected token error renamed to unexpected {
+added memory data type to represent memory size and address
+added size static method to every data type to get it´s size
+added new static method to create

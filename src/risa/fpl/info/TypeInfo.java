@@ -20,13 +20,15 @@ public class TypeInfo {
   }
   public final String name,cname,declaration;
   private final HashMap<String, IField>fields = new HashMap<>();
-  public TypeInfo(String name,String cname,String declaration) {
+  public final Function constructor;
+  public TypeInfo(String name,String cname,String declaration,Function constructor) {
 	  this.name = name;
 	  this.cname = cname;
 	  this.declaration = declaration;
+	  this.constructor = constructor;
   }
   public TypeInfo(String name,String cname) {
-	  this(name,cname,"");
+	  this(name,cname,"",null);
   }
   @Override
   public String toString() {

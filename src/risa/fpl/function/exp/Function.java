@@ -18,7 +18,7 @@ public class Function extends TypeInfo implements IFunction,IField {
 	private final boolean method;
 	private String prev_code;
     public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner) {
-       super(name,cname,buildDeclaration(cname, returnType,args,extern,methodOwner));
+       super(name,cname,buildDeclaration(cname, returnType,args,extern,methodOwner),null);
        this.returnType = returnType;
        this.args = args;
        this.method = methodOwner != null;
