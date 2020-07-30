@@ -21,6 +21,7 @@ public class TypeInfo {
   public final String name,cname,declaration;
   private final HashMap<String, IField>fields = new HashMap<>();
   public final Function constructor;
+  private ClassInfo classInfo;
   public TypeInfo(String name,String cname,String declaration,Function constructor) {
 	  this.name = name;
 	  this.cname = cname;
@@ -39,5 +40,12 @@ public class TypeInfo {
   }
   public IField getField(String name) {
 	  return fields.get(name);
+  }
+  public void setClassInfo(ClassInfo info){
+      classInfo = info;
+      classInfo.addField("size",new ValueExp(NumberInfo.MEMORY,"sizeof " + cname));
+  }
+  public ClassInfo getClassInfo(){
+      return classInfo;
   }
 }

@@ -30,7 +30,9 @@ dereference and define "variable method"(drf=) added
 fix classes can only be declared on module level
 fix module names now may not be valid c identifiers
 fix multi-line comment causing empty identifier
-unexpected token error renamed to unexpected {
+fix + and - ignored as identifiers
+fix } causing error instead of ending statement
+fix calling methods on return values
 added memory data type to represent memory size and address
 added size static method to every data type to get it´s size
 added new static method to create

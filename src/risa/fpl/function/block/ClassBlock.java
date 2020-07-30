@@ -11,6 +11,7 @@ import risa.fpl.env.Modifier;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.statement.ClassVariable;
+import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -31,7 +32,7 @@ public final class ClassBlock implements IFunction {
         }else{
             cID = IFunction.toCId(id.value);
         }
-		var cEnv = new ClassEnv(env,cID);
+		var cEnv = new ClassEnv(modEnv,cID);
 		var b = new BuilderWriter(writer);
 		b.write("typedef struct ");
 	    b.write(IFunction.toCId(id.value));
@@ -43,22 +44,26 @@ public final class ClassBlock implements IFunction {
 	    writer.write(b.getText());
         writer.write(cEnv.getDefaultConstructor());
 	    var type = new TypeInfo(id.value,cID,b.getText(),null);
-	    var newName = new StringBuilder(type.cname);
-        newName.append(' ');
+	    writer.write(type.cname);
+	    writer.write("* ");
+	    var newName = new StringBuilder();
         newName.append(modEnv.getNameSpace());
         newName.append(cID);
+        newName.append("_new");
         writer.write(newName.toString());
         writer.write('(');
         writer.write(type.cname);
-        writer.write("* this){");
+        writer.write("* this){\n");
+        writer.write("void* malloc(unsigned long);\n");
         writer.write(type.cname);
-        writer.write(" p=malloc(sizeof ");
+        writer.write("* p=malloc(sizeof ");
         writer.write(type.cname);
-        writer.write(");");
+        writer.write(");\n");
         writer.write(modEnv.getNameSpace());
         writer.write(type.cname);
-        writer.write("_init(p);return p;}");
-	    var classType = new TypeInfo(id.value,"");
+        writer.write("__init(p);\nreturn p;\n}");
+	    var classType = new ClassInfo(id.value);
+	    type.setClassInfo(classType);
 	    cEnv.addFields(type);
 	    env.addType(id.value,type);
 	    env.addFunction(id.value,new ClassVariable(type,classType,new TypeInfo[]{}));

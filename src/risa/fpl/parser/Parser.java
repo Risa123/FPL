@@ -35,14 +35,17 @@ public final class Parser implements AutoCloseable{
 		 list.add(new Atom(first.line,first.charNum,first.value,first.type));
 	 }
 	 while(hasNext()) {
-		 var token = tokenizer.next();
+		 var token = tokenizer.peek();
 		 if(token.type == TokenType.NEW_LINE) {
+		     tokenizer.next();
 			 break;
 		 }else if(token.type == TokenType.END_BLOCK) {
-		     throw new CompilerException(token.line,token.charNum,"unexpected }");
+		    break;
 		 }else if(token.type == TokenType.BEGIN_BLOCK) {
+		     tokenizer.next();
 			 list.add(parseBlock(token));
 		 }else {
+             tokenizer.next();
 			 list.add(new Atom(token.line,token.charNum,token.value,token.type));
 		 }
 	 }

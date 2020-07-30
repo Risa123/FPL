@@ -20,4 +20,9 @@ public abstract class AField implements IField {
     public String getPrevCode() {
         return prev_code;
     }
+
+    @Override
+    public boolean appendSemicolon() {
+        return true;
+    }
 }

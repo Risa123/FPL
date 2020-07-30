@@ -11,6 +11,7 @@ public final class Tokenizer {
 	  private boolean readNext = true;
 	  private static final int  UBYTE_MAX = 255,USHORT_MAX = 65_535;
 	  private static final long UINT_MAX = 4_294_967_295L,ULONG_MAX = Long.parseUnsignedLong("18446744073709551615");
+	  private Token current;
 	  public Tokenizer(Reader reader) {
 		  this.reader = reader;
 	  }
@@ -18,7 +19,7 @@ public final class Tokenizer {
 		  reader.close();
 	  }
 	  public boolean hasNext() throws IOException {
-		  return reader.ready();
+		  return reader.ready() || !readNext;
 	  }
 	  private Token nextPrivate() throws IOException, CompilerException {
 		  read();
@@ -44,10 +45,10 @@ public final class Tokenizer {
 				  if(!Character.isDigit(c)) {
 					  if(!isSeparator(c)) {
 						 b.appendCodePoint(c);
-						 return new Token(line,charNum,b.toString(),TokenType.ID);
-					  }
-					  readNext = false;
-					  return null;
+					  }else{
+					      readNext = false;
+                      }
+					  return new Token(line,charNum,b.toString(),TokenType.ID);
 				  }
 				  signed = true;
 			  }
@@ -162,8 +163,13 @@ public final class Tokenizer {
 		  return null;
 	  }
 	  public Token next() throws IOException, CompilerException {
+	      if(current != null){
+	          var r = current;
+	          current = null;
+	          return r;
+          }
 		  Token token;
-		  while((token = nextPrivate()) == null || token.value.isEmpty() || token.value.isBlank());
+		  while((token = nextPrivate())  == null || token.type != TokenType.NEW_LINE && (token.value.isEmpty() || token.value.isBlank()));
 		  return token;
 	  }
 	  private int read() throws IOException {
@@ -181,13 +187,16 @@ public final class Tokenizer {
 		  return c;
 	  }
 	  private boolean isSeparator(int c) {
-          if( c == '#' || c == '{' || c == ',' || c == ';' || c == '(' || c == '\n' || c == ':') {
+          if( c == '#' || c == '{' || c == ',' || c == ';' || c == '(' || c == '\n' || c == ':' || c == '}') {
               readNext = false;
               return true;
           }
-		  if(Character.isWhitespace(c)) {
-			  return true;
-		  }
-		  return false;
+		  return Character.isWhitespace(c);
 	  }
+	  public Token peek() throws IOException,CompilerException{
+	      if(current == null){
+	          current = next();
+          }
+	      return current;
+      }
 }

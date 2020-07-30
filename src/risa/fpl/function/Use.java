@@ -29,11 +29,6 @@ public final class Use implements IFunction{
 			}
 			addFromList(exp,modules);
 		}else {
-			var atom = (Atom)exp;
-			if(atom.type != TokenType.ID) {
-				throw new CompilerException(atom,"identifier expected");
-			}
-			modules.add(atom);
 			while(it.hasNext()) {
 				modules.add(it.nextID());
 			}

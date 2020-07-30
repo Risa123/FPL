@@ -18,17 +18,16 @@ public final class List extends AExp {
 	}
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator) throws CompilerException, IOException {
-	   TypeInfo ret = null;
+	   TypeInfo ret = null; // has to be null see line 26
 	   var it = new ExpIterator(exps,line,charNum);
+        var appendSemicolon = false;
 	   while(it.hasNext()) {
 		   var exp = it.next();
-		   if(exp instanceof Atom atom) { 
+		   if(exp instanceof Atom atom) {
               if(ret == null) {
             	  var f =  env.getFunction(atom);
+            	  appendSemicolon = f.appendSemicolon() && statement;
                   ret = f.compile(writer, env, it,exp.line,exp.charNum);
-                  if(statement && f.appendSemicolon()) {
-                	  writer.write(";\n");
-                  }
               }else{
             	 var field = ret.getField(atom.value);
             	 if(field == null) {
@@ -40,6 +39,9 @@ public final class List extends AExp {
 			   exp.compile(writer, env,it);
 		   }
 	   }
+        if(appendSemicolon) {
+            writer.write(";\n");
+        }
 	   return ret;
 	}
 	@Override
