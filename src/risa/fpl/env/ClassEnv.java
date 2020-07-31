@@ -3,6 +3,7 @@ package risa.fpl.env;
 import java.util.HashMap;
 
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.IField;
 import risa.fpl.info.TypeInfo;
 
@@ -40,5 +41,8 @@ public final class ClassEnv extends SubEnv {
 	    b.append(constructor);
 	    b.append("}\n");
 	    return b.toString();
+    }
+    public void addMethod(String name,Function method,String code){
+
     }
 }

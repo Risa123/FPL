@@ -28,6 +28,13 @@ public final class Var implements IFunction {
     }
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+        if(type != null && it.hasNext()){
+           var next = it.peek();
+           if(next instanceof Atom a && a.type == TokenType.CLASS_SELECTOR){
+               it.next();
+               return type.getClassInfo();
+           }
+        }
 		if(env.hasModifier(Modifier.NATIVE)) {
 			writer.write("extern ");
 		}
