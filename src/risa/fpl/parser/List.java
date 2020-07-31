@@ -26,8 +26,8 @@ public final class List extends AExp {
 		   if(exp instanceof Atom atom) {
               if(ret == null) {
             	  var f =  env.getFunction(atom);
-            	  appendSemicolon = f.appendSemicolon() && statement;
                   ret = f.compile(writer, env, it,exp.line,exp.charNum);
+                  appendSemicolon = f.appendSemicolon() && statement;
               }else{
             	 var field = ret.getField(atom.value);
             	 if(field == null) {

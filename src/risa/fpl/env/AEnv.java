@@ -56,14 +56,8 @@ public abstract class AEnv {
 		   throw new CompilerException(atom.line,atom.charNum,"identifier or literal expected instead of " + atom.type);
 	 }
   }
-  public TypeInfo getTypeUnsafe(String name) {
-	  if(name.endsWith("*")) {
-		  return new PointerInfo(getTypeUnsafe(name.substring(0,name.length() - 1)));
-	  }
-	  return types.get(name);
-  }
   public boolean hasFunctionInCurrentEnv(String name) {
-	  return functions.containsKey(name);
+	  return functions.containsKey(name.replace("*",""));
   }
   public void addFunction(String name,IFunction value) {
 	  functions.put(name, value);
@@ -72,11 +66,17 @@ public abstract class AEnv {
 	  if(atom.type != TokenType.ID) {
 		  throw new CompilerException(atom,"type identifier expected");
 	  }
-	  var type = getTypeUnsafe(atom.value);
-	  if(type == null) {
-		  throw new CompilerException(atom,"type " + atom.value + " not found");
-	  }
+	  if(atom.value.endsWith("*")){
+	      return new PointerInfo(getType(new Atom(atom.line,atom.charNum,atom.value.substring(0,atom.value.length() - 1), TokenType.ID)));
+      }
+	  var type = types.get(atom.value);
+	  if(type == null){
+	      throw new CompilerException(atom,"type " + atom + " not found");
+      }
 	  return type;
+  }
+  protected final boolean hasTypeInCurrentEnv(String name){
+      return types.containsKey(name.replace("*","")); //remove pointer declarations
   }
   public void addType(String name,TypeInfo type) {
 	  addType(name,type,true);

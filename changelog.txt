@@ -8,7 +8,7 @@ get and set methods added to pointer
 static array added
 0.0.2
 fixed wrong arguments message
-output directory not requied
+output directory not required
 stdc functions exit and system added to backend
 null added
 var statement sets variable type to null fixed
@@ -33,6 +33,11 @@ fix multi-line comment causing empty identifier
 fix + and - ignored as identifiers
 fix } causing error instead of ending statement
 fix calling methods on return values
+fix unable to declare pointers to types from modules
+fix pointer to unknown type causing NPE
+fix  ++ and -- converted to variable methods
+pointers can use cast
+pointers can use define and operator
 added memory data type to represent memory size and address
 added size static method to every data type to get it´s size
-added new static method to create
+added static method new to non-primitive data types

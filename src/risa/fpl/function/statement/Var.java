@@ -2,6 +2,7 @@ package risa.fpl.function.statement;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -14,7 +15,10 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.AExp;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
 public final class Var implements IFunction {
@@ -83,7 +87,16 @@ public final class Var implements IFunction {
 					declaredOnly = false;
 					var b = new BuilderWriter(writer);
 					b.write('=');
-					var expType  = env.getFunction(exp).compile(b, env, it, line, charNum);
+                    var list = new ArrayList<AExp>();
+                    list.add(exp);
+                    while(it.hasNext()){
+                        var expPart = it.next();
+                        if(expPart instanceof Atom a && a.type == TokenType.ARG_SEPARATOR){
+                            break;
+                        }
+                        list.add(expPart);
+                    }
+					var expType  = new List(exp.line,exp.charNum,list,true).compile(b,env,it);
 					if(type != null && !type.equals(expType)) {
 						throw new CompilerException(exp,expType  + " cannot be implicitly converted to " + type);
 					}

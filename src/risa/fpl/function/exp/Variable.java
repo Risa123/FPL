@@ -42,31 +42,19 @@ public class Variable extends ValueExp {
 			writer.write('&');
 			writer.write(code);
 			return new PointerInfo(type);
-		}else if(value.equals("drf=") && type instanceof PointerInfo p && !p.isFunctionPointer()){
-            writer.write('*');
-            writer.write(code);
-            writer.write('=');
-            it.nextAtom().compile(writer,env,it);
-            return TypeInfo.VOID;
-        }else if(type instanceof NumberInfo n) {
+		}else if(type instanceof PointerInfo p && !p.isFunctionPointer()){
+		    TypeInfo t;
+           if((t = processOperator(value,writer,it,env)) != null){
+               return t;
+           }
+        }else if(type instanceof NumberInfo) {
 			if(constant) {
 				throw new CompilerException(line,charNum,"constant cannot be redefined");
 			}
-			switch(value) {
-			case "+=":
-			case "-=":
-			case "*=":
-			case "/=":
-			  writer.write(code);
-		      writer.write(value);
-		      it.nextAtom().compile(writer, env, it);
-			  return TypeInfo.VOID;	
-			  default:
-				  if(!n.floatingPoint && value.equals("%=")) {
-					  writer.write(value);
-					  it.nextAtom().compile(writer, env, it);
-				  }
-			}
+			TypeInfo t;
+			if((t = processOperator(value,writer,it,env)) != null){
+			    return t;
+            }
 		}
 		return super.onField(atom, writer, env, it, line, charNum);
 	}
@@ -81,5 +69,36 @@ public class Variable extends ValueExp {
         }
 		return super.compile(writer, env, it, line, charNum);
 	}
-	
+	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException, CompilerException {
+            switch (operator) {
+                case "+=", "-=", "/=", "*=" -> {
+                    process(operator,writer,it,env);
+                    return TypeInfo.VOID;
+                }
+                case "++","--","p+","p-" ->{
+                    writer.write(code);
+                    if(operator.equals("p+")){
+                        operator = "++";
+                    }else if(operator.equals("p-")){
+                        operator = "--";
+                    }
+                    writer.write(operator);
+                    return type;
+                }
+            }
+            if(operator.equals("%=") && (type instanceof NumberInfo n && !n.floatingPoint || type instanceof PointerInfo)){
+                process(operator,writer,it,env);
+                return TypeInfo.VOID;
+            }else if(type instanceof PointerInfo && operator.equals("drf=")){
+                writer.write('*');
+                process("=",writer,it,env);
+                return TypeInfo.VOID;
+            }
+	    return null;
+    }
+    private void process(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException, CompilerException {
+        writer.write(code);
+        writer.write(operator);
+        it.nextAtom().compile(writer, env, it);
+    }
 }

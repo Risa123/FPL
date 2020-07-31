@@ -2,7 +2,6 @@ package risa.fpl.info;
 
 import risa.fpl.function.exp.BinaryOperator;
 import risa.fpl.function.exp.Cast;
-import risa.fpl.function.exp.UnaryOperator;
 
 public final class NumberInfo extends TypeInfo {
 	public static final NumberInfo BYTE = new NumberInfo("byte","char",1);
@@ -35,10 +34,6 @@ public final class NumberInfo extends TypeInfo {
 		addField("-",new BinaryOperator(this,this,"-"));
 		addField("/",new BinaryOperator(this,this,"/"));
 		addField("*",new BinaryOperator(this,this,"*"));
-		addField("++",new UnaryOperator(this,"++",true));
-		addField("--",new UnaryOperator(this,"--",true));
-		addField("p+",new UnaryOperator(this,"++",false));
-		addField("p-",new UnaryOperator(this,"--",false));
 		addField("cast",new Cast(this));
 	}
 	public NumberInfo(String name,String cname,int size) {

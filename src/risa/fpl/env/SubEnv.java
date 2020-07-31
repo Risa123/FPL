@@ -18,15 +18,16 @@ public IFunction getFunction(Atom atom) throws CompilerException {
 	}
 	return super.getFunction(atom);
 }
-@Override
-public TypeInfo getTypeUnsafe(String name) {
-	var type = super.getTypeUnsafe(name);
-	if(type == null) {
-		type = superEnv.getTypeUnsafe(name);
-	}
-	return type;
- }
- public TypeInfo getReturnType() {
+
+    @Override
+    public TypeInfo getType(Atom atom) throws CompilerException {
+        if(!hasTypeInCurrentEnv(atom.value)){
+            return superEnv.getType(atom);
+        }
+        return super.getType(atom);
+    }
+
+    public TypeInfo getReturnType() {
 	 return ((SubEnv)superEnv).getReturnType();
  }
  public boolean containsExitStatement() {

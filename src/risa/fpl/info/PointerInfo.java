@@ -8,8 +8,6 @@ public final class PointerInfo extends TypeInfo {
 	    super(type.name +"*",type.cname + "*");
         this.type = type;
         if(type != TypeInfo.VOID){
-            addField("++",new UnaryOperator(this,"++",false));
-            addField("--",new UnaryOperator(this,"--",false));
             addField("+",new BinaryOperator(this,this,"+"));
             addField("-",new BinaryOperator(this,this,"-"));
             addField("*",new BinaryOperator(this,this,"*"));
@@ -19,6 +17,7 @@ public final class PointerInfo extends TypeInfo {
             addField("set",new SetIndex());
             addField("==",new BinaryOperator(BOOL,this,"=="));
             addField("!=",new BinaryOperator(BOOL,this,"!="));
+            addField("cast",new Cast(this));
             if(type instanceof Function){
                 addField("drf",(Function)type);
             }else{

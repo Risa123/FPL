@@ -33,22 +33,20 @@ public final class ModuleEnv extends SubEnv{
 		}
 	}
 	@Override
-	public TypeInfo getTypeUnsafe(String name) {
+	public TypeInfo getType(Atom name) throws CompilerException {
 		for(var mod:importedModules) {
-			var type = mod.types.get(name);
-			if(type != null) {
-				return type;
-			}
+			if(mod.hasTypeInCurrentEnv(name.value)){
+			    return mod.getType(name);
+            }
 		}
-		return super.getTypeUnsafe(name);
+		return super.getType(name);
 	}
 	@Override
 	public IFunction getFunction(Atom name) throws CompilerException {
 		for(var mod:importedModules) {
-			var func = mod.functions.get(name.value);
-			if(func != null) {
-				return func;
-			}
+			if(mod.hasFunctionInCurrentEnv(name.value)){
+			    return mod.getFunction(name);
+            }
 		}
 		return super.getFunction(name);
 	}
