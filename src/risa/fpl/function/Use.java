@@ -29,6 +29,7 @@ public final class Use implements IFunction{
 			}
 			addFromList(exp,modules);
 		}else {
+		    modules.add((Atom)exp);
 			while(it.hasNext()) {
 				modules.add(it.nextID());
 			}
