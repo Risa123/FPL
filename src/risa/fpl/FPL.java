@@ -27,7 +27,7 @@ public final class FPL {
         	
         		try {
         			var mod = new ModuleBlock(this,p);
-    				modules.put(mod.name,mod);
+    				modules.put(mod.getName(),mod);
     			} catch (IOException e) {
     				throw new UncheckedIOException(e);
     			}catch(CompilerException e) {
@@ -52,7 +52,7 @@ public final class FPL {
     		var mod = getModule(name);
     		mod.compile();
     		files.append(' ');
-    		files.append(mod.cfile);
+    		files.append(mod.getCFile());
     	}
     	var err = Runtime.getRuntime().exec(cc + " -o " + output + files).getErrorStream();
         errStream.print(new String(err.readAllBytes()));

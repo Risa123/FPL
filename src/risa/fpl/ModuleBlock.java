@@ -5,24 +5,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 import risa.fpl.env.ModuleEnv;
-import risa.fpl.parser.AExp;
+import risa.fpl.function.block.ATwoPassBlock;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.parser.Parser;
 
-public final class ModuleBlock {
-   private final FPL lang;	
-   private final String sourceFile;
-   public final String cfile,name;
+public final class ModuleBlock extends ATwoPassBlock {
+   private final FPL lang;
+   private final String cfile,name,sourceFile;
    private boolean compiled;
    private final List exps;
    private ModuleEnv env;
    public ModuleBlock(FPL lang,Path sourceFile) throws IOException, CompilerException {
 	   this.lang = lang;
-	   this.sourceFile = sourceFile.subpath(2,sourceFile.getNameCount()).toString();
+       this.sourceFile = sourceFile.subpath(2, sourceFile.getNameCount()).toString();
 	   cfile = lang.outputDirectory + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
 		var name = new StringBuilder();
 		for(int i = 2;i < sourceFile.getNameCount() - 1;++i) {
@@ -39,58 +37,16 @@ public final class ModuleBlock {
 	   }
    }
    public void compile() throws IOException, CompilerException {
-	  if(!compiled) {
-		  compiled = true;
-		  try(var writer = Files.newBufferedWriter(Paths.get(cfile))){
-			 env = new ModuleEnv(lang.env,this);
-			 var infos = new ArrayList<ExpInfo>(exps.getExps().size());
-			 for(var exp:exps.getExps()) {
-				 var info = new ExpInfo();
-				 info.exp = exp;
-				 info.writer = new BuilderWriter(writer);
-				 infos.add(info);
-			 }
-			 for(;;) {
-				 var someNoAttempt = false;
-				 var it = infos.iterator();
-				 while(it.hasNext()) {
-					var info = it.next(); 
-					if(!info.attemptedToCompile) {
-						someNoAttempt = true;
-					}
-					try {
-						 info.exp.compile(info.writer, env,null);
-						 it.remove();
-						 writer.write(info.writer.getText());
-					}catch(CompilerException e) {
-						info.attemptedToCompile = true;
-						info.lastEx = e;
-						info.writer = new BuilderWriter(writer);
-						var exps = ((List)info.exp).getExps();
-						if(!exps.isEmpty() && exps.get(0) instanceof Atom a && a.getValue().equals("use")) {
-							throw e;
-						}
-					}
-				 }
-				 if(!someNoAttempt) {
-					 if(!infos.isEmpty()) {
-						 var b = new StringBuilder("errors in module:");
-						 for(var info:infos) {
-							 b.append('\n');
-							 info.lastEx.setSourceFile(sourceFile);
-							 b.append(info.lastEx.getMessage());
-						 }
-						 var first = infos.get(0).exp;
-						 throw new CompilerException(first.getLine(),first.getCharNum(),b.toString());
-					 }
-					 break;
-				 }
-			 }
-		  }catch(CompilerException e) {
-			  e.setSourceFile(sourceFile);
-			  throw e;
-		  }
-	  }
+       if (!compiled) {
+           compiled = true;
+           try (var writer = Files.newBufferedWriter(Paths.get(cfile))) {
+               env = new ModuleEnv(lang.env, this);
+               compile(writer,env,exps);
+           }catch(CompilerException ex){
+               ex.setSourceFile(sourceFile);
+               throw ex;
+           }
+       }
    }
    public ModuleEnv getModule(Atom name) throws CompilerException, IOException {
 	   var mod = lang.getModule(name.getValue());
@@ -99,10 +55,10 @@ public final class ModuleBlock {
 	   }
 	   return mod.env;
    }
-   private static class ExpInfo{
-	   AExp exp;
-	   CompilerException lastEx;
-	   boolean attemptedToCompile;
-	   BuilderWriter writer;
+   public String getName(){
+       return name;
+   }
+   public String getCFile(){
+       return cfile;
    }
 }

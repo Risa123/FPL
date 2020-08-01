@@ -6,6 +6,7 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.block.Constructor;
+import risa.fpl.function.block.Fn;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.IField;
 import risa.fpl.function.statement.Var;
@@ -77,6 +78,9 @@ public final class ClassEnv extends ANameSpacedEnv {
     public String getNameSpace(IFunction caller){
 	    if(caller instanceof Var){
 	        return "";
+        }
+	    if(caller instanceof Fn && !hasModifier(Modifier.NATIVE) && accessModifier == AccessModifier.PRIVATE){
+	        return "static ";
         }
 	    return nameSpace;
     }

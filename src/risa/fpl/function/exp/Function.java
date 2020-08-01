@@ -53,7 +53,9 @@ public class Function extends TypeInfo implements IFunction,IField {
 		var args = new ArrayList<TypeInfo>(this.args.length);
 		var first = !method;
 		if(method){
-		    writer.write('&');
+		    if(prev_code != null){
+                writer.write('&');
+            }
 		    writePrev(writer);
         }
 		while(it.hasNext()) {
@@ -83,7 +85,11 @@ public class Function extends TypeInfo implements IFunction,IField {
     }
     @Override
     public void writePrev(BufferedWriter writer) throws IOException {
-        if(prev_code != null){
+        if(prev_code == null){
+           if(method){
+               writer.write("this");
+           }
+        }else{
             writer.write(prev_code);
             prev_code = null;
         }

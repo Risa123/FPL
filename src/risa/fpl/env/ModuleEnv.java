@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.info.TypeInfo;
@@ -18,7 +19,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
-		nameSpace = IFunction.toCId(moduleBlock.name.replace('.','_'));
+		nameSpace = IFunction.toCId(moduleBlock.getName().replace('.','_'));
 	}
 	public void  importModule(Atom name,BufferedWriter writer) throws CompilerException, IOException {
 		var mod = moduleBlock.getModule(name);
@@ -52,6 +53,9 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	}
 	@Override
 	public String getNameSpace(IFunction caller) {
+	    if(!hasModifier(Modifier.NATIVE) && accessModifier == AccessModifier.PRIVATE){
+	        return "static ";
+        }
 		return nameSpace;
 	}
 }

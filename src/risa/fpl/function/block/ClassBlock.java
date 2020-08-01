@@ -15,7 +15,7 @@ import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
-public final class ClassBlock implements IFunction {
+public final class ClassBlock extends ATwoPassBlock implements IFunction {
 
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
@@ -37,7 +37,7 @@ public final class ClassBlock implements IFunction {
 		b.write("typedef struct ");
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write("{\n");
-		it.nextList().compile(b,cEnv, it);
+	    compile(b,cEnv,it.nextList());
 	    b.write('}');
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write(";\n");

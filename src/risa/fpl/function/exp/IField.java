@@ -5,8 +5,9 @@ import java.io.IOException;
 
 import risa.fpl.function.IFunction;
 
-public interface  IField extends IFunction{
+public interface IField extends IFunction{
     void setPrevCode(String code);
     void writePrev(BufferedWriter writer) throws IOException;
     String getPrevCode();
+
 }
