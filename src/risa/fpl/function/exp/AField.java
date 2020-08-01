@@ -1,10 +1,13 @@
 package risa.fpl.function.exp;
 
+import risa.fpl.function.AccessModifier;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 
 public abstract class AField implements IField {
     private String prev_code;
+    private AccessModifier accessModifier;
     @Override
     public void setPrevCode(String code) {
         prev_code = code;
@@ -24,5 +27,10 @@ public abstract class AField implements IField {
     @Override
     public boolean appendSemicolon() {
         return true;
+    }
+
+    @Override
+    public AccessModifier getAccessModifier() {
+        return accessModifier;
     }
 }

@@ -42,6 +42,7 @@ public final class ModuleBlock extends ATwoPassBlock {
            try (var writer = Files.newBufferedWriter(Paths.get(cfile))) {
                env = new ModuleEnv(lang.env, this);
                compile(writer,env,exps);
+               env.compilingStopped();
            }catch(CompilerException ex){
                ex.setSourceFile(sourceFile);
                throw ex;

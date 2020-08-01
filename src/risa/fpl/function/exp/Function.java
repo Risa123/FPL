@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
@@ -18,6 +19,7 @@ public class Function extends TypeInfo implements IFunction,IField {
 	private final TypeInfo[]args;
 	private final boolean method;
 	private String prev_code;
+	private AccessModifier accessModifier;
     public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner) {
        super(name,cname,null);
        this.returnType = returnType;
@@ -46,7 +48,13 @@ public class Function extends TypeInfo implements IFunction,IField {
         appendToDeclaration(");\n");
         buildDeclaration();
     }
-	@Override
+
+    @Override
+    public AccessModifier getAccessModifier() {
+        return accessModifier;
+    }
+
+    @Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
 		writer.write(getCname());
 		writer.write('(');

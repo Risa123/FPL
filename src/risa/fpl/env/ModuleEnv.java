@@ -16,6 +16,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
+	private boolean currentlyCompiled = true;
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -46,7 +47,12 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	public IFunction getFunction(Atom name) throws CompilerException {
 		for(var mod:importedModules) {
 			if(mod.hasFunctionInCurrentEnv(name.getValue())){
-			    return mod.getFunction(name);
+			    var f =  mod.getFunction(name);
+			    if(f instanceof Function func && (func.getAccessModifier() != AccessModifier.PRIVATE || currentlyCompiled)){
+			        return f;
+                }else{
+			        return f;
+                }
             }
 		}
 		return super.getFunction(name);
@@ -58,4 +64,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
         }
 		return nameSpace;
 	}
+	public void compilingStopped(){
+	    currentlyCompiled = false;
+    }
 }
