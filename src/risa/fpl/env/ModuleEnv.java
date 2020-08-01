@@ -35,7 +35,7 @@ public final class ModuleEnv extends SubEnv{
 	@Override
 	public TypeInfo getType(Atom name) throws CompilerException {
 		for(var mod:importedModules) {
-			if(mod.hasTypeInCurrentEnv(name.value)){
+			if(mod.hasTypeInCurrentEnv(name.getValue())){
 			    return mod.getType(name);
             }
 		}
@@ -44,7 +44,7 @@ public final class ModuleEnv extends SubEnv{
 	@Override
 	public IFunction getFunction(Atom name) throws CompilerException {
 		for(var mod:importedModules) {
-			if(mod.hasFunctionInCurrentEnv(name.value)){
+			if(mod.hasFunctionInCurrentEnv(name.getValue())){
 			    return mod.getFunction(name);
             }
 		}

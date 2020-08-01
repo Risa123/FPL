@@ -18,42 +18,42 @@ public abstract class AEnv {
   protected final HashMap<String,IFunction>functions = new HashMap<>();
   private final ArrayList<Modifier>mods = new ArrayList<>();
   public IFunction getFunction(Atom atom) throws CompilerException {
-	 switch(atom.type) {
+	 switch(atom.getType()) {
 	 case ID:
-		  if(atom.value.endsWith("*")) {
+		  if(atom.getValue().endsWith("*")) {
 			   return new Var(getType(atom));
 		   }
-		 var func = functions.get(atom.value);
+		 var func = functions.get(atom.getValue());
 		 if(func == null) {
-			 throw new CompilerException(atom.line,atom.charNum,"function " + atom.value + " not found" );
+			 throw new CompilerException(atom,"function " + atom + " not found" );
 		 }
 		 return func;
 	 case UINT:
-		return new ValueExp(NumberInfo.UINT,atom.value);
+		return new ValueExp(NumberInfo.UINT,atom.getValue());
 	 case SINT:
-		 return new ValueExp(NumberInfo.SINT,atom.value);
+		 return new ValueExp(NumberInfo.SINT,atom.getValue());
 	 case UBYTE:
-		 return new ValueExp(NumberInfo.UBYTE,atom.value);
+		 return new ValueExp(NumberInfo.UBYTE,atom.getValue());
 	 case SBYTE:
-		 return new ValueExp(NumberInfo.SBYTE,atom.value);
+		 return new ValueExp(NumberInfo.SBYTE,atom.getValue());
 	 case SSHORT:
-		 return new ValueExp(NumberInfo.SSHORT,atom.value);
+		 return new ValueExp(NumberInfo.SSHORT,atom.getValue());
 	 case USHORT:
-		 return new ValueExp(NumberInfo.USHORT,atom.value);
+		 return new ValueExp(NumberInfo.USHORT,atom.getValue());
 	 case ULONG:
-		 return new ValueExp(NumberInfo.ULONG,atom.value);
+		 return new ValueExp(NumberInfo.ULONG,atom.getValue());
 	 case SLONG:
-		 return new ValueExp(NumberInfo.SLONG,atom.value);
+		 return new ValueExp(NumberInfo.SLONG,atom.getValue());
 	 case FLOAT:
-		 return new ValueExp(NumberInfo.FLOAT,atom.value);
+		 return new ValueExp(NumberInfo.FLOAT,atom.getValue());
 	 case DOUBLE:
-		 return new ValueExp(NumberInfo.DOUBLE,atom.value);
+		 return new ValueExp(NumberInfo.DOUBLE,atom.getValue());
 	 case CHAR:
-		 return new ValueExp(NumberInfo.CHAR,atom.value);
+		 return new ValueExp(NumberInfo.CHAR,atom.getValue());
 	 case STRING:
-		 return new ValueExp(TypeInfo.STRING,atom.value);
+		 return new ValueExp(TypeInfo.STRING,atom.getValue());
 	   default:
-		   throw new CompilerException(atom.line,atom.charNum,"identifier or literal expected instead of " + atom.type);
+		   throw new CompilerException(atom.getLine(),atom.getCharNum(),"identifier or literal expected instead of " + atom.getType());
 	 }
   }
   public boolean hasFunctionInCurrentEnv(String name) {
@@ -63,13 +63,13 @@ public abstract class AEnv {
 	  functions.put(name, value);
   }
   public TypeInfo getType(Atom atom) throws CompilerException {
-	  if(atom.type != TokenType.ID) {
+	  if(atom.getType() != TokenType.ID) {
 		  throw new CompilerException(atom,"type identifier expected");
 	  }
-	  if(atom.value.endsWith("*")){
-	      return new PointerInfo(getType(new Atom(atom.line,atom.charNum,atom.value.substring(0,atom.value.length() - 1), TokenType.ID)));
+	  if(atom.getValue().endsWith("*")){
+	      return new PointerInfo(getType(new Atom(atom.getLine(),atom.getCharNum(),atom.getValue().substring(0,atom.getValue().length() - 1), TokenType.ID)));
       }
-	  var type = types.get(atom.value);
+	  var type = types.get(atom.getValue());
 	  if(type == null){
 	      throw new CompilerException(atom,"type " + atom + " not found");
       }

@@ -9,8 +9,8 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.tokenizer.TokenType;
 
 public final class Atom extends AExp {
-	public final String value;
-	public final TokenType type;
+	private final String value;
+	private final TokenType type;
 	public Atom(int line, int charNum,String value,TokenType type) {
 		super(line, charNum);
 		this.value = value;
@@ -18,10 +18,16 @@ public final class Atom extends AExp {
 	}
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it) throws IOException, CompilerException {
-		return env.getFunction(this).compile(writer,env,it,line,charNum);
+		return env.getFunction(this).compile(writer,env,it,getLine(),getCharNum());
 	}
 	@Override
 	public String toString() {
 		return value;
 	}
+	public String getValue(){
+	    return value;
+    }
+    public TokenType getType(){
+	    return type;
+    }
 }

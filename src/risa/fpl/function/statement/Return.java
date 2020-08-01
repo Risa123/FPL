@@ -28,6 +28,7 @@ public final class Return implements IFunction {
 				throw new CompilerException(line,charNum,"this function doesnt return void");
 			}
 		}
+		subEnv.exitStatement();
 		return TypeInfo.VOID;
 	}
 

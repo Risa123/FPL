@@ -28,7 +28,7 @@ public class Variable extends ValueExp {
     }
 	@Override
 	protected TypeInfo onField(Atom atom, BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws CompilerException, IOException {
-	    var value = atom.value;
+	    var value = atom.getValue();
 		if(value.equals("=")) {
 		   if(constant) {
 			  throw new CompilerException(line,charNum,"constant cannot be redefined");    	

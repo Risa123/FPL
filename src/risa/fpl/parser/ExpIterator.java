@@ -25,8 +25,8 @@ public final class ExpIterator {
 		  throw new CompilerException(lastLine,lastCharNum,"expression expected");
 	  }
 	  var exp = it.next();
-	  lastLine = exp.line;
-	  lastCharNum = exp.charNum;
+	  lastLine = exp.getLine();
+	  lastCharNum = exp.getCharNum();
 	  return exp;
   }
   public Atom nextAtom() throws CompilerException {
@@ -38,7 +38,7 @@ public final class ExpIterator {
   }
   public Atom nextID() throws CompilerException {
 	  var atom = nextAtom();
-	  if(atom.type != TokenType.ID) {
+	  if(atom.getType() != TokenType.ID) {
 		  throw new CompilerException(atom,"identifier expected");
 	  }
 	  return atom;

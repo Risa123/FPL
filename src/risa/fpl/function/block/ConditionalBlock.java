@@ -27,8 +27,8 @@ public final class ConditionalBlock extends ABlock{
 		while(it.hasNext()) {
 			var exp = it.peek();
 			if(expLine == 0) {
-				expLine = exp.line;
-				expCharNum = exp.charNum;
+				expLine = exp.getLine();
+				expCharNum = exp.getCharNum();
 			}
 			if(exp instanceof List) {
 				break;
@@ -45,7 +45,7 @@ public final class ConditionalBlock extends ABlock{
 		if(code.equals("if")) {
 			if(it.hasNext()) {
 				var elseExp = it.next();
-				if(!(elseExp instanceof List || elseExp instanceof Atom a && a.value.equals("if"))) {
+				if(!(elseExp instanceof List || elseExp instanceof Atom a && a.getValue().equals("if"))) {
 					throw new CompilerException(elseExp,"else block or if expected");
 				}
 				if(elseExp instanceof Atom) {

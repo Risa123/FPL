@@ -26,7 +26,7 @@ public final class ModifierBlockStat implements IFunction {
 	 	    	exp.compile(writer, env,it);
 	 	    }else {
 	 	    	var f = env.getFunction((Atom)exp);
-	 	        f.compile(writer, env, it, exp.line, exp.charNum);
+	 	        f.compile(writer, env, it, exp.getLine(), exp.getCharNum());
 	 	        appendSemicolon = f.appendSemicolon();
 	 	    }
 	    }catch(CompilerException ex) {

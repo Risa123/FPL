@@ -13,7 +13,7 @@ public class SubEnv extends AEnv {
   }
 @Override
 public IFunction getFunction(Atom atom) throws CompilerException {
-	if(!hasFunctionInCurrentEnv(atom.value)) {
+	if(!hasFunctionInCurrentEnv(atom.getValue())) {
 		return superEnv.getFunction(atom);
 	}
 	return super.getFunction(atom);
@@ -21,7 +21,7 @@ public IFunction getFunction(Atom atom) throws CompilerException {
 
     @Override
     public TypeInfo getType(Atom atom) throws CompilerException {
-        if(!hasTypeInCurrentEnv(atom.value)){
+        if(!hasTypeInCurrentEnv(atom.getValue())){
             return superEnv.getType(atom);
         }
         return super.getType(atom);

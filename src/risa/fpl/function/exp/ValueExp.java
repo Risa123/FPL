@@ -24,9 +24,9 @@ public class ValueExp extends AField {
 		if(it.hasNext()) {
 			var exp = it.peek();
 			if(exp instanceof Atom atom) {
-				if(atom.type == TokenType.ARG_SEPARATOR) {
+				if(atom.getType() == TokenType.ARG_SEPARATOR) {
 					it.next();
-				}else if(atom.type == TokenType.END_ARGS){
+				}else if(atom.getType() == TokenType.END_ARGS){
 
 				}else {
 					it.next();
@@ -40,9 +40,9 @@ public class ValueExp extends AField {
 		return type;
 	}
 	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws CompilerException, IOException {
-		var field = type.getField(atom.value);
+		var field = type.getField(atom.getValue());
 		if(field == null) {
-			throw new CompilerException(atom,type + " has no field  called " + atom.value);
+			throw new CompilerException(atom,type + " has no field  called " + atom);
 		}
 		var selector = "";
 		if(field instanceof Variable) {

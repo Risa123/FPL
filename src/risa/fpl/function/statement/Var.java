@@ -30,7 +30,7 @@ public final class Var implements IFunction {
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
         if(type != null && it.hasNext()){
            var next = it.peek();
-           if(next instanceof Atom a && a.type == TokenType.CLASS_SELECTOR){
+           if(next instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
                it.next();
                return type.getClassInfo();
            }
@@ -59,7 +59,7 @@ public final class Var implements IFunction {
 			var id = it.nextID();
 			String cID;
 			if(env.hasModifier(Modifier.NATIVE)) {
-				cID = id.value;
+				cID = id.getValue();
 				if(!IFunction.isCId(cID)) {
 					throw new CompilerException(id,cID + " is not valid C identifier");
 				}
@@ -68,9 +68,9 @@ public final class Var implements IFunction {
 				if(env instanceof ModuleEnv mod) {
 					cID = mod.getNameSpace();
 				}
-				cID += IFunction.toCId(id.value);
+				cID += IFunction.toCId(id.getValue());
 			}
-			if(env.hasFunctionInCurrentEnv(id.value)) {
+			if(env.hasFunctionInCurrentEnv(id.getValue())) {
 				throw new CompilerException(id,"there is already variable or function called " + id);
 			}
 			var declaredOnly = true;
@@ -86,7 +86,7 @@ public final class Var implements IFunction {
 					throw new CompilerException(id,"native variables can only be declared");
 				}
 				var exp = it.nextAtom();
-				if(exp.type == TokenType.ARG_SEPARATOR) {
+				if(exp.getType() == TokenType.ARG_SEPARATOR) {
 					if(type == null) {
 						throw new CompilerException(exp,"cannot infer type");
 					}
@@ -98,12 +98,12 @@ public final class Var implements IFunction {
                     list.add(exp);
                     while(it.hasNext()){
                         var expPart = it.next();
-                        if(expPart instanceof Atom a && a.type == TokenType.ARG_SEPARATOR){
+                        if(expPart instanceof Atom a && a.getType() == TokenType.ARG_SEPARATOR){
                             break;
                         }
                         list.add(expPart);
                     }
-					var expType  = new List(exp.line,exp.charNum,list,true).compile(b,env,it);
+					var expType  = new List(exp.getLine(),exp.getCharNum(),list,true).compile(b,env,it);
 					if(type != null && !type.equals(expType)) {
 						throw new CompilerException(exp,expType  + " cannot be implicitly converted to " + type);
 					}
@@ -133,7 +133,7 @@ public final class Var implements IFunction {
 					declaredOnly = false;
 				}
 			}
-			env.addFunction(id.value, new Variable(type,cID,declaredOnly,id.value,env.hasModifier(Modifier.CONST),env instanceof ClassEnv));
+			env.addFunction(id.getValue(), new Variable(type,cID,declaredOnly,id.getValue(),env.hasModifier(Modifier.CONST),env instanceof ClassEnv));
 		}
 		return TypeInfo.VOID;
 	}

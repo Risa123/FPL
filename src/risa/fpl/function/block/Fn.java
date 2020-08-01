@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnEnv;
@@ -22,21 +23,22 @@ public final class Fn extends ABlock {
 	private boolean appendSemicolon;
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException, CompilerException {
+	    var b = new BuilderWriter(writer);
 		var returnTypeAtom = it.nextID();
-		if(returnTypeAtom.value.equals("<>")){ //generic function
+		if(returnTypeAtom.getValue().equals("<>")){ //generic function
 		    returnTypeAtom = it.nextID();
         }
 		var returnType = env.getType(returnTypeAtom);
 		if(env.hasModifier(Modifier.NATIVE)) {
-			writer.write("extern ");
+			b.write("extern ");
 		}
-		writer.write(returnType.cname);
-		writer.write(' ');
+		b.write(returnType.cname);
+		b.write(' ');
 		var id = it.nextID();
 	    String cID;
 	    if(env.hasModifier(Modifier.NATIVE)) {
-	    	cID = id.value;
-	    	if(!IFunction.isCId(id.value)) {
+	    	cID = id.getValue();
+	    	if(!IFunction.isCId(id.getValue())) {
 	    		throw new CompilerException(id,"invalid C identifier");
 	    	}
 	    }else {
@@ -44,28 +46,30 @@ public final class Fn extends ABlock {
 	    	if(env instanceof ModuleEnv mod) {
 	    		cID = mod.getNameSpace();
 	    	}
-	    	cID += IFunction.toCId(id.value);
+	    	cID += IFunction.toCId(id.getValue());
 	    }
-		writer.write(cID);
-		writer.write('(');
+		b.write(cID);
+		b.write('(');
 		var fnEnv = new FnEnv(env,returnType);
-		var f = new Function(id.value,returnType,cID, parseArguments(writer,it,fnEnv),env.hasModifier(Modifier.NATIVE),null);
-		var p = new PointerInfo(f);
-		env.addFunction("&" + id.value,new ValueExp(p,"&" + cID));
-		env.addFunction(id.value,f);
-		env.addType(id.value,p,false);
-		writer.write(')');
+		var args = parseArguments(b,it,fnEnv);
+        b.write(')');
 		if(it.hasNext()) {
-			writer.write("{\n");
+			b.write("{\n");
 			var block = it.nextList();
-			block.compile(writer,fnEnv,it);
+			block.compile(b,fnEnv,it);
 			if(!fnEnv.isReturnUsed() && returnType != TypeInfo.VOID) {
 				throw new CompilerException(block,"there is no return in this block and this function doesn't return void");
 			}
-			writer.write("}\n");
+			b.write("}\n");
 		}else {
 			appendSemicolon = true;
 		}
+		writer.write(b.getText());
+        var f = new Function(id.getValue(),returnType,cID,args,env.hasModifier(Modifier.NATIVE),null);
+        var p = new PointerInfo(f);
+        env.addFunction("&" + id,new ValueExp(p,"&" + cID));
+        env.addFunction(id.getValue(),f);
+        env.addType(id.getValue(),p,false);
 		return TypeInfo.VOID;
 	}
 	@Override
@@ -87,7 +91,7 @@ public final class Fn extends ABlock {
             var argType = env.getType(it.nextID());
             args.add(argType);
             var argName = it.nextID();
-            var argNameCID = IFunction.toCId(argName.value);
+            var argNameCID = IFunction.toCId(argName.getValue());
             if(argType instanceof PointerInfo p && p.isFunctionPointer()){
                 writer.write(p.getFunctionPointerDeclaration(argNameCID));
             }else{
@@ -95,10 +99,10 @@ public final class Fn extends ABlock {
                 writer.write(' ');
                 writer.write(argNameCID);
             }
-            if(env.hasFunctionInCurrentEnv(argName.value)) {
+            if(env.hasFunctionInCurrentEnv(argName.getValue())) {
                 throw new CompilerException(argName,"there is already argument called " + argName);
             }
-            env.addFunction(argName.value, new Variable(argType,IFunction.toCId(argName.value),argName.value));
+            env.addFunction(argName.getValue(), new Variable(argType,IFunction.toCId(argName.getValue()),argName.getValue()));
         }
         var array = new TypeInfo[args.size()];
         args.toArray(array);

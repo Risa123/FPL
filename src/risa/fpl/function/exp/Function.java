@@ -36,9 +36,9 @@ public class Function extends TypeInfo implements IFunction,IField {
         }
 		while(it.hasNext()) {
 		   var exp = it.nextAtom();
-		   if(exp.type == TokenType.ARG_SEPARATOR) {
+		   if(exp.getType() == TokenType.ARG_SEPARATOR) {
 			   
-		   }else if(exp.type == TokenType.END_ARGS) {
+		   }else if(exp.getType() == TokenType.END_ARGS) {
 			   break;
 		   }else {
 			   if(first) {

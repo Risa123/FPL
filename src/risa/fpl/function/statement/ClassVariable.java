@@ -22,16 +22,16 @@ public final class ClassVariable extends Function {
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
         var id = it.nextAtom();
-		if(id.type == TokenType.ID){
+		if(id.getType() == TokenType.ID){
             writer.write(type.cname);
             writer.write(' ');
-            var cID = IFunction.toCId(id.value);
+            var cID = IFunction.toCId(id.getValue());
             writer.write(cID);
             writer.write(";\n");
             setPrevCode(cID);
             super.compile(writer,env,it,line,charNum);
-            env.addFunction(id.value,new Variable(type,IFunction.toCId(id.value),id.value));
-        }else if(id.type == TokenType.CLASS_SELECTOR){
+            env.addFunction(id.getValue(),new Variable(type,IFunction.toCId(id.getValue()),id.getValue()));
+        }else if(id.getType() == TokenType.CLASS_SELECTOR){
 		    return classType;
         }else{
 		    throw new CompilerException(id,"variable identifier or : expected");

@@ -26,21 +26,21 @@ public final class ClassBlock implements IFunction {
         }
         String cID;
         if(env.hasModifier(Modifier.NATIVE)){
-            cID = id.value;
+            cID = id.getValue();
             if(!IFunction.isCId(cID)){
                 throw new CompilerException(id,"invalid C identifier");
             }
         }else{
-            cID = IFunction.toCId(id.value);
+            cID = IFunction.toCId(id.getValue());
         }
 		var cEnv = new ClassEnv(modEnv,cID);
 		var b = new BuilderWriter(writer);
 		b.write("typedef struct ");
-	    b.write(IFunction.toCId(id.value));
+	    b.write(IFunction.toCId(id.getValue()));
 	    b.write("{\n");
 		it.nextList().compile(b,cEnv, it);
 	    b.write('}');
-	    b.write(IFunction.toCId(id.value));
+	    b.write(IFunction.toCId(id.getValue()));
 	    b.write(";\n");
 	    writer.write(b.getText());
         writer.write(cEnv.getDefaultConstructor());
@@ -54,7 +54,7 @@ public final class ClassBlock implements IFunction {
         b.write("* ");
         b.write(newName.toString());
         b.write("();\n");
-        var type = new TypeInfo(id.value,cID,b.getText(),null);
+        var type = new TypeInfo(id.getValue(),cID,b.getText(),null);
         writer.write(newName.toString());
         writer.write('(');
         writer.write(type.cname);
@@ -67,12 +67,12 @@ public final class ClassBlock implements IFunction {
         writer.write(modEnv.getNameSpace());
         writer.write(type.cname);
         writer.write("__init(p);\nreturn p;\n}");
-	    var classType = new ClassInfo(id.value);
+	    var classType = new ClassInfo(id.getValue());
 	    classType.addField("new",Function.newNew(newName.toString(),type));
 	    type.setClassInfo(classType);
 	    cEnv.addFields(type);
-	    env.addType(id.value,type);
-	    env.addFunction(id.value,new ClassVariable(type,classType,new TypeInfo[]{}));
+	    env.addType(id.getValue(),type);
+	    env.addFunction(id.getValue(),new ClassVariable(type,classType,new TypeInfo[]{}));
 		return TypeInfo.VOID;
 	}
 }

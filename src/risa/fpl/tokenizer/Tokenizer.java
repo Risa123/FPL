@@ -169,7 +169,7 @@ public final class Tokenizer {
 	          return r;
           }
 		  Token token;
-		  while((token = nextPrivate())  == null || token.type != TokenType.NEW_LINE && (token.value.isEmpty() || token.value.isBlank()));
+		  while((token = nextPrivate())  == null || token.type() != TokenType.NEW_LINE && (token.value().isEmpty() || token.value().isBlank()));
 		  return token;
 	  }
 	  private int read() throws IOException {

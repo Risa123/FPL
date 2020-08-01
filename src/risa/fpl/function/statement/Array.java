@@ -24,30 +24,30 @@ public final class Array implements IFunction {
 		var type = env.getType(it.nextID());
 		writer.write(type.cname);
 		var lenAtom = it.nextAtom();
-	    if(lenAtom.type != TokenType.UINT && lenAtom.type != TokenType.ULONG) {
-	    	throw new CompilerException(line,charNum,"array length expected instead of " + lenAtom.type);
+	    if(lenAtom.getType() != TokenType.UINT && lenAtom.getType() != TokenType.ULONG) {
+	    	throw new CompilerException(line,charNum,"array length expected instead of " + lenAtom);
 	    }
 	    var id = it.nextID();
 	    String cID;
 	    if(env.hasModifier(Modifier.NATIVE)) {
-	    	cID = id.value;
+	    	cID = id.getValue();
 	    	if(!IFunction.isCId(cID)) {
 	    		throw new CompilerException(id,"invalid C identifier");
 	    	}
 	    }else {
-	    	cID = IFunction.toCId(id.value);
+	    	cID = IFunction.toCId(id.getValue());
 	    }
 	    writer.write(' ');
 	    writer.write(cID);
 	    writer.write('[');
-	    writer.write(lenAtom.value);
+	    writer.write(lenAtom.getValue());
 	    writer.write(']');
 	    if(it.hasNext()) {
 	    	writer.write("={");
 	    }
 	    int count = 0;
 	    var first = true;
-	    env.addFunction(id.value,new Variable(new PointerInfo(type),cID,false,id.value,env.hasModifier(Modifier.CONST),env instanceof ClassEnv));
+	    env.addFunction(id.getValue(),new Variable(new PointerInfo(type),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),env instanceof ClassEnv));
 	    if(it.hasNext()) {
 	    	while(it.hasNext()) {
 		    	var exp = it.next();
@@ -62,7 +62,7 @@ public final class Array implements IFunction {
 		    	}
 		    	count++;
 		    }
-		    var len = Long.parseLong(lenAtom.value);
+		    var len = Long.parseLong(lenAtom.getValue());
 		    writer.write('}');
 		    if(count > len) {
 		    	throw new CompilerException(line,charNum,"can only have " + len+  " elements");

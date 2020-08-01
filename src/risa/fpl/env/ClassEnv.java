@@ -9,8 +9,9 @@ import risa.fpl.info.TypeInfo;
 
 public final class ClassEnv extends SubEnv {
 	private final HashMap<String, IField>fields = new HashMap<>();
-	private final StringBuilder constructor = new StringBuilder();
+	private final StringBuilder defaultConstructor = new StringBuilder();
 	private final String cname,nameSpace;
+	private final StringBuilder methodCode = new StringBuilder();
 	public ClassEnv(ModuleEnv superEnv,String cname) {
 		super(superEnv);
 		this.nameSpace = superEnv.getNameSpace();
@@ -27,10 +28,10 @@ public final class ClassEnv extends SubEnv {
 		super.addFunction(name, value);
 	}
 	public void appendToDefaultConstructor(String code) {
-		constructor.append(code);
+		defaultConstructor.append(code);
 	}
 	public String getDefaultConstructorCode() {
-		return constructor.toString();
+		return defaultConstructor.toString();
 	}
 	public String getDefaultConstructor(){
 	    var b = new StringBuilder(nameSpace);
@@ -38,11 +39,12 @@ public final class ClassEnv extends SubEnv {
 	    b.append("__init(");
 	    b.append(cname);
 	    b.append("* this){\n");
-	    b.append(constructor);
+	    b.append(defaultConstructor);
 	    b.append("}\n");
 	    return b.toString();
     }
     public void addMethod(String name,Function method,String code){
-
+         fields.put(name,method);
+         methodCode.append(code);
     }
 }

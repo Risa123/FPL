@@ -43,8 +43,8 @@ public final class ModuleBlock {
 		  compiled = true;
 		  try(var writer = Files.newBufferedWriter(Paths.get(cfile))){
 			 env = new ModuleEnv(lang.env,this);
-			 var infos = new ArrayList<ExpInfo>(exps.exps.size());
-			 for(var exp:exps.exps) {
+			 var infos = new ArrayList<ExpInfo>(exps.getExps().size());
+			 for(var exp:exps.getExps()) {
 				 var info = new ExpInfo();
 				 info.exp = exp;
 				 info.writer = new BuilderWriter(writer);
@@ -66,8 +66,8 @@ public final class ModuleBlock {
 						info.attemptedToCompile = true;
 						info.lastEx = e;
 						info.writer = new BuilderWriter(writer);
-						var exps = ((List)info.exp).exps;
-						if(!exps.isEmpty() && exps.get(0) instanceof Atom a && a.value.equals("use")) {
+						var exps = ((List)info.exp).getExps();
+						if(!exps.isEmpty() && exps.get(0) instanceof Atom a && a.getValue().equals("use")) {
 							throw e;
 						}
 					}
@@ -81,7 +81,7 @@ public final class ModuleBlock {
 							 b.append(info.lastEx.getMessage());
 						 }
 						 var first = infos.get(0).exp;
-						 throw new CompilerException(first.line,first.charNum,b.toString());
+						 throw new CompilerException(first.getLine(),first.getCharNum(),b.toString());
 					 }
 					 break;
 				 }
@@ -93,7 +93,7 @@ public final class ModuleBlock {
 	  }
    }
    public ModuleEnv getModule(Atom name) throws CompilerException, IOException {
-	   var mod = lang.getModule(name.value);
+	   var mod = lang.getModule(name.getValue());
 	   if(mod == null) {
 		   throw new CompilerException(name,"module " + name + " not found");
 	   }
