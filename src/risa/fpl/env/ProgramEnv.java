@@ -1,6 +1,8 @@
 package risa.fpl.env;
 
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.ModifierBlockStat;
+import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.Use;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.function.block.Fn;
@@ -41,5 +43,6 @@ public final class ProgramEnv extends AEnv {
 	  addType("char",TypeInfo.CHAR);
 	  addType("memory",NumberInfo.MEMORY);
 	  addFunction("nil",new ValueExp(TypeInfo.NIL,"0"));
+	  addFunction("private",new SetAccessModifier(AccessModifier.PRIVATE));
   }
 }

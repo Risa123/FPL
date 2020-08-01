@@ -12,7 +12,6 @@ import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.statement.ClassVariable;
-import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -33,7 +32,7 @@ public final class ClassBlock implements IFunction {
         }else{
             cID = IFunction.toCId(id.getValue());
         }
-		var cEnv = new ClassEnv(modEnv,cID);
+		var cEnv = new ClassEnv(modEnv,cID,id.getValue());
 		var b = new BuilderWriter(writer);
 		b.write("typedef struct ");
 	    b.write(IFunction.toCId(id.getValue()));
@@ -44,35 +43,36 @@ public final class ClassBlock implements IFunction {
 	    b.write(";\n");
 	    writer.write(b.getText());
         writer.write(cEnv.getDefaultConstructor());
+        writer.write(cEnv.getMethodCode());
 	    writer.write(cID);
 	    writer.write("* ");
 	    var newName = new StringBuilder();
-        newName.append(modEnv.getNameSpace());
+        newName.append(modEnv.getNameSpace(this));
         newName.append(cID);
         newName.append("_new");
         b.write(cID);
         b.write("* ");
         b.write(newName.toString());
         b.write("();\n");
-        var type = new TypeInfo(id.getValue(),cID,b.getText(),null);
+        var type = cEnv.getInstanceType();
+        type.appendToDeclaration(b.getText());
         writer.write(newName.toString());
         writer.write('(');
-        writer.write(type.cname);
+        writer.write(type.getCname());
         writer.write("* this){\n");
         writer.write("void* malloc(unsigned long);\n");
-        writer.write(type.cname);
+        writer.write(type.getCname());
         writer.write("* p=malloc(sizeof ");
-        writer.write(type.cname);
+        writer.write(type.getCname());
         writer.write(");\n");
-        writer.write(modEnv.getNameSpace());
-        writer.write(type.cname);
+        writer.write(modEnv.getNameSpace(this));
+        writer.write(type.getCname());
         writer.write("__init(p);\nreturn p;\n}");
-	    var classType = new ClassInfo(id.getValue());
-	    classType.addField("new",Function.newNew(newName.toString(),type));
-	    type.setClassInfo(classType);
+	    cEnv.getClassType().addField("new",Function.newNew(newName.toString(),type));
 	    cEnv.addFields(type);
+        type.buildDeclaration();
 	    env.addType(id.getValue(),type);
-	    env.addFunction(id.getValue(),new ClassVariable(type,classType,new TypeInfo[]{}));
+	    env.addFunction(id.getValue(),new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(null)));
 		return TypeInfo.VOID;
 	}
 }

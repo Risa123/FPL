@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import risa.fpl.CompilerException;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.statement.Var;
@@ -16,6 +17,7 @@ import risa.fpl.tokenizer.TokenType;
 public abstract class AEnv {
   protected final HashMap<String,TypeInfo>types = new HashMap<>();
   protected final HashMap<String,IFunction>functions = new HashMap<>();
+  protected AccessModifier accessModifier = AccessModifier.PUBLIC;
   private final ArrayList<Modifier>mods = new ArrayList<>();
   public IFunction getFunction(Atom atom) throws CompilerException {
 	 switch(atom.getType()) {
@@ -95,5 +97,8 @@ public abstract class AEnv {
   }
   public void removeModifier(Modifier mod) {
 	  mods.remove(mod);
+  }
+  public final void setAccessModifier(AccessModifier mod){
+      accessModifier = mod;
   }
 }

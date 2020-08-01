@@ -18,18 +18,19 @@ public class TypeInfo {
 	  NIL.addField("==",new BinaryOperator(BOOL, NIL,"=="));
       NIL.addField("!=",new BinaryOperator(BOOL, NIL,"!="));
   }
-  public final String name,cname,declaration;
+  private final String name,cname;
+  private String declaration = "";
+  private final StringBuilder declarationBuilder =  new StringBuilder();
   private final HashMap<String, IField>fields = new HashMap<>();
   public final Function constructor;
   private ClassInfo classInfo;
-  public TypeInfo(String name,String cname,String declaration,Function constructor) {
+  public TypeInfo(String name,String cname,Function constructor) {
 	  this.name = name;
 	  this.cname = cname;
-	  this.declaration = declaration;
 	  this.constructor = constructor;
   }
   public TypeInfo(String name,String cname) {
-	  this(name,cname,"",null);
+	  this(name,cname,null);
   }
   @Override
   public String toString() {
@@ -47,5 +48,23 @@ public class TypeInfo {
   }
   public ClassInfo getClassInfo(){
       return classInfo;
+  }
+  public final String getName(){
+      return name;
+  }
+  public final String getCname(){
+      return cname;
+  }
+  public final String getDeclaration(){
+      return declaration;
+  }
+  public final void buildDeclaration(){
+      declaration = declarationBuilder.toString();
+  }
+  public final void appendToDeclaration(String code){
+      declarationBuilder.append(code);
+  }
+  public final void appendToDeclaration(char c){
+      declarationBuilder.append(c);
   }
 }

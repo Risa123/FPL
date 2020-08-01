@@ -11,7 +11,7 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
-public final class ModuleEnv extends SubEnv{
+public final class ModuleEnv extends ANameSpacedEnv {
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
@@ -24,11 +24,11 @@ public final class ModuleEnv extends SubEnv{
 		var mod = moduleBlock.getModule(name);
 		importedModules.add(mod);
 		for(var type:mod.types.values()) {
-		  writer.write(type.declaration);
+		  writer.write(type.getDeclaration());
 		}
 		for(var func:mod.functions.values()) {
 			if(func instanceof Function f) {
-				writer.write(f.declaration);
+				writer.write(f.getDeclaration());
 			}
 		}
 	}
@@ -50,7 +50,8 @@ public final class ModuleEnv extends SubEnv{
 		}
 		return super.getFunction(name);
 	}
-	public String getNameSpace() {
+	@Override
+	public String getNameSpace(IFunction caller) {
 		return nameSpace;
 	}
 }

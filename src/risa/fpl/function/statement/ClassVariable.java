@@ -14,8 +14,8 @@ import risa.fpl.tokenizer.TokenType;
 
 public final class ClassVariable extends Function {
    private final TypeInfo type,classType;
-   public ClassVariable(TypeInfo type,TypeInfo classType,TypeInfo[]args) {
-       super("constructor",TypeInfo.VOID,type.cname + "__init",args,false,type);
+   public ClassVariable(TypeInfo type,TypeInfo classType,TypeInfo[]args,String nameSpace) {
+       super("constructor",TypeInfo.VOID,nameSpace + "__init",args,false,type);
 	   this.type = type;
 	   this.classType = classType;
    }
@@ -23,7 +23,7 @@ public final class ClassVariable extends Function {
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
         var id = it.nextAtom();
 		if(id.getType() == TokenType.ID){
-            writer.write(type.cname);
+            writer.write(type.getCname());
             writer.write(' ');
             var cID = IFunction.toCId(id.getValue());
             writer.write(cID);

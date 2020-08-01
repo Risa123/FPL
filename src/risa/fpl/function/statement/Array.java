@@ -22,7 +22,7 @@ public final class Array implements IFunction {
 			writer.write("const ");
 		}
 		var type = env.getType(it.nextID());
-		writer.write(type.cname);
+		writer.write(type.getCname());
 		var lenAtom = it.nextAtom();
 	    if(lenAtom.getType() != TokenType.UINT && lenAtom.getType() != TokenType.ULONG) {
 	    	throw new CompilerException(line,charNum,"array length expected instead of " + lenAtom);

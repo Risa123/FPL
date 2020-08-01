@@ -42,5 +42,9 @@ added memory data type to represent memory size and address
 added size static method to every data type to get it´s size
 added static method new to non-primitive data types
 0.1.0 snapshot 1
-checks for unreachable statements
+check for unreachable statements
 code refactoring
+methods can be declared
+added realloc to std.backend
+added class Random to std.math
+access modifiers added

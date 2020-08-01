@@ -22,7 +22,7 @@ public final class Cast extends AField {
 	    	throw new CompilerException(line,charNum,"conversion is only possible between pointers and numbers");
 	    }
 	    writer.write('(');
-	    writer.write(type.cname);
+	    writer.write(type.getCname());
 	    writer.write(')');
 		writePrev(writer);
 		return type;

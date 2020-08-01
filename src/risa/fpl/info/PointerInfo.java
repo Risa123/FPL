@@ -5,7 +5,7 @@ import risa.fpl.function.exp.*;
 public final class PointerInfo extends TypeInfo {
 	private final TypeInfo type;
 	public PointerInfo(TypeInfo type) {
-	    super(type.name +"*",type.cname + "*");
+	    super(type.getName() +"*",type.getCname() + "*");
         this.type = type;
         if(type != TypeInfo.VOID){
             addField("+",new BinaryOperator(this,this,"+"));
@@ -36,12 +36,12 @@ public final class PointerInfo extends TypeInfo {
     }
     public String getFunctionPointerDeclaration(String cID){
 	    var f = (Function)type;
-        var b = new StringBuilder(f.returnType.cname);
+        var b = new StringBuilder(f.getReturnType().getCname());
         b.append("(*");
         b.append(cID);
         b.append(")(");
         var firstArg = true;
-        for(var arg:f.args){
+        for(var arg:f.getArguments()){
             if(firstArg){
                 firstArg = false;
             }else{

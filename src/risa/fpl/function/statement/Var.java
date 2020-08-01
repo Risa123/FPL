@@ -6,10 +6,7 @@ import java.util.ArrayList;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
-import risa.fpl.env.ClassEnv;
-import risa.fpl.env.Modifier;
-import risa.fpl.env.ModuleEnv;
+import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
@@ -42,7 +39,7 @@ public final class Var implements IFunction {
 			if(env.hasModifier(Modifier.CONST)) {
 				writer.write("const ");
 			}
-			writer.write(type.cname);
+			writer.write(type.getCname());
 			writer.write(' ');
 		}
 		var first = true;
@@ -65,8 +62,8 @@ public final class Var implements IFunction {
 				}
 			}else {
 				cID = "";
-				if(env instanceof ModuleEnv mod) {
-					cID = mod.getNameSpace();
+				if(env instanceof ANameSpacedEnv tmp) {
+					cID = tmp.getNameSpace(this);
 				}
 				cID += IFunction.toCId(id.getValue());
 			}
@@ -114,7 +111,7 @@ public final class Var implements IFunction {
 						if(expType  instanceof PointerInfo p && p.isFunctionPointer()){
 						    cID = p.getFunctionPointerDeclaration(cID);
                         }else{
-                            writer.write(expType.cname);
+                            writer.write(expType.getCname());
                             writer.write(' ');
                         }
 						writer.write(cID);

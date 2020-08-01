@@ -11,15 +11,15 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
-public final class ModifierBlockStat implements IFunction {
-   private final Modifier mod;
+public class ModifierBlockStat implements IFunction {
+   protected final Object mod;
    private boolean appendSemicolon;
-   public ModifierBlockStat(Modifier mod) {
+   public ModifierBlockStat(Object mod) {
 	   this.mod = mod;
    }
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNm)throws IOException, CompilerException {
-	    env.addModifier(mod);
+        addMod(env);
 	    try {
 	    	 var exp = it.next();
 	 	    if(exp instanceof List) {
@@ -30,14 +30,20 @@ public final class ModifierBlockStat implements IFunction {
 	 	        appendSemicolon = f.appendSemicolon();
 	 	    }
 	    }catch(CompilerException ex) {
-	    	env.removeModifier(mod);
+	        removeMod(env);
 	    	throw ex;
 	    }
-	    env.removeModifier(mod);
+	    removeMod(env);
 		return TypeInfo.VOID;
 	}
 	@Override
 	public boolean appendSemicolon() {
 		return appendSemicolon;
 	}
+	public void addMod(AEnv env){
+        env.addModifier((Modifier)mod);
+    }
+    public void removeMod(AEnv env){
+       env.removeModifier((Modifier)mod);
+    }
 }
