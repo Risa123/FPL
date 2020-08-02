@@ -2,6 +2,9 @@ package risa.fpl.info;
 
 import java.util.HashMap;
 
+import risa.fpl.env.AEnv;
+import risa.fpl.env.IClassOwnedEnv;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
 public class TypeInfo {
@@ -22,15 +25,11 @@ public class TypeInfo {
   private String declaration = "";
   private final StringBuilder declarationBuilder =  new StringBuilder();
   private final HashMap<String, IField>fields = new HashMap<>();
-  public final Function constructor;
+  private Function constructor;
   private ClassInfo classInfo;
-  public TypeInfo(String name,String cname,Function constructor) {
+  public TypeInfo(String name,String cname) {
 	  this.name = name;
 	  this.cname = cname;
-	  this.constructor = constructor;
-  }
-  public TypeInfo(String name,String cname) {
-	  this(name,cname,null);
   }
   @Override
   public String toString() {
@@ -39,8 +38,16 @@ public class TypeInfo {
   public void addField(String name, IField value) {
 	  fields.put(name, value);
   }
-  public IField getField(String name) {
-	  return fields.get(name);
+  //denies access if fields is private and field is not requested by its class
+  public IField getField(String name,AEnv from) {
+      var field = fields.get(name);
+      if(field != null && field.getAccessModifier() != AccessModifier.PUBLIC){
+          if(from instanceof IClassOwnedEnv e && e.getClassType() == classInfo){
+              return field;
+          }
+          return null;
+      }
+	  return field;
   }
   public void setClassInfo(ClassInfo info){
       classInfo = info;
@@ -66,5 +73,11 @@ public class TypeInfo {
   }
   public final void appendToDeclaration(char c){
       declarationBuilder.append(c);
+  }
+  public final Function getConstructor(){
+      return constructor;
+  }
+  public final void setConstructor(Function constructor){
+      this.constructor = constructor;
   }
 }

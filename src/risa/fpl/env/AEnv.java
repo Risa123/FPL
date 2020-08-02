@@ -101,4 +101,7 @@ public abstract class AEnv {
   public final void setAccessModifier(AccessModifier mod){
       accessModifier = mod;
   }
+  public final AccessModifier getAccessModifier(){
+      return accessModifier;
+  }
 }

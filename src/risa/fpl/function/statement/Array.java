@@ -7,6 +7,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;
@@ -47,7 +48,8 @@ public final class Array implements IFunction {
 	    }
 	    int count = 0;
 	    var first = true;
-	    env.addFunction(id.getValue(),new Variable(new PointerInfo(type),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),env instanceof ClassEnv));
+	    var v = new Variable(new PointerInfo(type),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),env instanceof ClassEnv,env.getAccessModifier());
+	    env.addFunction(id.getValue(),v);
 	    if(it.hasNext()) {
 	    	while(it.hasNext()) {
 		    	var exp = it.next();

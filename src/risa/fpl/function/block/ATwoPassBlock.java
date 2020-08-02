@@ -44,7 +44,7 @@ public abstract class ATwoPassBlock {
             }
             if(!someNoAttempt) {
                 if(!infos.isEmpty()) {
-                    var b = new StringBuilder("errors in module:");
+                    var b = new StringBuilder("errors in two pass block:");
                     for(var info:infos) {
                         b.append('\n');
                         info.lastEx.setSourceFile("");

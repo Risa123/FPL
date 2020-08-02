@@ -7,7 +7,13 @@ import java.io.IOException;
 
 public abstract class AField implements IField {
     private String prev_code;
-    private AccessModifier accessModifier;
+    private final AccessModifier accessModifier;
+    public AField(AccessModifier accessModifier){
+        this.accessModifier = accessModifier;
+    }
+    public AField(){
+        this(AccessModifier.PUBLIC);
+    }
     @Override
     public void setPrevCode(String code) {
         prev_code = code;

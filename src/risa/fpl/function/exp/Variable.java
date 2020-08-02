@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
@@ -16,15 +17,15 @@ public class Variable extends ValueExp {
 	private final String id;
 	public final boolean constant;
 	private final boolean classAttribute;
-	public Variable(TypeInfo type, String code,boolean onlyDeclared,String id,boolean constant,boolean classAttribute) {
-		super(type, code);
+	public Variable(TypeInfo type, String code, boolean onlyDeclared, String id, boolean constant, boolean classAttribute, AccessModifier mod) {
+		super(type, code,mod);
 		this.onlyDeclared = onlyDeclared;
 		this.id = id;
 		this.constant = constant;
 		this.classAttribute = classAttribute;
 	}
     public Variable(TypeInfo type,String code,String id) {
-       this(type,code,false,id,false,false);
+       this(type,code,false,id,false,false,AccessModifier.PUBLIC);
     }
 	@Override
 	protected TypeInfo onField(Atom atom, BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws CompilerException, IOException {

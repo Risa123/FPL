@@ -19,11 +19,12 @@ public class Function extends TypeInfo implements IFunction,IField {
 	private final TypeInfo[]args;
 	private final boolean method;
 	private String prev_code;
-	private AccessModifier accessModifier;
-    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner) {
-       super(name,cname,null);
+	private final AccessModifier accessModifier;
+    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner,AccessModifier accessModifier) {
+       super(name,cname);
        this.returnType = returnType;
        this.args = args;
+       this.accessModifier = accessModifier;
        this.method = methodOwner != null;
         if(extern) {
             appendToDeclaration("extern ");
@@ -61,9 +62,6 @@ public class Function extends TypeInfo implements IFunction,IField {
 		var args = new ArrayList<TypeInfo>(this.args.length);
 		var first = !method;
 		if(method){
-		    if(prev_code != null){
-                writer.write('&');
-            }
 		    writePrev(writer);
         }
 		while(it.hasNext()) {
@@ -107,7 +105,7 @@ public class Function extends TypeInfo implements IFunction,IField {
         return prev_code;
     }
     public static Function newNew(String cname,TypeInfo type){
-        return new Function("new",new PointerInfo(type),cname,new TypeInfo[]{},false,null);
+        return new Function("new",new PointerInfo(type),cname,new TypeInfo[]{},false,null,AccessModifier.PUBLIC);
     }
     public final TypeInfo getReturnType(){
         return returnType;
@@ -115,4 +113,5 @@ public class Function extends TypeInfo implements IFunction,IField {
     public final TypeInfo[]getArguments(){
         return args;
     }
+
 }

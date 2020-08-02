@@ -6,7 +6,7 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
 public class SubEnv extends AEnv {
-  private final AEnv superEnv;
+  protected final AEnv superEnv;
   private boolean exitStatement;
   public SubEnv(AEnv superEnv) {
 	  this.superEnv = superEnv;

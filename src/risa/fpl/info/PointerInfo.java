@@ -1,5 +1,6 @@
 package risa.fpl.info;
 
+import risa.fpl.env.AEnv;
 import risa.fpl.function.exp.*;
 
 public final class PointerInfo extends TypeInfo {
@@ -51,5 +52,14 @@ public final class PointerInfo extends TypeInfo {
         }
         b.append(")");
         return b.toString();
+    }
+
+    @Override
+    public IField getField(String name, AEnv from) {
+	    var field = super.getField(name,from);
+	    if(field == null){
+	        field = type.getField(name,from);
+        }
+	    return field;
     }
 }

@@ -2,7 +2,6 @@ package risa.fpl.function.block;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -10,13 +9,12 @@ import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.ValueExp;
-import risa.fpl.function.exp.Variable;
+import risa.fpl.info.ClassInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.parser.List;
 
-public class Fn extends ABlock {
+public class Fn extends AFunctionBlock {
 	private boolean appendSemicolon;
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException, CompilerException {
@@ -46,11 +44,13 @@ public class Fn extends ABlock {
 	    	cID += IFunction.toCId(id.getValue());
 	    }
 		b.write(cID);
-		var fnEnv = new FnEnv(env,returnType);
         TypeInfo owner = null;
+        ClassInfo classType = null;
         if(env instanceof  ClassEnv cEnv){
             owner = cEnv.getInstanceType();
+            classType = owner.getClassInfo();
         }
+        var fnEnv = new FnEnv(env,returnType,classType);
 		var args = parseArguments(b,it,fnEnv,owner);
 		if(it.hasNext()) {
 			b.write("{\n");
@@ -63,10 +63,10 @@ public class Fn extends ABlock {
 		}else {
 			appendSemicolon = true;
 		}
-        var f = new Function(id.getValue(),returnType,cID,args,env.hasModifier(Modifier.NATIVE),owner);
+        var f = new Function(id.getValue(),returnType,cID,args,env.hasModifier(Modifier.NATIVE),owner,env.getAccessModifier());
         var p = new PointerInfo(f);
         if(env instanceof ClassEnv cEnv){
-           cEnv.addMethod(id.getValue(),f,b.getText());
+           cEnv.addMethod(f,b.getText());
         }else{
             writer.write(b.getText());
         }
@@ -79,43 +79,5 @@ public class Fn extends ABlock {
 	public boolean appendSemicolon() {
 		return appendSemicolon;
 	}
-    TypeInfo[]parseArguments(BufferedWriter writer,ExpIterator it,FnEnv env,TypeInfo owner) throws CompilerException, IOException{
-        writer.write('(');
-        var args = new ArrayList<TypeInfo>();
-        var first = owner == null;
-        if(!first){
-            writer.write(owner.getCname());
-            writer.write("* this");
-            env.addFunction("this",new Variable(new PointerInfo(owner),"this","this"));
-        }
-        while(it.hasNext()) {
-            if(it.peek() instanceof List) {
-                break;
-            }
-            if(first) {
-                first = false;
-            }else {
-                writer.write(',');
-            }
-            var argType = env.getType(it.nextID());
-            args.add(argType);
-            var argName = it.nextID();
-            var argNameCID = IFunction.toCId(argName.getValue());
-            if(argType instanceof PointerInfo p && p.isFunctionPointer()){
-                writer.write(p.getFunctionPointerDeclaration(argNameCID));
-            }else{
-                writer.write(argType.getCname());
-                writer.write(' ');
-                writer.write(argNameCID);
-            }
-            if(env.hasFunctionInCurrentEnv(argName.getValue())) {
-                throw new CompilerException(argName,"there is already argument called " + argName);
-            }
-            env.addFunction(argName.getValue(), new Variable(argType,IFunction.toCId(argName.getValue()),argName.getValue()));
-        }
-        writer.write(')');
-        var array = new TypeInfo[args.size()];
-        args.toArray(array);
-        return array;
-    }
+
 }

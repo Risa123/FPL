@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
@@ -15,7 +16,7 @@ import risa.fpl.tokenizer.TokenType;
 public final class ClassVariable extends Function {
    private final TypeInfo type,classType;
    public ClassVariable(TypeInfo type,TypeInfo classType,TypeInfo[]args,String nameSpace) {
-       super("constructor",TypeInfo.VOID,nameSpace + "__init",args,false,type);
+       super("constructor",TypeInfo.VOID,"I" + nameSpace + "_init",args,false,type, AccessModifier.PUBLIC);
 	   this.type = type;
 	   this.classType = classType;
    }

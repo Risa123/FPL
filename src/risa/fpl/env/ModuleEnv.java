@@ -16,7 +16,6 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
-	private boolean currentlyCompiled = true;
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -30,7 +29,9 @@ public final class ModuleEnv extends ANameSpacedEnv {
 		}
 		for(var func:mod.functions.values()) {
 			if(func instanceof Function f) {
-				writer.write(f.getDeclaration());
+				if(f.getAccessModifier() != AccessModifier.PRIVATE){
+                    writer.write(f.getDeclaration());
+                }
 			}
 		}
 	}
@@ -47,24 +48,26 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	public IFunction getFunction(Atom name) throws CompilerException {
 		for(var mod:importedModules) {
 			if(mod.hasFunctionInCurrentEnv(name.getValue())){
-			    var f =  mod.getFunction(name);
-			    if(f instanceof Function func && (func.getAccessModifier() != AccessModifier.PRIVATE || currentlyCompiled)){
-			        return f;
-                }else{
-			        return f;
-                }
+			   return mod.getFunction(name);
             }
 		}
-		return super.getFunction(name);
+		if(hasFunctionInCurrentEnv(name.getValue())){
+		    var f = super.getFunction(name);
+		    if(f instanceof Function func){
+		        if(func.getAccessModifier() == AccessModifier.PUBLIC){
+		            return f;
+                }
+            }else{
+		        return f;
+            }
+        }
+		return superEnv.getFunction(name);
 	}
 	@Override
 	public String getNameSpace(IFunction caller) {
 	    if(!hasModifier(Modifier.NATIVE) && accessModifier == AccessModifier.PRIVATE){
-	        return "static ";
+	        return "";
         }
 		return nameSpace;
 	}
-	public void compilingStopped(){
-	    currentlyCompiled = false;
-    }
 }

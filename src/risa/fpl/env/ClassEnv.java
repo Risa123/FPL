@@ -1,6 +1,5 @@
 package risa.fpl.env;
 
-import java.util.HashMap;
 
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
@@ -12,11 +11,10 @@ import risa.fpl.function.statement.Var;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TypeInfo;
 
-public final class ClassEnv extends ANameSpacedEnv {
-	private final HashMap<String, IField>fields = new HashMap<>();
+public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final StringBuilder defaultConstructor = new StringBuilder();
 	private final String cname,nameSpace;
-	private final StringBuilder methodCode = new StringBuilder();
+	private final StringBuilder methodCode = new StringBuilder(),methodDeclarations = new StringBuilder();
 	private final ClassInfo classType;
 	private final TypeInfo instanceType;
 	public ClassEnv(ModuleEnv superEnv,String cname,String id) {
@@ -26,22 +24,14 @@ public final class ClassEnv extends ANameSpacedEnv {
 		this.nameSpace = superEnv.getNameSpace(null) + cname;
 		this.cname = cname;
 		classType = new ClassInfo(id);
-		instanceType = new TypeInfo(id,cname,null);
+		instanceType = new TypeInfo(id,cname);
 		instanceType.setClassInfo(classType);
-	}
-	public void addFields(TypeInfo type) {
-		fields.forEach((name,field)->{
-		    type.addField(name,field);
-		    if(field instanceof Function f){
-		        type.appendToDeclaration(f.getDeclaration());
-            }
-        });
 	}
 	@Override
 	public void addFunction(String name,IFunction value) {
 		if(value instanceof IField field) {
-			fields.put(name,field);
-		}
+			instanceType.addField(name,field);
+        }
 		super.addFunction(name, value);
 	}
 	public void appendToDefaultConstructor(String code) {
@@ -51,25 +41,28 @@ public final class ClassEnv extends ANameSpacedEnv {
 		return defaultConstructor.toString();
 	}
 	public String getDefaultConstructor(){
-	    var b = new StringBuilder("void ");
+	    var b = new StringBuilder("void I");
 	    b.append(nameSpace);
-	    b.append("__init(");
+	    b.append("_init(");
 	    b.append(cname);
 	    b.append("* this){\n");
 	    b.append(defaultConstructor);
 	    b.append("}\n");
 	    return b.toString();
     }
-    public void addMethod(String name,Function method,String code){
-         fields.put(name,method);
+    public void addMethod(Function method,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
               methodCode.append("static ");
          }
          methodCode.append(code);
+         if(method.getAccessModifier() != AccessModifier.PRIVATE){
+             methodDeclarations.append(method.getDeclaration());
+         }
     }
     public String getMethodCode(){
 	    return methodCode.toString();
     }
+    @Override
     public ClassInfo getClassType(){
 	    return classType;
     }
@@ -78,9 +71,13 @@ public final class ClassEnv extends ANameSpacedEnv {
     }
     @Override
     public String getNameSpace(IFunction caller){
-	    if(caller instanceof Var || caller instanceof Function f && f.getAccessModifier() == AccessModifier.PRIVATE) {
+	    if(caller instanceof Var || caller instanceof Function f && f.getAccessModifier() != AccessModifier.PUBLIC) {
             return "";
         }
 	    return nameSpace;
     }
+    public void appendDeclarations(){
+        instanceType.appendToDeclaration(methodDeclarations.toString());
+    }
+
 }

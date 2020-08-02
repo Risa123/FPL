@@ -33,7 +33,7 @@ public final class List extends AExp {
                   ret = f.compile(writer, env, it,exp.getLine(),exp.getCharNum());
                   appendSemicolon = f.appendSemicolon() && statement;
               }else{
-            	 var field = ret.getField(atom.getValue());
+            	 var field = ret.getField(atom.getValue(),env);
             	 if(field == null) {
             		 throw new CompilerException(atom,ret + " has no field called " +atom );
             	 }
