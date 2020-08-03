@@ -7,7 +7,6 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
-import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;

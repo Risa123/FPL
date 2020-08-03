@@ -29,7 +29,7 @@ public final class ClassVariable extends Function {
             var cID = IFunction.toCId(id.getValue());
             writer.write(cID);
             writer.write(";\n");
-            setPrevCode(cID);
+            setPrevCode('&' + cID);
             super.compile(writer,env,it,line,charNum);
             env.addFunction(id.getValue(),new Variable(type,IFunction.toCId(id.getValue()),id.getValue()));
         }else if(id.getType() == TokenType.CLASS_SELECTOR){

@@ -62,11 +62,11 @@ public class Variable extends ValueExp {
 
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-		if(onlyDeclared) {
-			throw new CompilerException(line,charNum,"variable " + id + " was not defined");
-		}
 		if(getPrevCode() == null && classAttribute){
 		    writer.write("this->");
+        }
+		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=")){
+		    throw new CompilerException(line,charNum,"variable " + id + " not defined");
         }
 		return super.compile(writer, env, it, line, charNum);
 	}

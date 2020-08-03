@@ -125,11 +125,10 @@ public final class Var implements IFunction {
 				}
 			}else if(type == null) {
 				throw new CompilerException(id,"cannot infer type");
-			}else {
-				if(env instanceof ClassEnv || env instanceof ModuleEnv) {
-					declaredOnly = false;
-				}
 			}
+            if(env instanceof ClassEnv || env instanceof ModuleEnv) {
+                declaredOnly = false;
+            }
 			var v = new Variable(type,cID,declaredOnly,id.getValue(),env.hasModifier(Modifier.CONST),env instanceof ClassEnv,env.getAccessModifier());
 			env.addFunction(id.getValue(),v);
 		}

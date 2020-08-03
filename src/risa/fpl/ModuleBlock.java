@@ -21,7 +21,7 @@ public final class ModuleBlock extends ATwoPassBlock {
    public ModuleBlock(FPL lang,Path sourceFile) throws IOException, CompilerException {
 	   this.lang = lang;
        this.sourceFile = sourceFile.subpath(2, sourceFile.getNameCount()).toString();
-	   cfile = lang.outputDirectory + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
+	   cfile = lang.getOutputDirectory() + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
 		var name = new StringBuilder();
 		for(int i = 2;i < sourceFile.getNameCount() - 1;++i) {
 			name.append(sourceFile.getName(i));
@@ -40,7 +40,7 @@ public final class ModuleBlock extends ATwoPassBlock {
        if (!compiled) {
            compiled = true;
            try (var writer = Files.newBufferedWriter(Paths.get(cfile))) {
-               env = new ModuleEnv(lang.env, this);
+               env = new ModuleEnv(lang.getEnv(), this);
                compile(writer,env,exps);
            }catch(CompilerException ex) {
                ex.setSourceFile(sourceFile);

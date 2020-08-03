@@ -8,13 +8,12 @@ import java.util.Arrays;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
-import risa.fpl.function.IFunction;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
-public class Function extends TypeInfo implements IFunction,IField {
+public class Function extends TypeInfo implements IField {
 	private final TypeInfo returnType;
 	private final TypeInfo[]args;
 	private final boolean method;
@@ -67,7 +66,7 @@ public class Function extends TypeInfo implements IFunction,IField {
 		while(it.hasNext()) {
 		   var exp = it.nextAtom();
 		   if(exp.getType() == TokenType.ARG_SEPARATOR) {
-			   
+
 		   }else if(exp.getType() == TokenType.END_ARGS) {
 			   break;
 		   }else {
@@ -104,8 +103,8 @@ public class Function extends TypeInfo implements IFunction,IField {
     public String getPrevCode() {
         return prev_code;
     }
-    public static Function newNew(String cname,TypeInfo type){
-        return new Function("new",new PointerInfo(type),cname,new TypeInfo[]{},false,null,AccessModifier.PUBLIC);
+    public static Function newNew(String cname,TypeInfo type,TypeInfo[]args){
+        return new Function("new",new PointerInfo(type),cname,args,false,null,AccessModifier.PUBLIC);
     }
     public final TypeInfo getReturnType(){
         return returnType;

@@ -11,7 +11,9 @@ public final class CompilerException extends Exception {
 	  this(exp.getLine(),exp.getCharNum(),msg);
   }
   public void setSourceFile(String sourceFile) {
-	  this.sourceFile = sourceFile;
+      if(this.sourceFile == null){
+          this.sourceFile = sourceFile;
+      }
   }
   @Override
   public String getMessage() {

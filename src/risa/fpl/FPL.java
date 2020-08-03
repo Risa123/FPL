@@ -13,9 +13,9 @@ import risa.fpl.env.ProgramEnv;
 
 public final class FPL {
 	private final String cc,output;
-	final String outputDirectory;
+	private final String outputDirectory;
 	private final PrintStream errStream;
-	final ProgramEnv env = new ProgramEnv();
+	private final ProgramEnv env = new ProgramEnv();
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();
     public FPL(String project,String cc,String output,PrintStream errStream) throws IOException, CompilerException {
     	this.cc = cc;
@@ -63,6 +63,12 @@ public final class FPL {
     		mod.compile();
     	}
     	return mod;
+    }
+    String getOutputDirectory(){
+        return outputDirectory;
+    }
+    ProgramEnv getEnv(){
+        return env;
     }
 	public static void main(String[] args) throws IOException {
 		if(args.length != 3) {
