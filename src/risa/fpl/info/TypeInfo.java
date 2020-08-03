@@ -1,5 +1,6 @@
 package risa.fpl.info;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import risa.fpl.env.AEnv;
@@ -8,7 +9,12 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
 public class TypeInfo {
-  public static final TypeInfo VOID = new TypeInfo("void","void");
+  public static final TypeInfo VOID = new TypeInfo("void","void"){
+      @Override
+      public boolean isPrimitive(){
+          return true;
+      }
+  };
   public static final TypeInfo OBJECT = new TypeInfo("object","");
   public static final TypeInfo BOOL = new TypeInfo("bool","char");
   public static final TypeInfo STRING = new TypeInfo("string","char*");
@@ -27,6 +33,7 @@ public class TypeInfo {
   private final HashMap<String, IField>fields = new HashMap<>();
   private Function constructor;
   private ClassInfo classInfo;
+  private final ArrayList<TypeInfo>parents = new ArrayList<>();
   public TypeInfo(String name,String cname) {
 	  this.name = name;
 	  this.cname = cname;
@@ -41,9 +48,21 @@ public class TypeInfo {
   //denies access if fields is private and field is not requested by its class
   public IField getField(String name,AEnv from) {
       var field = fields.get(name);
+      if(field == null){
+          for(var parent:parents){
+              field = parent.getField(name,from);
+              if(field  != null){
+                  break;
+              }
+          }
+      }
       if(field != null && field.getAccessModifier() != AccessModifier.PUBLIC){
-          if(from instanceof IClassOwnedEnv e && e.getClassType() == classInfo){
-              return field;
+          if(from instanceof IClassOwnedEnv e){
+              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() == classInfo){
+                  return field;
+              }else if(field.getAccessModifier() == AccessModifier.PROTECTED){
+
+              }
           }
           return null;
       }
@@ -79,5 +98,14 @@ public class TypeInfo {
   }
   public final void setConstructor(Function constructor){
       this.constructor = constructor;
+  }
+  public boolean isPrimitive(){
+      return false;
+  }
+  public void addParent(TypeInfo parent){
+      parents.add(parent);
+  }
+  public boolean containsAllParents(ArrayList<TypeInfo>types){
+      return types.containsAll(parents);
   }
 }

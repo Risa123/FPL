@@ -24,9 +24,19 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	public void  importModule(Atom name,BufferedWriter writer) throws CompilerException, IOException {
 		var mod = moduleBlock.getModule(name);
 		importedModules.add(mod);
-		for(var type:mod.types.values()) {
-		  writer.write(type.getDeclaration());
-		}
+		var importedTypes = new ArrayList<TypeInfo>();
+        var typesToImport = new ArrayList<>(mod.types.values());
+		while(!typesToImport.isEmpty()){
+            var it = typesToImport.iterator();
+            while(it.hasNext()){
+                var type = it.next();
+                if(type.containsAllParents(importedTypes)){
+                    writer.write(type.getDeclaration());
+                    importedTypes.add(type);
+                    it.remove();
+                }
+            }
+        }
 		for(var func:mod.functions.values()) {
 			if(func instanceof Function f) {
 				if(f.getAccessModifier() != AccessModifier.PRIVATE){

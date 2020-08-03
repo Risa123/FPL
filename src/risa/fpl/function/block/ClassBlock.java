@@ -13,15 +13,28 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.tokenizer.TokenType;
 
 public final class ClassBlock extends ATwoPassBlock implements IFunction {
 
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-		var id = it.nextID();
 		if(!(env instanceof ModuleEnv modEnv)){
 		    throw new CompilerException(line,charNum,"can only be used on module level");
+        }
+        var id = it.nextID();
+		TypeInfo parentType = null;
+        if(it.peek() instanceof Atom a){
+            if(a.getType() != TokenType.ID){
+                throw new CompilerException(a,"identifier expected");
+            }
+            parentType = env.getType(a);
+            it.next();
+            if(parentType.isPrimitive()){
+                throw new CompilerException(id,"class cannot inherit from primtive type " + parentType);
+            }
         }
         String cID;
         if(env.hasModifier(Modifier.NATIVE)){
@@ -37,6 +50,11 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 		b.write("typedef struct ");
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write("{\n");
+	    if(parentType != null){
+            cEnv.getInstanceType().addParent(parentType);
+	        b.write(parentType.getCname());
+	        b.write(" parent;\n");
+        }
         try{
             compile(b,cEnv,it.nextList());
         }catch(CompilerException ex){

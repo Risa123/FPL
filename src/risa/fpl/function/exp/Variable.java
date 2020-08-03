@@ -2,6 +2,7 @@ package risa.fpl.function.exp;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
@@ -9,8 +10,10 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.parser.List;
 
 public class Variable extends ValueExp {
 	public boolean onlyDeclared;
@@ -37,7 +40,7 @@ public class Variable extends ValueExp {
 		    writer.write(code);
 			writer.write('=');
 			onlyDeclared = false;
-		    it.nextAtom().compile(writer, env, it);
+		    execute(it,writer,env);
 		    return TypeInfo.VOID;
 		}else if(value.equals("&")) {
 			writer.write('&');
@@ -100,6 +103,15 @@ public class Variable extends ValueExp {
     private void process(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException, CompilerException {
         writer.write(code);
         writer.write(operator);
-        it.nextAtom().compile(writer, env, it);
+        execute(it,writer, env);
+    }
+    private TypeInfo execute(ExpIterator it,BufferedWriter writer,AEnv env) throws CompilerException, IOException {
+	    var list = new ArrayList<AExp>();
+	    var first = it.nextAtom();
+	    list.add(first);
+	    while(it.hasNext()){
+	        list.add(it.next());
+        }
+	    return new List(first.getLine(),first.getCharNum(),list,true).compile(writer,env,it);
     }
 }

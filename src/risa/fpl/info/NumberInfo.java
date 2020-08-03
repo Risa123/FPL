@@ -50,4 +50,8 @@ public final class NumberInfo extends TypeInfo {
 		}
 		return super.equals(o);
 	}
+    @Override
+    public boolean isPrimitive() {
+        return true;
+    }
 }

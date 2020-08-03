@@ -60,5 +60,3 @@ module std.system aded
 fix fields not defined
 fix error reporting
 fix new method
-make native classes same as c structures
-inheritance

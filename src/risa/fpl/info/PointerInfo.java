@@ -62,4 +62,9 @@ public final class PointerInfo extends TypeInfo {
         }
 	    return field;
     }
+
+    @Override
+    public boolean isPrimitive() {
+        return true;
+    }
 }

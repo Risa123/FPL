@@ -83,7 +83,7 @@ public final class Var implements IFunction {
 					throw new CompilerException(id,"native variables can only be declared");
 				}
 				var exp = it.nextAtom();
-				if(exp.getType() == TokenType.ARG_SEPARATOR) {
+				if(exp.getType() == TokenType.END_ARGS) {
 					if(type == null) {
 						throw new CompilerException(exp,"cannot infer type");
 					}
@@ -95,7 +95,7 @@ public final class Var implements IFunction {
                     list.add(exp);
                     while(it.hasNext()){
                         var expPart = it.next();
-                        if(expPart instanceof Atom a && a.getType() == TokenType.ARG_SEPARATOR){
+                        if(expPart instanceof Atom a && a.getType() == TokenType.END_ARGS){
                             break;
                         }
                         list.add(expPart);
