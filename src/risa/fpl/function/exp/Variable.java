@@ -19,16 +19,16 @@ public class Variable extends ValueExp {
 	public boolean onlyDeclared;
 	private final String id;
 	public final boolean constant;
-	private final boolean classAttribute;
-	public Variable(TypeInfo type, String code, boolean onlyDeclared, String id, boolean constant, boolean classAttribute, AccessModifier mod) {
+	private final TypeInfo instanceType;
+	public Variable(TypeInfo type, String code, boolean onlyDeclared, String id, boolean constant,TypeInfo instanceType, AccessModifier mod) {
 		super(type, code,mod);
 		this.onlyDeclared = onlyDeclared;
 		this.id = id;
 		this.constant = constant;
-		this.classAttribute = classAttribute;
+		this.instanceType = instanceType;
 	}
     public Variable(TypeInfo type,String code,String id) {
-       this(type,code,false,id,false,false,AccessModifier.PUBLIC);
+       this(type,code,false,id,false,null,AccessModifier.PUBLIC);
     }
 	@Override
 	protected TypeInfo onField(Atom atom, BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws CompilerException, IOException {
@@ -65,8 +65,10 @@ public class Variable extends ValueExp {
 
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-		if(getPrevCode() == null && classAttribute){
-		    writer.write("this->");
+		if(getPrevCode() == null && instanceType != null){
+		    writer.write("((");
+		    writer.write(instanceType.getCname());
+		    writer.write("*)this)->");
         }
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=")){
 		    throw new CompilerException(line,charNum,"variable " + id + " not defined");

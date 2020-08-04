@@ -47,7 +47,11 @@ public final class Array implements IFunction {
 	    }
 	    int count = 0;
 	    var first = true;
-	    var v = new Variable(new PointerInfo(type),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),env instanceof ClassEnv,env.getAccessModifier());
+	    TypeInfo instanceType = null;
+	    if(env instanceof ClassEnv e){
+	        instanceType = e.getInstanceType();
+        }
+	    var v = new Variable(new PointerInfo(type),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
 	    env.addFunction(id.getValue(),v);
 	    if(it.hasNext()) {
 	    	while(it.hasNext()) {

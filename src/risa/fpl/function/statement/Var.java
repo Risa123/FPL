@@ -129,7 +129,11 @@ public final class Var implements IFunction {
             if(env instanceof ClassEnv || env instanceof ModuleEnv) {
                 declaredOnly = false;
             }
-			var v = new Variable(type,cID,declaredOnly,id.getValue(),env.hasModifier(Modifier.CONST),env instanceof ClassEnv,env.getAccessModifier());
+            TypeInfo instanceType = null;
+            if(env instanceof ClassEnv e){
+                instanceType = e.getInstanceType();
+            }
+			var v = new Variable(type,cID,declaredOnly,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
 			env.addFunction(id.getValue(),v);
 		}
 		return TypeInfo.VOID;
