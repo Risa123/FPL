@@ -16,6 +16,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
+	private boolean getRequestFromOutSide;
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -58,6 +59,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	public IFunction getFunction(Atom name) throws CompilerException {
 		for(var mod:importedModules) {
 			if(mod.hasFunctionInCurrentEnv(name.getValue())){
+			   mod.requestFromOutSide();
 			   return mod.getFunction(name);
             }
 		}
@@ -65,12 +67,17 @@ public final class ModuleEnv extends ANameSpacedEnv {
 		    var f = super.getFunction(name);
 		    if(f instanceof Function func){
 		        if(func.getAccessModifier() == AccessModifier.PUBLIC){
+		            getRequestFromOutSide = false;
+		            return f;
+                }else if(!getRequestFromOutSide){
 		            return f;
                 }
             }else{
+		        getRequestFromOutSide = false;
 		        return f;
             }
         }
+		getRequestFromOutSide = false;
 		return superEnv.getFunction(name);
 	}
 	@Override
@@ -80,4 +87,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
         }
 		return nameSpace;
 	}
+	public void requestFromOutSide(){
+	    getRequestFromOutSide = true;
+    }
 }

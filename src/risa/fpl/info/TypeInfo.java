@@ -61,7 +61,7 @@ public class TypeInfo {
               if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() == classInfo){
                   return field;
               }else if(field.getAccessModifier() == AccessModifier.PROTECTED){
-
+                  return field;
               }
           }
           return null;
