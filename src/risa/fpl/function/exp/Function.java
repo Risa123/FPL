@@ -19,7 +19,7 @@ public class Function extends TypeInfo implements IField {
 	private final boolean method;
 	private String prev_code;
 	private final AccessModifier accessModifier;
-    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner,AccessModifier accessModifier) {
+    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner,AccessModifier accessModifier,AEnv env) {
        super(name,cname);
        this.returnType = returnType;
        this.args = args;
@@ -46,7 +46,7 @@ public class Function extends TypeInfo implements IField {
             appendToDeclaration(arg.getCname());
         }
         appendToDeclaration(");\n");
-        buildDeclaration();
+        buildDeclaration(env);
     }
 
     @Override
@@ -103,8 +103,8 @@ public class Function extends TypeInfo implements IField {
     public String getPrevCode() {
         return prev_code;
     }
-    public static Function newNew(String cname,TypeInfo type,TypeInfo[]args){
-        return new Function("new",new PointerInfo(type),cname,args,false,null,AccessModifier.PUBLIC);
+    public static Function newNew(String cname,TypeInfo type,TypeInfo[]args,AEnv env){
+        return new Function("new",new PointerInfo(type),cname,args,false,null,AccessModifier.PUBLIC,env);
     }
     public final TypeInfo getReturnType(){
         return returnType;

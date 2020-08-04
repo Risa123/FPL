@@ -22,7 +22,7 @@ public final class Constructor extends AFunctionBlock {
         b.write(cEnv.getNameSpace(this));
         b.write("_init");
         var fEnv = new FnEnv(env,TypeInfo.VOID,type.getClassInfo());
-        var constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType(), parseArguments(b,it,fEnv,type),cEnv.getNameSpace(this));
+        var constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType(), parseArguments(b,it,fEnv,type),cEnv.getNameSpace(this),env);
         type.setConstructor(constructor);
         b.write("{\n");
         it.nextList().compile(b,fEnv,it);

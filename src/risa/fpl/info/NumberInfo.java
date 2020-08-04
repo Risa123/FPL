@@ -21,11 +21,8 @@ public final class NumberInfo extends TypeInfo {
 	public static final NumberInfo MEMORY = new NumberInfo("memory","unsigned long",8);
     private final int size;
     public final boolean floatingPoint;
-    static{
-
-    }
 	public NumberInfo(String name, String cname,int size,boolean floatingPoint) {
-		super(name, cname);
+		super(name, cname,true);
 		this.size = size;
 		this.floatingPoint = floatingPoint;
 		addField("==",new BinaryOperator(TypeInfo.BOOL,this,"=="));
@@ -50,8 +47,4 @@ public final class NumberInfo extends TypeInfo {
 		}
 		return super.equals(o);
 	}
-    @Override
-    public boolean isPrimitive() {
-        return true;
-    }
 }

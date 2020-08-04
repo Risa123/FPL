@@ -92,13 +92,11 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         writer.write(b.getText());
         var constructor = type.getConstructor();
         if(constructor == null){
-            constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this));
+            constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this),env);
             cEnv.addMethod(constructor,cEnv.getDefaultConstructor());
             type.setConstructor(constructor);
         }
         writer.write(cEnv.getMethodCode());
-        writer.write(cID);
-        writer.write("* ");
         var newName = new StringBuilder();
         newName.append(modEnv.getNameSpace(this));
         newName.append(cID);
@@ -106,6 +104,8 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         type.appendToDeclaration(b.getText());
         cEnv.appendDeclarations();
         if(!env.hasModifier(Modifier.ABSTRACT)){
+            writer.write(cID);
+            writer.write("* ");
             writer.write(newName.toString());
             writer.write('(');
             var args = constructor.getArguments();
@@ -134,12 +134,12 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             }
             writer.write(");");
             writer.write("\nreturn p;\n}\n");
-            var newMethod = Function.newNew(newName.toString(),type,constructor.getArguments());
+            var newMethod = Function.newNew(newName.toString(),type,constructor.getArguments(),env);
             cEnv.getClassType().addField("new",newMethod);
             writer.write(newMethod.getDeclaration());
             type.appendToDeclaration(newMethod.getDeclaration());
         }
-        type.buildDeclaration();
+        type.buildDeclaration(env);
 	    env.addType(idV,type);
 	    env.addFunction(id.getValue(),constructor);
 		return TypeInfo.VOID;

@@ -63,7 +63,7 @@ public class Fn extends AFunctionBlock {
 		}else {
 			appendSemicolon = true;
 		}
-        var f = new Function(id.getValue(),returnType,cID,args,env.hasModifier(Modifier.NATIVE),owner,env.getAccessModifier());
+        var f = new Function(id.getValue(),returnType,cID,args,env.hasModifier(Modifier.NATIVE),owner,env.getAccessModifier(),env);
         var p = new PointerInfo(f);
         if(env instanceof ClassEnv cEnv){
            cEnv.addMethod(f,b.getText());

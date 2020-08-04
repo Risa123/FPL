@@ -9,16 +9,11 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
 public class TypeInfo {
-  public static final TypeInfo VOID = new TypeInfo("void","void"){
-      @Override
-      public boolean isPrimitive(){
-          return true;
-      }
-  };
+  public static final TypeInfo VOID = new TypeInfo("void","void",true);
   public static final TypeInfo OBJECT = new TypeInfo("object","");
-  public static final TypeInfo BOOL = new TypeInfo("bool","char");
-  public static final TypeInfo STRING = new TypeInfo("string","char*");
-  public static final TypeInfo CHAR = new TypeInfo("char","char");
+  public static final TypeInfo BOOL = new TypeInfo("bool","char",true);
+  public static final TypeInfo STRING = new TypeInfo("string","char*",true);
+  public static final TypeInfo CHAR = new TypeInfo("char","char",true);
   public static final TypeInfo NIL = new TypeInfo("nil","");
   static {
 	  CHAR.addField("asByte",new AsByte());
@@ -29,14 +24,19 @@ public class TypeInfo {
   }
   private final String name,cname;
   private String declaration = "";
+  private final boolean primitive;
   private final StringBuilder declarationBuilder =  new StringBuilder();
   private final HashMap<String, IField>fields = new HashMap<>();
   private Function constructor;
   private ClassInfo classInfo;
   private final ArrayList<TypeInfo>parents = new ArrayList<>();
-  public TypeInfo(String name,String cname) {
+  public TypeInfo(String name,String cname,boolean primitive) {
 	  this.name = name;
 	  this.cname = cname;
+	  this.primitive = primitive;
+  }
+  public TypeInfo(String name,String cname){
+      this(name,cname,false);
   }
   @Override
   public String toString() {
@@ -84,8 +84,25 @@ public class TypeInfo {
   public final String getDeclaration(){
       return declaration;
   }
-  public final void buildDeclaration(){
-      declaration = declarationBuilder.toString();
+  public final void buildDeclaration(AEnv env){
+      var b = new StringBuilder();
+      for(var field:fields.values()){
+        if(field instanceof Variable v){
+            appendType(b,v.getType(),env);
+        }else if(field instanceof Function f){
+            appendType(b,f.getReturnType(),env);
+           for(var arg:f.getArguments()){
+               appendType(b,arg,env);
+           }
+        }
+      }
+      b.append(declarationBuilder.toString());
+      declaration = b.toString();
+  }
+  private void appendType(StringBuilder b,TypeInfo type,AEnv env){
+      if(!env.hasTypeInCurrentEnv(type.getName()) && !type.isPrimitive()){
+         b.append(type.getDeclaration());
+      }
   }
   public final void appendToDeclaration(String code){
       declarationBuilder.append(code);
@@ -99,8 +116,8 @@ public class TypeInfo {
   public final void setConstructor(Function constructor){
       this.constructor = constructor;
   }
-  public boolean isPrimitive(){
-      return false;
+  public final boolean isPrimitive(){
+      return primitive;
   }
   public void addParent(TypeInfo parent){
       parents.add(parent);

@@ -15,10 +15,10 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
-public class Variable extends ValueExp {
-	public boolean onlyDeclared;
+public final class Variable extends ValueExp {
+	private boolean onlyDeclared;
 	private final String id;
-	public final boolean constant;
+	private final boolean constant;
 	private final TypeInfo instanceType;
 	public Variable(TypeInfo type, String code, boolean onlyDeclared, String id, boolean constant,TypeInfo instanceType, AccessModifier mod) {
 		super(type, code,mod);
@@ -115,5 +115,17 @@ public class Variable extends ValueExp {
 	        list.add(it.next());
         }
 	    return new List(first.getLine(),first.getCharNum(),list,true).compile(writer,env,it);
+    }
+    public boolean isConstant(){
+	    return constant;
+    }
+    public boolean isOnlyDeclared(){
+	    return onlyDeclared;
+    }
+    public void defined(){
+	    onlyDeclared = true;
+    }
+    public TypeInfo getType(){
+	    return type;
     }
 }

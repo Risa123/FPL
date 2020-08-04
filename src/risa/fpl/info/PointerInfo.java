@@ -6,7 +6,7 @@ import risa.fpl.function.exp.*;
 public final class PointerInfo extends TypeInfo {
 	private final TypeInfo type;
 	public PointerInfo(TypeInfo type) {
-	    super(type.getName() +"*",type.getCname() + "*");
+	    super(type.getName() +"*",type.getCname() + "*",false);
         this.type = type;
         if(type != TypeInfo.VOID){
             addField("+",new BinaryOperator(this,this,"+"));
@@ -61,10 +61,5 @@ public final class PointerInfo extends TypeInfo {
 	        field = type.getField(name,from);
         }
 	    return field;
-    }
-
-    @Override
-    public boolean isPrimitive() {
-        return true;
     }
 }

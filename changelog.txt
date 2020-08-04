@@ -65,6 +65,7 @@ add notepad++ syntax for FPL
 0.1.0 snapshot 4
 fix class function checks for name clashes
 fix compiler not using cnames of types in function pointer
+fix types used in declarations not imported with type using them
 added abstract classes and methods
 added interface
 added virtual methods

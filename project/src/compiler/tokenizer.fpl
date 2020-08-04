@@ -1,3 +1,4 @@
+use std.io
 
 class Token {
   private {
@@ -24,6 +25,7 @@ class Tokenizer{
     int line 1;charNum 1
     bool readNext true
     char c
+    Readable readable
     fn char read {
        if readNext {
 
