@@ -1,0 +1,10 @@
+use {
+  std.backend
+  compiler.tokenizer
+  std.io
+}
+
+native fn int main int argc string* argv {
+  FileHandler* h FileHandler:new "test.txt","w";
+  return 0
+}

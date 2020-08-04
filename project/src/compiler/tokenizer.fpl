@@ -1,0 +1,36 @@
+
+class Token {
+  private {
+   int line;charNum
+    string value
+  }
+  this int line int charNum string value {
+    this line = line
+    this charNum = charNum
+    this value = value
+  }
+  fn int getLine {
+    return line
+  }
+  fn int getCharNum {
+    return charNum
+  }
+  fn string getValue {
+    return value
+  }
+}
+class Tokenizer{
+ private {
+    int line 1;charNum 1
+    bool readNext true
+    char c
+    fn char read {
+       if readNext {
+
+       } {
+         readNext = false
+       }
+       return c
+    }
+ }
+}

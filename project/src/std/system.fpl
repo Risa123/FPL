@@ -1,0 +1,5 @@
+use std.backend
+
+fn void exit int exitCode {
+  exit exitCode
+}

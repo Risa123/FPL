@@ -1,0 +1,27 @@
+native {
+ fn int puts string str
+ private fn void fclose void* file
+ fn void* malloc memory size
+ fn void free void* p
+ fn void exit int exitCode
+ private fn int system string cmd
+ private fn void* fopen string name string mode
+ private fn memory fread void* p memory size memory msize void* file
+ fn void* realloc void* p memory new_size
+ private fn memory fwrite void* p memory size memory nmen
+}
+fn int execute string cmd {
+  return system cmd
+}
+fn void file_close void* file {
+  fclose file
+}
+fn void* file_open string name string mode {
+   return fopen name,mode
+}
+fn memory file_read void* file byte* p memory size {
+  return fread p cast void*,size,1,file
+}
+fn memory file_write void* file byte* p memory size {
+  return fwrite p cast void*,size,1
+}
