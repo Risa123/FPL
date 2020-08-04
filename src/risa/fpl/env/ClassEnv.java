@@ -1,6 +1,7 @@
 package risa.fpl.env;
 
 
+import risa.fpl.CompilerException;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.SetAccessModifier;
@@ -10,6 +11,7 @@ import risa.fpl.function.exp.IField;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final StringBuilder defaultConstructor = new StringBuilder();
@@ -31,8 +33,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	public void addFunction(String name,IFunction value) {
 		if(value instanceof IField field) {
 			instanceType.addField(name,field);
+        }else{
+		    super.addFunction(name, value);
         }
-		super.addFunction(name, value);
 	}
 	public void appendToDefaultConstructor(String code) {
 		defaultConstructor.append(code);
@@ -79,5 +82,12 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     public void appendDeclarations(){
         instanceType.appendToDeclaration(methodDeclarations.toString());
     }
-
+    @Override
+    public IFunction getFunction(Atom name) throws CompilerException {
+	    var field = instanceType.getField(name.getValue(),this);
+	    if(field != null){
+	        return field;
+        }
+	    return super.getFunction(name);
+    }
 }

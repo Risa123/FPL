@@ -1,4 +1,5 @@
 tcc
 # Project exclude paths
 /bin/
+project/output
 std.zip
