@@ -77,7 +77,7 @@ public abstract class AEnv {
       }
 	  return type;
   }
-  protected final boolean hasTypeInCurrentEnv(String name){
+  public final boolean hasTypeInCurrentEnv(String name){
       return types.containsKey(name.replace("*","")); //remove pointer declarations
   }
   public void addType(String name,TypeInfo type) {

@@ -6,6 +6,7 @@ import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.Use;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.function.block.Fn;
+import risa.fpl.function.block.InterfaceBlock;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.statement.Array;
 import risa.fpl.function.statement.Var;
@@ -44,5 +45,7 @@ public final class ProgramEnv extends AEnv {
 	  addType("memory",NumberInfo.MEMORY);
 	  addFunction("nil",new ValueExp(TypeInfo.NIL,"0"));
 	  addFunction("private",new SetAccessModifier(AccessModifier.PRIVATE));
+	  addFunction("abstract",new ModifierBlockStat(Modifier.ABSTRACT));
+	  addFunction("interface",new InterfaceBlock());
   }
 }

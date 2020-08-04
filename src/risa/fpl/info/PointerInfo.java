@@ -48,7 +48,7 @@ public final class PointerInfo extends TypeInfo {
             }else{
                 b.append(',');
             }
-            b.append(arg);
+            b.append(arg.getCname());
         }
         b.append(")");
         return b.toString();

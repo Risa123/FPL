@@ -4,6 +4,7 @@ package risa.fpl.env;
 import risa.fpl.CompilerException;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.ModifierBlockStat;
 import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.block.Constructor;
 import risa.fpl.function.exp.Function;
@@ -23,6 +24,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		super(superEnv);
 		super.addFunction("this",new Constructor());
 		super.addFunction("protected",new SetAccessModifier(AccessModifier.PROTECTED));
+		super.addFunction("virtual",new ModifierBlockStat(Modifier.VIRTUAL));
 		this.nameSpace = superEnv.getNameSpace(null) + cname;
 		this.cname = cname;
 		classType = new ClassInfo(id);

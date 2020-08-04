@@ -62,3 +62,9 @@ fix error reporting
 fix new method
 expose std library and self-hosting compiler sources
 add notepad++ syntax for FPL
+0.1.0 snapshot 4
+fix class function checks for name clashes
+fix compiler not using cnames of types in function pointer
+added abstract classes and methods
+added interface
+added virtual methods

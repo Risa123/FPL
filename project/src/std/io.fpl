@@ -1,21 +1,30 @@
 use std.backend
 
-class FileHandler {
+abstract class FileHandler Closeable {
    protected void* handle
    this string name string mode {
       handle = file_open name,mode
    }
-   fn void close {
-     file_close this handle
+   virtual fn void close {
+     file_close handle
    }
 }
-class FileWriter FileHandler {
-  fn void write byte* p memory size {
+class FileWriter FileHandler Writable {
+  virtual fn void write byte* p memory size {
       file_write handle,p,size
   }
 }
-class FileReader FileHandler {
-  fn void read byte* p memory size{
+class FileReader FileHandler  Readable{
+  virtual fn void read byte* p memory size{
      file_read handle,p,size
   }
+}
+interface Closeable {
+  fn void close
+}
+interface Writable Closeable {
+   fn void read byte* p memory size
+}
+interface Readable Closeable {
+  fn void write byte* p memory size
 }

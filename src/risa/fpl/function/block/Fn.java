@@ -67,6 +67,8 @@ public class Fn extends AFunctionBlock {
         var p = new PointerInfo(f);
         if(env instanceof ClassEnv cEnv){
            cEnv.addMethod(f,b.getText());
+        }else if(env.hasModifier(Modifier.ABSTRACT)){
+            writer.write(p.getFunctionPointerDeclaration(cID));
         }else{
             writer.write(b.getText());
         }

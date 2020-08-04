@@ -5,6 +5,5 @@ use {
 }
 
 native fn int main int argc string* argv {
-
   return 0
 }

@@ -12,9 +12,11 @@ import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.statement.ClassVariable;
+import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
 public final class ClassBlock extends ATwoPassBlock implements IFunction {
@@ -25,16 +27,9 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 		    throw new CompilerException(line,charNum,"can only be used on module level");
         }
         var id = it.nextID();
-		TypeInfo parentType = null;
-        if(it.peek() instanceof Atom a){
-            if(a.getType() != TokenType.ID){
-                throw new CompilerException(a,"identifier expected");
-            }
-            parentType = env.getType(a);
-            it.next();
-            if(parentType.isPrimitive()){
-                throw new CompilerException(id,"class cannot inherit from primtive type " + parentType);
-            }
+		var idV = id.getValue();
+		if(env.hasTypeInCurrentEnv(idV)){
+		    throw new CompilerException(id,"this type is already declared");
         }
         String cID;
         if(env.hasModifier(Modifier.NATIVE)){
@@ -45,18 +40,47 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         }else{
             cID = IFunction.toCId(id.getValue());
         }
-		var cEnv = new ClassEnv(modEnv,cID,id.getValue());
+        var cEnv = new ClassEnv(modEnv,cID,idV);
+		TypeInfo parentType = null;
+		List block = null;
+        while(it.hasNext()){
+            var exp = it.next();
+            if(exp instanceof List l){
+                block = l;
+                break;
+            }else{
+                var typeID = (Atom)exp;
+                if(typeID.getType() != TokenType.ID){
+                    throw new CompilerException(typeID,"identifier expected");
+                }
+                var type = env.getType(typeID);
+                if(type.isPrimitive()){
+                    throw new CompilerException(typeID,"primitive types cannot inherited from");
+                }
+                cEnv.getInstanceType().addParent(type);
+                if(type instanceof InterfaceInfo){
+
+                }else{
+                    if(parentType != null){
+                        throw new CompilerException(typeID,"there is already parent class");
+                    }
+                    parentType = type;
+                }
+            }
+        }
+        if(block == null){
+            throw new CompilerException(line,charNum,"block expected as last argument");
+        }
 		var b = new BuilderWriter(writer);
 		b.write("typedef struct ");
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write("{\n");
 	    if(parentType != null){
-            cEnv.getInstanceType().addParent(parentType);
 	        b.write(parentType.getCname());
 	        b.write(" parent;\n");
         }
         try{
-            compile(b,cEnv,it.nextList());
+            compile(b,cEnv,block);
         }catch(CompilerException ex){
             ex.setSourceFile("");
             throw ex;
@@ -81,40 +105,42 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         newName.append("_new");
         type.appendToDeclaration(b.getText());
         cEnv.appendDeclarations();
-        writer.write(newName.toString());
-        writer.write('(');
-        var args = constructor.getArguments();
-        var first = true;
-        for(int i = 0; i < args.length;++i){
-            if(first){
-                first = false;
-            }else{
-                writer.write(',');
+        if(!env.hasModifier(Modifier.ABSTRACT)){
+            writer.write(newName.toString());
+            writer.write('(');
+            var args = constructor.getArguments();
+            var first = true;
+            for(int i = 0; i < args.length;++i){
+                if(first){
+                    first = false;
+                }else{
+                    writer.write(',');
+                }
+                writer.write(args[i].getCname());
+                writer.write(" a");
+                writer.write(Integer.toString(i));
             }
-            writer.write(args[i].getCname());
-            writer.write(" a");
-            writer.write(Integer.toString(i));
+            writer.write("){\n");
+            writer.write("void* malloc(unsigned long);\n");
+            writer.write(type.getCname());
+            writer.write("* p=malloc(sizeof ");
+            writer.write(type.getCname());
+            writer.write(");\n");
+            writer.write(constructor.getCname());
+            writer.write("(p");
+            for(int i = 0; i < constructor.getArguments().length;++i){
+                writer.write(",a");
+                writer.write(Integer.toString(i));
+            }
+            writer.write(");");
+            writer.write("\nreturn p;\n}\n");
+            var newMethod = Function.newNew(newName.toString(),type,constructor.getArguments());
+            cEnv.getClassType().addField("new",newMethod);
+            writer.write(newMethod.getDeclaration());
+            type.appendToDeclaration(newMethod.getDeclaration());
         }
-        writer.write("){\n");
-        writer.write("void* malloc(unsigned long);\n");
-        writer.write(type.getCname());
-        writer.write("* p=malloc(sizeof ");
-        writer.write(type.getCname());
-        writer.write(");\n");
-        writer.write(constructor.getCname());
-        writer.write("(p");
-        for(int i = 0; i < constructor.getArguments().length;++i){
-            writer.write(",a");
-            writer.write(Integer.toString(i));
-        }
-        writer.write(");");
-        writer.write("\nreturn p;\n}\n");
-        var newMethod = Function.newNew(newName.toString(),type,constructor.getArguments());
-	    cEnv.getClassType().addField("new",newMethod);
-	    writer.write(newMethod.getDeclaration());
-	    type.appendToDeclaration(newMethod.getDeclaration());
         type.buildDeclaration();
-	    env.addType(id.getValue(),type);
+	    env.addType(idV,type);
 	    env.addFunction(id.getValue(),constructor);
 		return TypeInfo.VOID;
 	}
