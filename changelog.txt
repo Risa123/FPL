@@ -60,5 +60,5 @@ module std.system aded
 fix fields not defined
 fix error reporting
 fix new method
-expose std library sources
+expose std library and self-hosting compiler sources
 add notepad++ syntax for FPL
