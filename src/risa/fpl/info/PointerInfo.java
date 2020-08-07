@@ -6,7 +6,7 @@ import risa.fpl.function.exp.*;
 public final class PointerInfo extends TypeInfo {
 	private final TypeInfo type;
 	public PointerInfo(TypeInfo type) {
-	    super(type.getName() +"*",type.getCname() + "*",false);
+	    super(type.getName() +"*",type.getCname() + "*",true);
         this.type = type;
         if(type != TypeInfo.VOID){
             addField("+",new BinaryOperator(this,this,"+"));

@@ -30,6 +30,7 @@ public class TypeInfo {
   private Function constructor;
   private ClassInfo classInfo;
   private final ArrayList<TypeInfo>parents = new ArrayList<>();
+  private final ArrayList<TypeInfo>requiredTypes = new ArrayList<>();
   public TypeInfo(String name,String cname,boolean primitive) {
 	  this.name = name;
 	  this.cname = cname;
@@ -85,23 +86,21 @@ public class TypeInfo {
       return declaration;
   }
   public final void buildDeclaration(AEnv env){
-      var b = new StringBuilder();
       for(var field:fields.values()){
         if(field instanceof Variable v){
-            appendType(b,v.getType(),env);
+            addType(v.getType(),env);
         }else if(field instanceof Function f){
-            appendType(b,f.getReturnType(),env);
+            addType(f.getReturnType(),env);
            for(var arg:f.getArguments()){
-               appendType(b,arg,env);
+               addType(arg,env);
            }
         }
       }
-      b.append(declarationBuilder.toString());
-      declaration = b.toString();
+      declaration = declarationBuilder.toString();
   }
-  private void appendType(StringBuilder b,TypeInfo type,AEnv env){
-      if(!env.hasTypeInCurrentEnv(type.getName()) && !type.isPrimitive()){
-         b.append(type.getDeclaration());
+  private void addType(TypeInfo type, AEnv env){
+      if(!env.hasTypeInCurrentEnv(type.getName())&& !type.isPrimitive() && !requiredTypes.contains(type)){
+         requiredTypes.add(type);
       }
   }
   public final void appendToDeclaration(String code){
@@ -124,5 +123,8 @@ public class TypeInfo {
   }
   public boolean containsAllParents(ArrayList<TypeInfo>types){
       return types.containsAll(parents);
+  }
+  public ArrayList<TypeInfo>getRequiredTypes(){
+      return requiredTypes;
   }
 }

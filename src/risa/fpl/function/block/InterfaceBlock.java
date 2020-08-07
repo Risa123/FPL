@@ -1,5 +1,6 @@
 package risa.fpl.function.block;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.InterfaceEnv;
@@ -27,7 +28,8 @@ public final class InterfaceBlock implements IFunction {
             throw new CompilerException(id,"this type is already declared");
         }
         var cID = IFunction.toCId(idV);
-        var type = new InterfaceInfo(idV,cID);
+        var iEnv = new InterfaceEnv(env,idV);
+        var type = iEnv.getType();
         List block = null;
         while(it.hasNext()){
             var exp = it.next();
@@ -48,13 +50,17 @@ public final class InterfaceBlock implements IFunction {
         if(block == null){
             throw new CompilerException(line,charNum,"block expected as last argument");
         }
-        writer.write("typedef struct ");
-        writer.write(cID);
-        writer.write("{\n");
-        block.compile(writer,new InterfaceEnv(env),it);
-        writer.write('}');
-        writer.write(cID);
-        writer.write(";\n");
+        var b = new BuilderWriter(writer);
+        b.write("typedef struct ");
+        b.write(cID);
+        b.write("{\n");
+        block.compile(b,iEnv,it);
+        b.write('}');
+        b.write(cID);
+        b.write(";\n");
+        writer.write(b.getText());
+        type.appendToDeclaration(b.getText());
+        type.buildDeclaration(env);
         env.addType(idV,type);
         return TypeInfo.VOID;
     }

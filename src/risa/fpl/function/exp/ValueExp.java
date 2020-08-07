@@ -25,7 +25,6 @@ public class ValueExp extends AField {
     }
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-		writePrev(writer);
 		if(it.hasNext()) {
 			var exp = it.peek();
 			if(exp instanceof Atom atom) {
@@ -41,6 +40,7 @@ public class ValueExp extends AField {
 				throw new CompilerException(exp,"unexpected list");
 			}
 		}
+        writePrev(writer);
 		writer.write(code);
 		return type;
 	}
@@ -59,6 +59,9 @@ public class ValueExp extends AField {
 		   }
 		}else if(field instanceof  Function && !(type instanceof PointerInfo)){
 		    prefix = "&";
+        }
+		if(getPrevCode() != null){
+		    prefix = getPrevCode() + prefix;
         }
 		field.setPrevCode(prefix + code + selector);
 		return field.compile(writer, env, it, line, charNum);

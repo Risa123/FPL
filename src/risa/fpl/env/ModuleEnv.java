@@ -17,6 +17,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
 	private boolean getRequestFromOutSide;
+	private final ArrayList<TypeInfo> cDeclaredTypes = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -25,15 +26,22 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	public void  importModule(Atom name,BufferedWriter writer) throws CompilerException, IOException {
 		var mod = moduleBlock.getModule(name);
 		importedModules.add(mod);
-		var importedTypes = new ArrayList<TypeInfo>();
         var typesToImport = new ArrayList<>(mod.types.values());
 		while(!typesToImport.isEmpty()){
             var it = typesToImport.iterator();
             while(it.hasNext()){
                 var type = it.next();
-                if(type.containsAllParents(importedTypes)){
-                    writer.write(type.getDeclaration());
-                    importedTypes.add(type);
+                if(type.containsAllParents(cDeclaredTypes)){
+                    if(!cDeclaredTypes.contains(type)){
+                        for(var rType:type.getRequiredTypes()){
+                            if(!cDeclaredTypes.contains(rType)){
+                                writer.write(rType.getDeclaration());
+                                cDeclaredTypes.add(rType);
+                            }
+                        }
+                        writer.write(type.getDeclaration());
+                        cDeclaredTypes.add(type);
+                    }
                     it.remove();
                 }
             }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.IClassOwnedEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
@@ -37,14 +38,17 @@ public final class Variable extends ValueExp {
 		   if(constant) {
 			  throw new CompilerException(line,charNum,"constant cannot be redefined");    	
 			}
+		    writePrev(writer);
 		    writer.write(code);
 			writer.write('=');
 			onlyDeclared = false;
 		    execute(it,writer,env);
 		    return TypeInfo.VOID;
 		}else if(value.equals("&")) {
-			writer.write('&');
-			writer.write(code);
+            writer.write('&');
+            writePrev(writer);
+		    writer.write(code);
+			//writePrev(writer);
 			return new PointerInfo(type);
 		}else if(type instanceof PointerInfo p && !p.isFunctionPointer()){
 		    TypeInfo t;
@@ -65,13 +69,11 @@ public final class Variable extends ValueExp {
 
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-		if(getPrevCode() == null && instanceType != null){
-		    writer.write("((");
-		    writer.write(instanceType.getCname());
-		    writer.write("*)this)->");
-        }
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=")){
 		    throw new CompilerException(line,charNum,"variable " + id + " not defined");
+        }
+		if(instanceType != null && getPrevCode() == null){
+		    setPrevCode("((" + instanceType.getCname() + "*)this)->");
         }
 		return super.compile(writer, env, it, line, charNum);
 	}
@@ -103,27 +105,18 @@ public final class Variable extends ValueExp {
 	    return null;
     }
     private void process(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException, CompilerException {
-        writer.write(code);
+	    writer.write(code);
         writer.write(operator);
         execute(it,writer, env);
     }
-    private TypeInfo execute(ExpIterator it,BufferedWriter writer,AEnv env) throws CompilerException, IOException {
+    private void execute(ExpIterator it,BufferedWriter writer,AEnv env) throws CompilerException, IOException {
 	    var list = new ArrayList<AExp>();
 	    var first = it.nextAtom();
 	    list.add(first);
 	    while(it.hasNext()){
 	        list.add(it.next());
         }
-	    return new List(first.getLine(),first.getCharNum(),list,true).compile(writer,env,it);
-    }
-    public boolean isConstant(){
-	    return constant;
-    }
-    public boolean isOnlyDeclared(){
-	    return onlyDeclared;
-    }
-    public void defined(){
-	    onlyDeclared = true;
+	    new List(first.getLine(),first.getCharNum(),list,true).compile(writer,env,it);
     }
     public TypeInfo getType(){
 	    return type;

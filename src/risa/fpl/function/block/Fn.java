@@ -53,6 +53,9 @@ public class Fn extends AFunctionBlock {
         var fnEnv = new FnEnv(env,returnType,classType);
 		var args = parseArguments(b,it,fnEnv,owner);
 		if(it.hasNext()) {
+		    if(env.hasModifier(Modifier.ABSTRACT)){
+		        throw new CompilerException(line,charNum,"abstract methods can only be declared");
+            }
 			b.write("{\n");
 			var block = it.nextList();
 			block.compile(b,fnEnv,it);
