@@ -89,6 +89,9 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write(";\n");
         var type = cEnv.getInstanceType();
+        for(var parent:type.getParents()){
+
+        }
         writer.write(b.getText());
         var constructor = type.getConstructor();
         if(constructor == null){

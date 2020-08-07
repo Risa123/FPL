@@ -66,7 +66,6 @@ add notepad++ syntax for FPL
 fix class function checks for name clashes
 fix compiler not using cnames of types in function pointer
 fix types used in declarations not imported with type using them
-added abstract classes and methods
-added interface
-added virtual methods
-add parent constructor calling
+classes can be abstract
+interfaces and virtual methods added but not yet implemented
+parent constructor calling
