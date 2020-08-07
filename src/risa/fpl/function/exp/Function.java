@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.Modifier;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
@@ -19,6 +20,7 @@ public class Function extends TypeInfo implements IField {
 	private final boolean method;
 	private String prev_code;
 	private final AccessModifier accessModifier;
+	private Modifier type;
     public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner,AccessModifier accessModifier,AEnv env) {
        super(name,cname);
        this.returnType = returnType;
@@ -56,6 +58,10 @@ public class Function extends TypeInfo implements IField {
 
     @Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+        if(type == Modifier.ABSTRACT || type == Modifier.VIRTUAL){
+            writer.write(getPrevCode());
+            writer.write("->");
+        }
 		writer.write(getCname());
 		writer.write('(');
 		var args = new ArrayList<TypeInfo>(this.args.length);
@@ -112,5 +118,7 @@ public class Function extends TypeInfo implements IField {
     public final TypeInfo[]getArguments(){
         return args;
     }
-
+    public void setType(Modifier type){
+        this.type = type;
+    }
 }

@@ -69,3 +69,4 @@ fix types used in declarations not imported with type using them
 added abstract classes and methods
 added interface
 added virtual methods
+add parent constructor calling

@@ -6,8 +6,11 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.function.statement.ClassVariable;
+import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -25,6 +28,20 @@ public final class Constructor extends AFunctionBlock {
         var constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType(), parseArguments(b,it,fEnv,type),cEnv.getNameSpace(this),env);
         type.setConstructor(constructor);
         b.write("{\n");
+        if(it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
+            var callStart = it.next();
+            TypeInfo parentType = null;
+            for(var p:type.getParents()){
+                if(!(p instanceof InterfaceInfo)){
+                    parentType = p;
+                }
+            }
+            if(parentType == null){
+                throw new CompilerException(callStart,"this type has no parent");
+            }
+            ((ClassVariable)parentType.getConstructor()).compileAsParentConstructor(b,fEnv,it,callStart.getLine(),callStart.getCharNum());
+            b.write(";\n");
+        }
         it.nextList().compile(b,fEnv,it);
         b.write("}\n");
         cEnv.addMethod(constructor,b.getText());

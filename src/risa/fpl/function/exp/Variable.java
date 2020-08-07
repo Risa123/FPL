@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
-import risa.fpl.env.IClassOwnedEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
@@ -48,7 +47,6 @@ public final class Variable extends ValueExp {
             writer.write('&');
             writePrev(writer);
 		    writer.write(code);
-			//writePrev(writer);
 			return new PointerInfo(type);
 		}else if(type instanceof PointerInfo p && !p.isFunctionPointer()){
 		    TypeInfo t;

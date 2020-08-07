@@ -141,7 +141,9 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         }
         type.buildDeclaration(env);
 	    env.addType(idV,type);
-	    env.addFunction(id.getValue(),constructor);
+	    if(!env.hasModifier(Modifier.ABSTRACT)){
+            env.addFunction(id.getValue(),constructor);
+        }
 		return TypeInfo.VOID;
 	}
 }

@@ -39,4 +39,7 @@ public final class ClassVariable extends Function {
         }
 		return TypeInfo.VOID;
 	}
+	public void compileAsParentConstructor(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+       super.compile(writer, env, it, line, charNum);
+    }
 }

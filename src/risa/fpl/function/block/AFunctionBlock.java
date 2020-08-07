@@ -6,8 +6,10 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
+import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -24,7 +26,8 @@ public abstract class AFunctionBlock extends ABlock{
             env.addFunction("this",new Variable(new PointerInfo(owner),"this","this"));
         }
         while(it.hasNext()) {
-            if(it.peek() instanceof List) {
+            var peeked = it.peek();
+            if(peeked instanceof List || ((Atom)peeked).getType() == TokenType.END_ARGS) {
                 break;
             }
             if(first) {

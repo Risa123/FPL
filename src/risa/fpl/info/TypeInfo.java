@@ -127,4 +127,7 @@ public class TypeInfo {
   public ArrayList<TypeInfo>getRequiredTypes(){
       return requiredTypes;
   }
+  public ArrayList<TypeInfo>getParents(){
+      return parents;
+  }
 }

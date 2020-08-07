@@ -57,9 +57,7 @@ public class ValueExp extends AField {
 		   }else {
 			   selector = ".";
 		   }
-		}else if(field instanceof  Function && !(type instanceof PointerInfo)){
-		    prefix = "&";
-        }
+		}
 		if(getPrevCode() != null){
 		    prefix = getPrevCode() + prefix;
         }

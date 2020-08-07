@@ -76,7 +76,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     }
     @Override
     public String getNameSpace(IFunction caller){
-	    if(caller instanceof Var || caller instanceof Function f && f.getAccessModifier() != AccessModifier.PUBLIC) {
+	    if(caller instanceof Var || caller instanceof Function f && f.getAccessModifier() == AccessModifier.PRIVATE) {
             return "";
         }
 	    return nameSpace;

@@ -67,6 +67,15 @@ public class Fn extends AFunctionBlock {
 			appendSemicolon = true;
 		}
         var f = new Function(id.getValue(),returnType,cID,args,env.hasModifier(Modifier.NATIVE),owner,env.getAccessModifier(),env);
+        Modifier type = null;
+        if(env.hasModifier(Modifier.ABSTRACT)){
+            type = Modifier.ABSTRACT;
+        }else if(env.hasModifier(Modifier.VIRTUAL)){
+            type = Modifier.VIRTUAL;
+        }
+        if(type != null){
+            f.setType(type);
+        }
         var p = new PointerInfo(f);
         if(env instanceof ClassEnv cEnv){
            cEnv.addMethod(f,b.getText());

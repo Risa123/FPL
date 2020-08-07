@@ -109,7 +109,7 @@ public final class Var implements IFunction {
 							writer.write("const ");
 						}
 						if(expType  instanceof PointerInfo p && p.isFunctionPointer()){
-						    cID = p.getFunctionPointerDeclaration(cID);
+                            cID = p.getFunctionPointerDeclaration(cID);
                         }else{
                             writer.write(expType.getCname());
                             writer.write(' ');
