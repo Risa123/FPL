@@ -12,8 +12,7 @@ import java.util.stream.Collectors;
 import risa.fpl.env.ProgramEnv;
 
 public final class FPL {
-	private final String cc,output;
-	private final String outputDirectory;
+	private final String cc,output,outputDirectory;
 	private final PrintStream errStream;
 	private final ProgramEnv env = new ProgramEnv();
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();

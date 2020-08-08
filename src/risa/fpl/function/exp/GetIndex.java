@@ -20,13 +20,9 @@ public final class GetIndex extends AField {
 		writer.write('[');
 		var indexAtom = it.nextAtom();
 		var indexType = env.getFunction(indexAtom).compile(writer, env, it, line, charNum);
-		if(indexType instanceof NumberInfo n) {
-			if(n.floatingPoint) {
-				throw new CompilerException(indexAtom,"integer number expected");
-			}
-		}else {
-			throw new CompilerException(indexAtom,"integer number expected");
-		}
+		if(!indexType.isIntegerNumber()){
+		    throw new CompilerException(indexAtom,"integer number expected");
+        }
 		writer.write(']');
 		return returnType;
 	}

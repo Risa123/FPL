@@ -39,4 +39,7 @@ class Tokenizer{
  this Readable readable{
     this readable = readable
  }
+ fn void close {
+   readable close
+ }
 }

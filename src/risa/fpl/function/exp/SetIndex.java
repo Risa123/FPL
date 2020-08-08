@@ -16,11 +16,7 @@ public final class SetIndex extends AField {
 		writer.write('[');
 		var indexExp = it.nextAtom();
 	    var indexType = env.getFunction(indexExp).compile(writer, env, it, line, charNum);
-	    if(indexType instanceof NumberInfo n) {
-	    	if(n.floatingPoint) {
-	    		throw new CompilerException(indexExp,"integer number expected");
-	    	}
-	    }else {
+	    if(!indexType.isIntegerNumber()) {
 	    	throw new CompilerException(indexExp,"integer number expected");
 	    }
 		writer.write("]=");

@@ -69,3 +69,11 @@ fix types used in declarations not imported with type using them
 classes can be abstract
 interfaces and virtual methods added but not yet implemented
 parent constructor calling
+0.1.0 snapshot 5
+implemented interface
+constructor may not have a block but just call to parent constructor
+method asByte removed from char
+cast can be used to cast char to integer number and vice-versa
+cast can be used to cast interface back to non-primitive type
+every class implementing an interface has methods to converting to given interface
+example method name: asInterface

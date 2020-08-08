@@ -1,10 +1,11 @@
 use {
-  std.backend
   compiler.tokenizer
   std.io
 }
 
 native fn int main int argc string* argv {
   FileReader reader "test"
+  reader close
+  var readable reader asReadable
   return 0
 }

@@ -95,6 +95,10 @@ public final class ModuleEnv extends ANameSpacedEnv {
         }
 		return nameSpace;
 	}
+	@Override
+    public String getNameSpace(){
+	    return nameSpace;
+    }
 	public void requestFromOutSide(){
 	    getRequestFromOutSide = true;
     }

@@ -92,7 +92,7 @@ public final class Variable extends ValueExp {
                     return type;
                 }
             }
-            if(operator.equals("%=") && (type instanceof NumberInfo n && !n.floatingPoint || type instanceof PointerInfo)){
+            if(operator.equals("%=") && (type instanceof NumberInfo n && !n.isFloatingPoint() || type instanceof PointerInfo)){
                 process(operator,writer,it,env);
                 return TypeInfo.VOID;
             }else if(type instanceof PointerInfo && operator.equals("drf=")){

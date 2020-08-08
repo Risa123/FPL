@@ -2,6 +2,7 @@ package risa.fpl.function.block;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -9,6 +10,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
 import risa.fpl.env.ModuleEnv;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.statement.ClassVariable;
@@ -43,6 +45,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         var cEnv = new ClassEnv(modEnv,cID,idV);
 		TypeInfo parentType = null;
 		List block = null;
+		var interfaces = new ArrayList<InterfaceInfo>();
         while(it.hasNext()){
             var exp = it.next();
             if(exp instanceof List l){
@@ -58,8 +61,8 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                     throw new CompilerException(typeID,"primitive types cannot inherited from");
                 }
                 cEnv.getInstanceType().addParent(type);
-                if(type instanceof InterfaceInfo){
-
+                if(type instanceof InterfaceInfo i){
+                   interfaces.add(i);
                 }else{
                     if(parentType != null){
                         throw new CompilerException(typeID,"there is already parent class");
@@ -89,8 +92,27 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write(";\n");
         var type = cEnv.getInstanceType();
-        for(var parent:type.getParents()){
-
+        for(var method:type.getAbstractMethods()){
+            var name = method.getName();
+            var impl = type.getField(name,cEnv);
+            if(!(impl instanceof Function) || ((Function)impl).getType() == Modifier.ABSTRACT){
+                throw new CompilerException(line,charNum,"this class doesn´t implement method " + name);
+            }
+            var noParentImpl = true;
+            if(parentType != null){
+                var parentImpl = parentType.getField(name,cEnv);
+                if(parentImpl instanceof Function f && f.getType() != Modifier.ABSTRACT){
+                    noParentImpl = false;
+                }
+            }
+            if(noParentImpl){
+                cEnv.appendToInitializer(cID);
+                cEnv.appendToInitializer("_impl.");
+                cEnv.appendToInitializer(method.getCname());
+                cEnv.appendToInitializer("=&");
+                cEnv.appendToInitializer(((Function) impl).getCname());
+                cEnv.appendToInitializer(";\n");
+            }
         }
         writer.write(b.getText());
         var constructor = type.getConstructor();
@@ -142,11 +164,39 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             writer.write(newMethod.getDeclaration());
             type.appendToDeclaration(newMethod.getDeclaration());
         }
-        type.buildDeclaration(env);
 	    env.addType(idV,type);
 	    if(!env.hasModifier(Modifier.ABSTRACT)){
             env.addFunction(id.getValue(),constructor);
         }
+        for(var i:interfaces){
+           writer.write("static ");
+           writer.write(i.getImplName());
+           writer.write(' ');
+           writer.write(cID);
+           writer.write("_impl;\n");
+           writer.write(i.getCname());
+           writer.write(' ');
+           var nameBuilder = new StringBuilder();
+           nameBuilder.append(cEnv.getNameSpace());
+           nameBuilder.append("_as");
+           nameBuilder.append(i.getCname());
+           var asCName = nameBuilder.toString();
+           writer.write(asCName);
+           writer.write('(');
+           writer.write(type.getCname());
+           writer.write("* this){\n");
+           writer.write(i.getCname());
+           writer.write(" tmp;\n");
+           writer.write("return tmp;\n");
+           writer.write("}\n");
+           var asName = "as" + i.getName();
+           var f = new Function(asName,i,asCName,new TypeInfo[]{},false,type, AccessModifier.PUBLIC,cEnv);
+           type.appendToDeclaration(f.getDeclaration());
+            type.addField(asName,f);
+        }
+        type.buildDeclaration(env);
+        writer.write(cEnv.getInitializer("_cinit"));
+        modEnv.appendToInitializer(cEnv.getInitializerName());
 		return TypeInfo.VOID;
 	}
 }

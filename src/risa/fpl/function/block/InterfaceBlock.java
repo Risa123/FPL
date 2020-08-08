@@ -7,6 +7,7 @@ import risa.fpl.env.InterfaceEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InterfaceInfo;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -45,17 +46,33 @@ public final class InterfaceBlock implements IFunction {
                if(!(parentType instanceof InterfaceInfo)){
                    throw new CompilerException(typeID,"interface can only inherit from interfaces");
                }
+               type.addParent(parentType);
             }
         }
         if(block == null){
             throw new CompilerException(line,charNum,"block expected as last argument");
         }
         var b = new BuilderWriter(writer);
+        var implName = type.getImplName();
+        b.write("typedef struct ");
+        b.write(implName);
+        b.write("{\n");
+        for(var parent:type.getParents()){
+            for(var method:parent.getAbstractMethods()){
+                b.write(new PointerInfo(method).getFunctionPointerDeclaration(method.getCname()));
+                b.write(";\n");
+            }
+        }
+        block.compile(b,iEnv,it);
+        b.write('}');
+        b.write(implName);
+        b.write(";\n");
         b.write("typedef struct ");
         b.write(cID);
         b.write("{\n");
-        block.compile(b,iEnv,it);
-        b.write('}');
+        b.write("void* instance;\n");
+        b.write(implName);
+        b.write("* impl;\n}");
         b.write(cID);
         b.write(";\n");
         writer.write(b.getText());

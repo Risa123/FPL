@@ -10,13 +10,13 @@ abstract class FileHandler Closeable {
    }
 }
 class FileWriter FileHandler Writable {
-  this string name;name,"w"; {}
+  this string name;name,"w"
   virtual fn void write byte* p memory size {
       file_write handle,p,size
   }
 }
 class FileReader FileHandler  Readable{
-  this string name;name,"r"; {}
+  this string name;name,"r"
   virtual fn void read byte* p memory size{
      file_read handle,p,size
   }

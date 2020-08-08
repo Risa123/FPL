@@ -20,7 +20,7 @@ public final class NumberInfo extends TypeInfo {
 	public static final NumberInfo DOUBLE = new NumberInfo("double","double",8,true);
 	public static final NumberInfo MEMORY = new NumberInfo("memory","unsigned long",8);
     private final int size;
-    public final boolean floatingPoint;
+    private final boolean floatingPoint;
 	public NumberInfo(String name, String cname,int size,boolean floatingPoint) {
 		super(name, cname,true);
 		this.size = size;
@@ -47,4 +47,7 @@ public final class NumberInfo extends TypeInfo {
 		}
 		return super.equals(o);
 	}
+	public boolean isFloatingPoint(){
+	    return floatingPoint;
+    }
 }

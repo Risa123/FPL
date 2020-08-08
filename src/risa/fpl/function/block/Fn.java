@@ -49,6 +49,8 @@ public class Fn extends AFunctionBlock {
         if(env instanceof  ClassEnv cEnv){
             owner = cEnv.getInstanceType();
             classType = owner.getClassInfo();
+        }else if(env instanceof InterfaceEnv e){
+            owner = e.getType();
         }
         var fnEnv = new FnEnv(env,returnType,classType);
 		var args = parseArguments(b,it,fnEnv,owner);

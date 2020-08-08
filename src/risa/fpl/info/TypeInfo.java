@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import risa.fpl.env.AEnv;
 import risa.fpl.env.IClassOwnedEnv;
+import risa.fpl.env.Modifier;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
@@ -16,7 +17,7 @@ public class TypeInfo {
   public static final TypeInfo CHAR = new TypeInfo("char","char",true);
   public static final TypeInfo NIL = new TypeInfo("nil","");
   static {
-	  CHAR.addField("asByte",new AsByte());
+	  CHAR.addField("cast",new Cast(CHAR));
 	  STRING.addField("get",new GetIndex(CHAR));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
 	  NIL.addField("==",new BinaryOperator(BOOL, NIL,"=="));
@@ -129,5 +130,26 @@ public class TypeInfo {
   }
   public ArrayList<TypeInfo>getParents(){
       return parents;
+  }
+  public ArrayList<Function>getAbstractMethods(){
+      var list = new ArrayList<Function>();
+      for(var field:fields.values()){
+          if(field instanceof Function f && f.getType() == Modifier.ABSTRACT){
+              list.add(f);
+          }
+      }
+      for(var parent:parents){
+          list.addAll(parent.getAbstractMethods());
+      }
+      return list;
+  }
+  public boolean isIntegerNumber(){
+      if(this instanceof NumberInfo n){
+          return !n.isFloatingPoint();
+      }
+      return false;
+  }
+  public boolean hasFieldIgnoreParents(String name){
+      return fields.containsKey(name);
   }
 }

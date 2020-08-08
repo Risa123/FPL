@@ -7,6 +7,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.ModifierBlockStat;
 import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.block.Constructor;
+import risa.fpl.function.exp.Cast;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.IField;
 import risa.fpl.function.statement.Var;
@@ -30,6 +31,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		classType = new ClassInfo(id);
 		instanceType = new TypeInfo(id,cname);
 		instanceType.setClassInfo(classType);
+		instanceType.addField("cast",new Cast(instanceType));
 	}
 	@Override
 	public void addFunction(String name,IFunction value) {
@@ -79,6 +81,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    if(caller instanceof Var || caller instanceof Function f && f.getAccessModifier() == AccessModifier.PRIVATE) {
             return "";
         }
+	    return nameSpace;
+    }
+    @Override
+    public String getNameSpace(){
 	    return nameSpace;
     }
     public void appendDeclarations(){

@@ -17,7 +17,7 @@ import risa.fpl.tokenizer.TokenType;
 public class Function extends TypeInfo implements IField {
 	private final TypeInfo returnType;
 	private final TypeInfo[]args;
-	private final boolean method;
+	private final TypeInfo methodOwner;
 	private String prev_code;
 	private final AccessModifier accessModifier;
 	private Modifier type;
@@ -26,7 +26,7 @@ public class Function extends TypeInfo implements IField {
        this.returnType = returnType;
        this.args = args;
        this.accessModifier = accessModifier;
-       this.method = methodOwner != null;
+       this.methodOwner = methodOwner;
         if(extern) {
             appendToDeclaration("extern ");
         }
@@ -58,15 +58,15 @@ public class Function extends TypeInfo implements IField {
 
     @Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-        if(type == Modifier.ABSTRACT || type == Modifier.VIRTUAL){
+        if(isVirtual() && !methodOwner.hasFieldIgnoreParents(getName())){
             writer.write(getPrevCode());
-            writer.write("->");
+            writer.write(".impl->");
         }
 		writer.write(getCname());
 		writer.write('(');
 		var args = new ArrayList<TypeInfo>(this.args.length);
-		var first = !method;
-		if(method){
+		var first = methodOwner == null;
+		if(methodOwner != null){
 		    writePrev(writer);
         }
 		while(it.hasNext()) {
@@ -97,7 +97,7 @@ public class Function extends TypeInfo implements IField {
     @Override
     public void writePrev(BufferedWriter writer) throws IOException {
         if(prev_code == null){
-           if(method){
+           if(methodOwner != null){
                writer.write("this");
            }
         }else{
@@ -120,5 +120,11 @@ public class Function extends TypeInfo implements IField {
     }
     public void setType(Modifier type){
         this.type = type;
+    }
+    public Modifier getType(){
+        return type;
+    }
+    public boolean isVirtual(){
+        return type == Modifier.ABSTRACT || type == Modifier.VIRTUAL;
     }
 }

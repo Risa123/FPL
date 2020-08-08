@@ -28,6 +28,7 @@ public final class Constructor extends AFunctionBlock {
         var constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType(), parseArguments(b,it,fEnv,type),cEnv.getNameSpace(this),env);
         type.setConstructor(constructor);
         b.write("{\n");
+        var hasParentConstructor = false;
         if(it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
             var callStart = it.next();
             TypeInfo parentType = null;
@@ -41,8 +42,13 @@ public final class Constructor extends AFunctionBlock {
             }
             ((ClassVariable)parentType.getConstructor()).compileAsParentConstructor(b,fEnv,it,callStart.getLine(),callStart.getCharNum());
             b.write(";\n");
+            hasParentConstructor = true;
         }
-        it.nextList().compile(b,fEnv,it);
+        if(it.hasNext()){
+            it.nextList().compile(b,fEnv,it);
+        }else if(!hasParentConstructor){
+            throw new CompilerException(line,charNum,"block expected as last argument");
+        }
         b.write("}\n");
         cEnv.addMethod(constructor,b.getText());
         return TypeInfo.VOID;
