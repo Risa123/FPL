@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
-import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 

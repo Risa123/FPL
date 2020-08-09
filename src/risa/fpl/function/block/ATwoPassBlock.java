@@ -21,12 +21,12 @@ public abstract class ATwoPassBlock {
             infos.add(info);
         }
         for(;;) {
-            var someNoAttempt = false;
+            var noAttempt = false;
             var it = infos.iterator();
             while(it.hasNext()) {
                 var info = it.next();
                 if(!info.attemptedToCompile) {
-                    someNoAttempt = true;
+                    noAttempt = true;
                 }
                 try {
                     info.exp.compile(info.writer, env,null);
@@ -42,7 +42,7 @@ public abstract class ATwoPassBlock {
                     }
                 }
             }
-            if(!someNoAttempt) {
+            if(!noAttempt) {
                 if(!infos.isEmpty()) {
                     var b = new StringBuilder("errors in two pass block:");
                     for(var info:infos) {

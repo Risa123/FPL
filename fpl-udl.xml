@@ -24,7 +24,7 @@
             <Keywords name="Folders in comment, open"></Keywords>
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
-            <Keywords name="Keywords1">if while class int float double bool uint sint&#x000D;&#x000A;char string byte ubyte sbyte ushort short sshort&#x000D;&#x000A;use return var fn void const native slong ulong long null memory private protected interface abstract virtual this main</Keywords>
+            <Keywords name="Keywords1">if while class int float double bool uint sint&#x000D;&#x000A;char string byte ubyte sbyte ushort short sshort&#x000D;&#x000A;use return var fn void const native slong ulong long null memory private protected interface abstract virtual this main override</Keywords>
             <Keywords name="Keywords2"></Keywords>
             <Keywords name="Keywords3"></Keywords>
             <Keywords name="Keywords4"></Keywords>

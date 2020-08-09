@@ -20,6 +20,10 @@ public class TypeInfo {
 	  CHAR.addField("cast",new Cast(CHAR));
 	  STRING.addField("get",new GetIndex(CHAR));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
+	  BOOL.addField("&&",new BinaryOperator(BOOL,BOOL,"&&"));
+      BOOL.addField("&",new BinaryOperator(BOOL,BOOL,"&"));
+      BOOL.addField("||",new BinaryOperator(BOOL,BOOL,"||"));
+      BOOL.addField("|",new BinaryOperator(BOOL,BOOL,"|"));
 	  NIL.addField("==",new BinaryOperator(BOOL, NIL,"=="));
       NIL.addField("!=",new BinaryOperator(BOOL, NIL,"!="));
   }
