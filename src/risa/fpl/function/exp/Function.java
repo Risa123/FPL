@@ -9,6 +9,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.Modifier;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
@@ -17,16 +18,17 @@ import risa.fpl.tokenizer.TokenType;
 public class Function extends TypeInfo implements IField {
 	private final TypeInfo returnType;
 	private final TypeInfo[]args;
-	private final TypeInfo methodOwner;
+	private final TypeInfo self;
 	private String prev_code;
 	private final AccessModifier accessModifier;
 	private Modifier type;
-    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,boolean extern,TypeInfo methodOwner,AccessModifier accessModifier,AEnv env) {
+	private boolean calledOnPointer;
+    public Function(String name, TypeInfo returnType, String cname, TypeInfo[] args, boolean extern, TypeInfo self, AccessModifier accessModifier, AEnv env) {
        super(name,cname);
        this.returnType = returnType;
        this.args = args;
        this.accessModifier = accessModifier;
-       this.methodOwner = methodOwner;
+       this.self = self;
         if(extern) {
             appendToDeclaration("extern ");
         }
@@ -34,9 +36,9 @@ public class Function extends TypeInfo implements IField {
         appendToDeclaration(' ');
         appendToDeclaration(cname);
         appendToDeclaration('(');
-        var first = methodOwner == null;
-        if(methodOwner != null){
-            appendToDeclaration(methodOwner.getCname());
+        var first = self == null;
+        if(self != null){
+            appendToDeclaration(self.getCname());
             appendToDeclaration("* this");
         }
         for(var arg:args) {
@@ -58,16 +60,24 @@ public class Function extends TypeInfo implements IField {
 
     @Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-        if(isVirtual() && !methodOwner.hasFieldIgnoreParents(getName())){
+        if(self instanceof InterfaceInfo){
             writer.write(getPrevCode());
             writer.write(".impl->");
         }
 		writer.write(getCname());
 		writer.write('(');
 		var args = new ArrayList<TypeInfo>(this.args.length);
-		var first = methodOwner == null;
-		if(methodOwner != null){
+		var first = self == null;
+		if(self != null){
+		    if(calledOnPointer){
+		      calledOnPointer = false;
+            }else if(!(self instanceof InterfaceInfo)){
+                writer.write('&');
+            }
 		    writePrev(writer);
+		    if(self instanceof InterfaceInfo){
+		        writer.write(".instance");
+            }
         }
 		while(it.hasNext()) {
 		   var exp = it.nextAtom();
@@ -97,7 +107,7 @@ public class Function extends TypeInfo implements IField {
     @Override
     public void writePrev(BufferedWriter writer) throws IOException {
         if(prev_code == null){
-           if(methodOwner != null){
+           if(self != null){
                writer.write("this");
            }
         }else{
@@ -126,5 +136,11 @@ public class Function extends TypeInfo implements IField {
     }
     public boolean isVirtual(){
         return type == Modifier.ABSTRACT || type == Modifier.VIRTUAL;
+    }
+    public void calledOnPointer(){
+        calledOnPointer = true;
+    }
+    public TypeInfo getSelf(){
+        return self;
     }
 }

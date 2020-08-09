@@ -18,10 +18,10 @@ public abstract class ANameSpacedEnv extends SubEnv {
         initializerName = "I" + getNameSpace() + name +"();\n";
         b.append("(){\n");
         b.append(initializer.toString());
-        b.append("}");
+        b.append("}\n");
         return b.toString();
     }
-    public final String getInitializerName(){
+    public final String getInitializerCall(){
         return initializerName;
     }
     public abstract String getNameSpace(IFunction caller);

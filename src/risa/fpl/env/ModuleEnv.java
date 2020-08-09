@@ -8,6 +8,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -16,12 +17,15 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
-	private boolean getRequestFromOutSide;
+	private boolean getRequestFromOutSide,initCalled;
 	private final ArrayList<TypeInfo> cDeclaredTypes = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
 		nameSpace = IFunction.toCId(moduleBlock.getName().replace('.','_'));
+		if(moduleBlock.isMain()){
+		    addFunction("main",new Main());
+        }
 	}
 	public void  importModule(Atom name,BufferedWriter writer) throws CompilerException, IOException {
 		var mod = moduleBlock.getModule(name);
@@ -53,6 +57,12 @@ public final class ModuleEnv extends ANameSpacedEnv {
                 }
 			}
 		}
+		if(!mod.initCalled){
+		    mod.initCalled = true;
+		    writer.write("void ");
+		    writer.write(mod.getInitializerCall());
+		    appendToInitializer(mod.getInitializerCall());
+        }
 	}
 	@Override
 	public TypeInfo getType(Atom name) throws CompilerException {
@@ -101,5 +111,17 @@ public final class ModuleEnv extends ANameSpacedEnv {
     }
 	public void requestFromOutSide(){
 	    getRequestFromOutSide = true;
+    }
+    public boolean isMain(){
+	    return moduleBlock.isMain();
+    }
+    public ArrayList<ModuleEnv> getModuleEnvironments(){
+	    return moduleBlock.getModuleEnvironments();
+    }
+    public void initCalled(){
+	    initCalled = true;
+    }
+    public boolean isInitCalled(){
+	    return initCalled;
     }
 }

@@ -55,7 +55,7 @@ private can be used in modules
 pointers to types can now used its fields/methods unless to are also fields/methods of pointer
 constructor added
 module std.io added currently with no use
-module std.system aded
+module std.system added
 0.1.0 snapshot 3
 fix fields not defined
 fix error reporting
@@ -77,3 +77,8 @@ cast can be used to cast char to integer number and vice-versa
 cast can be used to cast interface back to non-primitive type
 every class implementing an interface has methods to converting to given interface
 example method name: asInterface
+added keywords main and this to notepad++ syntax
+compilers build system changed
+added build-in main to declare main function
+impossible to declare C main
+impossible to make libraries will be reintroduced in 1.0

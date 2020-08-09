@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.ATwoPassBlock;
@@ -42,7 +43,9 @@ public final class ModuleBlock extends ATwoPassBlock {
            try (var writer = Files.newBufferedWriter(Paths.get(cfile))) {
                env = new ModuleEnv(lang.getEnv(), this);
                compile(writer,env,exps);
-               writer.write(env.getInitializer("_init"));
+               if(!isMain()){
+                   writer.write(env.getInitializer("_init"));
+               }
            }catch(CompilerException ex) {
                ex.setSourceFile(sourceFile);
                throw ex;
@@ -61,5 +64,16 @@ public final class ModuleBlock extends ATwoPassBlock {
    }
    public String getCFile(){
        return cfile;
+   }
+   public boolean isMain(){
+       return lang.getMainModule().equals(name);
+   }
+   public ArrayList<ModuleEnv> getModuleEnvironments(){
+       var modBlocks = lang.getModules();
+       var list = new ArrayList<ModuleEnv>(modBlocks.size());
+       for(var block:modBlocks){
+           list.add(block.env);
+       }
+       return list;
    }
 }

@@ -5,8 +5,7 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import risa.fpl.env.ProgramEnv;
@@ -16,11 +15,18 @@ public final class FPL {
 	private final PrintStream errStream;
 	private final ProgramEnv env = new ProgramEnv();
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();
-    public FPL(String project,String cc,String output,PrintStream errStream) throws IOException, CompilerException {
-    	this.cc = cc;
-    	this.output = output;
+	private final String mainModule;
+    public FPL(String project, PrintStream errStream) throws IOException, CompilerException {
+        var build = new Properties();
+        build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
+        if(!build.containsKey("mainModule") && !build.containsKey("cc") && build.containsKey("outputFile")){
+            throw new CompilerException(0,0,"invalid build file");
+        }
+    	this.cc = build.getProperty("cc");
+    	this.output = build.getProperty("outputFile");
     	this.errStream = errStream;
     	outputDirectory = project + "/output";
+        mainModule = build.getProperty("mainModule");
     	try {
     		Files.walk(Paths.get(project + "/src")).filter(p->p.toString().endsWith(".fpl")).forEach(p->{
         	
@@ -48,11 +54,11 @@ public final class FPL {
     	Files.createDirectory(path);
     	var files = new StringBuilder();
     	for(var name:modules.keySet()) {
-    		var mod = getModule(name);
-    		mod.compile();
-    		files.append(' ');
-    		files.append(mod.getCFile());
+    	  if(!name.equals(mainModule)){
+              compileModule(name,files);
+          }
     	}
+    	compileModule(mainModule,files);
     	var err = Runtime.getRuntime().exec(cc + " -o " + output + files).getErrorStream();
         errStream.print(new String(err.readAllBytes()));
     }
@@ -69,16 +75,28 @@ public final class FPL {
     ProgramEnv getEnv(){
         return env;
     }
+    String getMainModule(){
+        return mainModule;
+    }
+    private void compileModule(String name,StringBuilder files) throws IOException, CompilerException {
+        var mod = getModule(name);
+        mod.compile();
+        files.append(' ');
+        files.append(mod.getCFile());
+    }
 	public static void main(String[] args) throws IOException {
-		if(args.length != 3) {
-			System.err.println("<project directory><c compiler><output file> expected");
+		if(args.length != 1) {
+			System.err.println("<project directory> expected");
 			System.exit(1);
 		}
 		try {
-			new FPL(args[0],args[1],args[2],System.err).compile();
+			new FPL(args[0],System.err).compile();
 		} catch (CompilerException e) {
 			System.err.println(e.getMessage());
 			System.exit(2);
 		}
 	}
+	Collection<ModuleBlock> getModules(){
+        return modules.values();
+    }
 }

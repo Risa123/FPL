@@ -98,21 +98,12 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             if(!(impl instanceof Function) || ((Function)impl).getType() == Modifier.ABSTRACT){
                 throw new CompilerException(line,charNum,"this class doesn´t implement method " + name);
             }
-            var noParentImpl = true;
-            if(parentType != null){
-                var parentImpl = parentType.getField(name,cEnv);
-                if(parentImpl instanceof Function f && f.getType() != Modifier.ABSTRACT){
-                    noParentImpl = false;
-                }
-            }
-            if(noParentImpl){
-                cEnv.appendToInitializer(cID);
-                cEnv.appendToInitializer("_impl.");
-                cEnv.appendToInitializer(method.getCname());
-                cEnv.appendToInitializer("=&");
-                cEnv.appendToInitializer(((Function) impl).getCname());
-                cEnv.appendToInitializer(";\n");
-            }
+            cEnv.appendToInitializer(cID);
+            cEnv.appendToInitializer("_impl.");
+            cEnv.appendToInitializer(method.getCname());
+            cEnv.appendToInitializer("=&");
+            cEnv.appendToInitializer(((Function) impl).getCname());
+            cEnv.appendToInitializer(";\n");
         }
         writer.write(b.getText());
         var constructor = type.getConstructor();
@@ -187,6 +178,10 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            writer.write("* this){\n");
            writer.write(i.getCname());
            writer.write(" tmp;\n");
+           writer.write("tmp.instance=this;\n");
+           writer.write("tmp.impl=&");
+           writer.write(type.getCname());
+           writer.write("_impl;\n");
            writer.write("return tmp;\n");
            writer.write("}\n");
            var asName = "as" + i.getName();
@@ -196,7 +191,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         }
         type.buildDeclaration(env);
         writer.write(cEnv.getInitializer("_cinit"));
-        modEnv.appendToInitializer(cEnv.getInitializerName());
+        modEnv.appendToInitializer(cEnv.getInitializerCall());
 		return TypeInfo.VOID;
 	}
 }

@@ -41,7 +41,16 @@ public final class PointerInfo extends TypeInfo {
         b.append("(*");
         b.append(cID);
         b.append(")(");
-        var firstArg = true;
+        var self = f.getSelf();
+        var firstArg = self == null;
+        if(!firstArg){
+            if(self instanceof InterfaceInfo){
+               b.append("void");
+            }else{
+                b.append(self.getCname());
+            }
+            b.append("* this");
+        }
         for(var arg:f.getArguments()){
             if(firstArg){
                 firstArg = false;

@@ -2,10 +2,8 @@ use {
   compiler.tokenizer
   std.io
 }
-
-native fn int main int argc string* argv {
-  FileReader reader "test"
-  reader close
-  var readable reader asReadable
-  return 0
+main {
+ FileReader reader "test.txt"
+ Tokenizer tokenizer reader asReadable
+ tokenizer close
 }

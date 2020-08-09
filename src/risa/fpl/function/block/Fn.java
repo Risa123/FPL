@@ -30,6 +30,9 @@ public class Fn extends AFunctionBlock {
 		b.write(returnType.getCname());
 		b.write(' ');
 		var id = it.nextID();
+        if(env instanceof  ModuleEnv e && e.isMain() && id.getValue().equals("main")){
+           throw new CompilerException(id,"main method can only be declared using build-in function main");
+        }
 	    String cID;
 	    if(env.hasModifier(Modifier.NATIVE)) {
 	    	cID = id.getValue();
