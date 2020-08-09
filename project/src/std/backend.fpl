@@ -9,6 +9,7 @@ native {
  private fn memory fread void* p memory size memory msize void* file
  fn void* realloc void* p memory new_size
  private fn memory fwrite void* p memory size memory nmen
+ private fn bool feof void* file
 }
 fn int execute string cmd {
   return system cmd
@@ -24,4 +25,7 @@ fn memory file_read void* file byte* p memory size {
 }
 fn memory file_write void* file byte* p memory size {
   return fwrite p cast void*,size,1
+}
+fn bool file_eof void* file{
+   return feof file
 }

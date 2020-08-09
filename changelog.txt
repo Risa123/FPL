@@ -82,3 +82,8 @@ compilers build system changed
 added build-in main to declare main function
 impossible to declare C main
 impossible to make libraries will be reintroduced in 1.0
+0.1.0 snapshot 6
+fix main block not allowing access to arguments of main function
+override modifier added not implemented
+method ready added to Readable interface
+file_eof added to backend

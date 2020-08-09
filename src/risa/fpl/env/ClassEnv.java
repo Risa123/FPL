@@ -26,6 +26,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		super.addFunction("this",new Constructor());
 		super.addFunction("protected",new SetAccessModifier(AccessModifier.PROTECTED));
 		super.addFunction("virtual",new ModifierBlockStat(Modifier.VIRTUAL));
+		super.addFunction("override",new ModifierBlockStat(Modifier.OVERRIDE));
 		this.nameSpace = superEnv.getNameSpace(null) + cname;
 		this.cname = cname;
 		classType = new ClassInfo(id);

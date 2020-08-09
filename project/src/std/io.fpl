@@ -5,20 +5,23 @@ abstract class FileHandler Closeable {
    this string name string mode {
       handle = file_open name,mode
    }
-   virtual fn void close {
+   override fn void close {
      file_close handle
    }
 }
 class FileWriter FileHandler Writable {
   this string name;name,"w"
-  virtual fn void write byte* p memory size {
+  override fn void write byte* p memory size {
       file_write handle,p,size
   }
 }
 class FileReader FileHandler  Readable{
   this string name;name,"r"
-  virtual fn void read byte* p memory size{
+  override fn void read byte* p memory size{
      file_read handle,p,size
+  }
+  override fn bool ready {
+    return file_eof handle
   }
 }
 interface Closeable {
@@ -29,4 +32,5 @@ interface Writable Closeable {
 }
 interface Readable Closeable {
   fn void read byte* p memory size
+  fn bool ready
 }

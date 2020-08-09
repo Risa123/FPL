@@ -5,7 +5,9 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.Variable;
 import risa.fpl.info.NumberInfo;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -19,6 +21,8 @@ public final class Main implements IFunction {
             throw new CompilerException(line,charNum,"this can only be used in main module");
         }
         var fnEnv = new FnEnv(env, NumberInfo.INT,null);
+        fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
+        fnEnv.addFunction("argv",new Variable(new PointerInfo(TypeInfo.STRING),"argv","argv"));
         writer.write(modEnv.getInitializer("_init"));
         modEnv.initCalled();
         writer.write("static int ");
