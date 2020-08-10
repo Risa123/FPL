@@ -29,7 +29,6 @@ public final class FPL {
         mainModule = build.getProperty("mainModule");
     	try {
     		Files.walk(Paths.get(project + "/src")).filter(p->p.toString().endsWith(".fpl")).forEach(p->{
-        	
         		try {
         			var mod = new ModuleBlock(this,p);
     				modules.put(mod.getName(),mod);

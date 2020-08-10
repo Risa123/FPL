@@ -21,15 +21,16 @@ public class Function extends TypeInfo implements IField {
 	private final TypeInfo self;
 	private String prev_code;
 	private final AccessModifier accessModifier;
-	private Modifier type;
+	private final FunctionType type;
 	private boolean calledOnPointer;
-    public Function(String name, TypeInfo returnType, String cname, TypeInfo[] args, boolean extern, TypeInfo self, AccessModifier accessModifier, AEnv env) {
+    public Function(String name, TypeInfo returnType, String cname, TypeInfo[] args,FunctionType type, TypeInfo self, AccessModifier accessModifier, AEnv env) {
        super(name,cname);
        this.returnType = returnType;
        this.args = args;
        this.accessModifier = accessModifier;
        this.self = self;
-        if(extern) {
+       this.type = type;
+        if(type == FunctionType.NATIVE) {
             appendToDeclaration("extern ");
         }
         appendToDeclaration(returnType.getCname());
@@ -120,7 +121,7 @@ public class Function extends TypeInfo implements IField {
         return prev_code;
     }
     public static Function newNew(String cname,TypeInfo type,TypeInfo[]args,AEnv env){
-        return new Function("new",new PointerInfo(type),cname,args,false,null,AccessModifier.PUBLIC,env);
+        return new Function("new",new PointerInfo(type),cname,args,FunctionType.NORMAL,null,AccessModifier.PUBLIC,env);
     }
     public final TypeInfo getReturnType(){
         return returnType;
@@ -128,14 +129,11 @@ public class Function extends TypeInfo implements IField {
     public final TypeInfo[]getArguments(){
         return args;
     }
-    public void setType(Modifier type){
-        this.type = type;
-    }
-    public Modifier getType(){
+    public FunctionType getType(){
         return type;
     }
     public boolean isVirtual(){
-        return type == Modifier.ABSTRACT || type == Modifier.VIRTUAL;
+        return type == FunctionType.ABSTRACT || type == FunctionType.VIRTUAL;
     }
     public void calledOnPointer(){
         calledOnPointer = true;

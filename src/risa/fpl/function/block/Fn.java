@@ -8,6 +8,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
+import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.PointerInfo;
@@ -71,20 +72,19 @@ public class Fn extends AFunctionBlock {
 		}else {
 			appendSemicolon = true;
 		}
-        var f = new Function(id.getValue(),returnType,cID,args,env.hasModifier(Modifier.NATIVE),owner,env.getAccessModifier(),env);
-        Modifier type = null;
+        FunctionType type;
         if(env.hasModifier(Modifier.ABSTRACT)){
-            type = Modifier.ABSTRACT;
+            type = FunctionType.ABSTRACT;
         }else if(env.hasModifier(Modifier.VIRTUAL)){
-            type = Modifier.VIRTUAL;
+            type = FunctionType.VIRTUAL;
+        }else{
+            type = FunctionType.NORMAL;
         }
-        if(type != null){
-            f.setType(type);
-        }
+        var f = new Function(id.getValue(),returnType,cID,args,type,owner,env.getAccessModifier(),env);
         var p = new PointerInfo(f);
         if(env instanceof ClassEnv cEnv){
-           cEnv.addMethod(f,b.getText());
-        }else if(env.hasModifier(Modifier.ABSTRACT)){
+            cEnv.addMethod(f,b.getText());
+        }else if(env instanceof InterfaceEnv){
             writer.write(p.getFunctionPointerDeclaration(cID));
         }else{
             writer.write(b.getText());
@@ -98,5 +98,4 @@ public class Fn extends AFunctionBlock {
 	public boolean appendSemicolon() {
 		return appendSemicolon;
 	}
-
 }

@@ -22,6 +22,9 @@ public final class Array implements IFunction {
 			writer.write("const ");
 		}
 		var type = env.getType(it.nextID());
+		if(env instanceof ClassEnv e && e.getInstanceType() == type){
+		    writer.write("struct ");
+        }
 		writer.write(type.getCname());
 		var lenAtom = it.nextAtom();
 	    if(lenAtom.getType() != TokenType.UINT && lenAtom.getType() != TokenType.ULONG) {

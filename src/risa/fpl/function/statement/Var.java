@@ -39,6 +39,9 @@ public final class Var implements IFunction {
 			if(env.hasModifier(Modifier.CONST)) {
 				writer.write("const ");
 			}
+			if(env instanceof ClassEnv e && type == e.getInstanceType()){
+			    writer.write("struct ");
+            }
 			writer.write(type.getCname());
 			writer.write(' ');
 		}

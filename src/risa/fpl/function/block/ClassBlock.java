@@ -13,6 +13,7 @@ import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
+import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
@@ -91,19 +92,24 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 	    b.write('}');
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write(";\n");
+	    b.write(cEnv.getImpl());
         var type = cEnv.getInstanceType();
-        for(var method:type.getAbstractMethods()){
-            var name = method.getName();
-            var impl = type.getField(name,cEnv);
-            if(!(impl instanceof Function) || ((Function)impl).getType() == Modifier.ABSTRACT){
-                throw new CompilerException(line,charNum,"this class doesn´t implement method " + name);
+        if(!cEnv.isAbstract()){
+            for(var method:type.getAbstractMethods()){
+                var name = method.getName();
+                var impl = type.getField(name,cEnv);
+                if(!(impl instanceof Function) || ((Function)impl).getType() == FunctionType.ABSTRACT){
+                    throw new CompilerException(line,charNum,"this class doesn´t implement method " + name);
+                }
+                if(type.hasFieldIgnoreParents(name)){
+                    cEnv.appendToInitializer(cID);
+                    cEnv.appendToInitializer("_impl.");
+                    cEnv.appendToInitializer(method.getCname());
+                    cEnv.appendToInitializer("=&");
+                    cEnv.appendToInitializer(((Function) impl).getCname());
+                    cEnv.appendToInitializer(";\n");
+                }
             }
-            cEnv.appendToInitializer(cID);
-            cEnv.appendToInitializer("_impl.");
-            cEnv.appendToInitializer(method.getCname());
-            cEnv.appendToInitializer("=&");
-            cEnv.appendToInitializer(((Function) impl).getCname());
-            cEnv.appendToInitializer(";\n");
         }
         writer.write(b.getText());
         var constructor = type.getConstructor();
@@ -164,6 +170,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            writer.write(i.getImplName());
            writer.write(' ');
            writer.write(cID);
+           writer.write(i.getCname());
            writer.write("_impl;\n");
            writer.write(i.getCname());
            writer.write(' ');
@@ -185,7 +192,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            writer.write("return tmp;\n");
            writer.write("}\n");
            var asName = "as" + i.getName();
-           var f = new Function(asName,i,asCName,new TypeInfo[]{},false,type, AccessModifier.PUBLIC,cEnv);
+           var f = new Function(asName,i,asCName,new TypeInfo[]{},FunctionType.NORMAL,type, AccessModifier.PUBLIC,cEnv);
            type.appendToDeclaration(f.getDeclaration());
             type.addField(asName,f);
         }

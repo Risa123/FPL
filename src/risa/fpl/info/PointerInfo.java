@@ -47,6 +47,7 @@ public final class PointerInfo extends TypeInfo {
             if(self instanceof InterfaceInfo){
                b.append("void");
             }else{
+                b.append("struct ");
                 b.append(self.getCname());
             }
             b.append("* this");

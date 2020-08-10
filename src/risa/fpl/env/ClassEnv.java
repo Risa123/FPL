@@ -9,9 +9,11 @@ import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.block.Constructor;
 import risa.fpl.function.exp.Cast;
 import risa.fpl.function.exp.Function;
+import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.IField;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.ClassInfo;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
@@ -21,6 +23,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final StringBuilder methodCode = new StringBuilder(),methodDeclarations = new StringBuilder();
 	private final ClassInfo classType;
 	private final TypeInfo instanceType;
+	private final StringBuilder implBuilder = new StringBuilder();
 	public ClassEnv(ModuleEnv superEnv,String cname,String id) {
 		super(superEnv);
 		super.addFunction("this",new Constructor());
@@ -62,9 +65,15 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
               methodCode.append("static ");
          }
-         methodCode.append(code);
+         if(method.getType() != FunctionType.ABSTRACT){
+             methodCode.append(code);
+         }
          if(method.getAccessModifier() != AccessModifier.PRIVATE){
              methodDeclarations.append(method.getDeclaration());
+         }
+         if(method.isVirtual()){
+             implBuilder.append(new PointerInfo(method).getFunctionPointerDeclaration(method.getCname()));
+             implBuilder.append(";\n");
          }
     }
     public String getMethodCode(){
@@ -98,5 +107,24 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	        return field;
         }
 	    return super.getFunction(name);
+    }
+    public boolean isAbstract(){
+	    return superEnv.hasModifier(Modifier.ABSTRACT);
+    }
+    public String getImpl(){
+	    var b = new StringBuilder("typedef struct ");
+	    var implName = cname + "_impl_type";
+	    b.append(implName);
+	    b.append("{\n");
+	    b.append(implBuilder);
+	    b.append('}');
+	    b.append(implName);
+	    b.append(";\n");
+	    b.append("static ");
+	    b.append(implName);
+	    b.append(' ');
+	    b.append(cname);
+	    b.append("_impl;\n");
+	    return b.toString();
     }
 }

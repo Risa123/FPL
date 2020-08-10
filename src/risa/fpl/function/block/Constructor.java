@@ -44,6 +44,7 @@ public final class Constructor extends AFunctionBlock {
             b.write(";\n");
             hasParentConstructor = true;
         }
+        b.write(cEnv.getDefaultConstructorCode());
         if(it.hasNext()){
             it.nextList().compile(b,fEnv,it);
         }else if(!hasParentConstructor){

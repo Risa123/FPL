@@ -88,6 +88,9 @@ override modifier added not implemented
 method ready added to Readable interface
 file_eof added to backend
 0.1.0 snapshot 7
+fix abstract methods cannot be declared in non-abstract classes
+fix default constructor code not append to constructor
+fix classes can have fields of its type
 virtual and abstract methods implemented
 bool operators &,&&,|,|| added
 override added to notepad++ syntax

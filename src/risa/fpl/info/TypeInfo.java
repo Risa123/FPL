@@ -138,7 +138,7 @@ public class TypeInfo {
   public ArrayList<Function>getAbstractMethods(){
       var list = new ArrayList<Function>();
       for(var field:fields.values()){
-          if(field instanceof Function f && f.getType() == Modifier.ABSTRACT){
+          if(field instanceof Function f && f.getType() == FunctionType.ABSTRACT){
               list.add(f);
           }
       }
