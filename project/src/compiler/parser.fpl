@@ -13,3 +13,14 @@ abstract class AExp {
   }
   abstract fn void compile
 }
+class Atom AExp {
+  private {
+    string value
+  }
+  this string value {
+    this value = value
+  }
+  override fn void compile {
+
+  }
+}

@@ -91,6 +91,8 @@ file_eof added to backend
 fix abstract methods cannot be declared in non-abstract classes
 fix default constructor code not append to constructor
 fix classes can have fields of its type
+fix non-abstract or native methods not requiring blocks causing possible errors
 virtual and abstract methods implemented
 bool operators &,&&,|,|| added
 override added to notepad++ syntax
+override implemented

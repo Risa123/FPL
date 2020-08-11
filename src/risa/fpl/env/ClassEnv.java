@@ -13,6 +13,7 @@ import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.IField;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.ClassInfo;
+import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -126,5 +127,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    b.append(cname);
 	    b.append("_impl;\n");
 	    return b.toString();
+    }
+    public String getImplOf(InterfaceInfo i){
+	    return cname + i.getCname() + "_impl";
     }
 }

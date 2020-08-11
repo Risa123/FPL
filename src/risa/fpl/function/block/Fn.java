@@ -70,22 +70,41 @@ public class Fn extends AFunctionBlock {
 			}
 			b.write("}\n");
 		}else {
+		    if(!(env.hasModifier(Modifier.ABSTRACT) || env.hasModifier(Modifier.NATIVE))){
+		        throw new CompilerException(line,charNum,"block required");
+            }
 			appendSemicolon = true;
 		}
         FunctionType type;
         if(env.hasModifier(Modifier.ABSTRACT)){
             type = FunctionType.ABSTRACT;
+            appendSemicolon = false;
         }else if(env.hasModifier(Modifier.VIRTUAL)){
             type = FunctionType.VIRTUAL;
         }else{
             type = FunctionType.NORMAL;
         }
         var f = new Function(id.getValue(),returnType,cID,args,type,owner,env.getAccessModifier(),env);
+        if(owner != null){
+            var parentField = owner.getField(id.getValue(),env);
+            if(env.hasModifier(Modifier.OVERRIDE)){
+                if(!(parentField instanceof Function parentMethod)){
+                    throw new CompilerException(line,charNum,"there is no method " + id + " to override");
+                }
+                if(!parentMethod.equalSignature(f)){
+                    throw new CompilerException(line,charNum,"this method doesn´t have signature of one it overrides");
+                }
+            }else{
+                if(parentField != null){
+                    throw new CompilerException(line,charNum,"override is required");
+                }
+            }
+        }
         var p = new PointerInfo(f);
         if(env instanceof ClassEnv cEnv){
             cEnv.addMethod(f,b.getText());
         }else if(env instanceof InterfaceEnv){
-            writer.write(p.getFunctionPointerDeclaration(cID));
+            writer.write(p.getFunctionPointerDeclaration(cID) + ";\n");
         }else{
             writer.write(b.getText());
         }

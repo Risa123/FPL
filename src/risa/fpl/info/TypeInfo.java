@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import risa.fpl.env.AEnv;
 import risa.fpl.env.IClassOwnedEnv;
-import risa.fpl.env.Modifier;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
@@ -93,17 +92,20 @@ public class TypeInfo {
   public final void buildDeclaration(AEnv env){
       for(var field:fields.values()){
         if(field instanceof Variable v){
-            addType(v.getType(),env);
+            addRequiredType(v.getType(),env);
         }else if(field instanceof Function f){
-            addType(f.getReturnType(),env);
+            addRequiredType(f.getReturnType(),env);
            for(var arg:f.getArguments()){
-               addType(arg,env);
+               addRequiredType(arg,env);
            }
         }
       }
+      for(var parent:parents){
+          addRequiredType(parent,env);
+      }
       declaration = declarationBuilder.toString();
   }
-  private void addType(TypeInfo type, AEnv env){
+  private void addRequiredType(TypeInfo type, AEnv env){
       if(!env.hasTypeInCurrentEnv(type.getName())&& !type.isPrimitive() && !requiredTypes.contains(type)){
          requiredTypes.add(type);
       }
@@ -156,4 +158,9 @@ public class TypeInfo {
   public boolean hasFieldIgnoreParents(String name){
       return fields.containsKey(name);
   }
+  public String ensureCast(TypeInfo to){
+
+      return "";
+  }
+  //writing equals will cause error
 }

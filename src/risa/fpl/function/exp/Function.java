@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
-import risa.fpl.env.Modifier;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.PointerInfo;
@@ -140,5 +139,8 @@ public class Function extends TypeInfo implements IField {
     }
     public TypeInfo getSelf(){
         return self;
+    }
+    public boolean equalSignature(Function f){
+        return returnType.equals(f.returnType) && Arrays.equals(args,f.args);
     }
 }

@@ -101,14 +101,6 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                 if(!(impl instanceof Function) || ((Function)impl).getType() == FunctionType.ABSTRACT){
                     throw new CompilerException(line,charNum,"this class doesn´t implement method " + name);
                 }
-                if(type.hasFieldIgnoreParents(name)){
-                    cEnv.appendToInitializer(cID);
-                    cEnv.appendToInitializer("_impl.");
-                    cEnv.appendToInitializer(method.getCname());
-                    cEnv.appendToInitializer("=&");
-                    cEnv.appendToInitializer(((Function) impl).getCname());
-                    cEnv.appendToInitializer(";\n");
-                }
             }
         }
         writer.write(b.getText());
@@ -184,17 +176,21 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            writer.write(type.getCname());
            writer.write("* this){\n");
            writer.write(i.getCname());
-           writer.write(" tmp;\n");
-           writer.write("tmp.instance=this;\n");
+           writer.write(" tmp;\ntmp.instance=this;\n");
            writer.write("tmp.impl=&");
-           writer.write(type.getCname());
-           writer.write("_impl;\n");
-           writer.write("return tmp;\n");
-           writer.write("}\n");
+           writer.write(cEnv.getImplOf(i));
+           writer.write(";\nreturn tmp;\n}\n");
            var asName = "as" + i.getName();
            var f = new Function(asName,i,asCName,new TypeInfo[]{},FunctionType.NORMAL,type, AccessModifier.PUBLIC,cEnv);
            type.appendToDeclaration(f.getDeclaration());
-            type.addField(asName,f);
+           type.addField(asName,f);
+           if(!cEnv.isAbstract()){
+               for(var method:i.getAbstractMethods()){
+                   cEnv.appendToInitializer(cEnv.getImplOf(i) + "." +  method.getCname());
+                   var impl =(Function)type.getField(method.getName(),cEnv);
+                   cEnv.appendToInitializer("=&"  + impl.getCname()  + ";\n");
+               }
+           }
         }
         type.buildDeclaration(env);
         writer.write(cEnv.getInitializer("_cinit"));
