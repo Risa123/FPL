@@ -92,6 +92,8 @@ fix abstract methods cannot be declared in non-abstract classes
 fix default constructor code not append to constructor
 fix classes can have fields of its type
 fix non-abstract or native methods not requiring blocks causing possible errors
+fix parent constructor called in implicit constructor
+fix requires parent constructor if doesn´t have implicit one
 virtual and abstract methods implemented
 bool operators &,&&,|,|| added
 override added to notepad++ syntax

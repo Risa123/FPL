@@ -36,8 +36,6 @@ public class ValueExp extends AField {
 					it.next();
 					return onField(atom,writer,env,it,line,charNum);
 				}
-			}else {
-				throw new CompilerException(exp,"unexpected list");
 			}
 		}
         writePrev(writer);

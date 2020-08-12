@@ -101,7 +101,7 @@ public class Function extends TypeInfo implements IField {
 		   }
 		}
 		if(argCount != args.length) {
-			throw new CompilerException(line,charNum,"incorrect number of arguments expected " + Arrays.toString(args));
+			throw new CompilerException(line,charNum,"incorrect number of arguments (" + argCount + ")expected" + Arrays.toString(args));
 		}
 		writer.write(')');
 		return returnType;
