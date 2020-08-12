@@ -19,6 +19,7 @@ public final class NumberInfo extends TypeInfo {
 	public static final NumberInfo FLOAT = new NumberInfo("float","float",4,true);
 	public static final NumberInfo DOUBLE = new NumberInfo("double","double",8,true);
 	public static final NumberInfo MEMORY = new NumberInfo("memory","unsigned long",8);
+	public static final TypeInfo NUMBER = new TypeInfo("number","");
     private final int size;
     private final boolean floatingPoint;
 	public NumberInfo(String name, String cname,int size,boolean floatingPoint) {

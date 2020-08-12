@@ -31,7 +31,7 @@ public abstract class ATwoPassBlock {
                 try {
                     info.exp.compile(info.writer, env,null);
                     it.remove();
-                    writer.write(info.writer.getText());
+                    writer.write(info.writer.getCode());
                 }catch(CompilerException e) {
                     info.attemptedToCompile = true;
                     info.lastEx = e;

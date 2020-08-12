@@ -6,6 +6,7 @@ import java.util.HashMap;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.IClassOwnedEnv;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 
 public class TypeInfo {
@@ -35,6 +36,8 @@ public class TypeInfo {
   private ClassInfo classInfo;
   private final ArrayList<TypeInfo>parents = new ArrayList<>();
   private final ArrayList<TypeInfo>requiredTypes = new ArrayList<>();
+  private final HashMap<TypeInfo,String> conversionMethodCNames = new HashMap<>();
+  private TypeInfo primaryParent;
   public TypeInfo(String name,String cname,boolean primitive) {
 	  this.name = name;
 	  this.cname = cname;
@@ -155,12 +158,41 @@ public class TypeInfo {
       }
       return false;
   }
-  public boolean hasFieldIgnoreParents(String name){
-      return fields.containsKey(name);
+  public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
+      if(expCode.endsWith(";\n")){ //caused by Var
+          expCode = expCode.substring(0, expCode.length() - 2);
+      }
+      if(this != to && !primitive){
+          var prefix = "";
+          if(!comesFromPointer){
+              prefix = "&";
+          }
+          return getConversionMethodCName(to) + "(" + prefix +  expCode + ")";
+      }
+      return expCode;
   }
-  public String ensureCast(TypeInfo to){
-
-      return "";
+  public String ensureCast(TypeInfo to,String expCode){
+      return ensureCast(to,expCode,false);
   }
-  //writing equals will cause error
+  @Override
+  public boolean equals(Object o){
+      if(o instanceof TypeInfo type && type.parents.contains(this)){
+          return true;
+      }
+      return super.equals(o);
+  }
+  public String getConversionMethodCName(TypeInfo type){
+      return conversionMethodCNames.get(type);
+  }
+  public void addConversionMethodCName(TypeInfo type, String cname){
+      conversionMethodCNames.put(type,cname);
+  }
+  public void setPrimaryParent(TypeInfo primaryParent,String nameSpace){
+      this.primaryParent = primaryParent;
+      addParent(primaryParent);
+      addConversionMethodCName(primaryParent, IFunction.INTERNAL_METHOD_PREFIX + nameSpace +"_toParent");
+  }
+  public TypeInfo getPrimaryParent(){
+      return primaryParent;
+  }
 }

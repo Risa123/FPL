@@ -44,4 +44,5 @@ public interface IFunction {
   default boolean appendSemicolon() {
 	  return true;
   }
+  String INTERNAL_METHOD_PREFIX = "I";
 }

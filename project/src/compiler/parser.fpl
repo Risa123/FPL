@@ -17,10 +17,18 @@ class Atom AExp {
   private {
     string value
   }
-  this string value {
+  this int line int charNum string value;line,charNum {
     this value = value
   }
   override fn void compile {
 
   }
+}
+class List AExp {
+ this int line int charNum;line,charNum {
+
+ }
+ override fn void compile {
+
+ }
 }

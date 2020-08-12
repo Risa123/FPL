@@ -10,7 +10,6 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
 import risa.fpl.env.ModuleEnv;
-import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
@@ -69,6 +68,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                         throw new CompilerException(typeID,"there is already parent class");
                     }
                     parentType = type;
+                    cEnv.getInstanceType().setPrimaryParent(parentType,cEnv.getNameSpace());
                 }
             }
         }
@@ -89,6 +89,10 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             ex.setSourceFile("");
             throw ex;
         }
+        //parent type doesn't have implicit constructor
+        if(parentType != null && parentType.getConstructor().getArguments().length > 0 && !cEnv.isParentConstructorCalled()){
+            throw new CompilerException(line,charNum,"constructor is required to call parent constructor");
+        }
 	    b.write('}');
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write(";\n");
@@ -103,7 +107,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                 }
             }
         }
-        writer.write(b.getText());
+        writer.write(b.getCode());
         var constructor = type.getConstructor();
         if(constructor == null){
             constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this),env);
@@ -115,7 +119,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         newName.append(modEnv.getNameSpace(this));
         newName.append(cID);
         newName.append("_new");
-        type.appendToDeclaration(b.getText());
+        type.appendToDeclaration(b.getCode());
         cEnv.appendDeclarations();
         if(!env.hasModifier(Modifier.ABSTRACT)){
             writer.write(cID);
@@ -166,11 +170,11 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            writer.write("_impl;\n");
            writer.write(i.getCname());
            writer.write(' ');
-           var nameBuilder = new StringBuilder();
-           nameBuilder.append(cEnv.getNameSpace());
-           nameBuilder.append("_as");
-           nameBuilder.append(i.getCname());
-           var asCName = nameBuilder.toString();
+           var callBuilder = new StringBuilder(INTERNAL_METHOD_PREFIX);
+           callBuilder.append(cEnv.getNameSpace());
+           callBuilder.append("_as");
+           callBuilder.append(i.getCname());
+           var asCName = callBuilder.toString();
            writer.write(asCName);
            writer.write('(');
            writer.write(type.getCname());
@@ -180,10 +184,8 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            writer.write("tmp.impl=&");
            writer.write(cEnv.getImplOf(i));
            writer.write(";\nreturn tmp;\n}\n");
-           var asName = "as" + i.getName();
-           var f = new Function(asName,i,asCName,new TypeInfo[]{},FunctionType.NORMAL,type, AccessModifier.PUBLIC,cEnv);
-           type.appendToDeclaration(f.getDeclaration());
-           type.addField(asName,f);
+           type.appendToDeclaration(i.getCname() + " " + callBuilder + "(" + type.getCname() + "*);\n");
+           type.addConversionMethodCName(i,callBuilder.toString());
            if(!cEnv.isAbstract()){
                for(var method:i.getAbstractMethods()){
                    cEnv.appendToInitializer(cEnv.getImplOf(i) + "." +  method.getCname());
@@ -193,6 +195,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            }
         }
         type.buildDeclaration(env);
+        writer.write(cEnv.getImplDefinition());
         writer.write(cEnv.getInitializer("_cinit"));
         modEnv.appendToInitializer(cEnv.getInitializerCall());
 		return TypeInfo.VOID;

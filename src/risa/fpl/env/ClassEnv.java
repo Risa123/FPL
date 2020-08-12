@@ -25,6 +25,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final ClassInfo classType;
 	private final TypeInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
+	private final String implName;
+	private String toParentDeclaration;
+	private boolean parentConstructorCalled;
 	public ClassEnv(ModuleEnv superEnv,String cname,String id) {
 		super(superEnv);
 		super.addFunction("this",new Constructor());
@@ -37,6 +40,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		instanceType = new TypeInfo(id,cname);
 		instanceType.setClassInfo(classType);
 		instanceType.addField("cast",new Cast(instanceType));
+		implName = cname + "_impl_type";
 	}
 	@Override
 	public void addFunction(String name,IFunction value) {
@@ -53,11 +57,17 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		return defaultConstructor.toString();
 	}
 	public String getDefaultConstructor(){
-	    var b = new StringBuilder("void I");
+	    var b = new StringBuilder("void ");
+	    b.append(IFunction.INTERNAL_METHOD_PREFIX);
 	    b.append(nameSpace);
 	    b.append("_init(");
 	    b.append(cname);
 	    b.append("* this){\n");
+	    var primaryParent = instanceType.getPrimaryParent();
+	    if(primaryParent != null){
+	        b.append(primaryParent.getConstructor().getCname());
+	        b.append("(this);\n");
+        }
 	    b.append(defaultConstructor);
 	    b.append("}\n");
 	    return b.toString();
@@ -114,21 +124,41 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     }
     public String getImpl(){
 	    var b = new StringBuilder("typedef struct ");
-	    var implName = cname + "_impl_type";
 	    b.append(implName);
 	    b.append("{\n");
 	    b.append(implBuilder);
 	    b.append('}');
 	    b.append(implName);
 	    b.append(";\n");
-	    b.append("static ");
-	    b.append(implName);
-	    b.append(' ');
-	    b.append(cname);
-	    b.append("_impl;\n");
+	    var primaryParent = instanceType.getPrimaryParent();
+	    if(primaryParent != null){
+	        toParentDeclaration = primaryParent.getCname() + " " + IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + "_toParent()";
+	        b.append(toParentDeclaration);
+	        b.append(";\n");
+        }
 	    return b.toString();
     }
     public String getImplOf(InterfaceInfo i){
 	    return cname + i.getCname() + "_impl";
+    }
+    public String getImplDefinition(){
+	    var b = new StringBuilder();
+        b.append("static ");
+        b.append(implName);
+        b.append(' ');
+        b.append(cname);
+        b.append("_impl;\n");
+        var primaryParent = instanceType.getPrimaryParent();
+        if(primaryParent != null){
+            b.append(toParentDeclaration);
+            b.append("{}\n");
+        }
+        return b.toString();
+    }
+    public void parentConstructorCalled(){
+	    parentConstructorCalled = true;
+    }
+    public boolean isParentConstructorCalled(){
+	    return parentConstructorCalled;
     }
 }

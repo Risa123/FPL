@@ -103,10 +103,16 @@ public final class Var implements IFunction {
                         }
                         list.add(expPart);
                     }
-					var expType  = new List(exp.getLine(),exp.getCharNum(),list,true).compile(b,env,it);
-					if(type != null && !type.equals(expType)) {
-						throw new CompilerException(exp,expType  + " cannot be implicitly converted to " + type);
-					}
+                    var buffer = new BuilderWriter(writer);
+					var expType  = new List(exp.getLine(),exp.getCharNum(),list,true).compile(buffer,env,it);
+					if(type != null){
+                        if(!type.equals(expType)) {
+                            throw new CompilerException(exp,expType  + " cannot be implicitly converted to " + type);
+                        }
+                        b.write(expType.ensureCast(type,buffer.getCode()));
+                    }else{
+					    b.write(buffer.getCode());
+                    }
 					if(type == null) {
 						if(env.hasModifier(Modifier.CONST)) {
 							writer.write("const ");
@@ -121,9 +127,9 @@ public final class Var implements IFunction {
 					}
 					type = expType;
 					if(env instanceof  ClassEnv e){
-					    e.appendToDefaultConstructor("this->" + cID + b.getText() + ";\n");
+					    e.appendToDefaultConstructor("this->" + cID + b.getCode() + ";\n");
                     }else{
-                        writer.write(b.getText());
+                        writer.write(b.getCode());
                     }
 				}
 			}else if(type == null) {

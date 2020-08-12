@@ -102,11 +102,11 @@ public class Fn extends AFunctionBlock {
         }
         var p = new PointerInfo(f);
         if(env instanceof ClassEnv cEnv){
-            cEnv.addMethod(f,b.getText());
+            cEnv.addMethod(f,b.getCode());
         }else if(env instanceof InterfaceEnv){
             writer.write(p.getFunctionPointerDeclaration(cID) + ";\n");
         }else{
-            writer.write(b.getText());
+            writer.write(b.getCode());
         }
         env.addFunction("&" + id,new ValueExp(p,"&" + cID));
         env.addFunction(id.getValue(),f);

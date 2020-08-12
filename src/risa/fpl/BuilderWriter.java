@@ -17,7 +17,7 @@ public final class BuilderWriter extends BufferedWriter {
  public void write(String str){
 	builder.append(str);
  }
- public String getText() {
+ public String getCode() {
 	 return builder.toString();
  }
 }

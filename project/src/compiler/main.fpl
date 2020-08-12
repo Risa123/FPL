@@ -1,9 +1,13 @@
 use {
   compiler.tokenizer
+  compiler.parser
   std.io
 }
 main {
  FileReader reader "test.txt"
- Tokenizer tokenizer reader asReadable
+ Tokenizer tokenizer reader
  tokenizer close
+ List l
+ AExp exp l
+ exp compile
 }

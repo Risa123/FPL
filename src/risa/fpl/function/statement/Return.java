@@ -3,6 +3,7 @@ package risa.fpl.function.statement;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.SubEnv;
@@ -19,10 +20,12 @@ public final class Return implements IFunction {
 		var subEnv = (SubEnv)env;
 		if(it.hasNext()) {
 			var exp = it.next();
-		    returnType = exp.compile(writer, env,it);
+			var buffer = new BuilderWriter(writer);
+		    returnType = exp.compile(buffer, env,it);
 			if(!subEnv.getReturnType().equals(returnType)) {
 				throw new CompilerException(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
 			}
+			writer.write(returnType.ensureCast(subEnv.getReturnType(),buffer.getCode()));
 		}else {
 			if(subEnv.getReturnType() != TypeInfo.VOID){
 				throw new CompilerException(line,charNum,"this function doesnt return void");

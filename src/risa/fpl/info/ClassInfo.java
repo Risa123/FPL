@@ -38,6 +38,6 @@ public final class ClassInfo extends TypeInfo{
         NumberInfo.DOUBLE.setClassInfo(DOUBLE);
     }
     public ClassInfo(String name) {
-        super(name + " class","");
+        super(name + " class","",false);
     }
 }

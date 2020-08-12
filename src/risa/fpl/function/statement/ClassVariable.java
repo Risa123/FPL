@@ -17,7 +17,7 @@ import risa.fpl.tokenizer.TokenType;
 public final class ClassVariable extends Function {
    private final TypeInfo type,classType;
    public ClassVariable(TypeInfo type,TypeInfo classType,TypeInfo[]args,String nameSpace,AEnv env) {
-       super("constructor",TypeInfo.VOID,"I" + nameSpace + "_init",args, FunctionType.NORMAL,type, AccessModifier.PUBLIC,env);
+       super("constructor",TypeInfo.VOID,INTERNAL_METHOD_PREFIX + nameSpace + "_init",args, FunctionType.NORMAL,type, AccessModifier.PUBLIC,env);
 	   this.type = type;
 	   this.classType = classType;
    }

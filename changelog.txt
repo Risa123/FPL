@@ -96,3 +96,5 @@ virtual and abstract methods implemented
 bool operators &,&&,|,|| added
 override added to notepad++ syntax
 override implemented
+conversion to interface is implicit
+code refactoring

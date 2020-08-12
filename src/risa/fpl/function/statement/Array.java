@@ -3,6 +3,7 @@ package risa.fpl.function.statement;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
@@ -64,16 +65,18 @@ public final class Array implements IFunction {
 		    	}else {
 		    		writer.write(',');
 		    	}
-		    	var expType = exp.compile(writer, env, it);
+		    	var buffer = new BuilderWriter(writer);
+		    	var expType = exp.compile(buffer, env, it);
 		    	if(!expType.equals(type)){
 		    		throw new CompilerException(exp,type + " expected instead of " + expType );
 		    	}
+		    	writer.write(expType.ensureCast(type,buffer.getCode()));
 		    	count++;
 		    }
 		    var len = Long.parseLong(lenAtom.getValue());
 		    writer.write('}');
 		    if(count > len) {
-		    	throw new CompilerException(line,charNum,"can only have " + len+  " elements");
+		    	throw new CompilerException(line,charNum,"can only have " + len +  " elements");
 		    }
 	    }
 		return TypeInfo.VOID;

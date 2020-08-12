@@ -72,4 +72,13 @@ public final class PointerInfo extends TypeInfo {
         }
 	    return field;
     }
+    @Override
+    public String getConversionMethodCName(TypeInfo type) {
+        return this.type.getConversionMethodCName(type);
+    }
+
+    @Override
+    public String ensureCast(TypeInfo to, String expCode) {
+        return type.ensureCast(to,expCode,true);
+    }
 }

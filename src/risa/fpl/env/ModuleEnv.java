@@ -36,9 +36,9 @@ public final class ModuleEnv extends ANameSpacedEnv {
             while(it.hasNext()){
                 var type = it.next();
                 if(type.containsAllParents(cDeclaredTypes)){
-                    if(!cDeclaredTypes.contains(type)){
+                    if(!hasCDeclaredType(type)){
                         for(var rType:type.getRequiredTypes()){
-                            if(!cDeclaredTypes.contains(rType)){
+                            if(!hasCDeclaredType(rType)){
                                 writer.write(rType.getDeclaration());
                                 cDeclaredTypes.add(rType);
                             }
@@ -123,5 +123,18 @@ public final class ModuleEnv extends ANameSpacedEnv {
     }
     public boolean isInitCalled(){
 	    return initCalled;
+    }
+
+    /**
+     * same as contains but uses == instead of equals
+     * necessary to avoid issues with implementation of equals in TypeInfo
+     */
+    private boolean hasCDeclaredType(TypeInfo type){
+        for(var t:cDeclaredTypes){
+            if(t == type){
+                return true;
+            }
+        }
+	    return false;
     }
 }

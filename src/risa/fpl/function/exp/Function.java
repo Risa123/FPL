@@ -2,9 +2,9 @@ package risa.fpl.function.exp;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
@@ -23,7 +23,7 @@ public class Function extends TypeInfo implements IField {
 	private final FunctionType type;
 	private boolean calledOnPointer;
     public Function(String name, TypeInfo returnType, String cname, TypeInfo[] args,FunctionType type, TypeInfo self, AccessModifier accessModifier, AEnv env) {
-       super(name,cname);
+       super(name,cname,true);
        this.returnType = returnType;
        this.args = args;
        this.accessModifier = accessModifier;
@@ -66,7 +66,6 @@ public class Function extends TypeInfo implements IField {
         }
 		writer.write(getCname());
 		writer.write('(');
-		var args = new ArrayList<TypeInfo>(this.args.length);
 		var first = self == null;
 		if(self != null){
 		    if(calledOnPointer){
@@ -79,6 +78,7 @@ public class Function extends TypeInfo implements IField {
 		        writer.write(".instance");
             }
         }
+		int argCount = 0;
 		while(it.hasNext()) {
 		   var exp = it.nextAtom();
 		   if(exp.getType() == TokenType.ARG_SEPARATOR) {
@@ -91,11 +91,17 @@ public class Function extends TypeInfo implements IField {
 			   }else {
 				   writer.write(',');
 			   }
-			   args.add(exp.compile(writer, env, it));
+			   var buffer = new BuilderWriter(writer);
+			   var type = exp.compile(buffer, env, it);
+               if(!args[argCount].equals(type)){
+                   throw new CompilerException(exp,"incorrect argument " + Arrays.toString(args) + " are expected arguments");
+               }
+			   writer.write(type.ensureCast(args[argCount],buffer.getCode()));
+			   argCount++;
 		   }
 		}
-		if(!Arrays.equals(this.args,args.toArray())) {
-			throw new CompilerException(line,charNum,Arrays.toString(this.args) + " expected as arguments instead of " + args);
+		if(argCount != args.length) {
+			throw new CompilerException(line,charNum,"incorrect number of arguments expected " + Arrays.toString(args));
 		}
 		writer.write(')');
 		return returnType;
