@@ -13,4 +13,11 @@ public final class InterfaceInfo extends TypeInfo {
     public String getImplName(){
         return implName;
     }
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof TypeInfo type && type.getParents().contains(this)){
+            return true;
+        }
+        return this == o;
+    }
 }

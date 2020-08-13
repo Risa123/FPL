@@ -81,4 +81,7 @@ public final class PointerInfo extends TypeInfo {
     public String ensureCast(TypeInfo to, String expCode) {
         return type.ensureCast(to,expCode,true);
     }
+    public TypeInfo getType(){
+	    return type;
+    }
 }

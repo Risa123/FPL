@@ -12,6 +12,7 @@ import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
 public class Function extends TypeInfo implements IField {
@@ -80,6 +81,10 @@ public class Function extends TypeInfo implements IField {
         }
 		int argCount = 0;
 		while(it.hasNext()) {
+		   var test = it.peek();
+		   if(test instanceof List){
+		       break;
+           }
 		   var exp = it.nextAtom();
 		   if(exp.getType() == TokenType.ARG_SEPARATOR) {
 

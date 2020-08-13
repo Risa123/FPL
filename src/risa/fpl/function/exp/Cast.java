@@ -33,6 +33,8 @@ public final class Cast extends AField {
           writePrev(writer);
           writer.write(".instance");
         }else{
+	        //TODO:cast type to parent pointer or cast type pointer to parent pointer
+            
 	        throw new CompilerException(line,charNum,"cannot cast " + target + " to " + type);
         }
 		return type;

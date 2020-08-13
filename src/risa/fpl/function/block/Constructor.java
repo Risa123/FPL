@@ -6,7 +6,6 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.function.statement.ClassVariable;
-import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -32,12 +31,7 @@ public final class Constructor extends AFunctionBlock {
         var hasParentConstructor = false;
         if(it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
             var callStart = it.next();
-            TypeInfo parentType = null;
-            for(var p:type.getParents()){
-                if(!(p instanceof InterfaceInfo)){
-                    parentType = p;
-                }
-            }
+            var parentType = type.getPrimaryParent();
             if(parentType == null){
                 throw new CompilerException(callStart,"this type has no parent");
             }
@@ -46,10 +40,7 @@ public final class Constructor extends AFunctionBlock {
             hasParentConstructor = true;
             cEnv.parentConstructorCalled();
         }
-        System.out.println(line);
-        b.write(type.getConstructor().getCname());
-        b.write("(this);\n");
-        b.write(cEnv.getDefaultConstructorCode());
+        b.write(cEnv.getImplicitConstructorCode());
         if(it.hasNext()){
            it.nextList().compile(b,fEnv,it);
         }else if(!hasParentConstructor){

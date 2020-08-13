@@ -176,7 +176,7 @@ public class TypeInfo {
   }
   @Override
   public boolean equals(Object o){
-      if(o instanceof TypeInfo type && type.parents.contains(this)){
+      if(o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this)){
           return true;
       }
       return super.equals(o);
@@ -190,7 +190,6 @@ public class TypeInfo {
   public void setPrimaryParent(TypeInfo primaryParent,String nameSpace){
       this.primaryParent = primaryParent;
       addParent(primaryParent);
-      addConversionMethodCName(primaryParent, IFunction.INTERNAL_METHOD_PREFIX + nameSpace +"_toParent");
   }
   public TypeInfo getPrimaryParent(){
       return primaryParent;

@@ -19,7 +19,7 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
-	private final StringBuilder defaultConstructor = new StringBuilder();
+	private final StringBuilder implicitConstructor = new StringBuilder();
 	private final String cname,nameSpace;
 	private final StringBuilder methodCode = new StringBuilder(),methodDeclarations = new StringBuilder();
 	private final ClassInfo classType;
@@ -50,25 +50,26 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		    super.addFunction(name, value);
         }
 	}
-	public void appendToDefaultConstructor(String code) {
-		defaultConstructor.append(code);
+	public void appendToImplicitConstructor(String code) {
+		implicitConstructor.append(code);
 	}
-	public String getDefaultConstructorCode() {
-		return defaultConstructor.toString();
+	public String getImplicitConstructorCode() {
+	    var parentConstructorCall = "";
+	    var primaryParent = instanceType.getPrimaryParent();
+	    //check for implicit constructor
+	    if(primaryParent != null && primaryParent.getConstructor().getArguments().length == 0){
+	        parentConstructorCall = primaryParent.getConstructor().getCname() + "(this);\n";
+        }
+		return parentConstructorCall + implicitConstructor.toString();
 	}
-	public String getDefaultConstructor(){
+	public String getImplicitConstructor(){
 	    var b = new StringBuilder("void ");
 	    b.append(IFunction.INTERNAL_METHOD_PREFIX);
 	    b.append(nameSpace);
 	    b.append("_init(");
 	    b.append(cname);
 	    b.append("* this){\n");
-	    var primaryParent = instanceType.getPrimaryParent();
-	    if(primaryParent != null){
-	        b.append(primaryParent.getConstructor().getCname());
-	        b.append("(this);\n");
-        }
-	    b.append(defaultConstructor);
+	    b.append(getImplicitConstructorCode());
 	    b.append("}\n");
 	    return b.toString();
     }

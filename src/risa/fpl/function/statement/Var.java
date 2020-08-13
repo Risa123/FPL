@@ -127,7 +127,7 @@ public final class Var implements IFunction {
 					}
 					type = expType;
 					if(env instanceof  ClassEnv e){
-					    e.appendToDefaultConstructor("this->" + cID + b.getCode() + ";\n");
+					    e.appendToImplicitConstructor("this->" + cID + b.getCode() + ";\n");
                     }else{
                         writer.write(b.getCode());
                     }
