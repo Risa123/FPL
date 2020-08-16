@@ -162,7 +162,11 @@ public class TypeInfo {
       if(expCode.endsWith(";\n")){ //caused by Var
           expCode = expCode.substring(0, expCode.length() - 2);
       }
-      if(this != to && !primitive){
+      var npType = to;
+      if(npType instanceof PointerInfo p){
+          npType = p.getType();
+      }
+      if(this != npType && !primitive){
           var prefix = "";
           if(!comesFromPointer){
               prefix = "&";

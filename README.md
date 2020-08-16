@@ -11,5 +11,5 @@ Project directory must contain directory src for source files and file build.pro
 Format of build.properties is.  
 outputFile = (output binary)  
 cc = (C compiler command)  
-mainModule = (main module)
-This program requires java 14 preview or higher.
+mainModule = (main module)  
+**This program requires java 14 preview or higher.**

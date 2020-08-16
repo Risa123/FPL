@@ -8,5 +8,6 @@ main {
  Tokenizer tokenizer reader
  tokenizer close
  List l 1,1
- AExp exp l cast AExp*
+ AExp* exp l cast AExp*
+ exp compile
 }

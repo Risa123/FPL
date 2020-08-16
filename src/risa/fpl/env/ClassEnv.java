@@ -25,7 +25,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final ClassInfo classType;
 	private final TypeInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
-	private final String implName;
+	private final String dataName;
 	private String toParentDeclaration;
 	private boolean parentConstructorCalled;
 	public ClassEnv(ModuleEnv superEnv,String cname,String id) {
@@ -40,7 +40,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		instanceType = new TypeInfo(id,cname);
 		instanceType.setClassInfo(classType);
 		instanceType.addField("cast",new Cast(instanceType));
-		implName = cname + "_impl_type";
+		dataName = cname + "_data";
 	}
 	@Override
 	public void addFunction(String name,IFunction value) {
@@ -123,13 +123,13 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     public boolean isAbstract(){
 	    return superEnv.hasModifier(Modifier.ABSTRACT);
     }
-    public String getImpl(){
+    public String getDataDeclaration(){
 	    var b = new StringBuilder("typedef struct ");
-	    b.append(implName);
+	    b.append(dataName);
 	    b.append("{\n");
 	    b.append(implBuilder);
 	    b.append('}');
-	    b.append(implName);
+	    b.append(dataName);
 	    b.append(";\n");
 	    var primaryParent = instanceType.getPrimaryParent();
 	    if(primaryParent != null){
@@ -142,10 +142,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     public String getImplOf(InterfaceInfo i){
 	    return cname + i.getCname() + "_impl";
     }
-    public String getImplDefinition(){
+    public String getDataDefinition(){
 	    var b = new StringBuilder();
         b.append("static ");
-        b.append(implName);
+        b.append(dataName);
         b.append(' ');
         b.append(cname);
         b.append("_impl;\n");

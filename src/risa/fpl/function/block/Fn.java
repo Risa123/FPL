@@ -35,7 +35,7 @@ public class Fn extends AFunctionBlock {
            throw new CompilerException(id,"main method can only be declared using build-in function main");
         }
 	    String cID;
-	    if(env.hasModifier(Modifier.NATIVE)) {
+	    if(env.hasModifier(Modifier.NATIVE) || env.hasModifier(Modifier.ABSTRACT)) {
 	    	cID = id.getValue();
 	    	if(!IFunction.isCId(id.getValue())) {
 	    		throw new CompilerException(id,"invalid C identifier");

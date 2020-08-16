@@ -61,9 +61,13 @@ public class Function extends TypeInfo implements IField {
 
     @Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-        if(self instanceof InterfaceInfo){
+        if(self != null && isVirtual()){
             writer.write(getPrevCode());
-            writer.write(".impl->");
+            if(self instanceof InterfaceInfo){
+                writer.write(".impl->");
+            }else{
+                writer.write("->class_data->");
+            }
         }
 		writer.write(getCname());
 		writer.write('(');
