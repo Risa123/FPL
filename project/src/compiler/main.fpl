@@ -7,12 +7,4 @@ main {
  FileReader reader "test.txt"
  Tokenizer tokenizer reader
  tokenizer close
- B b
- b test
-}
-class A {
-  virtual fn void test {}
-}
-class B A{
-  override fn void test {}
 }

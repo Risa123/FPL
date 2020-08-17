@@ -75,7 +75,7 @@ public class Function extends TypeInfo implements IField {
                 writer.write(".class_data)->");
             }
         }
-		writer.write(getCname());
+		writer.write(implName);
 		writer.write('(');
 		var first = self == null;
 		if(self != null){

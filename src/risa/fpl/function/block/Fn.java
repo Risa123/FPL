@@ -81,11 +81,12 @@ public class Fn extends AFunctionBlock {
         if(env.hasModifier(Modifier.ABSTRACT)){
             type = FunctionType.ABSTRACT;
             appendSemicolon = false;
+            if(env instanceof ClassEnv e && !e.isAbstract()){ //no cast exception will happen
+                throw new CompilerException(line,charNum,"abstract method can only be declared in abstract class");
+            }
         }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
             type = FunctionType.VIRTUAL;
-            if(env.hasModifier(Modifier.OVERRIDE)){
-                implName = IFunction.toCId(id.getValue());
-            }
+            implName = IFunction.toCId(id.getValue());
         }else{
             type = FunctionType.NORMAL;
         }

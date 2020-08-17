@@ -104,7 +104,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                 var name = method.getName();
                 var impl = type.getField(name,cEnv);
                 if(!(impl instanceof Function) || ((Function)impl).getType() == FunctionType.ABSTRACT){
-                    throw new CompilerException(line,charNum,"this class doesn´t implement method " + name);
+                    throw new CompilerException(line,charNum,"this class doesn't implement method " + name);
                 }
             }
         }
