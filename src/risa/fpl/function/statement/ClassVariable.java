@@ -17,9 +17,12 @@ import risa.fpl.tokenizer.TokenType;
 public final class ClassVariable extends Function {
    private final TypeInfo type,classType;
    public ClassVariable(TypeInfo type,TypeInfo classType,TypeInfo[]args,String nameSpace,AEnv env) {
-       super("constructor",TypeInfo.VOID,INTERNAL_METHOD_PREFIX + nameSpace + "_init",args, FunctionType.NORMAL,type, AccessModifier.PUBLIC,env);
+       super("constructor",TypeInfo.VOID,makeCName(nameSpace),args, FunctionType.NORMAL,type, AccessModifier.PUBLIC,env,makeCName(nameSpace));
 	   this.type = type;
 	   this.classType = classType;
+   }
+   private static String makeCName(String nameSpace){
+      return INTERNAL_METHOD_PREFIX + nameSpace + "_init";
    }
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {

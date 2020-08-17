@@ -25,8 +25,7 @@ public final class Main implements IFunction {
         fnEnv.addFunction("argv",new Variable(new PointerInfo(TypeInfo.STRING),"argv","argv"));
         writer.write(modEnv.getInitializer("_init"));
         modEnv.initCalled();
-        writer.write("static int ");
-        writer.write("fpl_main(int argc,char** argv){\n");
+        writer.write("static int fpl_main(int argc,char** argv){\n");
         writer.write(modEnv.getInitializerCall());
         for(var e:modEnv.getModuleEnvironments()){
             if(!e.isInitCalled()){
@@ -40,9 +39,7 @@ public final class Main implements IFunction {
         if(!fnEnv.isReturnUsed()){
             writer.write("return 0;\n");
         }
-        writer.write("}\n");
-        writer.write("int main(int argc,char** argv){\n");
-        writer.write("return fpl_main(argc,argv);\n}\n");
+        writer.write("}\nint main(int argc,char** argv){\nreturn fpl_main(argc,argv);\n}\n");
         return TypeInfo.VOID;
     }
 }

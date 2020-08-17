@@ -8,6 +8,7 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
@@ -23,13 +24,15 @@ public class Function extends TypeInfo implements IField {
 	private final AccessModifier accessModifier;
 	private final FunctionType type;
 	private boolean calledOnPointer;
-    public Function(String name, TypeInfo returnType, String cname, TypeInfo[] args,FunctionType type, TypeInfo self, AccessModifier accessModifier, AEnv env) {
+	private final String implName;
+    public Function(String name, TypeInfo returnType, String cname, TypeInfo[] args,FunctionType type, TypeInfo self, AccessModifier accessModifier, AEnv env,String implName) {
        super(name,cname,true);
        this.returnType = returnType;
        this.args = args;
        this.accessModifier = accessModifier;
        this.self = self;
        this.type = type;
+       this.implName = implName;
         if(type == FunctionType.NATIVE) {
             appendToDeclaration("extern ");
         }
@@ -61,12 +64,15 @@ public class Function extends TypeInfo implements IField {
 
     @Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-        if(self != null && isVirtual()){
+        if(isVirtual()){
+            if(self instanceof InstanceInfo i){
+                writer.write("((" + i.getClassDataType() + ")");
+            }
             writer.write(getPrevCode());
             if(self instanceof InterfaceInfo){
                 writer.write(".impl->");
             }else{
-                writer.write("->class_data->");
+                writer.write(".class_data)->");
             }
         }
 		writer.write(getCname());
@@ -135,7 +141,7 @@ public class Function extends TypeInfo implements IField {
         return prev_code;
     }
     public static Function newNew(String cname,TypeInfo type,TypeInfo[]args,AEnv env){
-        return new Function("new",new PointerInfo(type),cname,args,FunctionType.NORMAL,null,AccessModifier.PUBLIC,env);
+        return new Function("new",new PointerInfo(type),cname,args,FunctionType.NORMAL,null,AccessModifier.PUBLIC,env,cname);
     }
     public final TypeInfo getReturnType(){
         return returnType;
@@ -157,5 +163,8 @@ public class Function extends TypeInfo implements IField {
     }
     public boolean equalSignature(Function f){
         return returnType.equals(f.returnType) && Arrays.equals(args,f.args);
+    }
+    public String getImplName(){
+        return implName;
     }
 }

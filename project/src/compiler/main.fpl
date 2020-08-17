@@ -7,7 +7,12 @@ main {
  FileReader reader "test.txt"
  Tokenizer tokenizer reader
  tokenizer close
- List l 1,1
- AExp* exp l cast AExp*
- exp compile
+ B b
+ b test
+}
+class A {
+  virtual fn void test {}
+}
+class B A{
+  override fn void test {}
 }

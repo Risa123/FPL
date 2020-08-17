@@ -79,9 +79,8 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 		b.write("typedef struct ");
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write("{\n");
-	    if(parentType == null){
-	       b.write("void* class_data;\n");
-        }else{
+	    b.write("void* class_data;\n");
+	    if(parentType != null){
             b.write(parentType.getCname());
             b.write(" parent;\n");
         }
@@ -110,6 +109,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             }
         }
         writer.write(b.getCode());
+        writer.write(cEnv.getDataDefinition());
         var constructor = type.getConstructor();
         if(constructor == null){
             constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this),env);
@@ -197,7 +197,6 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            }
         }
         type.buildDeclaration(env);
-        writer.write(cEnv.getDataDefinition());
         writer.write(cEnv.getInitializer("_cinit"));
         modEnv.appendToInitializer(cEnv.getInitializerCall());
 		return TypeInfo.VOID;

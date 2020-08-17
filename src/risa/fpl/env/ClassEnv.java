@@ -12,10 +12,7 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.IField;
 import risa.fpl.function.statement.Var;
-import risa.fpl.info.ClassInfo;
-import risa.fpl.info.InterfaceInfo;
-import risa.fpl.info.PointerInfo;
-import risa.fpl.info.TypeInfo;
+import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
@@ -23,9 +20,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final String cname,nameSpace;
 	private final StringBuilder methodCode = new StringBuilder(),methodDeclarations = new StringBuilder();
 	private final ClassInfo classType;
-	private final TypeInfo instanceType;
+	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
-	private final String dataName;
+	private final String dataType,dataName;
 	private String toParentDeclaration;
 	private boolean parentConstructorCalled;
 	public ClassEnv(ModuleEnv superEnv,String cname,String id) {
@@ -37,9 +34,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		this.nameSpace = superEnv.getNameSpace(null) + cname;
 		this.cname = cname;
 		classType = new ClassInfo(id);
-		instanceType = new TypeInfo(id,cname);
+		instanceType = new InstanceInfo(id,cname);
 		instanceType.setClassInfo(classType);
 		instanceType.addField("cast",new Cast(instanceType));
+		dataType = cname + "_data_type";
 		dataName = cname + "_data";
 	}
 	@Override
@@ -54,13 +52,13 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		implicitConstructor.append(code);
 	}
 	public String getImplicitConstructorCode() {
-	    var parentConstructorCall = "";
+	    var additionalCode = "this->class_data=&" + dataName + ";\n";
 	    var primaryParent = instanceType.getPrimaryParent();
 	    //check for implicit constructor
 	    if(primaryParent != null && primaryParent.getConstructor().getArguments().length == 0){
-	        parentConstructorCall = primaryParent.getConstructor().getCname() + "(this);\n";
+	        additionalCode += primaryParent.getConstructor().getCname() + "(this);\n";
         }
-		return parentConstructorCall + implicitConstructor.toString();
+		return additionalCode + implicitConstructor.toString();
 	}
 	public String getImplicitConstructor(){
 	    var b = new StringBuilder("void ");
@@ -84,7 +82,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
              methodDeclarations.append(method.getDeclaration());
          }
          if(method.isVirtual()){
-             implBuilder.append(new PointerInfo(method).getFunctionPointerDeclaration(method.getCname()));
+             implBuilder.append(new PointerInfo(method).getFunctionPointerDeclaration(method.getImplName()));
              implBuilder.append(";\n");
          }
     }
@@ -95,7 +93,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     public ClassInfo getClassType(){
 	    return classType;
     }
-    public TypeInfo getInstanceType(){
+    public InstanceInfo getInstanceType(){
 	    return instanceType;
     }
     @Override
@@ -125,13 +123,13 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     }
     public String getDataDeclaration(){
 	    var b = new StringBuilder("typedef struct ");
-	    b.append(dataName);
+        var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
+	    b.append(dataType);
 	    b.append("{\n");
 	    b.append(implBuilder);
 	    b.append('}');
-	    b.append(dataName);
+	    b.append(dataType);
 	    b.append(";\n");
-	    var primaryParent = instanceType.getPrimaryParent();
 	    if(primaryParent != null){
 	        toParentDeclaration = primaryParent.getCname() + " " + IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + "_toParent()";
 	        b.append(toParentDeclaration);
@@ -145,10 +143,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     public String getDataDefinition(){
 	    var b = new StringBuilder();
         b.append("static ");
-        b.append(dataName);
+        b.append(dataType);
         b.append(' ');
-        b.append(cname);
-        b.append("_impl;\n");
+        b.append(dataName);
+        b.append(";\n");
         var primaryParent = instanceType.getPrimaryParent();
         if(primaryParent != null){
             b.append(toParentDeclaration);
@@ -161,5 +159,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     }
     public boolean isParentConstructorCalled(){
 	    return parentConstructorCalled;
+    }
+    public String getDataName(){
+	    return dataName;
     }
 }

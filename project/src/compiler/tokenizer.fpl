@@ -42,4 +42,7 @@ class Tokenizer{
  fn void close {
    readable close
  }
+ fn bool hasNext {
+    return readable ready
+ }
 }
