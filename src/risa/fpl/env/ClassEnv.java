@@ -52,12 +52,15 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		implicitConstructor.append(code);
 	}
 	public String getImplicitConstructorCode() {
-	    var additionalCode = "this->class_data=&" + dataName + ";\n";
-	    var primaryParent = instanceType.getPrimaryParent();
-	    //check for implicit constructor
-	    if(primaryParent != null && primaryParent.getConstructor().getArguments().length == 0){
-	        additionalCode += primaryParent.getConstructor().getCname() + "(this);\n";
+	    var additionalCode = "";
+        var primaryParent = instanceType.getPrimaryParent();
+        //check for implicit constructor
+        if(primaryParent != null && primaryParent.getConstructor().getArguments().length == 0){
+            additionalCode += primaryParent.getConstructor().getCname() + "(this);\n";
         }
+	    if(!isAbstract()){
+	        additionalCode += "this->class_data=&" + dataName + ";\n";
+	     }
 		return additionalCode + implicitConstructor.toString();
 	}
 	public String getImplicitConstructor(){

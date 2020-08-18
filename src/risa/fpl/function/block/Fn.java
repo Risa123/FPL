@@ -100,15 +100,21 @@ public class Fn extends AFunctionBlock {
                 if(!parentMethod.equalSignature(f)){
                     throw new CompilerException(line,charNum,"this method doesn't have signature of one it overrides");
                 }
-                if(parentMethod.getSelf() instanceof InstanceInfo i){
-                    var cEnv = (ClassEnv)env; //override can only appear in ClassEnv
-                    cEnv.appendToInitializer(cEnv.getDataName() + "." + parentMethod.getImplName() + "=&");
-                    cEnv.appendToInitializer(f.getCname() + ";\n");
-                }
             }else{
                 if(parentField != null){
                     throw new CompilerException(line,charNum,"override is required");
                 }
+            }
+            if(env.hasModifier(Modifier.OVERRIDE) || env.hasModifier(Modifier.VIRTUAL)){
+                String methodImplName;
+                if(env.hasModifier(Modifier.VIRTUAL)){
+                    methodImplName = f.getImplName();
+                }else{
+                    methodImplName = ((Function)parentField).getImplName();
+                }
+                var cEnv = (ClassEnv)env; //override can only appear in ClassEnv
+                cEnv.appendToInitializer(cEnv.getDataName() + "." + methodImplName + "=&");
+                cEnv.appendToInitializer(f.getCname() + ";\n");
             }
         }
         var p = new PointerInfo(f);

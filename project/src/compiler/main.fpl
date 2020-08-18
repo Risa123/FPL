@@ -2,9 +2,24 @@ use {
   compiler.tokenizer
   compiler.parser
   std.io
+  std.backend
 }
 main {
  FileReader reader "test.txt"
  Tokenizer tokenizer reader
  tokenizer close
+ B b
+ b test
+ b test1
+}
+abstract class A {
+  abstract fn void test
+}
+class B A {
+ override fn void test {
+   puts "test"
+ }
+ virtual fn void test1 {
+   puts "test1"
+ }
 }
