@@ -43,6 +43,6 @@ class Tokenizer{
    readable close
  }
  fn bool hasNext {
-    return readable ready
+    return readable ready; || readNext !
  }
 }

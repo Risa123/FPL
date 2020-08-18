@@ -102,3 +102,4 @@ conversion to interface and parent class is implicit
 code refactoring
 0.1.0 snapshot 8
 re-implement function pointers
+fix return

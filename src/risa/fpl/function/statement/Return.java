@@ -2,6 +2,7 @@ package risa.fpl.function.statement;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -9,7 +10,9 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.AExp;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.parser.List;
 
 public final class Return implements IFunction {
 
@@ -19,7 +22,11 @@ public final class Return implements IFunction {
 		TypeInfo returnType;
 		var subEnv = (SubEnv)env;
 		if(it.hasNext()) {
-			var exp = it.next();
+		    var list = new ArrayList<AExp>();
+		    while(it.hasNext()){
+		        list.add(it.next());
+            }
+			var exp = new List(line,charNum,list,true);
 			var buffer = new BuilderWriter(writer);
 		    returnType = exp.compile(buffer, env,it);
 			if(!subEnv.getReturnType().equals(returnType)) {
