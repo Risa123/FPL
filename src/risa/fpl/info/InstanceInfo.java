@@ -1,7 +1,7 @@
 package risa.fpl.info;
 
 public final class InstanceInfo extends TypeInfo{
-    private String attributesCode;
+    private String attributesCode,implCode;
     public InstanceInfo(String name, String cname) {
         super(name, cname);
     }
@@ -13,5 +13,11 @@ public final class InstanceInfo extends TypeInfo{
     }
     public void setAttributesCode(String attributesCode){
         this.attributesCode = attributesCode;
+    }
+    public String getImplCode(){
+        return implCode;
+    }
+    public void setImplCode(String implCode){
+        this.implCode = implCode;
     }
 }

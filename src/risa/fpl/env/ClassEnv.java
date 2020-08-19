@@ -85,6 +85,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
              methodDeclarations.append(method.getDeclaration());
          }
          if(method.isVirtual()){
+             var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
+             //check if parent already has this method
+             if(primaryParent != null && primaryParent.getField(method.getName(),this) instanceof  Function){
+                 return;
+             }
              implBuilder.append(new PointerInfo(method).getFunctionPointerDeclaration(method.getImplName()));
              implBuilder.append(";\n");
          }
@@ -126,9 +131,13 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     }
     public String getDataDeclaration(){
 	    var b = new StringBuilder("typedef struct ");
+	    instanceType.setImplCode(implBuilder.toString());
         var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
 	    b.append(dataType);
 	    b.append("{\n");
+	    if(primaryParent != null){
+	        b.append(primaryParent.getImplCode());
+        }
 	    b.append(implBuilder);
 	    b.append('}');
 	    b.append(dataType);

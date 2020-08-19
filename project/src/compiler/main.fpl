@@ -8,18 +8,4 @@ main {
  FileReader reader "test.txt"
  Tokenizer tokenizer reader
  tokenizer close
- B b
- A* a b cast A*
- a test
-}
-abstract class A {
-  abstract fn void test
-}
-class B A {
-virtual fn void test1 {
-   puts "test1"
- }
- override fn void test {
-   puts "test"
- }
 }
