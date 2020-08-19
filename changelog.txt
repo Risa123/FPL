@@ -101,5 +101,5 @@ override implemented
 conversion to interface and parent class is implicit
 code refactoring
 0.1.0 snapshot 8
-fix return
+fix return not processing expressions properly
 fix virtual method

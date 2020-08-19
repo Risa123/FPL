@@ -14,6 +14,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.statement.ClassVariable;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -80,16 +81,18 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write("{\n");
 	    b.write("void* class_data;\n");
-	    if(parentType != null){
-            b.write(parentType.getCname());
-            b.write(" parent;\n");
+	    if(parentType instanceof InstanceInfo i){
+            b.write(i.getAttributesCode());
         }
+	    var attributes = new BuilderWriter(b);
         try{
-            compile(b,cEnv,block);
+            compile(attributes,cEnv,block);
         }catch(CompilerException ex){
             ex.setSourceFile("");
             throw ex;
         }
+        cEnv.getInstanceType().setAttributesCode(attributes.getCode());
+        b.write(attributes.getCode());
         //parent type doesn't have implicit constructor
         if(parentType != null && parentType.getConstructor().getArguments().length > 0 && !cEnv.isParentConstructorCalled()){
             throw new CompilerException(line,charNum,"constructor is required to call parent constructor");

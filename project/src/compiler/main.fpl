@@ -16,10 +16,10 @@ abstract class A {
   abstract fn void test
 }
 class B A {
+virtual fn void test1 {
+   puts "test1"
+ }
  override fn void test {
    puts "test"
- }
- virtual fn void test1 {
-   puts "test1"
  }
 }
