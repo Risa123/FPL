@@ -72,7 +72,12 @@ public class Function extends TypeInfo implements IField {
             if(self instanceof InterfaceInfo){
                 writer.write(".impl->");
             }else{
-                writer.write(".class_data)->");
+                if(calledOnPointer){
+                    writer.write("->");
+                }else{
+                    writer.write('.');
+                }
+                writer.write("class_data)->");
             }
         }
 		writer.write(implName);

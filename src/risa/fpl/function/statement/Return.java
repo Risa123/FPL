@@ -35,7 +35,7 @@ public final class Return implements IFunction {
 			writer.write(returnType.ensureCast(subEnv.getReturnType(),buffer.getCode()));
 		}else {
 			if(subEnv.getReturnType() != TypeInfo.VOID){
-				throw new CompilerException(line,charNum,"this function doesnt return void");
+				throw new CompilerException(line,charNum,"this function doesn't return void");
 			}
 		}
 		subEnv.exitStatement();

@@ -9,8 +9,8 @@ main {
  Tokenizer tokenizer reader
  tokenizer close
  B b
- b test
- b test1
+ A* a b cast A*
+ a test
 }
 abstract class A {
   abstract fn void test
