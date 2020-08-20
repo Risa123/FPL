@@ -16,6 +16,7 @@ import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.InterfaceInfo;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -111,8 +112,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                 }
             }
         }
-        writer.write(b.getCode());
-        writer.write(cEnv.getDataDefinition());
+        writer.write(b.getCode() + cEnv.getDataDefinition());
         var constructor = type.getConstructor();
         if(constructor == null){
             constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this),env);
@@ -120,46 +120,33 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             type.setConstructor(constructor);
         }
         writer.write(cEnv.getMethodCode());
-        var newName = new StringBuilder();
-        newName.append(modEnv.getNameSpace(this));
-        newName.append(cID);
-        newName.append("_new");
+        var allocName = "static" + cEnv.getNameSpace() + "_alloc";
         type.appendToDeclaration(b.getCode());
         cEnv.appendDeclarations();
         if(!env.hasModifier(Modifier.ABSTRACT)){
-            writer.write(cID);
-            writer.write("* ");
-            writer.write(newName.toString());
-            writer.write('(');
+            writer.write(cID + "* " + allocName + "(");
             var args = constructor.getArguments();
-            var first = true;
-            for(int i = 0; i < args.length;++i){
-                if(first){
-                    first = false;
-                }else{
-                    writer.write(',');
-                }
-                writer.write(args[i].getCname());
-                writer.write(" a");
-                writer.write(Integer.toString(i));
-            }
+            var compiledArgs = constructorArguments(args);
+            writer.write(compiledArgs);
             writer.write("){\n");
             writer.write("void* malloc(unsigned long);\n");
             writer.write(type.getCname());
             writer.write("* p=malloc(sizeof ");
             writer.write(type.getCname());
             writer.write(");\n");
-            writer.write(constructor.getCname());
-            writer.write("(p");
-            for(int i = 0; i < constructor.getArguments().length;++i){
-                writer.write(",a");
-                writer.write(Integer.toString(i));
-            }
-            writer.write(");");
+            writer.write(constructorCall(constructor,"p"));
             writer.write("\nreturn p;\n}\n");
-            var newMethod = Function.newNew(newName.toString(),type,constructor.getArguments(),env);
-            cEnv.getClassType().addField("new",newMethod);
-            writer.write(newMethod.getDeclaration());
+            var allocMethod = Function.newStatic("alloc",new PointerInfo(type),args,cEnv);
+            var classType = cEnv.getClassType();
+            classType.addField("alloc",allocMethod);
+            writer.write(allocMethod.getDeclaration());
+            type.appendToDeclaration(allocMethod.getDeclaration());
+            var newName = "static" + cEnv.getNameSpace() + "_new";
+            writer.write(type.getCname() + " " + newName + "(" + compiledArgs + "){\n" + type.getCname() + " inst;\n");
+            writer.write(constructorCall(constructor,"&inst"));
+            writer.write("return inst;\n}\n");
+            var newMethod = Function.newStatic("new",type,args,cEnv);
+            classType.addField("new",newMethod);
             type.appendToDeclaration(newMethod.getDeclaration());
         }
 	    env.addType(idV,type);
@@ -204,4 +191,28 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         modEnv.appendToInitializer(cEnv.getInitializerCall());
 		return TypeInfo.VOID;
 	}
+	private String constructorArguments(TypeInfo[]args){
+        var first = true;
+        var b = new StringBuilder();
+        for(int i = 0; i < args.length;++i){
+            if(first){
+                first = false;
+            }else{
+                b.append(',');
+            }
+            b.append(args[i].getCname()).append(" a").append(i);
+        }
+        return b.toString();
+    }
+    private String constructorCall(Function constructor,String self){
+	    var b = new StringBuilder(constructor.getCname());
+        b.append("(");
+        b.append(self);
+        for(int i = 0; i < constructor.getArguments().length;++i){
+            b.append(",a");
+            b.append(i);
+        }
+        b.append(");\n");
+        return b.toString();
+    }
 }

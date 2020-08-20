@@ -7,7 +7,9 @@ import java.util.Arrays;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.ClassEnv;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.function.IFunction;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.PointerInfo;
@@ -145,8 +147,9 @@ public class Function extends TypeInfo implements IField {
     public String getPrevCode() {
         return prev_code;
     }
-    public static Function newNew(String cname,TypeInfo type,TypeInfo[]args,AEnv env){
-        return new Function("new",new PointerInfo(type),cname,args,FunctionType.NORMAL,null,AccessModifier.PUBLIC,env,cname);
+    public static Function newStatic(String name,TypeInfo returnType,TypeInfo[]args, ClassEnv env){
+        var cname = "static" + env.getNameSpace()  + IFunction.toCId(name) ;
+        return new Function("new",returnType,cname,args,FunctionType.NORMAL,null,AccessModifier.PUBLIC,env,cname);
     }
     public final TypeInfo getReturnType(){
         return returnType;

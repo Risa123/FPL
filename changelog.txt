@@ -106,3 +106,6 @@ fix virtual method
 0.1.0 snapshot 9
 fpointer added
 try catch finally throw and fpointer is added to notepad++ syntax
+added method alloc to all classes to allocate new instance
+method new is now used to create non-dynamic instances
+fix static methods clashing with instance methods
