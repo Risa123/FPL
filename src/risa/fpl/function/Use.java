@@ -46,6 +46,9 @@ public final class Use implements IFunction{
 				if(atom.getType() != TokenType.ID) {
 					throw new CompilerException(atom,"identifier expected");
 				}
+				if(atom.getValue().equals("std.lang")){
+				    throw new CompilerException(atom,"this module is imported automatically");
+                }
 				modules.add(atom);
 			}else {
 				addFromList(mod,modules);

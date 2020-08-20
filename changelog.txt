@@ -109,3 +109,4 @@ try catch finally throw and fpointer is added to notepad++ syntax
 added method alloc to all classes to allocate new instance
 method new is now used to create non-dynamic instances
 fix static methods clashing with instance methods
+bitwise operators added

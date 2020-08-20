@@ -33,6 +33,12 @@ public final class NumberInfo extends TypeInfo {
 		addField("/",new BinaryOperator(this,this,"/"));
 		addField("*",new BinaryOperator(this,this,"*"));
 		addField("cast",new Cast(this));
+		addField(">>",new BinaryOperator(this,this,">>"));
+        addField("<<",new BinaryOperator(this,this,"<<"));
+        addField("~",new BinaryOperator(this,this,"~"));
+        addField("^",new BinaryOperator(this,this,"^"));
+        addField("|",new BinaryOperator(this,this,"|"));
+        addField("&",new BinaryOperator(this,this,"&"));
 	}
 	public NumberInfo(String name,String cname,int size) {
 		this(name,cname,size,false);
