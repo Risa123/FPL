@@ -35,7 +35,7 @@ public final class Var implements IFunction {
 		if(env.hasModifier(Modifier.NATIVE)) {
 			writer.write("extern ");
 		}
-		if(type != null && !(type instanceof Function)) {
+		if(type != null && !(type instanceof PointerInfo p && p.isFunctionPointer())) {
 			if(env.hasModifier(Modifier.CONST)) {
 				writer.write("const ");
 			}

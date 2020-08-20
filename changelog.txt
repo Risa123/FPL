@@ -104,3 +104,5 @@ code refactoring
 fix return not processing expressions properly
 fix virtual method
 0.1.0 snapshot 9
+fpointer added
+try catch finally throw and fpointer is added to notepad++ syntax

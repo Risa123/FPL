@@ -10,10 +10,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.ValueExp;
-import risa.fpl.info.ClassInfo;
-import risa.fpl.info.InstanceInfo;
-import risa.fpl.info.PointerInfo;
-import risa.fpl.info.TypeInfo;
+import risa.fpl.info.*;
 import risa.fpl.parser.ExpIterator;
 
 public class Fn extends AFunctionBlock {
@@ -125,7 +122,7 @@ public class Fn extends AFunctionBlock {
         }else{
             writer.write(b.getCode());
         }
-        env.addFunction("&" + id,new ValueExp(p,"&" + cID));
+        env.addFunction("&" + id,new ValueExp(new PointerInfo(f),"&" + cID));
         env.addFunction(id.getValue(),f);
         env.addType(id.getValue(),p,false);
 		return TypeInfo.VOID;

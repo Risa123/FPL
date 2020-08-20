@@ -172,4 +172,11 @@ public class Function extends TypeInfo implements IField {
     public String getImplName(){
         return implName;
     }
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof Function f){
+            return equalSignature(f);
+        }
+        return false;
+    }
 }

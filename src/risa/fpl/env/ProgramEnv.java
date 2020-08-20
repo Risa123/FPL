@@ -9,6 +9,7 @@ import risa.fpl.function.block.Fn;
 import risa.fpl.function.block.InterfaceBlock;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.statement.Array;
+import risa.fpl.function.statement.FPointer;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
@@ -47,5 +48,6 @@ public final class ProgramEnv extends AEnv {
 	  addFunction("private",new SetAccessModifier(AccessModifier.PRIVATE));
 	  addFunction("abstract",new ModifierBlockStat(Modifier.ABSTRACT));
 	  addFunction("interface",new InterfaceBlock());
+	  addFunction("fpointer",new FPointer());
   }
 }
