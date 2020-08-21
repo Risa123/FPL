@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import risa.fpl.CompilerException;
+import risa.fpl.FPL;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.ValueExp;
@@ -104,4 +105,5 @@ public abstract class AEnv {
   public final AccessModifier getAccessModifier(){
       return accessModifier;
   }
+  public abstract FPL getFPL();
 }

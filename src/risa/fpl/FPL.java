@@ -13,9 +13,10 @@ import risa.fpl.env.ProgramEnv;
 public final class FPL {
 	private final String cc,output,outputDirectory;
 	private final PrintStream errStream;
-	private final ProgramEnv env = new ProgramEnv();
+	private final ProgramEnv env = new ProgramEnv(this);
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();
 	private final String mainModule;
+	private final ArrayList<String>flags = new ArrayList<>();
     public FPL(String project, PrintStream errStream) throws IOException, CompilerException {
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
@@ -27,10 +28,11 @@ public final class FPL {
     	this.errStream = errStream;
     	outputDirectory = project + "/output";
         mainModule = build.getProperty("mainModule");
+        Collections.addAll(flags,build.getProperty("flags","").split(","));
     	try {
     		Files.walk(Paths.get(project + "/src")).filter(p->p.toString().endsWith(".fpl")).forEach(p->{
         		try {
-        			var mod = new ModuleBlock(this,p);
+        			var mod = new ModuleBlock(p,this);
     				modules.put(mod.getName(),mod);
     			} catch (IOException e) {
     				throw new UncheckedIOException(e);
@@ -97,5 +99,8 @@ public final class FPL {
 	}
 	Collection<ModuleBlock> getModules(){
         return modules.values();
+    }
+    public boolean hasFlag(String name){
+        return flags.contains(name);
     }
 }

@@ -8,7 +8,6 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
@@ -85,6 +84,9 @@ public final class Var implements IFunction {
 				if(env.hasModifier(Modifier.NATIVE)) {
 					throw new CompilerException(id,"native variables can only be declared");
 				}
+				if(env instanceof CStructEnv){
+				    throw new CompilerException(id,"C structures can only contain declarations");
+                }
 				var exp = it.nextAtom();
 				if(exp.getType() == TokenType.END_ARGS) {
 					if(type == null) {

@@ -1,1 +1,18 @@
 #this module is imported automatically
+class Exception {
+
+}
+private cstruct jump_buf {
+  (if_flag X86 {
+    ulong Ebp;Ebx;Edi;Esi;Esp;Eip;Registration;TryLevel
+    ulong Cookie;UnwindFunc
+    [] ulong 6 UnwindData
+  })
+}
+class Thread {
+  private {
+    int id
+    jump_buf buf
+  }
+}
+Thread* currentThread

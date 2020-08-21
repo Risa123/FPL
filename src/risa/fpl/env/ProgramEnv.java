@@ -1,9 +1,11 @@
 package risa.fpl.env;
 
+import risa.fpl.FPL;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.ModifierBlockStat;
 import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.Use;
+import risa.fpl.function.block.CStructBlock;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.function.block.Fn;
 import risa.fpl.function.block.InterfaceBlock;
@@ -15,7 +17,9 @@ import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 
 public final class ProgramEnv extends AEnv {
-  public ProgramEnv() {
+  private final FPL fpl;
+  public ProgramEnv(FPL fpl) {
+      this.fpl = fpl;
 	  addFunction("fn",new Fn());
 	  addFunction("native",new ModifierBlockStat(Modifier.NATIVE));
 	  addFunction("const",new ModifierBlockStat(Modifier.CONST));
@@ -49,5 +53,10 @@ public final class ProgramEnv extends AEnv {
 	  addFunction("abstract",new ModifierBlockStat(Modifier.ABSTRACT));
 	  addFunction("interface",new InterfaceBlock());
 	  addFunction("fpointer",new FPointer());
+	  addFunction("cstruct",new CStructBlock());
+  }
+  @Override
+  public FPL getFPL(){
+      return fpl;
   }
 }

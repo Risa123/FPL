@@ -1,6 +1,7 @@
 package risa.fpl.env;
 
 import risa.fpl.CompilerException;
+import risa.fpl.FPL;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -35,5 +36,9 @@ public IFunction getFunction(Atom atom) throws CompilerException {
  }
  public void exitStatement() {
 	 exitStatement = true;
+ }
+ @Override
+ public FPL getFPL()  {
+      return superEnv.getFPL();
  }
 }

@@ -124,7 +124,6 @@ public final class ModuleEnv extends ANameSpacedEnv {
     public boolean isInitCalled(){
 	    return initCalled;
     }
-
     /**
      * same as contains but uses == instead of equals
      * necessary to avoid issues with implementation of equals in TypeInfo

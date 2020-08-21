@@ -35,17 +35,9 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 		if(env.hasTypeInCurrentEnv(idV)){
 		    throw new CompilerException(id,"this type is already declared");
         }
-        String cID;
-        if(env.hasModifier(Modifier.NATIVE)){
-            cID = id.getValue();
-            if(!IFunction.isCId(cID)){
-                throw new CompilerException(id,"invalid C identifier");
-            }
-        }else{
-            cID = IFunction.toCId(id.getValue());
-        }
+        String cID = IFunction.toCId(id.getValue());
         var cEnv = new ClassEnv(modEnv,cID,idV);
-		TypeInfo parentType = null;
+		InstanceInfo parentType = null;
 		List block = null;
 		var interfaces = new ArrayList<InterfaceInfo>();
         while(it.hasNext()){
@@ -69,7 +61,11 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                     if(parentType != null){
                         throw new CompilerException(typeID,"there is already parent class");
                     }
-                    parentType = type;
+                    if(type instanceof InstanceInfo t){
+                        parentType = t;
+                    }else{
+                        throw new CompilerException(typeID,"can only inherit from other classes");
+                    }
                     cEnv.getInstanceType().setPrimaryParent(parentType,cEnv.getNameSpace());
                 }
             }
