@@ -12,7 +12,6 @@ private cstruct jump_buf {
 class Thread {
   private {
     int id
-    jump_buf buf
   }
 }
 Thread* currentThread

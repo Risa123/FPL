@@ -112,6 +112,5 @@ fix static methods clashing with instance methods
 bitwise operators added
 std.lang added
 0.1.0 snapshot 10
-cstruct function to declared c structures
-exceptions added
+cstruct function to declared c structure
 throw removed from syntax it will be a method
