@@ -1,5 +1,6 @@
 package risa.fpl.function.block;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.CStructEnv;
@@ -18,9 +19,15 @@ public final class CStructBlock extends ABlock {
         if(!IFunction.isCId(cID)){
             throw new CompilerException(id,"invalid C identifier");
         }
-        writer.write("typedef struct " + cID + "{\n");
-        it.nextList().compile(writer,new CStructEnv(env,cID),it);
-        writer.write("}" + cID + ";\n");
+        var b  = new BuilderWriter(writer);
+        b.write("typedef struct " + cID + "{\n");
+        var sEnv = new CStructEnv(env,cID);
+        it.nextList().compile(b,sEnv,it);
+        b.write("}" + cID + ";\n");
+        var type = sEnv.getType();
+        writer.write(b.getCode());
+        type.appendToDeclaration(b.getCode());
+        type.buildDeclaration(env);
         return  TypeInfo.VOID;
     }
 }

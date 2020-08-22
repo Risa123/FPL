@@ -81,18 +81,18 @@ public final class Var implements IFunction {
 			}
             var type = this.type;
 			if(it.hasNext()) {
-				if(env.hasModifier(Modifier.NATIVE)) {
-					throw new CompilerException(id,"native variables can only be declared");
-				}
-				if(env instanceof CStructEnv){
-				    throw new CompilerException(id,"C structures can only contain declarations");
-                }
 				var exp = it.nextAtom();
 				if(exp.getType() == TokenType.END_ARGS) {
 					if(type == null) {
 						throw new CompilerException(exp,"cannot infer type");
 					}
 				}else {
+                    if(env.hasModifier(Modifier.NATIVE)) {
+                        throw new CompilerException(id,"native variables can only be declared");
+                    }
+                    if(env instanceof CStructEnv){
+                        throw new CompilerException(id,"C structures can only contain declarations");
+                    }
 					declaredOnly = false;
 					var b = new BuilderWriter(writer);
 					b.write('=');

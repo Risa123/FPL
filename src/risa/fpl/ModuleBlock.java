@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.ATwoPassBlock;
+import risa.fpl.function.exp.Throw;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.parser.Parser;
@@ -38,6 +39,9 @@ public final class ModuleBlock extends ATwoPassBlock {
 		   throw e;
 	   }
    }
+   private Atom makeID(String id){
+       return new Atom(0,0,id, TokenType.ID);
+   }
    public void compile() throws IOException, CompilerException {
        if (!compiled) {
            compiled = true;
@@ -45,9 +49,12 @@ public final class ModuleBlock extends ATwoPassBlock {
                env = new ModuleEnv(fpl.getEnv(), this);
                writer.write("#include<setjmp.h>\n");
                if(!name.equals("std.lang")){
-                   env.importModule(new Atom(0,0,"std.lang", TokenType.ID),writer);
+                   env.importModule(makeID("std.lang"),writer);
                }
                compile(writer,env,exps);
+               if(name.equals("std.lang")){
+                   env.getType(makeID("Exception")).addField("throw",new Throw());
+               }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
                }

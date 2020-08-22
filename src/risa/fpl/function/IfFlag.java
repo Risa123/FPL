@@ -1,4 +1,4 @@
-package risa.fpl.function.exp;
+package risa.fpl.function;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
@@ -8,11 +8,14 @@ import risa.fpl.parser.ExpIterator;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public final class Throw extends AField {
+public final class IfFlag implements IFunction {
     @Override
     public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-        writePrev(writer);
-        writer.write(";\nlongjmp(_std_lang_currentThread->_env,_std_lang_currentThread->_id);\n");
+        var flag = it.nextID().getValue();
+        var exp = it.next();
+        if(env.getFPL().hasFlag(flag)){
+            exp.compile(writer,env,it);
+        }
         return TypeInfo.VOID;
     }
 }

@@ -19,4 +19,7 @@ public final class CStructEnv extends SubEnv {
             super.addFunction(name,func);
         }
     }
+    public TypeInfo getType(){
+        return type;
+    }
 }

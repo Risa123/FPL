@@ -1,10 +1,7 @@
 package risa.fpl.env;
 
 import risa.fpl.FPL;
-import risa.fpl.function.AccessModifier;
-import risa.fpl.function.ModifierBlockStat;
-import risa.fpl.function.SetAccessModifier;
-import risa.fpl.function.Use;
+import risa.fpl.function.*;
 import risa.fpl.function.block.CStructBlock;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.function.block.Fn;
@@ -54,6 +51,7 @@ public final class ProgramEnv extends AEnv {
 	  addFunction("interface",new InterfaceBlock());
 	  addFunction("fpointer",new FPointer());
 	  addFunction("cstruct",new CStructBlock());
+	  addFunction("if_flag",new IfFlag());
   }
   @Override
   public FPL getFPL(){

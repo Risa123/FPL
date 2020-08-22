@@ -119,4 +119,7 @@ public final class Variable extends ValueExp {
     public TypeInfo getType(){
 	    return type;
     }
+    public String getExternDeclaration(){
+	    return "extern " + type.getCname() +  " " + code + ";\n";
+    }
 }

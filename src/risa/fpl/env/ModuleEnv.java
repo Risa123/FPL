@@ -10,6 +10,7 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
+import risa.fpl.function.exp.Variable;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
@@ -55,7 +56,9 @@ public final class ModuleEnv extends ANameSpacedEnv {
 				if(f.getAccessModifier() != AccessModifier.PRIVATE){
                     writer.write(f.getDeclaration());
                 }
-			}
+			}else if(func instanceof Variable v){
+			    writer.write(v.getExternDeclaration());
+            }
 		}
 		if(!mod.initCalled){
 		    mod.initCalled = true;
