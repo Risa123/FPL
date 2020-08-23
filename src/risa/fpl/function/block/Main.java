@@ -37,9 +37,14 @@ public final class Main implements IFunction {
         }
         it.nextList().compile(writer,fnEnv,it);
         if(!fnEnv.isReturnUsed()){
-            writer.write("return 0;\n");
+            writer.write("return 0;\n}\n");
         }
-        writer.write("}\nint main(int argc,char** argv){\nreturn fpl_main(argc,argv);\n}\n");
+        writer.write("int main(int argc,char** argv){\n");
+        writer.write("_Thread mainThread = static_std_lang_Thread_new();\n");
+        writer.write("_std_lang_currentThread = &mainThread;\n");
+        writer.write("int printf(char* str,...);\nint setjmp(jmp_buf env);\n");
+        writer.write("int tmp = setjmp(_std_lang_currentThread->_env);\n");
+        writer.write("if(tmp != 0){\nprintf(\"exception happened\");\nreturn 1;\n}\nreturn fpl_main(argc,argv);\n}");
         return TypeInfo.VOID;
     }
 }

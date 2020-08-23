@@ -117,5 +117,6 @@ throw removed from syntax it will be a method
 std.lang is imported to every module
 0.1.0 snapshot 11
 fix cstruct not importable
-fix module variable declarations not include
+fix module variable declarations not included
 if_flag added
+0.1.0 snapshot 12

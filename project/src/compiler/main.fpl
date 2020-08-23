@@ -8,4 +8,5 @@ main {
  FileReader reader "test.txt"
  Tokenizer tokenizer reader
  tokenizer close
+ Exception:new;throw
 }

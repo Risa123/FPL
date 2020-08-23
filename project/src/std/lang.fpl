@@ -3,7 +3,8 @@ class Exception {
 
 }
 
-private cstruct jump_buf {
+private{
+ cstruct jump_buffer {
   if_flag x86 {
     ulong Ebp;Ebx;Edi;Esi;Esp;Eip;Registration;TryLevel
     ulong Cookie;UnwindFunc
@@ -51,10 +52,23 @@ private cstruct jump_buf {
     long RsBSP;RsPFS;ApUNAT;ApLC;IntSp;IntNats;Preds
   }
 }
+cstruct jmp_buf {
+  if_flag x86 {
+    [] int  16 jmp_buf
+  }
+  if_flag ia64 {
+    [] ulong  66 jmp_buf # JBLEN(33) * FLOAT128 (see: setjmp.h)
+  }
+  if_flag x86_64 {
+    [] ulong 32 jmp_buf #JBLEN(16) * FLOAT128
+  }
+  }
+
+}
 class Thread {
   private {
-    int id
-    jump_buf env
+    int id 1
+    jmp_buf env
   }
 }
 Thread* currentThread

@@ -47,7 +47,6 @@ public final class ModuleBlock extends ATwoPassBlock {
            compiled = true;
            try (var writer = Files.newBufferedWriter(Paths.get(cFile))) {
                env = new ModuleEnv(fpl.getEnv(), this);
-               writer.write("#include<setjmp.h>\n");
                if(!name.equals("std.lang")){
                    env.importModule(makeID("std.lang"),writer);
                }
