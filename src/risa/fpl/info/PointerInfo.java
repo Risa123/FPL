@@ -9,11 +9,11 @@ public final class PointerInfo extends TypeInfo {
 	    super(type.getName() +"*",type.getCname() + "*",true);
         this.type = type;
         if(type != TypeInfo.VOID){
-            addField("+",new BinaryOperator(this,this,"+"));
-            addField("-",new BinaryOperator(this,this,"-"));
-            addField("*",new BinaryOperator(this,this,"*"));
-            addField("/",new BinaryOperator(this,this,"/"));
-            addField("%",new BinaryOperator(this,this,"%"));
+            addField("+",new BinaryOperator(this,NumberInfo.MEMORY,"+"));
+            addField("-",new BinaryOperator(this,NumberInfo.MEMORY,"-"));
+            addField("*",new BinaryOperator(this,NumberInfo.MEMORY,"*"));
+            addField("/",new BinaryOperator(this,NumberInfo.MEMORY,"/"));
+            addField("%",new BinaryOperator(this,NumberInfo.MEMORY,"%"));
             addField("get",new GetIndex(this));
             addField("set",new SetIndex());
             addField("==",new BinaryOperator(BOOL,this,"=="));

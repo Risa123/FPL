@@ -1,12 +1,12 @@
 use {
   compiler.tokenizer
   compiler.parser
-  std.io
-  std.backend
+  #std.io.file
 }
 main {
+(
  FileReader reader "test.txt"
  Tokenizer tokenizer reader
  tokenizer close
- Exception:new;throw
+ )
 }

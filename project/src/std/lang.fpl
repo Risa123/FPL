@@ -1,73 +1,35 @@
 #this module is imported automatically
 class Exception {
-
+   private {
+     string message
+   }
+   this string message {
+     this message = message
+   }
+   virtual fn string getMessage {
+     return message
+   }
 }
-
 private{
- cstruct jump_buffer {
-  if_flag x86 {
-    ulong Ebp;Ebx;Edi;Esi;Esp;Eip;Registration;TryLevel
-    ulong Cookie;UnwindFunc
-    [] ulong 6 UnwindData
-  }
-  if_flag x86_64 {
-    ulong Frame;Rbx;Rsp;Rbp;Rsi;Rdi;R12;R13;R14
-    ulong R15;Rip;Spare;
-    [] ulong 2 Xmm6
-    [] ulong 2 Xmm7
-    [] ulong 2 Xmm8
-    [] ulong 2 Xmm9
-    [] ulong 2 Xmm10
-    [] ulong 2 Xmm11
-    [] ulong 2 Xmm12
-    [] ulong 2 Xmm13
-    [] ulong 2 Xmm14
-    [] ulong 2 Xmm15
-  }
-  if_flag ia64 {
-    [] ulong 6 iAReserved
-    ulong Registration;TryLevel;Cookie;UnwindFunc
-    [] ulong 6 UnwindData
-    [] ulong 2 FltS0
-    [] ulong 2 FltS1
-    [] ulong 2 FltS2
-    [] ulong 2 FltS3
-    [] ulong 2 FltS4
-    [] ulong 2 FltS5
-    [] ulong 2 FltS6
-    [] ulong 2 FltS7
-    [] ulong 2 FltS8
-    [] ulong 2 FltS9
-    [] ulong 2 FltS10
-    [] ulong 2 FltS11
-    [] ulong 2 FltS12
-    [] ulong 2 FltS13
-    [] ulong 2 FltS14
-    [] ulong 2 FltS15
-    [] ulong 2 FltS16
-    [] ulong 2 FltS17
-    [] ulong 2 FltS18
-    [] ulong 2 FltS19
-    long FPSR;StIIP;BrS0;BrS1;BrS2;BrS3;BrS4;IntS0;IntS1;IntS2;IntS3
-    long RsBSP;RsPFS;ApUNAT;ApLC;IntSp;IntNats;Preds
-  }
-}
-cstruct jmp_buf {
-  if_flag x86 {
-    [] int  16 jmp_buf
-  }
-  if_flag ia64 {
-    [] ulong  66 jmp_buf # JBLEN(33) * FLOAT128 (see: setjmp.h)
-  }
-  if_flag x86_64 {
-    [] ulong 32 jmp_buf #JBLEN(16) * FLOAT128
-  }
-  }
+    fpointer void throwTargetType
 }
 class Thread {
-  private {
-    int id 1
-    jmp_buf env
+ private {
+  throwTargetType throwTarget
+  Exception* exception
+  string name
+  fn void handleException Exception* ex {
+      throwTarget
   }
+ }
+ this string name {
+   this name = name
+ }
+ fn void setName string name {
+   this name = name
+ }
+ fn string getName {
+   return name
+ }
 }
 Thread* currentThread

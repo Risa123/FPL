@@ -1,3 +1,4 @@
+use std.io.base
 use std.backend
 
 abstract class FileHandler Closeable {
@@ -23,14 +24,4 @@ class FileReader FileHandler  Readable{
   override fn bool ready {
     return file_eof handle
   }
-}
-interface Closeable {
-  fn void close
-}
-interface Writable Closeable {
-    fn void write byte* p memory size
-}
-interface Readable Closeable {
-  fn void read byte* p memory size
-  fn bool ready
 }

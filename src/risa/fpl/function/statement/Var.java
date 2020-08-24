@@ -75,9 +75,10 @@ public final class Var implements IFunction {
 			var declaredOnly = true;
 			if(type != null) {
 			    if(type instanceof PointerInfo p && p.isFunctionPointer()){
-			       cID = p.getFunctionPointerDeclaration(cID);
+			       writer.write(p.getFunctionPointerDeclaration(cID));
+                }else{
+                    writer.write(cID);
                 }
-				writer.write(cID);
 			}
             var type = this.type;
 			if(it.hasNext()) {
@@ -120,12 +121,12 @@ public final class Var implements IFunction {
 							writer.write("const ");
 						}
 						if(expType  instanceof PointerInfo p && p.isFunctionPointer()){
-                            cID = p.getFunctionPointerDeclaration(cID);
+                            writer.write(p.getFunctionPointerDeclaration(cID));
                         }else{
                             writer.write(expType.getCname());
                             writer.write(' ');
+                            writer.write(cID);
                         }
-						writer.write(cID);
 					}
 					type = expType;
 					if(env instanceof  ClassEnv e){

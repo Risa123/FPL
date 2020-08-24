@@ -12,8 +12,7 @@ public final class Throw extends AField {
     @Override
     public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
         writePrev(writer);
-        writer.write(";\nvoid longjmp(jmp_buf env,int value);\n");
-        writer.write("longjmp(_std_lang_currentThread->_env,_std_lang_currentThread->_id);\n");
+        writer.write(";\n_std_lang_currentThread->_throwTarget();\n");
         return TypeInfo.VOID;
     }
 }
