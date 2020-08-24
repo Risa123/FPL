@@ -44,12 +44,10 @@ public final class FPL {
     		throw e.ex;
     	}
     	var arch = System.getProperty("os.arch");
-    	if(arch.equals("x86")){
-    	    flags.add("x86");
-        }else if(arch.equals("amd64")){
-            flags.add("x86_64");
-        }else if(arch.equals("ia64")){
-           flags.add("ia64");
+        switch (arch) {
+            case "x86" -> flags.add("x86");
+            case "amd64" -> flags.add("x86_64");
+            case "ia64" -> flags.add("ia64");
         }
     }
     public void compile() throws IOException, CompilerException {
