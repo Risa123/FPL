@@ -43,8 +43,7 @@ public final class FPL {
     	}catch(UncheckedCompilerException e) {
     		throw e.ex;
     	}
-    	var arch = System.getProperty("os.arch");
-        switch (arch) {
+        switch (System.getProperty("os.arch")) {
             case "x86" -> flags.add("x86");
             case "amd64" -> flags.add("x86_64");
             case "ia64" -> flags.add("ia64");
