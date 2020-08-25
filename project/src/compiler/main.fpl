@@ -1,7 +1,6 @@
 use {
   compiler.tokenizer
-  compiler.parser
-  #std.io.file
+  std.io.file
 }
 main {
 (

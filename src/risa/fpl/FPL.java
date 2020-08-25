@@ -86,7 +86,6 @@ public final class FPL {
     }
     private void compileModule(String name,StringBuilder files) throws IOException, CompilerException {
         var mod = getModule(name);
-        mod.compile();
         files.append(' ');
         files.append(mod.getCFile());
     }

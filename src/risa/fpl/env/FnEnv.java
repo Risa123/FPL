@@ -31,7 +31,6 @@ public final class FnEnv extends SubEnv implements IClassOwnedEnv{
 	public boolean isReturnUsed() {
 		return returnUsed;
 	}
-
     @Override
     public ClassInfo getClassType() {
         return classType;

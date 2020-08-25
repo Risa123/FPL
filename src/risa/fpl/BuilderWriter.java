@@ -7,7 +7,6 @@ public final class BuilderWriter extends BufferedWriter {
   public BuilderWriter(BufferedWriter writer) {
 	  super(writer);
   }
-
  @Override
  public void write(int c){
 	builder.append((char)c);

@@ -15,7 +15,6 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
 public final class Return implements IFunction {
-
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
 		writer.write("return ");
@@ -41,5 +40,4 @@ public final class Return implements IFunction {
 		subEnv.exitStatement();
 		return TypeInfo.VOID;
 	}
-
 }

@@ -15,7 +15,6 @@ import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
 public final class Use implements IFunction{
-
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
 		var modules = new ArrayList<Atom>();
@@ -34,9 +33,9 @@ public final class Use implements IFunction{
 				modules.add(it.nextID());
 			}
 		}
-		   for(var mod:modules) {
-               ((ModuleEnv)env).importModule(mod,writer);
-		   }
+		for(var mod:modules) {
+		    ((ModuleEnv)env).importModule(mod,writer);
+		}
 		return TypeInfo.VOID;
 	}
 	private void addFromList(AExp exp,ArrayList<Atom>modules) throws CompilerException {

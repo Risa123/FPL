@@ -18,7 +18,7 @@ public IFunction getFunction(Atom atom) throws CompilerException {
 		return superEnv.getFunction(atom);
 	}
 	return super.getFunction(atom);
-}
+   }
 
     @Override
     public TypeInfo getType(Atom atom) throws CompilerException {
@@ -27,7 +27,6 @@ public IFunction getFunction(Atom atom) throws CompilerException {
         }
         return super.getType(atom);
     }
-
     public TypeInfo getReturnType() {
 	 return ((SubEnv)superEnv).getReturnType();
  }

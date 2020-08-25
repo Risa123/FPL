@@ -16,7 +16,6 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
 public final class Array implements IFunction {
-
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
 		if(env.hasModifier(Modifier.CONST)) {
@@ -81,5 +80,4 @@ public final class Array implements IFunction {
 	    }
 		return TypeInfo.VOID;
 	}
-
 }

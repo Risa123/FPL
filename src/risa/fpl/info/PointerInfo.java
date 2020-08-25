@@ -8,21 +8,21 @@ public final class PointerInfo extends TypeInfo {
 	public PointerInfo(TypeInfo type) {
 	    super(type.getName() +"*",type.getCname() + "*",true);
         this.type = type;
-        if(type != TypeInfo.VOID){
-            addField("+",new BinaryOperator(this,NumberInfo.MEMORY,"+"));
-            addField("-",new BinaryOperator(this,NumberInfo.MEMORY,"-"));
-            addField("*",new BinaryOperator(this,NumberInfo.MEMORY,"*"));
-            addField("/",new BinaryOperator(this,NumberInfo.MEMORY,"/"));
-            addField("%",new BinaryOperator(this,NumberInfo.MEMORY,"%"));
-            addField("get",new GetIndex(this));
-            addField("set",new SetIndex());
-            addField("==",new BinaryOperator(BOOL,this,"=="));
-            addField("!=",new BinaryOperator(BOOL,this,"!="));
-            addField("cast",new Cast(this));
-            if(type instanceof Function){
-                addField("drf",(Function)type);
+        if(type != TypeInfo.VOID) {
+            addField("+", new BinaryOperator(this, NumberInfo.MEMORY, "+"));
+            addField("-", new BinaryOperator(this, NumberInfo.MEMORY, "-"));
+            addField("*", new BinaryOperator(this, NumberInfo.MEMORY, "*"));
+            addField("/", new BinaryOperator(this, NumberInfo.MEMORY, "/"));
+            addField("%", new BinaryOperator(this, NumberInfo.MEMORY, "%"));
+            addField("get", new GetIndex(this));
+            addField("set", new SetIndex());
+            addField("==", new BinaryOperator(BOOL, this, "=="));
+            addField("!=", new BinaryOperator(BOOL, this, "!="));
+            addField("cast", new Cast(this));
+            if (type instanceof Function) {
+               addField("drf",(Function)type);
             }else{
-                addField("drf",new UnaryOperator(type,"*",false));
+                addField("drf", new UnaryOperator(type, "*", false));
             }
         }
 	}

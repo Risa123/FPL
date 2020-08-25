@@ -3,7 +3,7 @@ interface Closeable {
   fn void close
 }
 interface Writable Closeable {
-    fn void write byte* p memory size
+  fn void write byte* p memory size
 }
 interface Readable Closeable {
   fn void read byte* p memory size

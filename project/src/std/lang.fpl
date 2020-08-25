@@ -1,4 +1,4 @@
-#this module is imported automatically
+(#this module is imported automatically)
 class Exception {
    private {
      string message
@@ -10,17 +10,12 @@ class Exception {
      return message
    }
 }
-private{
-    fpointer void throwTargetType
-}
+private fpointer void throwTargetType
 class Thread {
- private {
-  throwTargetType throwTarget
-  Exception* exception
-  string name
-  fn void handleException Exception* ex {
-      throwTarget
-  }
+ private string name
+ internal {
+   Exception* exception
+   throwTargetType throwTarget
  }
  this string name {
    this name = name
@@ -33,3 +28,7 @@ class Thread {
  }
 }
 Thread* currentThread
+#these functions will be made inaccessible by compiler
+fn void throw Exception* ex {
+
+}
