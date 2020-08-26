@@ -63,7 +63,6 @@ public final class PointerInfo extends TypeInfo {
         b.append(")");
         return b.toString();
     }
-
     @Override
     public IField getField(String name, AEnv from) {
 	    var field = super.getField(name,from);
@@ -76,7 +75,6 @@ public final class PointerInfo extends TypeInfo {
     public String getConversionMethodCName(TypeInfo type) {
         return this.type.getConversionMethodCName(type);
     }
-
     @Override
     public String ensureCast(TypeInfo to, String expCode) {
         return type.ensureCast(to,expCode,true);

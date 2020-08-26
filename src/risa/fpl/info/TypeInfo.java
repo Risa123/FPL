@@ -6,7 +6,6 @@ import java.util.HashMap;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.IClassOwnedEnv;
 import risa.fpl.function.AccessModifier;
-import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 
 public class TypeInfo {
@@ -109,7 +108,7 @@ public class TypeInfo {
       declaration = declarationBuilder.toString();
   }
   private void addRequiredType(TypeInfo type, AEnv env){
-      if(!env.hasTypeInCurrentEnv(type.getName())&& !type.isPrimitive() && !requiredTypes.contains(type)){
+      if(env.hasNotTypeInCurrentEnv(type) && !type.isPrimitive() && !notContains(requiredTypes,type)){
          requiredTypes.add(type);
       }
   }
@@ -130,9 +129,6 @@ public class TypeInfo {
   }
   public void addParent(TypeInfo parent){
       parents.add(parent);
-  }
-  public boolean containsAllParents(ArrayList<TypeInfo>types){
-      return types.containsAll(parents);
   }
   public ArrayList<TypeInfo>getRequiredTypes(){
       return requiredTypes;
@@ -191,11 +187,22 @@ public class TypeInfo {
   public void addConversionMethodCName(TypeInfo type, String cname){
       conversionMethodCNames.put(type,cname);
   }
-  public void setPrimaryParent(TypeInfo primaryParent,String nameSpace){
+  public void setPrimaryParent(TypeInfo primaryParent){
       this.primaryParent = primaryParent;
       addParent(primaryParent);
   }
   public TypeInfo getPrimaryParent(){
       return primaryParent;
+  }
+  /*
+   same as !ArrayList.contains but uses == instead of equals
+   */
+  public static boolean notContains(ArrayList<TypeInfo>list,TypeInfo type){
+      for(var t:list){
+          if(t == type){
+              return false;
+          }
+      }
+      return true;
   }
 }

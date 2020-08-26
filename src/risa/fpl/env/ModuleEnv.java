@@ -31,25 +31,20 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	public void  importModule(Atom name,BufferedWriter writer) throws CompilerException, IOException {
 		var mod = moduleBlock.getModule(name);
 		importedModules.add(mod);
-        var typesToImport = new ArrayList<>(mod.types.values());
-		while(!typesToImport.isEmpty()){
-            var it = typesToImport.iterator();
-            while(it.hasNext()){
-                var type = it.next();
-                if(type.containsAllParents(cDeclaredTypes)){
-                    if(!hasCDeclaredType(type)){
-                        for(var rType:type.getRequiredTypes()){
-                            if(!hasCDeclaredType(rType)){
-                                writer.write(rType.getDeclaration());
-                                cDeclaredTypes.add(rType);
-                            }
-                        }
-                        writer.write(type.getDeclaration());
-                        cDeclaredTypes.add(type);
-                    }
-                    it.remove();
-                }
-            }
+        var typesToImport = new ArrayList<TypeInfo>(mod.types.values().size());
+        for(var type:mod.types.values()){
+            toImport(typesToImport,type,mod);
+        }
+        while(!typesToImport.isEmpty()){
+           var it = typesToImport.iterator();
+           while(it.hasNext()) {
+               var type = it.next();
+               if (declaredContains(type.getRequiredTypes())) {
+                   writer.write(type.getDeclaration());
+                   it.remove();
+                   cDeclaredTypes.add(type);
+               }
+           }
         }
 		for(var func:mod.functions.values()) {
 			if(func instanceof Function f) {
@@ -127,16 +122,22 @@ public final class ModuleEnv extends ANameSpacedEnv {
     public boolean isInitCalled(){
 	    return initCalled;
     }
-    /**
-     * same as contains but uses == instead of equals
-     * necessary to avoid issues with implementation of equals in TypeInfo
-     */
-    private boolean hasCDeclaredType(TypeInfo type){
-        for(var t:cDeclaredTypes){
-            if(t == type){
-                return true;
+    private void toImport(ArrayList<TypeInfo> list,TypeInfo type,ModuleEnv mod){
+        if(TypeInfo.notContains(cDeclaredTypes,type)){
+            list.add(type);
+        }else{
+            return;
+        }
+        for(var r:type.getRequiredTypes()){
+            toImport(list,r,mod);
+        }
+    }
+    private boolean declaredContains(ArrayList<TypeInfo>types){
+        for(var type:types){
+            if(TypeInfo.notContains(cDeclaredTypes,type)){
+                return false;
             }
         }
-	    return false;
+        return true;
     }
 }

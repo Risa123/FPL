@@ -3,9 +3,7 @@ use {
   std.io.file
 }
 main {
-(
  FileReader reader "test.txt"
  Tokenizer tokenizer reader
  tokenizer close
- )
 }

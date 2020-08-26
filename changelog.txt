@@ -124,4 +124,4 @@ exceptions added
 module io separated into base and file submodules
 internal access modifier added  fields declared to be internal can only be access from inside of module
 fix pointer arithmetic now correctly expects memory operands
-fix main module compilation causing compiler to stop
+fix importing std.io.file causing compiler to stop

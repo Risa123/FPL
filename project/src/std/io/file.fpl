@@ -1,6 +1,7 @@
-use std.io.base
-use std.backend
-
+use {
+ std.io.base
+ std.backend
+}
 abstract class FileHandler Closeable {
    protected void* handle
    this string name string mode {

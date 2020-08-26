@@ -66,7 +66,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                     }else{
                         throw new CompilerException(typeID,"can only inherit from other classes");
                     }
-                    cEnv.getInstanceType().setPrimaryParent(parentType,cEnv.getNameSpace());
+                    cEnv.getInstanceType().setPrimaryParent(parentType);
                 }
             }
         }
