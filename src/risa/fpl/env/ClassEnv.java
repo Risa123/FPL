@@ -35,7 +35,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		this.nameSpace = superEnv.getNameSpace(null) + cname;
 		this.cname = cname;
 		classType = new ClassInfo(id);
-		instanceType = new InstanceInfo(id,cname);
+		instanceType = new InstanceInfo(id,cname,superEnv);
 		instanceType.setClassInfo(classType);
 		instanceType.addField("cast",new Cast(instanceType));
 		dataType = cname + "_data_type";

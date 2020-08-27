@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import risa.fpl.env.AEnv;
 import risa.fpl.env.IClassOwnedEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
@@ -64,7 +65,9 @@ public class TypeInfo {
           }
       }
       if(field != null && field.getAccessModifier() != AccessModifier.PUBLIC){
-          if(from instanceof IClassOwnedEnv e){
+          if(from instanceof SubEnv sub && field.getAccessModifier() == AccessModifier.INTERNAL && this instanceof InstanceInfo i && i.getModule() == sub.getModule()){
+              return field;
+          }else if(from instanceof IClassOwnedEnv e){
               if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() == classInfo){
                   return field;
               }else if(field.getAccessModifier() == AccessModifier.PROTECTED){
@@ -91,24 +94,24 @@ public class TypeInfo {
   public final String getDeclaration(){
       return declaration;
   }
-  public final void buildDeclaration(AEnv env){
+  public final void buildDeclaration(){
       for(var field:fields.values()){
         if(field instanceof Variable v){
-            addRequiredType(v.getType(),env);
+            addRequiredType(v.getType());
         }else if(field instanceof Function f){
-            addRequiredType(f.getReturnType(),env);
+            addRequiredType(f.getReturnType());
            for(var arg:f.getArguments()){
-               addRequiredType(arg,env);
+               addRequiredType(arg);
            }
         }
       }
       for(var parent:parents){
-          addRequiredType(parent,env);
+          addRequiredType(parent);
       }
       declaration = declarationBuilder.toString();
   }
-  private void addRequiredType(TypeInfo type, AEnv env){
-      if(env.hasNotTypeInCurrentEnv(type) && !type.isPrimitive() && !notContains(requiredTypes,type)){
+  private void addRequiredType(TypeInfo type){
+      if(!type.isPrimitive()){
          requiredTypes.add(type);
       }
   }

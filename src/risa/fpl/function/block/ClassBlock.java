@@ -182,7 +182,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                }
            }
         }
-        type.buildDeclaration(env);
+        type.buildDeclaration();
         writer.write(cEnv.getInitializer("_cinit"));
         modEnv.appendToInitializer(cEnv.getInitializerCall());
 		return TypeInfo.VOID;

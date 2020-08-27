@@ -27,7 +27,7 @@ public final class CStructBlock extends ABlock {
         var type = sEnv.getType();
         writer.write(b.getCode());
         type.appendToDeclaration(b.getCode());
-        type.buildDeclaration(env);
+        type.buildDeclaration();
         return  TypeInfo.VOID;
     }
 }

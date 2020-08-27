@@ -31,15 +31,22 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	public void  importModule(Atom name,BufferedWriter writer) throws CompilerException, IOException {
 		var mod = moduleBlock.getModule(name);
 		importedModules.add(mod);
-        var typesToImport = new ArrayList<TypeInfo>(mod.types.values().size());
-        for(var type:mod.types.values()){
-            toImport(typesToImport,type,mod);
-        }
+        var typesToImport = new ArrayList<>(mod.types.values());
         while(!typesToImport.isEmpty()){
            var it = typesToImport.iterator();
            while(it.hasNext()) {
                var type = it.next();
-               if (declaredContains(type.getRequiredTypes())) {
+               var importedRequiredTypes = new ArrayList<>(type.getRequiredTypes());
+               var rIt = importedRequiredTypes.iterator();
+               while(rIt.hasNext()){
+                   var t = rIt.next();
+                   if(TypeInfo.notContains(typesToImport,t) && TypeInfo.notContains(cDeclaredTypes,t)){
+                       writer.write(t.getDeclaration());
+                       cDeclaredTypes.add(t);
+                       rIt.remove();
+                   }
+               }
+               if (declaredContains(importedRequiredTypes)) {
                    writer.write(type.getDeclaration());
                    it.remove();
                    cDeclaredTypes.add(type);
@@ -122,16 +129,6 @@ public final class ModuleEnv extends ANameSpacedEnv {
     public boolean isInitCalled(){
 	    return initCalled;
     }
-    private void toImport(ArrayList<TypeInfo> list,TypeInfo type,ModuleEnv mod){
-        if(TypeInfo.notContains(cDeclaredTypes,type)){
-            list.add(type);
-        }else{
-            return;
-        }
-        for(var r:type.getRequiredTypes()){
-            toImport(list,r,mod);
-        }
-    }
     private boolean declaredContains(ArrayList<TypeInfo>types){
         for(var type:types){
             if(TypeInfo.notContains(cDeclaredTypes,type)){
@@ -139,5 +136,9 @@ public final class ModuleEnv extends ANameSpacedEnv {
             }
         }
         return true;
+    }
+    @Override
+    public ModuleEnv getModule(){
+	    return this;
     }
 }

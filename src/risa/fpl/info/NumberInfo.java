@@ -28,6 +28,10 @@ public final class NumberInfo extends TypeInfo {
 		this.floatingPoint = floatingPoint;
 		addField("==",new BinaryOperator(TypeInfo.BOOL,this,"=="));
 		addField("!=",new BinaryOperator(TypeInfo.BOOL,this,"!="));
+		addField(">",new BinaryOperator(TypeInfo.BOOL,this,">"));
+        addField("<",new BinaryOperator(TypeInfo.BOOL,this,"<"));
+        addField(">=",new BinaryOperator(TypeInfo.BOOL,this,">="));
+        addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
 		addField("+",new BinaryOperator(this,this,"+"));
 		addField("-",new BinaryOperator(this,this,"-"));
 		addField("/",new BinaryOperator(this,this,"/"));

@@ -56,7 +56,7 @@ public class Function extends TypeInfo implements IField {
             appendToDeclaration(arg.getCname());
         }
         appendToDeclaration(");\n");
-        buildDeclaration(env);
+        buildDeclaration();
     }
 
     @Override

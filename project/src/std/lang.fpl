@@ -29,6 +29,3 @@ class Thread {
 }
 Thread* currentThread
 #these functions will be made inaccessible by compiler
-fn void throw Exception* ex {
-
-}

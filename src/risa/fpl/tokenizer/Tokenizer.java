@@ -24,10 +24,10 @@ public final class Tokenizer {
 	  private Token nextPrivate() throws IOException, CompilerException {
 		  read();
 		  if(c == '(') {
-			  while(read() != ')');
+			  while(hasNext() && read() != ')');
 		  }else if(c == '#') {
-			  while(read() != '\n');
-			  readNext = false;
+			  while(hasNext() && read() != '\n');
+              readNext = false;
 		  }else if(c == '$'){
 			  if(!hasNext()) {
 				  throw new CompilerException(line,charNum,"char expected");

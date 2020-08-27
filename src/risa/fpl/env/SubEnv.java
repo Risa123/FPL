@@ -40,4 +40,7 @@ public IFunction getFunction(Atom atom) throws CompilerException {
  public FPL getFPL()  {
       return superEnv.getFPL();
  }
+ public ModuleEnv getModule(){
+      return ((SubEnv)superEnv).getModule();
+ }
 }

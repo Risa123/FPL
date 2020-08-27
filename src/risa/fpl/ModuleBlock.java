@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.ATwoPassBlock;
-import risa.fpl.function.exp.Throw;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.parser.Parser;
@@ -47,12 +46,12 @@ public final class ModuleBlock extends ATwoPassBlock {
            compiled = true;
            try (var writer = Files.newBufferedWriter(Paths.get(cFile))) {
                env = new ModuleEnv(fpl.getEnv(), this);
-               if(!name.equals("std.lang")){
+               if(!(name.equals("std.lang") || name.equals("std.backend"))){
                    env.importModule(makeID("std.lang"),writer);
                }
                compile(writer,env,exps);
                if(name.equals("std.lang")){
-                   env.getType(makeID("Exception")).addField("throw",new Throw());
+                   //internalization
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
