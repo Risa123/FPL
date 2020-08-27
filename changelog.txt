@@ -120,7 +120,6 @@ fix cstruct not importable
 fix module variable declarations not included
 if_flag added
 0.1.0 snapshot 12
-exceptions added
 module io separated into base and file submodules
 internal access modifier added  fields declared to be internal can only be access from inside of module
 < > <= >= added to numbers
