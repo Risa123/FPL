@@ -57,7 +57,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
         var primaryParent = instanceType.getPrimaryParent();
         //check for implicit constructor
         if(primaryParent != null && primaryParent.getConstructor().getArguments().length == 0){
-            additionalCode += primaryParent.getConstructor().getCname() + "(this);\n";
+            additionalCode += primaryParent.getConstructor().getCname() + "((" + primaryParent.getCname() + "*)this);\n";
         }
 	    if(!isAbstract()){
 	        additionalCode += "this->class_data=&" + dataName + ";\n";

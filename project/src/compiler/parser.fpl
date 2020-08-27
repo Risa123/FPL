@@ -14,10 +14,8 @@ abstract class AExp {
   abstract fn void compile
 }
 class Atom AExp {
-  private {
-    string value
-  }
-  this int line int charNum string value;line,charNum {
+   private string value
+   this int line int charNum string value;line,charNum {
     this value = value
   }
   override fn void compile {

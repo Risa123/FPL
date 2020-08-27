@@ -88,6 +88,7 @@ public class Function extends TypeInfo implements IField {
 		if(self != null){
 		    if(calledOnPointer){
 		      calledOnPointer = false;
+		      writer.write("(" + self.getCname() + "*)");
             }else if(!(self instanceof InterfaceInfo)){
                 writer.write('&');
             }

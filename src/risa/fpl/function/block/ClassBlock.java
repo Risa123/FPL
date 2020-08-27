@@ -127,9 +127,9 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             writer.write("){\n");
             writer.write("void* malloc(unsigned long);\n");
             writer.write(type.getCname());
-            writer.write("* p=malloc(sizeof ");
+            writer.write("* p=malloc(sizeof(");
             writer.write(type.getCname());
-            writer.write(");\n");
+            writer.write("));\n");
             writer.write(constructorCall(constructor,"p"));
             writer.write("\nreturn p;\n}\n");
             var allocMethod = Function.newStatic("alloc",new PointerInfo(type),args,cEnv);

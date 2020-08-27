@@ -8,7 +8,7 @@ import risa.fpl.CompilerException;
 public final class Tokenizer {
 	  private final Reader reader;
 	  private int line = 1,charNum = 1,c;
-	  private boolean readNext = true;
+	  private boolean readNext = true,forceEnd;
 	  private static final int  UBYTE_MAX = 255,USHORT_MAX = 65_535;
 	  private static final long UINT_MAX = 4_294_967_295L,ULONG_MAX = Long.parseUnsignedLong("18446744073709551615");
 	  private Token current;
@@ -19,6 +19,9 @@ public final class Tokenizer {
 		  reader.close();
 	  }
 	  public boolean hasNext() throws IOException {
+	      if(forceEnd){
+	          return false;
+          }
 		  return reader.ready() || !readNext;
 	  }
 	  private Token nextPrivate() throws IOException, CompilerException {
@@ -27,7 +30,10 @@ public final class Tokenizer {
 			  while(hasNext() && read() != ')');
 		  }else if(c == '#') {
 			  while(hasNext() && read() != '\n');
-              readNext = false;
+			  readNext = false;
+			  if(c != '\n'){
+			      readNext = true;
+              }
 		  }else if(c == '$'){
 			  if(!hasNext()) {
 				  throw new CompilerException(line,charNum,"char expected");
@@ -154,6 +160,10 @@ public final class Tokenizer {
           } else  if(!isSeparator(c)) {
 			  var b = new StringBuilder();
 			  readNext = false;
+			  if(!Character.isValidCodePoint(c)){
+			      forceEnd = true;
+			      return new Token(line,charNum,"",TokenType.NEW_LINE);
+              }
 			  while(hasNext() && !isSeparator(read())) {
 				  b.appendCodePoint(c);
 			  }

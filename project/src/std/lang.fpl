@@ -28,4 +28,3 @@ class Thread {
  }
 }
 Thread* currentThread
-#these functions will be made inaccessible by compiler
