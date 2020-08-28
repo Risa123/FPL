@@ -127,4 +127,4 @@ fix pointer arithmetic now correctly expects memory operands
 fix importing std.io.file causing compiler to stop
 fix comment on last line causing compiler to stop
 0.1.0 snapshot 13
-improvement of compatibility with non-tcc compilers
+fix two-stage compiling not working correctly

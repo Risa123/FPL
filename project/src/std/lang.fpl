@@ -1,4 +1,5 @@
 (#this module is imported automatically)
+use std.backend
 class Exception {
    private {
      string message
@@ -8,6 +9,9 @@ class Exception {
    }
    virtual fn string getMessage {
      return message
+   }
+   fn void throw {
+     currentThread throwTarget
    }
 }
 private fpointer void throwTargetType
@@ -28,3 +32,4 @@ class Thread {
  }
 }
 Thread* currentThread
+#these functions will be made inaccessible by compiler
