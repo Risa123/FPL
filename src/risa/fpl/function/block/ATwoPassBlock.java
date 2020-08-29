@@ -2,6 +2,7 @@ package risa.fpl.function.block;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
+import risa.fpl.ModuleBlock;
 import risa.fpl.env.AEnv;
 import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
@@ -37,14 +38,19 @@ public abstract class ATwoPassBlock {
                     info.lastEx = e;
                     info.writer = new BuilderWriter(writer);
                     var exps = ((List)info.exp).getExps();
-                    if(!exps.isEmpty() && exps.get(0) instanceof Atom a && a.getValue().equals("use")) {
+                    if(!exps.isEmpty() && exps.get(0) instanceof Atom a && a.getValue().equals("use") && this instanceof ModuleBlock) {
                         throw e;
                     }
                 }
             }
             if(!noAttempt) {
                 if(!infos.isEmpty()) {
-                    var b = new StringBuilder("errors in two pass block:");
+                    var b = new StringBuilder("errors in ");
+                    if(this instanceof ClassBlock){
+                        b.append("class block");
+                    }else{
+                        b.append("module block");
+                    }
                     for(var info:infos) {
                         b.append('\n');
                         info.lastEx.setSourceFile("");

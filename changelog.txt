@@ -127,4 +127,7 @@ fix pointer arithmetic now correctly expects memory operands
 fix importing std.io.file causing compiler to stop
 fix comment on last line causing compiler to stop
 0.1.0 snapshot 13
+error messages from two pass blocks now show if it is module or class
+fix cstruct checks if type is already declared
 fix two-stage compiling not working correctly
+fix functions with use identifier can be now used in class block

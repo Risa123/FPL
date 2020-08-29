@@ -16,6 +16,9 @@ public final class CStructBlock extends ABlock {
     public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
         var id = it.nextID();
         var cID = id.getValue();
+        if(env.hasTypeInCurrentEnv(id.getValue())){
+            throw new CompilerException(id,"this type is already declared");
+        }
         if(!IFunction.isCId(cID)){
             throw new CompilerException(id,"invalid C identifier");
         }
