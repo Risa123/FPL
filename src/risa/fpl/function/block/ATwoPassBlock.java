@@ -51,6 +51,7 @@ public abstract class ATwoPassBlock {
                     }else{
                         b.append("module block");
                     }
+                    b.append(':');
                     for(var info:infos) {
                         b.append('\n');
                         info.lastEx.setSourceFile("");

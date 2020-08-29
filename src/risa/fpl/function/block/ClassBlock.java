@@ -24,7 +24,6 @@ import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
 public final class ClassBlock extends ATwoPassBlock implements IFunction {
-
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
 		if(!(env instanceof ModuleEnv modEnv)){

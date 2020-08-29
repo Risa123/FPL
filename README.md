@@ -12,5 +12,5 @@ Format of build.properties is.
 outputFile = (output binary)  
 cc = (C compiler command)  
 mainModule = (main module)  
-flags = (compilation flags see if_flag function)
+flags = (compilation flags see if_flag function)  
 **This program requires java 14 preview or higher.**
