@@ -21,8 +21,8 @@ public abstract class ATwoPassBlock {
             info.writer = new BuilderWriter(writer);
             infos.add(info);
         }
-        for(;;) {
-            var noAttempt = false;
+        var noAttempt = false;
+        while(!noAttempt) {
             var it = infos.iterator();
             while(it.hasNext()) {
                 var info = it.next();
@@ -43,25 +43,22 @@ public abstract class ATwoPassBlock {
                     }
                 }
             }
-            if(!noAttempt) {
-                if(!infos.isEmpty()) {
-                    var b = new StringBuilder("errors in ");
-                    if(this instanceof ClassBlock){
-                        b.append("class block");
-                    }else{
-                        b.append("module block");
-                    }
-                    b.append(':');
-                    for(var info:infos) {
-                        b.append('\n');
-                        info.lastEx.setSourceFile("");
-                        b.append(info.lastEx.getMessage());
-                    }
-                    var first = infos.get(0).exp;
-                    throw new CompilerException(first.getLine(),first.getCharNum(),b.toString());
-                }
-                break;
+        }
+        if(!infos.isEmpty()) {
+            var b = new StringBuilder("errors in ");
+            if(this instanceof ClassBlock){
+                b.append("class block");
+            }else{
+                b.append("module block");
             }
+            b.append(':');
+            for(var info:infos) {
+                b.append('\n');
+                info.lastEx.setSourceFile("");
+                b.append(info.lastEx.getMessage());
+            }
+            var first = infos.get(0).exp;
+            throw new CompilerException(first.getLine(),first.getCharNum(),b.toString());
         }
     }
     private static class ExpInfo{
