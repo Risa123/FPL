@@ -21,8 +21,7 @@ public abstract class ATwoPassBlock {
             info.writer = new BuilderWriter(writer);
             infos.add(info);
         }
-        var noAttempt = false;
-        while(!noAttempt) {
+        for(var noAttempt = false;!noAttempt;) {
             var it = infos.iterator();
             while(it.hasNext()) {
                 var info = it.next();
