@@ -19,9 +19,6 @@ class Thread {
    Exception* exception
    throwTargetType throwTarget
  }
- this string name {
-   this name = name
- }
  fn void setName string name {
    this name = name
  }
