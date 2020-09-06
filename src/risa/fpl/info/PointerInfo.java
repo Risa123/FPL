@@ -18,6 +18,10 @@ public final class PointerInfo extends TypeInfo {
             addField("set", new SetIndex());
             addField("==", new BinaryOperator(BOOL, this, "=="));
             addField("!=", new BinaryOperator(BOOL, this, "!="));
+            addField(">",new BinaryOperator(TypeInfo.BOOL,this,">"));
+            addField("<",new BinaryOperator(TypeInfo.BOOL,this,"<"));
+            addField(">=",new BinaryOperator(TypeInfo.BOOL,this,">="));
+            addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
             addField("cast", new Cast(this));
             if (type instanceof Function) {
                addField("drf",(Function)type);
