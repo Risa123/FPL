@@ -130,4 +130,4 @@ fix comment on last line causing compiler to stop
 error messages from two pass blocks now show if it is module or class
 fix cstruct checks if type is already declared
 fix two-stage compiling not working correctly
-fix functions with use identifier can be now used in class block
+fix functions with use identifier in class block now work as any other function

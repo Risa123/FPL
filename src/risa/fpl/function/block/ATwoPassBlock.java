@@ -25,7 +25,7 @@ public abstract class ATwoPassBlock {
             var it = infos.iterator();
             while(it.hasNext()) {
                 var info = it.next();
-                if(!info.attemptedToCompile) {
+                if(!info.attemptedToCompile) { //ends after first unattempted there is the bug
                     noAttempt = true;
                 }
                 try {
