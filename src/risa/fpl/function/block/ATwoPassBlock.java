@@ -21,19 +21,15 @@ public abstract class ATwoPassBlock {
             info.writer = new BuilderWriter(writer);
             infos.add(info);
         }
-        for(var noAttempt = false;!noAttempt;) {
+        for(int i = 0; i < 2 && !infos.isEmpty();++i) {
             var it = infos.iterator();
             while(it.hasNext()) {
                 var info = it.next();
-                if(!info.attemptedToCompile) { //ends after first unattempted there is the bug
-                    noAttempt = true;
-                }
                 try {
                     info.exp.compile(info.writer, env,null);
                     it.remove();
                     writer.write(info.writer.getCode());
                 }catch(CompilerException e) {
-                    info.attemptedToCompile = true;
                     info.lastEx = e;
                     info.writer = new BuilderWriter(writer);
                     var exps = ((List)info.exp).getExps();
@@ -63,7 +59,6 @@ public abstract class ATwoPassBlock {
     private static class ExpInfo{
         AExp exp;
         CompilerException lastEx;
-        boolean attemptedToCompile;
         BuilderWriter writer;
     }
 }
