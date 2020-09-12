@@ -105,13 +105,5 @@ public abstract class AEnv {
   public final AccessModifier getAccessModifier(){
       return accessModifier;
   }
-  public final boolean hasNotTypeInCurrentEnv(TypeInfo type){
-      for(var t:types.values()){
-          if(t == type){
-              return false;
-          }
-      }
-      return true;
-  }
   public abstract FPL getFPL();
 }
