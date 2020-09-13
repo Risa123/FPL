@@ -40,6 +40,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		instanceType.addField("cast",new Cast(instanceType));
 		dataType = cname + "_data_type";
 		dataName = cname + "_data";
+		superEnv.addType(id,instanceType);
 	}
 	@Override
 	public void addFunction(String name,IFunction value) {

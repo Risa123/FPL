@@ -31,7 +31,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
         }
         var id = it.nextID();
 		var idV = id.getValue();
-		if(env.hasTypeInCurrentEnv(idV)){
+		if(env.hasTypeInCurrentEnv(idV) && !(env.getType(id) instanceof InstanceInfo i && !i.isComplete())){
 		    throw new CompilerException(id,"this type is already declared");
         }
         String cID = IFunction.toCId(id.getValue());
@@ -144,7 +144,6 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             classType.addField("new",newMethod);
             type.appendToDeclaration(newMethod.getDeclaration());
         }
-	    env.addType(idV,type);
 	    if(!env.hasModifier(Modifier.ABSTRACT)){
             env.addFunction(id.getValue(),constructor);
         }

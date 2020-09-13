@@ -94,7 +94,7 @@ public class TypeInfo {
   public final String getDeclaration(){
       return declaration;
   }
-  public final void buildDeclaration(){
+  public void buildDeclaration(){
       for(var field:fields.values()){
         if(field instanceof Variable v){
             addRequiredType(v.getType());
