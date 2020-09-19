@@ -38,7 +38,7 @@ public final class Var implements IFunction {
 			if(env.hasModifier(Modifier.CONST)) {
 				writer.write("const ");
 			}
-			if(env instanceof ClassEnv e && type == e.getInstanceType()){
+			if(env instanceof ClassEnv && (!type.isPrimitive() || type instanceof PointerInfo p && !p.getType().isPrimitive())){
 			    writer.write("struct ");
             }
 			writer.write(type.getCname());
@@ -123,6 +123,9 @@ public final class Var implements IFunction {
 						if(expType  instanceof PointerInfo p && p.isFunctionPointer()){
                             writer.write(p.getFunctionPointerDeclaration(cID));
                         }else{
+						    if(!expType.isPrimitive() || (expType instanceof  PointerInfo p && !p.getType().isPrimitive())){
+						        writer.write("struct ");
+                            }
                             writer.write(expType.getCname());
                             writer.write(' ');
                             writer.write(cID);
