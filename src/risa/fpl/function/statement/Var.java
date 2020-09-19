@@ -150,5 +150,4 @@ public final class Var implements IFunction {
 		}
 		return TypeInfo.VOID;
 	}
-
 }
