@@ -52,8 +52,7 @@ public final class FPL {
     public void compile() throws IOException, CompilerException {
     	var path = Paths.get(outputDirectory);
         if(Files.exists(path)){
-            var list = Files.walk(path).sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-            for(var p:list) {
+            for(var p:Files.walk(path).sorted(Comparator.reverseOrder()).collect(Collectors.toList())) {
                 Files.deleteIfExists(p);
             }
         }

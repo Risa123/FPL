@@ -51,7 +51,7 @@ public final class ModuleBlock extends ATwoPassBlock {
                }
                compile(writer,env,exps);
                if(name.equals("std.lang")){
-                   //internalization
+                   //adding methods to primitive types
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));

@@ -26,7 +26,7 @@ public final class PointerInfo extends TypeInfo {
             if (type instanceof Function) {
                addField("drf",(Function)type);
             }else{
-                addField("drf", new UnaryOperator(type, "*", false));
+                addField("drf",new Dereference(type));
             }
         }
 	}
