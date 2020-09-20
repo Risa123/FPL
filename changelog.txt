@@ -132,6 +132,5 @@ fix cstruct checks if type is already declared
 fix two-stage compiling not working correctly
 fix functions with use identifier in class block now work as any other function
 0.1.0 snapshot 14
-added method getType to all types
-runtime type object added
 fix added cast to drf
+added getObjectSize to all types

@@ -76,7 +76,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 		b.write("typedef struct ");
 	    b.write(IFunction.toCId(id.getValue()));
 	    b.write("{\n");
-	    b.write("void* class_data;\n");
+	    b.write("void* object_data;\n");
 	    if(parentType instanceof InstanceInfo i){
             b.write(i.getAttributesCode());
         }

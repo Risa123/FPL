@@ -19,7 +19,6 @@ public IFunction getFunction(Atom atom) throws CompilerException {
 	}
 	return super.getFunction(atom);
    }
-
     @Override
     public TypeInfo getType(Atom atom) throws CompilerException {
         if(!hasTypeInCurrentEnv(atom.getValue())){

@@ -1,13 +1,6 @@
 (#this module is imported automatically)
 use std.backend
-class TypeObject {
-  private {
-     memory size
-  }
-  fn memory getSize {
-   return size
-  }
-}
+
 class Exception {
    private string message
    this string message {
@@ -17,7 +10,7 @@ class Exception {
      return message
    }
    fn void throw {
-     getType
+     getInstanceSize
      currentThread throwTarget
    }
 }

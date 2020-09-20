@@ -79,7 +79,7 @@ public class Function extends TypeInfo implements IField {
                 }else{
                     writer.write('.');
                 }
-                writer.write("class_data)->");
+                writer.write("object_data)->");
             }
         }
 		writer.write(implName);

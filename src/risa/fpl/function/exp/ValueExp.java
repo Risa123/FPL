@@ -30,9 +30,7 @@ public class ValueExp extends AField {
 			if(exp instanceof Atom atom) {
 				if(atom.getType() == TokenType.ARG_SEPARATOR) {
 					it.next();
-				}else if(atom.getType() == TokenType.END_ARGS){
-
-				}else {
+				}else if(atom.getType() != TokenType.END_ARGS){
 					it.next();
 					return onField(atom,writer,env,it,line,charNum);
 				}
@@ -64,5 +62,4 @@ public class ValueExp extends AField {
 		field.setPrevCode(prefix + code + selector);
 		return field.compile(writer, env, it, line, charNum);
 	}
-
 }

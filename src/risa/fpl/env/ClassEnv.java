@@ -61,7 +61,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
             additionalCode += primaryParent.getConstructor().getCname() + "((" + primaryParent.getCname() + "*)this);\n";
         }
 	    if(!isAbstract()){
-	        additionalCode += "this->class_data=&" + dataName + ";\n";
+	        additionalCode += "this->object_data=&" + dataName + ";\n";
 	     }
 		return additionalCode + implicitConstructor.toString();
 	}
@@ -136,7 +136,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    instanceType.setImplCode(implBuilder.toString());
         var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
 	    b.append(dataType);
-	    b.append("{\n");
+	    b.append("{\nunsigned long size;\n");
 	    if(primaryParent != null){
 	        b.append(primaryParent.getImplCode());
         }
