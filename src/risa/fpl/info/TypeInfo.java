@@ -80,7 +80,6 @@ public class TypeInfo {
   }
   public void setClassInfo(ClassInfo info){
       classInfo = info;
-      classInfo.addField("size",new ValueExp(NumberInfo.MEMORY,"sizeof " + cname));
   }
   public ClassInfo getClassInfo(){
       return classInfo;

@@ -12,7 +12,6 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.InterfaceInfo;
-import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
@@ -27,7 +26,7 @@ public class Function extends TypeInfo implements IField {
 	private final FunctionType type;
 	private boolean calledOnPointer;
 	private final String implName;
-    public Function(String name, TypeInfo returnType, String cname, TypeInfo[] args,FunctionType type, TypeInfo self, AccessModifier accessModifier, AEnv env,String implName) {
+    public Function(String name, TypeInfo returnType, String cname, TypeInfo[] args,FunctionType type, TypeInfo self, AccessModifier accessModifier,String implName) {
        super(name,cname,true);
        this.returnType = returnType;
        this.args = args;
@@ -150,7 +149,7 @@ public class Function extends TypeInfo implements IField {
     }
     public static Function newStatic(String name,TypeInfo returnType,TypeInfo[]args, ClassEnv env){
         var cname = "static" + env.getNameSpace()  + IFunction.toCId(name) ;
-        return new Function("new",returnType,cname,args,FunctionType.NORMAL,null,AccessModifier.PUBLIC,env,cname);
+        return new Function("new",returnType,cname,args,FunctionType.NORMAL,null,AccessModifier.PUBLIC,cname);
     }
     public final TypeInfo getReturnType(){
         return returnType;

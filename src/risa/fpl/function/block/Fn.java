@@ -87,7 +87,7 @@ public class Fn extends AFunctionBlock {
         }else{
             type = FunctionType.NORMAL;
         }
-        var f = new Function(id.getValue(),returnType,cID,args,type,self,env.getAccessModifier(),env,implName);
+        var f = new Function(id.getValue(),returnType,cID,args,type,self,env.getAccessModifier(),implName);
         if(self != null){
             var parentField = self.getField(id.getValue(),env);
             if(env.hasModifier(Modifier.OVERRIDE)){

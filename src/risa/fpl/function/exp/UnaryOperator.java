@@ -3,7 +3,6 @@ package risa.fpl.function.exp;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
@@ -18,7 +17,7 @@ public final class UnaryOperator extends AField {
 		this.postfix = postfix;
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNm) throws IOException, CompilerException {
+	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNm) throws IOException {
 		if(postfix) {
 			writePrev(writer);
 		}

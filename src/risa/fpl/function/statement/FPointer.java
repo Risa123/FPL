@@ -22,7 +22,7 @@ public final class FPointer extends AFunctionBlock {
         var id = it.nextID();
         var cID = IFunction.toCId(id.getValue());
         var args = parseArguments(new BuilderWriter(writer),it,new FnEnv(env,returnType,null),null);
-        var f = new Function(id.getValue(),returnType,cID,args, FunctionType.NORMAL,null,env.getAccessModifier(),env,"");
+        var f = new Function(id.getValue(),returnType,cID,args, FunctionType.NORMAL,null,env.getAccessModifier(),"");
         env.addType(id.getValue(),new PointerInfo(f));
         return TypeInfo.VOID;
     }

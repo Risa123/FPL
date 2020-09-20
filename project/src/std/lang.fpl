@@ -10,7 +10,7 @@ class Exception {
      return message
    }
    fn void throw {
-     getInstanceSize
+     getObjectSize
      currentThread throwTarget
    }
 }

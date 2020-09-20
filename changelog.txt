@@ -133,4 +133,7 @@ fix two-stage compiling not working correctly
 fix functions with use identifier in class block now work as any other function
 0.1.0 snapshot 14
 fix added cast to drf
-added getObjectSize to all types
+added getObjectSize method to instances
+method size in classes renamed to getObjectSize
+implemented throw
+fix removing accidentally added size method from classes

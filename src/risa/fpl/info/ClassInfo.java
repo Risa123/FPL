@@ -39,5 +39,6 @@ public final class ClassInfo extends TypeInfo{
     }
     public ClassInfo(String name) {
         super(name + " class","",false);
+        addField("getObjectSize",null);
     }
 }
