@@ -53,7 +53,7 @@ public class ValueExp extends AField {
 		   }else {
 			   selector = ".";
 		   }
-		}else if(field instanceof Function f && type instanceof PointerInfo){
+		}else if(field instanceof ICalledOnPointer f && type instanceof PointerInfo){
             f.calledOnPointer();
         }
 		if(getPrevCode() != null){

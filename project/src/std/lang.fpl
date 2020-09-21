@@ -10,7 +10,7 @@ class Exception {
      return message
    }
    fn void throw {
-     getObjectSize
+     currentThread exception = malloc getObjectSize
      currentThread throwTarget
    }
 }

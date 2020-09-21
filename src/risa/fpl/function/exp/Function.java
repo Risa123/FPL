@@ -17,7 +17,7 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
-public class Function extends TypeInfo implements IField {
+public class Function extends TypeInfo implements IField,ICalledOnPointer {
 	private final TypeInfo returnType;
 	private final TypeInfo[]args;
 	private final TypeInfo self;
