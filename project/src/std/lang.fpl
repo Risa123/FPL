@@ -11,6 +11,11 @@ class Exception {
    }
    fn void throw {
      currentThread exception = malloc getObjectSize
+     memory i 0L
+     while i < getObjectSize {
+       currentThread exception set i,this get i
+       i ++
+     }
      currentThread throwTarget
    }
 }

@@ -137,3 +137,4 @@ added getObjectSize method to instances
 method size in classes renamed to getInstanceSize
 implemented throw
 fix removing accidentally added size method from classes
+fix ==,!=,<,>,<=,>= and cast can be used on void* pointers

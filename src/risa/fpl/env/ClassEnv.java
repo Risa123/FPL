@@ -17,13 +17,11 @@ import risa.fpl.parser.Atom;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final StringBuilder implicitConstructor = new StringBuilder();
-	private final String cname,nameSpace;
+	private final String cname,nameSpace,dataType,dataName;
 	private final StringBuilder methodCode = new StringBuilder(),methodDeclarations = new StringBuilder();
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
-	private final String dataType,dataName;
-	private String toParentDeclaration;
 	private boolean parentConstructorCalled;
 	public ClassEnv(ModuleEnv superEnv,String cname,String id) {
 		super(superEnv);
@@ -145,11 +143,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    b.append('}');
 	    b.append(dataType);
 	    b.append(";\n");
-	    if(primaryParent != null){
-	        toParentDeclaration = primaryParent.getCname() + " " + IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + "_toParent()";
-	        b.append(toParentDeclaration);
-	        b.append(";\n");
-        }
 	    return b.toString();
     }
     public String getImplOf(InterfaceInfo i){
@@ -162,11 +155,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
         b.append(' ');
         b.append(dataName);
         b.append(";\n");
-        var primaryParent = instanceType.getPrimaryParent();
-        if(primaryParent != null){
-            b.append(toParentDeclaration);
-            b.append("{}\n");
-        }
         return b.toString();
     }
     public void parentConstructorCalled(){

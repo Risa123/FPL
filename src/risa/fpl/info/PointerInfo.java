@@ -16,19 +16,19 @@ public final class PointerInfo extends TypeInfo {
             addField("%", new BinaryOperator(this, NumberInfo.MEMORY, "%"));
             addField("get", new GetIndex(this));
             addField("set", new SetIndex());
-            addField("==", new BinaryOperator(BOOL, this, "=="));
-            addField("!=", new BinaryOperator(BOOL, this, "!="));
-            addField(">",new BinaryOperator(TypeInfo.BOOL,this,">"));
-            addField("<",new BinaryOperator(TypeInfo.BOOL,this,"<"));
-            addField(">=",new BinaryOperator(TypeInfo.BOOL,this,">="));
-            addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
-            addField("cast", new Cast(this));
             if (type instanceof Function) {
                addField("drf",(Function)type);
             }else{
                 addField("drf",new Dereference(type));
             }
         }
+        addField("==", new BinaryOperator(BOOL, this, "=="));
+        addField("!=", new BinaryOperator(BOOL, this, "!="));
+        addField(">",new BinaryOperator(TypeInfo.BOOL,this,">"));
+        addField("<",new BinaryOperator(TypeInfo.BOOL,this,"<"));
+        addField(">=",new BinaryOperator(TypeInfo.BOOL,this,">="));
+        addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
+        addField("cast", new Cast(this));
 	}
 	@Override
 	public boolean equals(Object o) {
