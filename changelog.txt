@@ -134,6 +134,6 @@ fix functions with use identifier in class block now work as any other function
 0.1.0 snapshot 14
 fix added cast to drf
 added getObjectSize method to instances
-method size in classes renamed to getObjectSize
+method size in classes renamed to getInstanceSize
 implemented throw
 fix removing accidentally added size method from classes

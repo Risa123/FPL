@@ -43,6 +43,6 @@ public final class InstanceInfo extends TypeInfo{
     @Override
     public void setClassInfo(ClassInfo info) {
         super.setClassInfo(info);
-        getClassInfo().addField("getObjectSize",new ValueExp(NumberInfo.MEMORY,"sizeof " + getCname()));
+        getClassInfo().addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + getCname() + ")"));
     }
 }
