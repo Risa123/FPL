@@ -11,11 +11,10 @@ import java.util.stream.Collectors;
 import risa.fpl.env.ProgramEnv;
 
 public final class FPL {
-	private final String cc,output,outputDirectory;
+	private final String cc,output,outputDirectory,mainModule;
 	private final PrintStream errStream;
 	private final ProgramEnv env = new ProgramEnv(this);
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();
-	private final String mainModule;
 	private final ArrayList<String>flags = new ArrayList<>();
     public FPL(String project, PrintStream errStream) throws IOException, CompilerException {
         var build = new Properties();

@@ -7,7 +7,8 @@ abstract class FileHandler Closeable {
    this string name string mode {
       handle = file_open name,mode
       if handle == nil {
-        IOException:new "file not found";throw
+        IOException ex "file not found"
+        ex throw
       }
    }
    override fn void close {

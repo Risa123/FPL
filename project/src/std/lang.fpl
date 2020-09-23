@@ -16,7 +16,7 @@ class Exception {
        currentThread exception set i,this get i
        i ++
      }
-     currentThread throwTarget
+    currentThread throwTarget #throwTarget + memcopy = crash
    }
 }
 private fpointer void throwTargetType
