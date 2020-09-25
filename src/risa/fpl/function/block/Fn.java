@@ -78,7 +78,7 @@ public class Fn extends AFunctionBlock {
         if(env.hasModifier(Modifier.ABSTRACT)){
             type = FunctionType.ABSTRACT;
             appendSemicolon = false;
-            if(env instanceof ClassEnv e && !e.isAbstract()){ //no cast exception will happen
+            if(env instanceof ClassEnv e && !e.isAbstract()){
                 throw new CompilerException(line,charNum,"abstract method can only be declared in abstract class");
             }
         }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){

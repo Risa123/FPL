@@ -87,11 +87,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
              methodDeclarations.append(method.getDeclaration());
          }
          if(method.isVirtual()){
-             var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
-             //check if parent already has this method
-             if(primaryParent != null && primaryParent.getField(method.getName(),this) instanceof  Function){
-                 return;
-             }
              implBuilder.append(new PointerInfo(method).getFunctionPointerDeclaration(method.getImplName()));
              implBuilder.append(";\n");
          }

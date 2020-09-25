@@ -56,12 +56,10 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
         appendToDeclaration(");\n");
         buildDeclaration();
     }
-
     @Override
     public AccessModifier getAccessModifier() {
         return accessModifier;
     }
-
     @Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
         if(isVirtual()){
