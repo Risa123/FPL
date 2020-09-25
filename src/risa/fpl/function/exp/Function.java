@@ -18,9 +18,8 @@ import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
 public class Function extends TypeInfo implements IField,ICalledOnPointer {
-	private final TypeInfo returnType;
 	private final TypeInfo[]args;
-	private final TypeInfo self;
+	private final TypeInfo self,returnType;
 	private String prev_code;
 	private final AccessModifier accessModifier;
 	private final FunctionType type;
@@ -103,11 +102,9 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
 		       break;
            }
 		   var exp = it.nextAtom();
-		   if(exp.getType() == TokenType.ARG_SEPARATOR) {
-
-		   }else if(exp.getType() == TokenType.END_ARGS) {
+		   if(exp.getType() == TokenType.END_ARGS) {
 			   break;
-		   }else {
+		   }else if(exp.getType() != TokenType.ARG_SEPARATOR){
 			   if(first) {
 				   first = false;
 			   }else {

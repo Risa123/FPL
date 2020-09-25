@@ -3,7 +3,6 @@ use {
   std.io.file
 }
 main {
- FileReader reader "test.txt"
- Tokenizer tokenizer reader
- tokenizer close
+ FileWriter writer "test.txt"
+ writer close #method not set in initializer
 }

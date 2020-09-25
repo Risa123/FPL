@@ -75,6 +75,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    b.append("}\n");
 	    return b.toString();
     }
+    //parent virtual methods not added to object_data
     public void addMethod(Function method,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
               methodCode.append("static ");
