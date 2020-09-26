@@ -40,7 +40,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		dataName = cname + "_data";
 		superEnv.addType(id,instanceType);
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
-
 	}
 	@Override
 	public void addFunction(String name,IFunction value) {

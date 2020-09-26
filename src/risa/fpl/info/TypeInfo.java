@@ -138,15 +138,26 @@ public class TypeInfo {
   public ArrayList<TypeInfo>getParents(){
       return parents;
   }
-  public ArrayList<Function>getAbstractMethods(){
+  public ArrayList<Function> getMethodsOfType(FunctionType type){
       var list = new ArrayList<Function>();
       for(var field:fields.values()){
-          if(field instanceof Function f && f.getType() == FunctionType.ABSTRACT){
+          if(field instanceof Function f && f.getType() == type){
               list.add(f);
           }
       }
       for(var parent:parents){
-          list.addAll(parent.getAbstractMethods());
+          for(var field:parent.getMethodsOfType(type)){
+              var found = false;
+              for(var f:list){
+                  if(f.getName().equals(field.getName())) {
+                      found = true;
+                      break;
+                  }
+              }
+              if(!found){
+                  list.add(field);
+              }
+          }
       }
       return list;
   }

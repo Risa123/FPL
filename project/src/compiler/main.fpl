@@ -4,5 +4,5 @@ use {
 }
 main {
  FileWriter writer "test.txt"
- writer close #method not set in initializer
+ writer close
 }

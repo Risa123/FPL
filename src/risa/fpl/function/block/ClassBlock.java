@@ -75,7 +75,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 		var b = new BuilderWriter(writer);
 		b.write("typedef struct ");
 	    b.write(IFunction.toCId(id.getValue()));
-	    b.write("{\nvoid* object_data;\\n\"");
+	    b.write("{\nvoid* object_data;\n");
 	    if(parentType instanceof InstanceInfo i){
             b.write(i.getAttributesCode());
         }
@@ -98,7 +98,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 	    b.write(cEnv.getDataDeclaration());
         var type = cEnv.getInstanceType();
         if(!cEnv.isAbstract()){
-            for(var method:type.getAbstractMethods()){
+            for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
                 var name = method.getName();
                 var impl = type.getField(name,cEnv);
                 if(!(impl instanceof Function) || ((Function)impl).getType() == FunctionType.ABSTRACT){
@@ -169,10 +169,15 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            writer.write(";\nreturn tmp;\n}\n");
            type.appendToDeclaration(i.getCname() + " " + callBuilder + "(" + type.getCname() + "*);\n");
            type.addConversionMethodCName(i,callBuilder.toString());
-           if(!cEnv.isAbstract()){
-               for(var method:i.getAbstractMethods()){
+           var parent = type.getPrimaryParent();
+           if(!cEnv.isAbstract() && parent != null){
+               for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
+                   cEnv.appendToInitializer("=&" + method.getCname() + ";\n");
+               }
+               for(var method:i.getMethodsOfType(FunctionType.ABSTRACT)){
                    cEnv.appendToInitializer(cEnv.getImplOf(i) + "." +  method.getCname());
                    var impl =(Function)type.getField(method.getName(),cEnv);
+                   cEnv.appendToInitializer("");
                    cEnv.appendToInitializer("=&"  + impl.getCname()  + ";\n");
                }
            }
