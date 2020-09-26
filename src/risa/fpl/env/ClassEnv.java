@@ -40,6 +40,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		dataName = cname + "_data";
 		superEnv.addType(id,instanceType);
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
+
 	}
 	@Override
 	public void addFunction(String name,IFunction value) {
@@ -75,7 +76,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    b.append("}\n");
 	    return b.toString();
     }
-    //parent virtual methods not added to object_data
     public void addMethod(Function method,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
               methodCode.append("static ");

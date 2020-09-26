@@ -75,8 +75,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
 		var b = new BuilderWriter(writer);
 		b.write("typedef struct ");
 	    b.write(IFunction.toCId(id.getValue()));
-	    b.write("{\n");
-	    b.write("void* object_data;\n");
+	    b.write("{\nvoid* object_data;\\n\"");
 	    if(parentType instanceof InstanceInfo i){
             b.write(i.getAttributesCode());
         }
@@ -123,8 +122,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             var args = constructor.getArguments();
             var compiledArgs = constructorArguments(args);
             writer.write(compiledArgs);
-            writer.write("){\n");
-            writer.write("void* malloc(unsigned long);\n");
+            writer.write("){\nvoid* malloc(unsigned long);\n");
             writer.write(type.getCname());
             writer.write("* p=malloc(sizeof(");
             writer.write(type.getCname());
@@ -166,8 +164,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            writer.write(type.getCname());
            writer.write("* this){\n");
            writer.write(i.getCname());
-           writer.write(" tmp;\ntmp.instance=this;\n");
-           writer.write("tmp.impl=&");
+           writer.write(" tmp;\ntmp.instance=this;\ntmp.impl=&");
            writer.write(cEnv.getImplOf(i));
            writer.write(";\nreturn tmp;\n}\n");
            type.appendToDeclaration(i.getCname() + " " + callBuilder + "(" + type.getCname() + "*);\n");
