@@ -172,12 +172,11 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            var parent = type.getPrimaryParent();
            if(!cEnv.isAbstract() && parent != null){
                for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
-                   cEnv.appendToInitializer("=&" + method.getCname() + ";\n");
+                   cEnv.appendToInitializer(cEnv.getDataName() + "." + method.getImplName() + "=&" + method.getCname() + ";\n");
                }
                for(var method:i.getMethodsOfType(FunctionType.ABSTRACT)){
                    cEnv.appendToInitializer(cEnv.getImplOf(i) + "." +  method.getCname());
                    var impl =(Function)type.getField(method.getName(),cEnv);
-                   cEnv.appendToInitializer("");
                    cEnv.appendToInitializer("=&"  + impl.getCname()  + ";\n");
                }
            }

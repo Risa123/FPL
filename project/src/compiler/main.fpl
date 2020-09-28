@@ -3,6 +3,6 @@ use {
   std.io.file
 }
 main {
- FileWriter writer "test.txt"
- writer close
+ FileReader reader "test.txt"
+ reader close
 }

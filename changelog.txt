@@ -132,10 +132,12 @@ fix cstruct checks if type is already declared
 fix two-stage compiling not working correctly
 fix functions with use identifier in class block now work as any other function
 0.1.0 snapshot 14
-fix added cast to drf
 added getObjectSize method to instances
 method size in classes renamed to getInstanceSize
 implemented throw
+changed "official c compiler" to TDM-GCC
+fix added cast to drf
 fix removing accidentally added size method from classes
 fix ==,!=,<,>,<=,>= and cast can be used on void* pointers
 fix virtual method not assigned to table crash
+fix drf method missing in function pointers

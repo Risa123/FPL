@@ -1,7 +1,5 @@
 package risa.fpl.info;
 
-import risa.fpl.function.exp.ValueExp;
-
 public final class ClassInfo extends TypeInfo{
     public static final ClassInfo CHAR = new ClassInfo("char");
     public static final ClassInfo BOOL = new ClassInfo("bool");
