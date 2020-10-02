@@ -49,7 +49,6 @@ public final class NumberInfo extends TypeInfo {
 		this(name,cname,size,false);
 		addField("%",new BinaryOperator(this,this,"%"));
 	}
-
     @Override
     public void setClassInfo(ClassInfo info) {
         super.setClassInfo(info);

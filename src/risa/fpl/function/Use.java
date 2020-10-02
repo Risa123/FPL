@@ -39,8 +39,7 @@ public final class Use implements IFunction{
 		return TypeInfo.VOID;
 	}
 	private void addFromList(AExp exp,ArrayList<Atom>modules) throws CompilerException {
-		var list = ((List)exp).getExps();
-		for(var mod:list) {
+		for(var mod:((List)exp).getExps()) {
 			if(mod instanceof Atom atom) {
 				if(atom.getType() != TokenType.ID) {
 					throw new CompilerException(atom,"identifier expected");

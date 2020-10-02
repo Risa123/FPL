@@ -42,17 +42,14 @@ public final class PointerInfo extends TypeInfo {
     public String getFunctionPointerDeclaration(String cID){
 	    var f = (Function)type;
         var b = new StringBuilder(f.getReturnType().getCname());
-        b.append("(*");
-        b.append(cID);
-        b.append(")(");
+        b.append("(*").append(cID).append(")(");
         var self = f.getSelf();
         var firstArg = self == null;
         if(!firstArg){
             if(self instanceof InterfaceInfo){
                b.append("void");
             }else{
-                b.append("struct ");
-                b.append(self.getCname());
+                b.append("struct ").append(self.getCname());
             }
             b.append("* this");
         }

@@ -69,8 +69,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    b.append(IFunction.INTERNAL_METHOD_PREFIX);
 	    b.append(nameSpace);
 	    b.append("_init(");
-	    b.append(cname);
-	    b.append("* this){\n");
+	    b.append(cname).append("* this){\n");
 	    b.append(getImplicitConstructorCode());
 	    b.append("}\n");
 	    return b.toString();
@@ -149,11 +148,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     }
     public String getDataDefinition(){
 	    var b = new StringBuilder();
-        b.append("static ");
-        b.append(dataType);
-        b.append(' ');
-        b.append(dataName);
-        b.append(";\n");
+        b.append("static ").append(dataType).append(' ');
+        b.append(dataName).append(";\n");
         return b.toString();
     }
     public void parentConstructorCalled(){

@@ -39,7 +39,6 @@ public final class InstanceInfo extends TypeInfo{
         complete = true;
         super.buildDeclaration();
     }
-
     @Override
     public void setClassInfo(ClassInfo info) {
         super.setClassInfo(info);
