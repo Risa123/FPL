@@ -4,7 +4,7 @@ package risa.fpl.env;
 import risa.fpl.CompilerException;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.ModifierBlockStat;
+import risa.fpl.function.AddModifier;
 import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.block.Constructor;
 import risa.fpl.function.exp.Cast;
@@ -23,13 +23,17 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
 	private boolean parentConstructorCalled;
+	private static final SetAccessModifier PROTECTED = new SetAccessModifier(AccessModifier.PROTECTED);
+	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
+	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
+	private static final AddModifier OVERRIDE = new AddModifier(Modifier.OVERRIDE);
 	public ClassEnv(ModuleEnv superEnv,String cname,String id) {
 		super(superEnv);
 		super.addFunction("this",new Constructor());
-		super.addFunction("protected",new SetAccessModifier(AccessModifier.PROTECTED));
-		super.addFunction("virtual",new ModifierBlockStat(Modifier.VIRTUAL));
-		super.addFunction("override",new ModifierBlockStat(Modifier.OVERRIDE));
-		super.addFunction("internal",new SetAccessModifier(AccessModifier.INTERNAL));
+		super.addFunction("protected",PROTECTED);
+		super.addFunction("virtual",VIRTUAL);
+		super.addFunction("override",OVERRIDE);
+		super.addFunction("internal",INTERNAL);
 		this.nameSpace = superEnv.getNameSpace(null) + cname;
 		this.cname = cname;
 		classType = new ClassInfo(id);
@@ -67,8 +71,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	public String getImplicitConstructor(){
 	    var b = new StringBuilder("void ");
 	    b.append(IFunction.INTERNAL_METHOD_PREFIX);
-	    b.append(nameSpace);
-	    b.append("_init(");
+	    b.append(nameSpace).append("_init(");
 	    b.append(cname).append("* this){\n");
 	    b.append(getImplicitConstructorCode());
 	    b.append("}\n");
@@ -137,10 +140,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    if(primaryParent != null){
 	        b.append(primaryParent.getImplCode());
         }
-	    b.append(implBuilder);
-	    b.append('}');
-	    b.append(dataType);
-	    b.append(";\n");
+	    b.append(implBuilder).append('}');
+	    b.append(dataType).append(";\n");
 	    return b.toString();
     }
     public String getImplOf(InterfaceInfo i){

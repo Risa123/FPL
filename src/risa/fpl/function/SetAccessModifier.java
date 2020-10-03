@@ -2,7 +2,7 @@ package risa.fpl.function;
 
 import risa.fpl.env.AEnv;
 
-public final class SetAccessModifier extends ModifierBlockStat{
+public final class SetAccessModifier extends AddModifier {
     public SetAccessModifier(AccessModifier mod){
         super(mod);
     }

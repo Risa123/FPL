@@ -141,4 +141,9 @@ public final class ModuleEnv extends ANameSpacedEnv {
     public ModuleEnv getModule(){
 	    return this;
     }
+    public Function getAndRemove(String name){
+		var f = functions.get(name);
+		functions.remove(name);
+		return (Function)f;
+	}
 }

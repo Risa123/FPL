@@ -39,14 +39,10 @@ public final class Main implements IFunction {
         if(!fnEnv.isReturnUsed()){
             writer.write("return 0;\n}\n");
         }
-        writer.write("static void exceptionHandler(){\n");
-        writer.write("int printf(char* str,...);\nvoid exit(int exitCode);\n");
-        writer.write("printf(\"exception happened:%s\");\n");
-        writer.write("exit(1);\n}\n");
         writer.write("int main(int argc,char** argv){\n");
         writer.write("_Thread mainThread = static_std_lang_Thread_new(\"Main\");\n");
         writer.write("_std_lang_currentThread = &mainThread;\n");
-        writer.write("_std_lang_currentThread->_throwTarget = &exceptionHandler;\n");
+        writer.write("_std_lang_currentThread->_throwTarget = &_std_lang_defaultExceptionHandler;\n");
         writer.write("return fpl_main(argc,argv);\n}");
         return TypeInfo.VOID;
     }

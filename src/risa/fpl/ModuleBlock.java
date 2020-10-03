@@ -38,20 +38,17 @@ public final class ModuleBlock extends ATwoPassBlock {
 		   throw e;
 	   }
    }
-   private Atom makeID(String id){
-       return new Atom(0,0,id, TokenType.ID);
-   }
    public void compile() throws IOException, CompilerException {
        if (!compiled) {
            compiled = true;
            try (var writer = Files.newBufferedWriter(Paths.get(cFile))) {
                env = new ModuleEnv(fpl.getEnv(), this);
                if(!(name.equals("std.lang") || name.equals("std.backend"))){
-                   env.importModule(makeID("std.lang"),writer);
+                   env.importModule(new Atom(0,0,"std.lang",TokenType.ID),writer);
                }
                compile(writer,env,exps);
                if(name.equals("std.lang")){
-                   //adding methods to primitive types
+                   env.getAndRemove("defaultExceptionHandler");
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));

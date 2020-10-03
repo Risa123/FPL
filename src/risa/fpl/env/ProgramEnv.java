@@ -18,8 +18,8 @@ public final class ProgramEnv extends AEnv {
   public ProgramEnv(FPL fpl) {
       this.fpl = fpl;
 	  addFunction("fn",new Fn());
-	  addFunction("native",new ModifierBlockStat(Modifier.NATIVE));
-	  addFunction("const",new ModifierBlockStat(Modifier.CONST));
+	  addFunction("native",new AddModifier(Modifier.NATIVE));
+	  addFunction("const",new AddModifier(Modifier.CONST));
 	  addFunction("use",new Use());
 	  addFunction("true",new ValueExp(TypeInfo.BOOL,"1"));
 	  addFunction("false",new ValueExp(TypeInfo.BOOL,"0"));
@@ -47,7 +47,7 @@ public final class ProgramEnv extends AEnv {
 	  addType("memory",NumberInfo.MEMORY);
 	  addFunction("nil",new ValueExp(TypeInfo.NIL,"0"));
 	  addFunction("private",new SetAccessModifier(AccessModifier.PRIVATE));
-	  addFunction("abstract",new ModifierBlockStat(Modifier.ABSTRACT));
+	  addFunction("abstract",new AddModifier(Modifier.ABSTRACT));
 	  addFunction("interface",new InterfaceBlock());
 	  addFunction("fpointer",new FPointer());
 	  addFunction("cstruct",new CStructBlock());

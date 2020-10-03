@@ -12,6 +12,7 @@ class Exception {
    fn void throw {
      currentThread exception = malloc getObjectSize
      memory i 0L
+     puts "x"
      while i < getObjectSize {
        currentThread exception set i,this get i
        i ++
@@ -19,7 +20,7 @@ class Exception {
     currentThread throwTarget drf
    }
 }
-private fpointer void throwTargetType
+fpointer void throwTargetType
 class Thread {
  private string name
  internal {
@@ -35,3 +36,7 @@ class Thread {
 }
 Thread* currentThread
 #these functions will be made inaccessible by compiler
+fn void defaultExceptionHandler {
+  puts "exception happened:"
+  exit 1
+}

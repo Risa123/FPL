@@ -16,8 +16,8 @@ public final class PointerInfo extends TypeInfo {
             addField("%", new BinaryOperator(this, NumberInfo.MEMORY, "%"));
             addField("get", new GetIndex(this));
             addField("set", new SetIndex());
-            if (type instanceof Function) {
-               addField("drf",(Function)type);
+            if (type instanceof Function f) {
+               addField("drf",new FunctionDereference(f));
             }else{
                 addField("drf",new Dereference(type));
             }

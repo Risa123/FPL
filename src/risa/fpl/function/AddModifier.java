@@ -11,10 +11,10 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
-public class ModifierBlockStat implements IFunction {
+public class AddModifier implements IFunction {
    protected final Object mod;
    private boolean appendSemicolon;
-   public ModifierBlockStat(Object mod) {
+   public AddModifier(Object mod) {
 	   this.mod = mod;
    }
 	@Override

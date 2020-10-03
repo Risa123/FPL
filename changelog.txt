@@ -137,8 +137,9 @@ method size in classes renamed to getInstanceSize
 implemented throw
 changed "official c compiler" to TDM-GCC
 FPLC.exe added to gitignore
+default exception handler moved to std.lang
 fix added cast to drf
 fix removing accidentally added size method from classes
 fix ==,!=,<,>,<=,>= and cast can be used on void* pointers
 fix virtual method not assigned to table crash
-fix drf method missing in function pointers
+fix drf method private in function pointers
