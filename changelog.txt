@@ -142,4 +142,3 @@ fix added cast to drf
 fix removing accidentally added size method from classes
 fix ==,!=,<,>,<=,>= and cast can be used on void* pointers
 fix virtual method not assigned to table crash
-fix drf method private in function pointers
