@@ -1,16 +1,26 @@
 native {
  fn int puts string str
- private fn void fclose void* file
  fn void* malloc memory size
  fn void free void* p
  fn void exit int exitCode
- private fn int system string cmd
- private fn void* fopen string name string mode
- private fn memory fread void* p memory size memory msize void* file
  fn void* realloc void* p memory new_size
- private fn memory fwrite void* p memory size memory nmen
- private fn bool feof void* file
+ private {
+    fn memory fwrite void* p memory size memory nmen
+    fn bool feof void* file
+    fn int system string cmd
+    fn void* fopen string name string mode
+    fn memory fread void* p memory size memory msize void* file
+    fn void fclose void* file
+    fn int fflush void* file
+    fn void* __acrt_iob_func uint index
+    fn int setvbuf void* file byte* buffer int mode memory size
+ }
 }
+private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
+void* stdin __acrt_iob_func STDIN_INDEX
+void* stdout __acrt_iob_func STDOUT_INDEX
+void* stderr __acrt_iob_func STDERR_INDEX
+int _IOFBF 0x0000;_IOLBF 0x0040;_IONBF 0x0004
 fn int execute string cmd {
   return system cmd
 }
@@ -28,4 +38,10 @@ fn memory file_write void* file byte* p memory size {
 }
 fn bool file_eof void* file{
    return feof file
+}
+fn int file_flush void* file{
+  return fflush file
+}
+fn int file_setBuffer void* file byte* buffer int mode memory size{
+   return setvbuf file,buffer,mode,size
 }

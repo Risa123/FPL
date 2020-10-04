@@ -42,6 +42,7 @@ public final class Main implements IFunction {
         writer.write("int main(int argc,char** argv){\n");
         writer.write("_Thread mainThread = static_std_lang_Thread_new(\"Main\");\n");
         writer.write("_std_lang_currentThread = &mainThread;\n");
+        writer.write("void _std_lang_defaultExceptionHandler();\n");
         writer.write("_std_lang_currentThread->_throwTarget = &_std_lang_defaultExceptionHandler;\n");
         writer.write("return fpl_main(argc,argv);\n}");
         return TypeInfo.VOID;

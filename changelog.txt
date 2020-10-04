@@ -135,10 +135,14 @@ fix functions with use identifier in class block now work as any other function
 added getObjectSize method to instances
 method size in classes renamed to getInstanceSize
 implemented throw
-changed "official c compiler" to TDM-GCC
+changed official c compiler to TDM-GCC
+std.backend requires changes on different compiler
 FPLC.exe added to gitignore
 default exception handler moved to std.lang
+hexadecimal numbers added
 fix added cast to drf
 fix removing accidentally added size method from classes
 fix ==,!=,<,>,<=,>= and cast can be used on void* pointers
 fix virtual method not assigned to table crash
+fix error message not printing
+fix module variable initialization

@@ -35,7 +35,7 @@ public final class Var implements IFunction {
 			writer.write("extern ");
 		}
 		if(type != null && !(type instanceof PointerInfo p && p.isFunctionPointer())) {
-			if(env.hasModifier(Modifier.CONST)) {
+			if(env.hasModifier(Modifier.CONST) && !(env instanceof ANameSpacedEnv)) {
 				writer.write("const ");
 			}
 			if(env instanceof ClassEnv && (!type.isPrimitive() || type instanceof PointerInfo p && !p.getType().isPrimitive())){
@@ -117,7 +117,7 @@ public final class Var implements IFunction {
 					    b.write(buffer.getCode());
                     }
 					if(type == null) {
-						if(env.hasModifier(Modifier.CONST)) {
+						if(env.hasModifier(Modifier.CONST) && !(env instanceof  ANameSpacedEnv)) {
 							writer.write("const ");
 						}
 						if(expType  instanceof PointerInfo p && p.isFunctionPointer()){
@@ -134,7 +134,9 @@ public final class Var implements IFunction {
 					type = expType;
 					if(env instanceof  ClassEnv e){
 					    e.appendToImplicitConstructor("this->" + cID + b.getCode() + ";\n");
-                    }else{
+                    }else if(env instanceof  ModuleEnv e){
+                       e.appendToInitializer(cID + b.getCode() + ";\n");
+					}else{
                         writer.write(b.getCode());
                     }
 				}

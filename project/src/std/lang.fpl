@@ -12,7 +12,6 @@ class Exception {
    fn void throw {
      currentThread exception = malloc getObjectSize
      memory i 0L
-     puts "x"
      while i < getObjectSize {
        currentThread exception set i,this get i
        i ++
@@ -37,6 +36,8 @@ class Thread {
 Thread* currentThread
 #these functions will be made inaccessible by compiler
 fn void defaultExceptionHandler {
+  file_setBuffer stdout x 0
   puts "exception happened:"
+  free currentThread exception cast void*
   exit 1
 }
