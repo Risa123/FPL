@@ -172,10 +172,10 @@ public class TypeInfo {
           expCode = expCode.substring(0, expCode.length() - 2);
       }
       var npType = to;
-      if(npType instanceof PointerInfo p){
+      if(npType instanceof PointerInfo p) {
           npType = p.getType();
       }
-      if(this != npType && !primitive){
+      if(this != npType && !primitive && getConversionMethodCName(to) != null /*would return null for nil pointer*/){
           var prefix = "";
           if(!comesFromPointer){
               prefix = "&";

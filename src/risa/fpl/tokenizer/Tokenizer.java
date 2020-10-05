@@ -44,6 +44,7 @@ public final class Tokenizer {
 			  return new Token(line,charNum,builder.toString(),TokenType.CHAR);
 		  }else if(c == '+' || c == '-' || Character.isDigit(c)) {
 			  var signed = false;
+			  var hex = false;
 			  var b = new StringBuilder();
 			  if(c == '+' || c == '-') {
 				  b.appendCodePoint(c);
@@ -57,49 +58,67 @@ public final class Tokenizer {
 					  return new Token(line,charNum,b.toString(),TokenType.ID);
 				  }
 				  signed = true;
+			  }else if(c == '0'){
+			  	read();
+			  	if(c == 'x'){
+                    hex = true;
+				}else if(!isSeparator(c)){
+					b.append('0');
+					readNext = false;
+				}
+			  }else{
+				  b.appendCodePoint(c);
 			  }
-			  b.appendCodePoint(c);
 			  var type = signed?TokenType.SINT:TokenType.UINT;
 			  var floatingPoint = false;
 			  var hasTypeChar = false;
-			  while(hasNext() && !isSeparator(read())) {
-				  if(Character.isDigit(c)) {
-					  b.appendCodePoint(c);
-				  }else if(c == '.') {
-					 if(floatingPoint) {
-						 throw new CompilerException(line,charNum,"this number already has floating point");
-					 }
-	                 floatingPoint = true;
-	                 type = TokenType.DOUBLE;
-	                 if(signed){
-	                	 throw new CompilerException(line,charNum,"floating point number cannot be signed");
-	                 }
-				  }else if(c == 'F'){
-					  type = TokenType.FLOAT;
-					  if(!floatingPoint) {
-						  throw new CompilerException(line,charNum,"float number expected");
+			  if(hex){
+                while(hasNext() && !isSeparator(read())){
+                    b.appendCodePoint(c);
+				}
+			  }else{
+				  while(hasNext() && !isSeparator(read())) {
+					  if(Character.isDigit(c)) {
+						  b.appendCodePoint(c);
+					  }else if(c == '.') {
+						  if(floatingPoint) {
+							  throw new CompilerException(line,charNum,"this number already has floating point");
+						  }
+						  floatingPoint = true;
+						  type = TokenType.DOUBLE;
+						  if(signed){
+							  throw new CompilerException(line,charNum,"floating point number cannot be signed");
+						  }
+					  }else if(c == 'F'){
+						  type = TokenType.FLOAT;
+						  if(!floatingPoint) {
+							  throw new CompilerException(line,charNum,"float number expected");
+						  }
+						  break;
+					  }else if(c == 'L'){
+						  hasTypeChar = true;
+						  type = signed?TokenType.SLONG:TokenType.ULONG;
+						  break;
+					  }else if(c == 'S'){
+						  hasTypeChar = true;
+						  type = signed?TokenType.SSHORT:TokenType.USHORT;
+						  break;
+					  }else if(c == 'B'){
+						  hasTypeChar = true;
+						  type = signed?TokenType.SBYTE:TokenType.UBYTE;
+						  break;
+					  }else {
+						  throw new CompilerException(line,charNum,"unexpected character " + c);
 					  }
-					  break;
-				  }else if(c == 'L'){
-					  hasTypeChar = true;
-					  type = signed?TokenType.SLONG:TokenType.ULONG;
-					  break;
-				  }else if(c == 'S'){
-					  hasTypeChar = true;
-					  type = signed?TokenType.SSHORT:TokenType.USHORT;
-					  break;
-				  }else if(c == 'B'){
-					  hasTypeChar = true;
-					  type = signed?TokenType.SBYTE:TokenType.UBYTE;
-					  break;
-				  }else {
-					  throw new CompilerException(line,charNum,"unexpected character " + c);
 				  }
 			  }
 			  if(!hasTypeChar) {
 				  readNext = false;
 			  }
 			  var value = b.toString();
+			  if(value.isEmpty()){
+			  	 return null;
+			  }
 			  if(floatingPoint) {
 				  if(type == TokenType.FLOAT) {
 					 try {
@@ -116,7 +135,12 @@ public final class Tokenizer {
 				  }
 			  }else {
 				  if(type != TokenType.ULONG) {
-					  var n = Long.parseLong(value);
+					  long n;
+					  if(hex){
+					  	n = Long.parseLong(value,16);
+					  }else{
+					  	 n = Long.parseLong(value);
+					  }
 					  if(type == TokenType.SBYTE && (n < Byte.MIN_VALUE || n > Byte.MAX_VALUE)) {
 						  throw new CompilerException(line,charNum,"sbyte numbere expected");
 					  }else if(type == TokenType.SSHORT && (n < Short.MIN_VALUE || n > Short.MAX_VALUE)) {

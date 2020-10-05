@@ -146,3 +146,4 @@ fix ==,!=,<,>,<=,>= and cast can be used on void* pointers
 fix virtual method not assigned to table crash
 fix error message not printing
 fix module variable initialization
+fix nil compiled incorrectly
