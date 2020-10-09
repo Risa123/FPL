@@ -18,7 +18,7 @@ import risa.fpl.parser.Atom;
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final StringBuilder implicitConstructor = new StringBuilder();
 	private final String cname,nameSpace,dataType,dataName;
-	private final StringBuilder methodCode = new StringBuilder(),methodDeclarations = new StringBuilder();
+
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
@@ -79,13 +79,13 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     }
     public void addMethod(Function method,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
-              methodCode.append("static ");
+              appendFunctionCode("static ");
          }
          if(method.getType() != FunctionType.ABSTRACT){
-             methodCode.append(code);
+             appendFunctionCode(code);
          }
          if(method.getAccessModifier() != AccessModifier.PRIVATE){
-             methodDeclarations.append(method.getDeclaration());
+             appendFunctionDeclaration(method);
          }
          if(method.isVirtual()){
          	 var parent = instanceType.getPrimaryParent();
@@ -95,9 +95,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
              implBuilder.append(new PointerInfo(method).getFunctionPointerDeclaration(method.getImplName()));
              implBuilder.append(";\n");
          }
-    }
-    public String getMethodCode(){
-	    return methodCode.toString();
     }
     @Override
     public ClassInfo getClassType(){
@@ -118,7 +115,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    return nameSpace;
     }
     public void appendDeclarations(){
-        instanceType.appendToDeclaration(methodDeclarations.toString());
+        instanceType.appendToDeclaration(getFunctionDeclaration());
     }
     @Override
     public IFunction getFunction(Atom name) throws CompilerException {

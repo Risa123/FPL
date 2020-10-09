@@ -1,10 +1,12 @@
 package risa.fpl.env;
 
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.Function;
 
 public abstract class ANameSpacedEnv extends SubEnv {
     private final StringBuilder initializer = new StringBuilder();
     private String initializerName;
+    private final StringBuilder functionCode = new StringBuilder(), functionDeclaration = new StringBuilder();
     public ANameSpacedEnv(AEnv superEnv) {
         super(superEnv);
     }
@@ -27,4 +29,16 @@ public abstract class ANameSpacedEnv extends SubEnv {
     }
     public abstract String getNameSpace(IFunction caller);
     public abstract String getNameSpace();
+    public String getFunctionCode(){
+        return functionCode.toString();
+    }
+    public String getFunctionDeclaration(){
+        return functionDeclaration.toString();
+    }
+    public void appendFunctionCode(String code){
+        functionCode.append(code);
+    }
+    public void appendFunctionDeclaration(Function func){
+        functionDeclaration.append(func.getDeclaration()).append(";\n");
+    }
 }

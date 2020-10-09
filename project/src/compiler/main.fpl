@@ -3,6 +3,6 @@ use {
   std.io.file
 }
 main {
-  Exception ex "test"
-  ex throw
+  FileReader reader "notfound"
+  reader close
 }

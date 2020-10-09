@@ -20,9 +20,9 @@ private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
 void* stdin __acrt_iob_func STDIN_INDEX
 void* stdout __acrt_iob_func STDOUT_INDEX
 void* stderr __acrt_iob_func STDERR_INDEX
-int IO_FULL_BUFFER 0x0000 ;_IOFLBF
-int IO_LINE_BUFFER 0x0040 ;_IOLBF
-int IO_NO_BUFFER 0x0004 ;_IONBF
+int IO_FULL_BUFFER 0x0000 #_IOFLBF
+int IO_LINE_BUFFER 0x0040 #_IOLBF
+int IO_NO_BUFFER 0x0004 #_IONBF
 fn int execute string cmd {
   return system cmd
 }

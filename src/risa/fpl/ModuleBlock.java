@@ -47,6 +47,8 @@ public final class ModuleBlock extends ATwoPassBlock {
                    env.importModule(new Atom(0,0,"std.lang",TokenType.ID),writer);
                }
                compile(writer,env,exps);
+               writer.write(env.getFunctionDeclaration());
+               writer.write(env.getFunctionCode());
                if(name.equals("std.lang")){
                    env.getAndRemove("defaultExceptionHandler");
                }

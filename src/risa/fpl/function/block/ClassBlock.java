@@ -113,7 +113,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             cEnv.addMethod(constructor,cEnv.getImplicitConstructor());
             type.setConstructor(constructor);
         }
-        writer.write(cEnv.getMethodCode());
+        writer.write(cEnv.getFunctionCode());
         var allocName = "static" + cEnv.getNameSpace() + "_alloc";
         type.appendToDeclaration(b.getCode());
         cEnv.appendDeclarations();

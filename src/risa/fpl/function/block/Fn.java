@@ -23,9 +23,6 @@ public class Fn extends AFunctionBlock {
 		    returnTypeAtom = it.nextID();
         }
 		var returnType = env.getType(returnTypeAtom);
-		if(env.hasModifier(Modifier.NATIVE)) {
-			b.write("extern ");
-		}
 		b.write(returnType.getCname());
 		b.write(' ');
 		var id = it.nextID();
@@ -84,6 +81,8 @@ public class Fn extends AFunctionBlock {
         }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
             type = FunctionType.VIRTUAL;
             implName = IFunction.toCId(id.getValue());
+        }else if(env.hasModifier(Modifier.NATIVE)){
+            type = FunctionType.NATIVE;
         }else{
             type = FunctionType.NORMAL;
         }
@@ -119,6 +118,11 @@ public class Fn extends AFunctionBlock {
             cEnv.addMethod(f,b.getCode());
         }else if(env instanceof InterfaceEnv){
             writer.write(p.getFunctionPointerDeclaration(cID) + ";\n");
+        }else if(env instanceof ModuleEnv e){
+            if(f.getType() != FunctionType.NATIVE){
+                e.appendFunctionCode(b.getCode());
+            }
+            e.appendFunctionDeclaration(f);
         }else{
             writer.write(b.getCode());
         }
