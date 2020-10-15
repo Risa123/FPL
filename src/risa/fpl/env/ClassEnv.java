@@ -18,7 +18,6 @@ import risa.fpl.parser.Atom;
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private final StringBuilder implicitConstructor = new StringBuilder();
 	private final String cname,nameSpace,dataType,dataName;
-
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();

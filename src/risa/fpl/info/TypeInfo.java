@@ -34,8 +34,7 @@ public class TypeInfo {
   private final HashMap<String, IField>fields = new HashMap<>();
   private Function constructor;
   private ClassInfo classInfo;
-  private final ArrayList<TypeInfo>parents = new ArrayList<>();
-  private final ArrayList<TypeInfo>requiredTypes = new ArrayList<>();
+  private final ArrayList<TypeInfo>parents = new ArrayList<>(),requiredTypes = new ArrayList<>();
   private final HashMap<TypeInfo,String> conversionMethodCNames = new HashMap<>();
   private TypeInfo primaryParent;
   public TypeInfo(String name,String cname,boolean primitive) {

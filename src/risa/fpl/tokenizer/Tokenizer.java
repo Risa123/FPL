@@ -160,6 +160,9 @@ public final class Tokenizer {
 					  }
 				  }
 			  }
+			  if(hex){
+			  	 value = "0x" + value;
+			  }
 			  return new Token(line,charNum,value,type);
 		  } else if( c == '{') {
 			  return new Token(line,charNum,"{",TokenType.BEGIN_BLOCK);
