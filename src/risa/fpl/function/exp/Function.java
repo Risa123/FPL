@@ -66,11 +66,15 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
             if(self instanceof InstanceInfo i){
                 writer.write("((" + i.getClassDataType() + ")");
             }
-            writer.write(getPrevCode());
+            if(getPrevCode() == null){
+                writer.write("this");
+            }else{
+                writer.write(getPrevCode());
+            }
             if(self instanceof InterfaceInfo){
                 writer.write(".impl->");
             }else{
-                if(calledOnPointer){
+                if(calledOnPointer || getPrevCode() == null){
                     writer.write("->");
                 }else{
                     writer.write('.');

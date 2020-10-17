@@ -25,10 +25,10 @@ fixed function importing
 function pointers can be used as arguments
 pointer dereference added
 0.0.5
-dereference and define "variable method"(drf=) added
+dereference and define "variable method"(drf=) added to pointers
 0.0.6
 fix classes can only be declared on module level
-fix module names now may not be valid c identifiers
+fix module names now may not be valid C identifiers
 fix multi-line comment causing empty identifier
 fix + and - ignored as identifiers
 fix } causing error instead of ending statement
@@ -42,7 +42,7 @@ added memory data type to represent memory size and address
 added size static method to every data type to get it´s size
 added static method new to non-primitive data types
 0.1.0 snapshot 1
-check for unreachable statements
+check for unreachable statements after return
 code refactoring
 methods can be declared
 added realloc to std.backend
@@ -142,8 +142,8 @@ default exception handler moved to std.lang
 hexadecimal numbers added
 fix added cast to drf
 fix removing accidentally added size method from classes
-fix ==,!=,<,>,<=,>= and cast can be used on void* pointers
+fix ==,!=,<,>,<=,>= and cast can now be used on void* pointers
 fix virtual method not assigned to table crash
-fix error message not printing
 fix module variable initialization
 fix nil compiled incorrectly
+fix unable to call virtual methods of class in its methods without this

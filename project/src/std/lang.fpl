@@ -6,7 +6,7 @@ class Exception {
    this string message {
      this message = message
    }
-   virtual fn string getMessage {
+   virtual fn string getMessage { #returns null ?
      return message
    }
    fn void throw {
