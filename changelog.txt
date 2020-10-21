@@ -139,7 +139,7 @@ changed official C compiler to TDM-GCC
 std.backend requires changes on different compiler
 FPLC.exe added to gitignore
 default exception handler moved to std.lang
-hexadecimal numbers added
+support for hexadecimal number
 fix added cast to drf
 fix removing accidentally added size method from classes
 fix ==,!=,<,>,<=,>= and cast can now be used on void* pointers
@@ -147,3 +147,6 @@ fix virtual method not assigned to table crash
 fix module variable initialization
 fix nil compiled incorrectly
 fix unable to call virtual methods of class in its methods without this
+0.1.0 snapshot 15
+fix unable to access private fields in pointers
+fix getMessage returns nil

@@ -16,6 +16,7 @@ class Exception {
        currentThread exception set i,this get i
        i ++
      }
+     puts currentThread exception message
     currentThread throwTarget drf
    }
 }

@@ -19,7 +19,7 @@ public final class PointerInfo extends TypeInfo {
             if (type instanceof Function f) {
                addField("drf",new FunctionDereference(f));
             }else{
-                addField("drf",new Dereference(type));
+              addField("drf",new Dereference(type));
             }
         }
         addField("==", new BinaryOperator(BOOL, this, "=="));

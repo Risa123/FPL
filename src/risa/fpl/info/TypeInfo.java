@@ -52,7 +52,7 @@ public class TypeInfo {
   public void addField(String name, IField value) {
 	  fields.put(name, value);
   }
-  //denies access if fields is private and field is not requested by its class
+  //returns null if field cannot be accessed from Env from
   public IField getField(String name,AEnv from) {
       var field = fields.get(name);
       if(field == null){
@@ -63,11 +63,12 @@ public class TypeInfo {
               }
           }
       }
+      //look here
       if(field != null && field.getAccessModifier() != AccessModifier.PUBLIC){
           if(from instanceof SubEnv sub && field.getAccessModifier() == AccessModifier.INTERNAL && this instanceof InstanceInfo i && i.getModule() == sub.getModule()){
               return field;
           }else if(from instanceof IClassOwnedEnv e){
-              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() == classInfo){
+              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() == classInfo){ //look here
                   return field;
               }else if(field.getAccessModifier() == AccessModifier.PROTECTED){
                   return field;
