@@ -25,8 +25,7 @@ public final class Var implements IFunction {
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
         if(type != null && it.hasNext()){
-           var next = it.peek();
-           if(next instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
+           if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
                it.next();
                return type.getClassInfo();
            }

@@ -18,12 +18,16 @@ public class TypeInfo {
   public static final TypeInfo NIL = new TypeInfo("nil","");
   static {
 	  CHAR.addField("cast",new Cast(CHAR));
+	  CHAR.addField("==",new BinaryOperator(CHAR,CHAR,"=="));
+	  CHAR.addField("!=",new BinaryOperator(CHAR,CHAR,"!="));
 	  STRING.addField("get",new GetIndex(CHAR));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
 	  BOOL.addField("&&",new BinaryOperator(BOOL,BOOL,"&&"));
       BOOL.addField("&",new BinaryOperator(BOOL,BOOL,"&"));
       BOOL.addField("||",new BinaryOperator(BOOL,BOOL,"||"));
       BOOL.addField("|",new BinaryOperator(BOOL,BOOL,"|"));
+      BOOL.addField("==",new BinaryOperator(BOOL,BOOL,"=="));
+      BOOL.addField("!=",new BinaryOperator(BOOL,BOOL,"!="));
 	  NIL.addField("==",new BinaryOperator(BOOL, NIL,"=="));
       NIL.addField("!=",new BinaryOperator(BOOL, NIL,"!="));
   }
@@ -63,12 +67,11 @@ public class TypeInfo {
               }
           }
       }
-      //look here
       if(field != null && field.getAccessModifier() != AccessModifier.PUBLIC){
           if(from instanceof SubEnv sub && field.getAccessModifier() == AccessModifier.INTERNAL && this instanceof InstanceInfo i && i.getModule() == sub.getModule()){
               return field;
           }else if(from instanceof IClassOwnedEnv e){
-              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() == classInfo){ //look here
+              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() == classInfo){
                   return field;
               }else if(field.getAccessModifier() == AccessModifier.PROTECTED){
                   return field;

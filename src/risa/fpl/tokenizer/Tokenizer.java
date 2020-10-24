@@ -40,6 +40,9 @@ public final class Tokenizer {
 			  }
 			  var builder = new StringBuilder("'");
 			  builder.appendCodePoint(read());
+			  if(c == '\\' && hasNext()){
+				  builder.appendCodePoint(read());
+			  }
 			  builder.append("'");
 			  return new Token(line,charNum,builder.toString(),TokenType.CHAR);
 		  }else if(c == '+' || c == '-' || Character.isDigit(c)) {

@@ -148,5 +148,7 @@ fix module variable initialization
 fix nil compiled incorrectly
 fix unable to call virtual methods of class in its methods without this
 0.1.0 snapshot 15
-fix unable to access private fields in pointers
+added == and != to bool and char
+support for special characters added
+fix variable not defined and cannot infer type
 fix getMessage returns nil

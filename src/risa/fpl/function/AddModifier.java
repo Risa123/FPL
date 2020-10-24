@@ -21,7 +21,7 @@ public class AddModifier implements IFunction {
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNm)throws IOException, CompilerException {
         addMod(env);
 	    try {
-	    	 var exp = it.next();
+	    	var exp = it.next();
 	 	    if(exp instanceof List) {
 	 	    	exp.compile(writer, env,it);
 	 	    }else {

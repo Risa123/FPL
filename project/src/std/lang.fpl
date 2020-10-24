@@ -6,7 +6,7 @@ class Exception {
    this string message {
      this message = message
    }
-   virtual fn string getMessage { #returns null ?
+   virtual fn string getMessage {
      return message
    }
    fn void throw {
@@ -16,7 +16,6 @@ class Exception {
        currentThread exception set i,this get i
        i ++
      }
-     puts currentThread exception message
     currentThread throwTarget drf
    }
 }
@@ -42,4 +41,12 @@ fn void defaultExceptionHandler {
   puts currentThread exception getMessage
   free currentThread exception cast void*
   exit 1
+}
+#string functions
+fn int getLength string* this {
+  int length 0
+  while this drf get length; != $\0 {
+      length ++
+  }
+  return length
 }

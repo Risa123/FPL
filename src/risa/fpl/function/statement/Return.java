@@ -32,10 +32,8 @@ public final class Return implements IFunction {
 				throw new CompilerException(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
 			}
 			writer.write(returnType.ensureCast(subEnv.getReturnType(),buffer.getCode()));
-		}else {
-			if(subEnv.getReturnType() != TypeInfo.VOID){
-				throw new CompilerException(line,charNum,"this function doesn't return void");
-			}
+		}else if(subEnv.getReturnType() != TypeInfo.VOID){
+			throw new CompilerException(line,charNum,"this function doesn't return void");
 		}
 		subEnv.exitStatement();
 		return TypeInfo.VOID;
