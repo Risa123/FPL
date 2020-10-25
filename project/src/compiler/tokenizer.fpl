@@ -28,7 +28,7 @@ class Tokenizer{
     Readable readable
     fn char read {
        if readNext {
-         var p c &
+         var p c ref
          readable read p cast byte*,1
        }{
          readNext = false

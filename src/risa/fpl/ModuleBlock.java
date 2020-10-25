@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.ATwoPassBlock;
+import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.parser.Parser;
@@ -51,6 +52,7 @@ public final class ModuleBlock extends ATwoPassBlock {
                writer.write(env.getFunctionCode());
                if(name.equals("std.lang")){
                    env.getAndRemove("defaultExceptionHandler");
+                   TypeInfo.STRING.addField("getLength",env.getAndRemove("getLength"));
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));

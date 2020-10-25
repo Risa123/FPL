@@ -30,10 +30,7 @@ public final class Tokenizer {
 			  while(hasNext() && read() != ')');
 		  }else if(c == '#') {
 			  while(hasNext() && read() != '\n');
-			  readNext = false;
-			  if(c != '\n'){
-			      readNext = true;
-              }
+			  readNext = c != '\n';
 		  }else if(c == '$'){
 			  if(!hasNext()) {
 				  throw new CompilerException(line,charNum,"char expected");
@@ -66,8 +63,10 @@ public final class Tokenizer {
 			  	if(c == 'x'){
                     hex = true;
 				}else if(!isSeparator(c)){
-					b.append('0');
 					readNext = false;
+				}
+			    if(!hex){
+					b.append('0');
 				}
 			  }else{
 				  b.appendCodePoint(c);

@@ -43,7 +43,7 @@ public final class Variable extends ValueExp {
 			onlyDeclared = false;
 		    execute(it,writer,env);
 		    return TypeInfo.VOID;
-		}else if(value.equals("&")) {
+		}else if(value.equals("ref")) {
             writer.write('&');
             writePrev(writer);
 		    writer.write(code);

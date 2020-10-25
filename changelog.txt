@@ -150,5 +150,7 @@ fix unable to call virtual methods of class in its methods without this
 0.1.0 snapshot 15
 added == and != to bool and char
 support for special characters added
-fix variable not defined and cannot infer type
+getLength method added to string
+variable "method" & renamed to ref to avoid collusion with & operator
+fix 0 ignored by tokenizer
 fix getMessage returns nil
