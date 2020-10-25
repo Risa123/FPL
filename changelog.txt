@@ -153,4 +153,5 @@ support for special characters added
 getLength method added to string
 variable "method" & renamed to ref to avoid collusion with & operator
 fix 0 ignored by tokenizer
+fix two-pass compiling
 fix getMessage returns nil

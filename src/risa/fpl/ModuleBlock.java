@@ -25,13 +25,13 @@ public final class ModuleBlock extends ATwoPassBlock {
        this.sourceFile = sourceFile.subpath(2, sourceFile.getNameCount()).toString();
 	   cFile = fpl.getOutputDirectory() + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
 	   this.fpl = fpl;
-		var name = new StringBuilder();
-		for(int i = 2;i < sourceFile.getNameCount() - 1;++i) {
+	   var name = new StringBuilder();
+	   for(int i = 2;i < sourceFile.getNameCount() - 1;++i) {
 			name.append(sourceFile.getName(i));
 			name.append('.');
-		}
-		name.append(sourceFile.getFileName().toString().split("\\.")[0]);
-		this.name = name.toString();
+	   }
+	   name.append(sourceFile.getFileName().toString().split("\\.")[0]);
+	   this.name = name.toString();
 	   try (var parser = new Parser(Files.newBufferedReader(sourceFile))){
 		   exps = parser.parse();
 	   }catch(CompilerException e) {
