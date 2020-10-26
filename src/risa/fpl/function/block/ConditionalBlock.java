@@ -37,7 +37,10 @@ public final class ConditionalBlock extends ABlock{
 				list.add(exp);
 			}
 		}
-		new List(expLine,expCharNum,list,false).compile(writer,new SubEnv(env),it);
+		var ret = new List(expLine,expCharNum,list,false).compile(writer,new SubEnv(env),it);
+		if( ret!= TypeInfo.BOOL){
+			throw new CompilerException(expLine,expCharNum,"expression expected to return bool instead of " + ret);
+		}
 		writer.write("){\n");
 		var block = it.nextList();
 		block.compile(writer, env,it);

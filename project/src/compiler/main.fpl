@@ -4,11 +4,8 @@ use {
   std.backend
 }
 main {
-  var test "test"
-  var len test getLength test
-  if len != 0{
-    puts "not zero"
-  }
+  var str "str"
+  var str1 "str1"
   FileReader reader "notfound"
   reader close
 }

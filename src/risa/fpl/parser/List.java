@@ -24,9 +24,6 @@ public final class List extends AExp {
         var appendSemicolon = false;
 	   while(it.hasNext()) {
 		   var exp = it.next();
-           if(!statement && env instanceof SubEnv s && s.containsExitStatement()){
-               throw new CompilerException(exp,"unreachable statement");
-           }
 		   if(exp instanceof Atom atom) {
               if(ret == null) {
             	  var f =  env.getFunction(atom);

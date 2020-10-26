@@ -2,6 +2,7 @@ package risa.fpl.function.exp;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import risa.fpl.BuilderWriter;
@@ -12,6 +13,7 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.InterfaceInfo;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
@@ -97,7 +99,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
 		        writer.write(".instance");
             }
         }
-		int argCount = 0;
+		var argList = new ArrayList<TypeInfo>();
 		while(it.hasNext()) {
 		   var test = it.peek();
 		   if(test instanceof List){
@@ -114,16 +116,15 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
 			   }
 			   var buffer = new BuilderWriter(writer);
 			   var type = exp.compile(buffer, env, it);
-               if(!args[argCount].equals(type)){
-                   throw new CompilerException(exp,"incorrect argument ["  + type + "] " + Arrays.toString(args) + " are expected arguments");
-               }
-			   writer.write(type.ensureCast(args[argCount],buffer.getCode()));
-			   argCount++;
+			   writer.write(type.ensureCast(type,buffer.getCode()));
+			   argList.add(type);
 		   }
 		}
-		if(argCount != args.length) {
-			throw new CompilerException(line,charNum,"incorrect number of arguments (" + argCount + ")expected" + Arrays.toString(args));
-		}
+		var array = new TypeInfo[argList.size()];
+		argList.toArray(array);
+		if(!Arrays.equals(args,array)){
+		    throw new CompilerException(line,charNum,"incorrect arguments expected" + Arrays.toString(args) + " instead of " + Arrays.toString(array));
+        }
 		writer.write(')');
 		return returnType;
 	}
@@ -181,11 +182,11 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
         }
         return false;
     }
-    public Function makeMethod(){
+    public Function makeMethod(TypeInfo ofType){
         var args = new TypeInfo[this.args.length - 1];
         if (args.length > 0) {
             System.arraycopy(this.args, 1, args, 0, args.length);
         }
-        return new Function(getName(),returnType,getCname(),args,type,self,accessModifier,implName);
+        return new Function(getName(),returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
     }
 }

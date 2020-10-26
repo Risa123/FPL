@@ -53,7 +53,7 @@ public final class ModuleBlock extends ATwoPassBlock {
                writer.write(env.getFunctionCode());
                if(name.equals("std.lang")){
                    env.getAndRemove("defaultExceptionHandler");
-                   TypeInfo.STRING.addField("getLength",makeMethod("getLength"));
+                   TypeInfo.STRING.addField("getLength",makeMethod("getLength",TypeInfo.STRING));
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
@@ -88,7 +88,7 @@ public final class ModuleBlock extends ATwoPassBlock {
        }
        return list;
    }
-   public Function makeMethod(String name){
-       return env.getAndRemove(name).makeMethod();
+   public Function makeMethod(String name,TypeInfo ofType){
+       return env.getAndRemove(name).makeMethod(ofType);
    }
 }

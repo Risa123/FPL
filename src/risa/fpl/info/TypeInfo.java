@@ -28,8 +28,8 @@ public class TypeInfo {
       BOOL.addField("|",new BinaryOperator(BOOL,BOOL,"|"));
       BOOL.addField("==",new BinaryOperator(BOOL,BOOL,"=="));
       BOOL.addField("!=",new BinaryOperator(BOOL,BOOL,"!="));
-	  NIL.addField("==",new BinaryOperator(BOOL, NIL,"=="));
-      NIL.addField("!=",new BinaryOperator(BOOL, NIL,"!="));
+	  NIL.addField("==",new BinaryOperator(BOOL,NIL,"=="));
+      NIL.addField("!=",new BinaryOperator(BOOL,NIL,"!="));
   }
   private final String name,cname;
   private String declaration = "";
