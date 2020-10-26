@@ -17,9 +17,6 @@ class Exception {
        i ++
      }
      var len getLength message ref
-     if len == 0 {
-       puts "zero length"
-     }
     currentThread throwTarget drf
    }
 }

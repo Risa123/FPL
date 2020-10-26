@@ -1,8 +1,14 @@
 use {
   compiler.tokenizer
   std.io.file
+  std.backend
 }
 main {
+  var test "test"
+  var len test getLength test
+  if len != 0{
+    puts "not zero"
+  }
   FileReader reader "notfound"
   reader close
 }

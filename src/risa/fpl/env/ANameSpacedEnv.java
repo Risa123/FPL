@@ -6,7 +6,7 @@ import risa.fpl.function.exp.Function;
 public abstract class ANameSpacedEnv extends SubEnv {
     private final StringBuilder initializer = new StringBuilder();
     private String initializerName;
-    private final StringBuilder functionCode = new StringBuilder(), functionDeclaration = new StringBuilder();
+    private final StringBuilder functionCode = new StringBuilder(), functionDeclarations = new StringBuilder();
     public ANameSpacedEnv(AEnv superEnv) {
         super(superEnv);
     }
@@ -16,7 +16,7 @@ public abstract class ANameSpacedEnv extends SubEnv {
     public final String getInitializer(String name){
         var b = new StringBuilder("void ");
         b.append(IFunction.INTERNAL_METHOD_PREFIX);
-        b.append(name).append(getNameSpace());
+        b.append(getNameSpace()).append(name);
         initializerName = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + name +"();\n";
         b.append("(){\n").append(initializer.toString());
         b.append("}\n");
@@ -30,13 +30,16 @@ public abstract class ANameSpacedEnv extends SubEnv {
     public String getFunctionCode(){
         return functionCode.toString();
     }
-    public String getFunctionDeclaration(){
-        return functionDeclaration.toString();
+    public String getFunctionDeclarations(){
+        return functionDeclarations.toString();
     }
     public void appendFunctionCode(String code){
         functionCode.append(code);
     }
     public void appendFunctionDeclaration(Function func){
-        functionDeclaration.append(func.getDeclaration()).append(";\n");
+        functionDeclarations.append(func.getDeclaration()).append(";\n");
+    }
+    public void appendFunctionDeclarations(String code){
+        functionDeclarations.append(code);
     }
 }

@@ -114,7 +114,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    return nameSpace;
     }
     public void appendDeclarations(){
-        instanceType.appendToDeclaration(getFunctionDeclaration());
+        instanceType.appendToDeclaration(getFunctionDeclarations());
     }
     @Override
     public IFunction getFunction(Atom name) throws CompilerException {

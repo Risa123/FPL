@@ -115,7 +115,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
 			   var buffer = new BuilderWriter(writer);
 			   var type = exp.compile(buffer, env, it);
                if(!args[argCount].equals(type)){
-                   throw new CompilerException(exp,"incorrect argument " + Arrays.toString(args) + " are expected arguments");
+                   throw new CompilerException(exp,"incorrect argument ["  + type + "] " + Arrays.toString(args) + " are expected arguments");
                }
 			   writer.write(type.ensureCast(args[argCount],buffer.getCode()));
 			   argCount++;
@@ -180,5 +180,12 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
             return equalSignature(f);
         }
         return false;
+    }
+    public Function makeMethod(){
+        var args = new TypeInfo[this.args.length - 1];
+        if (args.length > 0) {
+            System.arraycopy(this.args, 1, args, 0, args.length);
+        }
+        return new Function(getName(),returnType,getCname(),args,type,self,accessModifier,implName);
     }
 }

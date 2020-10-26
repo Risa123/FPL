@@ -113,7 +113,6 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
             cEnv.addMethod(constructor,cEnv.getImplicitConstructor());
             type.setConstructor(constructor);
         }
-        writer.write(cEnv.getFunctionCode());
         var allocName = "static" + cEnv.getNameSpace() + "_alloc";
         type.appendToDeclaration(b.getCode());
         cEnv.appendDeclarations();
@@ -182,7 +181,9 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
            }
         }
         type.buildDeclaration();
-        writer.write(cEnv.getInitializer("_cinit"));
+        modEnv.appendFunctionDeclarations(cEnv.getFunctionDeclarations());
+        modEnv.appendFunctionCode(cEnv.getFunctionCode());
+        modEnv.appendFunctionCode(cEnv.getInitializer("_cinit"));
         modEnv.appendToInitializer(cEnv.getInitializerCall());
 		return TypeInfo.VOID;
 	}
