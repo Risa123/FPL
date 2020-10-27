@@ -14,11 +14,11 @@ public final class GetIndex extends AField {
     	this.returnType = returnType;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException, CompilerException {
 		writePrev(writer);
 		writer.write('[');
 		var indexAtom = it.nextAtom();
-		var indexType = env.getFunction(indexAtom).compile(writer, env, it, line, charNum);
+		var indexType = env.getFunction(indexAtom).compile(writer,env,it,line,charNum);
 		if(!indexType.isIntegerNumber()){
 		    throw new CompilerException(indexAtom,"integer number expected");
         }

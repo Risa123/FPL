@@ -45,7 +45,7 @@ fn void defaultExceptionHandler {
 #string methods
 fn uint getLength string* this {
   uint length 0
-  while this drf get length != $\0 {
+  while this drf get length != $\0 { # != compiled outside of list
       length ++
   }
   return length

@@ -19,7 +19,7 @@ public class BinaryOperator extends AField {
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
 	    writePrev(writer);
-	    writer.write(operator);	
+	    writer.write(operator);
 	    var exp = it.next();
 	    var opType = exp.compile(writer, env,it);
 	    if(!operandType.equals(opType)) {

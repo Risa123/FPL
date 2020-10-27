@@ -18,7 +18,6 @@ public final class Return implements IFunction {
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
 		writer.write("return ");
-		TypeInfo returnType;
 		var subEnv = (SubEnv)env;
 		if(it.hasNext()) {
 		    var list = new ArrayList<AExp>();
@@ -27,7 +26,7 @@ public final class Return implements IFunction {
             }
 			var exp = new List(line,charNum,list,true);
 			var buffer = new BuilderWriter(writer);
-		    returnType = exp.compile(buffer, env,it);
+		    var returnType = exp.compile(buffer, env,it);
 			if(!subEnv.getReturnType().equals(returnType)) {
 				throw new CompilerException(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
 			}

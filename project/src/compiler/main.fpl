@@ -4,8 +4,6 @@ use {
   std.backend
 }
 main {
-  var str "str"
-  var str1 "str1"
   FileReader reader "notfound"
   reader close
 }
