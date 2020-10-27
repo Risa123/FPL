@@ -19,7 +19,7 @@ public final class List extends AExp {
 	}
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator) throws CompilerException, IOException {
-	   TypeInfo ret = null; //has to be null see line 26
+	   TypeInfo ret = null; //has to be null see line 28
 	   var it = new ExpIterator(exps,getLine(),getCharNum());
         var appendSemicolon = false;
 	   while(it.hasNext()) {

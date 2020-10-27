@@ -50,7 +50,7 @@ public final class Tokenizer {
 				  b.appendCodePoint(c);
 				  read();
 				  if(!Character.isDigit(c)) {
-					  if(!isSeparator(c)) {
+					  if(notSeparator(c)) {
 						 b.appendCodePoint(c);
 					  }else{
 					      readNext = false;
@@ -62,7 +62,7 @@ public final class Tokenizer {
 			  	read();
 			  	if(c == 'x'){
                     hex = true;
-				}else if(!isSeparator(c)){
+				}else if(notSeparator(c)){
 					readNext = false;
 				}
 			    if(!hex){
@@ -75,11 +75,11 @@ public final class Tokenizer {
 			  var floatingPoint = false;
 			  var hasTypeChar = false;
 			  if(hex){
-                while(hasNext() && !isSeparator(read())){
+                while(hasNext() && notSeparator(read())){
                     b.appendCodePoint(c);
 				}
-			  }else{
-				  while(hasNext() && !isSeparator(read())) {
+			  }else if(notSeparator(c)){
+				  while(hasNext() && notSeparator(read())) {
 					  if(Character.isDigit(c)) {
 						  b.appendCodePoint(c);
 					  }else if(c == '.') {
@@ -110,7 +110,7 @@ public final class Tokenizer {
 						  type = signed?TokenType.SBYTE:TokenType.UBYTE;
 						  break;
 					  }else {
-						  throw new CompilerException(line,charNum,"unexpected character " + c);
+						  throw new CompilerException(line,charNum,"unexpected character " + Character.toString(c) + ",code:" + c);
 					  }
 				  }
 			  }
@@ -186,18 +186,17 @@ public final class Tokenizer {
 			  return new Token(line,charNum,b.toString(),TokenType.STRING);
 		  }else if(c == ':'){
 		      return new Token(line,charNum,":",TokenType.CLASS_SELECTOR);
-          } else  if(!isSeparator(c)) {
+          } else  if(notSeparator(c)) {
 			  var b = new StringBuilder();
 			  readNext = false;
 			  if(!Character.isValidCodePoint(c)){
 			      forceEnd = true;
 			      return new Token(line,charNum,"",TokenType.NEW_LINE);
               }
-			  while(hasNext() && !isSeparator(read())) {
+			  while(hasNext() && notSeparator(read())) {
 				  b.appendCodePoint(c);
 			  }
-			  var str = b.toString();
-			  return new Token(line,charNum,str,TokenType.ID);
+			  return new Token(line,charNum,b.toString(),TokenType.ID);
 		  }
 		  return null;
 	  }
@@ -225,12 +224,12 @@ public final class Tokenizer {
 		  }
 		  return c;
 	  }
-	  private boolean isSeparator(int c) {
+	  private boolean notSeparator(int c) {
           if( c == '#' || c == '{' || c == ',' || c == ';' || c == '(' || c == '\n' || c == ':' || c == '}') {
               readNext = false;
-              return true;
+              return false;
           }
-		  return Character.isWhitespace(c);
+		  return !Character.isWhitespace(c);
 	  }
 	  public Token peek() throws IOException,CompilerException{
 	      if(current == null){
