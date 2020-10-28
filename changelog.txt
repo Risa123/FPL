@@ -152,7 +152,7 @@ added == and != to bool and char
 support for special characters added
 getLength method added to string
 variable "method" & renamed to ref to avoid collusion with & operator
-fix hopefully all problems with number 0.
+fix hopefully all problems with number 0
 fix two-pass compiling
 fix rewritten function incorrect arguments reporting to fix ArrayIndexOutOfBoundsException
 fix removed incorrectly working unreachable statement check
