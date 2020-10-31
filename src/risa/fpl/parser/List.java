@@ -6,22 +6,21 @@ import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
-import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
 
 public final class List extends AExp {
 	private final ArrayList<AExp>exps;
 	private final boolean statement;
 	public List(int line, int charNum,ArrayList<AExp>exps,boolean statement) {
-		super(line, charNum);
+		super(line,charNum);
 		this.exps = exps;
 		this.statement = statement;
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator) throws CompilerException, IOException {
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator) throws CompilerException,IOException {
 	   TypeInfo ret = null; //has to be null see line 28
 	   var it = new ExpIterator(exps,getLine(),getCharNum());
-        var appendSemicolon = false;
+	   var appendSemicolon = false;
 	   while(it.hasNext()) {
 		   var exp = it.next();
 		   if(exp instanceof Atom atom) {
@@ -32,7 +31,7 @@ public final class List extends AExp {
               }else{
             	 var field = ret.getField(atom.getValue(),env);
             	 if(field == null) {
-            		 throw new CompilerException(atom,ret + " has no field called " +atom );
+            		 throw new CompilerException(atom,ret + " has no field called " + atom);
             	 }
             	 ret = field.compile(writer,env,it,atom.getLine(),atom.getCharNum());
               }
@@ -40,9 +39,9 @@ public final class List extends AExp {
 			   exp.compile(writer,env,it);
 		   }
 	   }
-        if(appendSemicolon) {
-            writer.write(";\n");
-        }
+	   if(appendSemicolon) {
+	   	 writer.write(";\n");
+	   }
 	   return ret;
 	}
 	@Override
