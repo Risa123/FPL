@@ -24,10 +24,9 @@ public class ValueExp extends AField {
         this(type,code,AccessModifier.PUBLIC);
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException, CompilerException {
 		if(it.hasNext()) {
-			var exp = it.peek();
-			if(exp instanceof Atom atom) {
+			if(it.peek() instanceof Atom atom) {
 				if(atom.getType() == TokenType.ARG_SEPARATOR) {
 					it.next();
 				}else if(atom.getType() != TokenType.END_ARGS){
@@ -60,6 +59,6 @@ public class ValueExp extends AField {
 		    prefix = getPrevCode() + prefix;
         }
 		field.setPrevCode(prefix + code + selector);
-		return field.compile(writer, env, it, line, charNum);
+		return field.compile(writer,env,it,line,charNum);
 	}
 }
