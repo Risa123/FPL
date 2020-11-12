@@ -43,7 +43,7 @@ public final class ConditionalBlock extends ABlock{
 		}
 		writer.write("){\n");
 		var block = it.nextList();
-		block.compile(writer, env,it);
+		block.compile(writer,env,it);
 		writer.write("}\n");
 		if(code.equals("if")) {
 			if(it.hasNext()) {

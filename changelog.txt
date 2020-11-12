@@ -151,10 +151,10 @@ fix unable to call virtual methods of class in its methods without this
 added == and != to bool and char
 support for special characters added
 getLength method added to string
+equals method added to string
 variable "method" & renamed to ref to avoid collusion with & operator
 fix hopefully all problems with number 0
 fix two-pass compiling
 fix rewritten function incorrect arguments reporting to fix ArrayIndexOutOfBoundsException
 fix removed incorrectly working unreachable statement check
 fix while and if not checking if expression returns bool
-fix if and while ignoring expression after args_end

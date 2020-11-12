@@ -54,6 +54,7 @@ public final class ModuleBlock extends ATwoPassBlock {
                if(name.equals("std.lang")){
                    env.getAndRemove("defaultExceptionHandler");
                    TypeInfo.STRING.addField("getLength",makeMethod("getLength",TypeInfo.STRING));
+                   TypeInfo.STRING.addField("equals",makeMethod("equals",TypeInfo.STRING));
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));

@@ -51,12 +51,13 @@ fn uint getLength string* this {
   return length
 }
 fn bool equals string* this string str {
-   if getLength this; != getLength str ref {
+   var len getLength this
+   if len != getLength str ref {
       return false
    }
-   uint i 0
-   while i < getLength this {
-      if this get i != 0 {
+   var i 0
+   while i < len {
+      if this drf get i; != $\0 {
          return false
       }
    }

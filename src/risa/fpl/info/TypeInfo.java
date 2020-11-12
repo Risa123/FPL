@@ -18,8 +18,8 @@ public class TypeInfo {
   public static final TypeInfo NIL = new TypeInfo("nil","");
   static {
 	  CHAR.addField("cast",new Cast(CHAR));
-	  CHAR.addField("==",new BinaryOperator(CHAR,CHAR,"=="));
-	  CHAR.addField("!=",new BinaryOperator(CHAR,CHAR,"!="));
+	  CHAR.addField("==",new BinaryOperator(BOOL,CHAR,"=="));
+	  CHAR.addField("!=",new BinaryOperator(BOOL,CHAR,"!="));
 	  STRING.addField("get",new GetIndex(CHAR));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
 	  BOOL.addField("&&",new BinaryOperator(BOOL,BOOL,"&&"));
