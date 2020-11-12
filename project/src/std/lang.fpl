@@ -16,6 +16,7 @@ class Exception {
        currentThread exception set i,this get i
        i ++
      }
+     puts currentThread exception message
     currentThread throwTarget drf
    }
 }
@@ -44,7 +45,7 @@ fn void defaultExceptionHandler {
 }
 #string methods
 fn uint getLength string* this {
-  uint length 0
+  var length 0
   while this drf get length; != $\0 {
       length ++
   }

@@ -65,7 +65,7 @@ public final class PointerInfo extends TypeInfo {
         return b.toString();
     }
     @Override
-    public IField getField(String name, AEnv from) {
+    public IField getField(String name,AEnv from) {
 	    var field = super.getField(name,from);
 	    if(field == null){
 	        field = type.getField(name,from);

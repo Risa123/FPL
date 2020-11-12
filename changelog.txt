@@ -158,3 +158,4 @@ fix two-pass compiling
 fix rewritten function incorrect arguments reporting to fix ArrayIndexOutOfBoundsException
 fix removed incorrectly working unreachable statement check
 fix while and if not checking if expression returns bool
+fix access modifiers
