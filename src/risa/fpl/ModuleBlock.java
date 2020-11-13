@@ -28,8 +28,7 @@ public final class ModuleBlock extends ATwoPassBlock {
 	   this.fpl = fpl;
 	   var name = new StringBuilder();
 	   for(int i = 2;i < sourceFile.getNameCount() - 1;++i) {
-			name.append(sourceFile.getName(i));
-			name.append('.');
+			name.append(sourceFile.getName(i)).append('.');
 	   }
 	   name.append(sourceFile.getFileName().toString().split("\\.")[0]);
 	   this.name = name.toString();
@@ -40,10 +39,10 @@ public final class ModuleBlock extends ATwoPassBlock {
 		   throw e;
 	   }
    }
-   public void compile() throws IOException, CompilerException {
+   public void compile() throws IOException,CompilerException {
        if (!compiled) {
            compiled = true;
-           try (var writer = Files.newBufferedWriter(Paths.get(cFile))) {
+           try(var writer = Files.newBufferedWriter(Paths.get(cFile))){
                env = new ModuleEnv(fpl.getEnv(), this);
                if(!(name.equals("std.lang") || name.equals("std.backend"))){
                    env.importModule(new Atom(0,0,"std.lang",TokenType.ID),writer);
@@ -53,8 +52,8 @@ public final class ModuleBlock extends ATwoPassBlock {
                writer.write(env.getFunctionCode());
                if(name.equals("std.lang")){
                    env.getAndRemove("defaultExceptionHandler");
-                   TypeInfo.STRING.addField("getLength",makeMethod("getLength",TypeInfo.STRING));
-                   TypeInfo.STRING.addField("equals",makeMethod("equals",TypeInfo.STRING));
+                   makeMethod("getLength",TypeInfo.STRING);
+                   makeMethod("equals",TypeInfo.STRING);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
@@ -65,7 +64,7 @@ public final class ModuleBlock extends ATwoPassBlock {
            }
        }
    }
-   public ModuleEnv getModule(Atom name) throws CompilerException, IOException {
+   public ModuleEnv getModule(Atom name) throws CompilerException,IOException {
 	   var mod = fpl.getModule(name.getValue());
 	   if(mod == null) {
 		   throw new CompilerException(name,"module " + name + " not found");
@@ -89,7 +88,7 @@ public final class ModuleBlock extends ATwoPassBlock {
        }
        return list;
    }
-   public Function makeMethod(String name,TypeInfo ofType){
-       return env.getAndRemove(name).makeMethod(ofType);
+   public void makeMethod(String name,TypeInfo ofType){
+       ofType.addField(name,env.getAndRemove(name).makeMethod(ofType));
    }
 }
