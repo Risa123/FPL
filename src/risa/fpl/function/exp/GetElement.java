@@ -13,9 +13,9 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
-public final class GetIndex extends AField {
+public final class GetElement extends AField {
     private final TypeInfo returnType;
-    public GetIndex(TypeInfo returnType) {
+    public GetElement(TypeInfo returnType) {
     	this.returnType = returnType;
     }
 	@Override

@@ -200,7 +200,7 @@ public final class Tokenizer {
 		  }
 		  return null;
 	  }
-	  public Token next() throws IOException, CompilerException {
+	  public Token next() throws IOException,CompilerException {
 	      if(current != null){
 	          var r = current;
 	          current = null;

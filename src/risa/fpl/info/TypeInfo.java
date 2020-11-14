@@ -20,7 +20,7 @@ public class TypeInfo {
 	  CHAR.addField("cast",new Cast(CHAR));
 	  CHAR.addField("==",new BinaryOperator(BOOL,CHAR,"=="));
 	  CHAR.addField("!=",new BinaryOperator(BOOL,CHAR,"!="));
-	  STRING.addField("get",new GetIndex(CHAR));
+	  STRING.addField("get",new GetElement(CHAR));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
 	  BOOL.addField("&&",new BinaryOperator(BOOL,BOOL,"&&"));
       BOOL.addField("&",new BinaryOperator(BOOL,BOOL,"&"));
@@ -71,7 +71,7 @@ public class TypeInfo {
           if(from instanceof SubEnv sub && field.getAccessModifier() == AccessModifier.INTERNAL && this instanceof InstanceInfo i && i.getModule() == sub.getModule()){
               return field;
           }else if(from instanceof IClassOwnedEnv e){
-              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() == classInfo){
+              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType().getName().equals(classInfo.getName())){
                   return field;
               }else if(field.getAccessModifier() == AccessModifier.PROTECTED){
                   return field;
@@ -200,7 +200,7 @@ public class TypeInfo {
   public String getConversionMethodCName(TypeInfo type){
       return conversionMethodCNames.get(type);
   }
-  public void addConversionMethodCName(TypeInfo type, String cname){
+  public void addConversionMethodCName(TypeInfo type,String cname){
       conversionMethodCNames.put(type,cname);
   }
   public void setPrimaryParent(TypeInfo primaryParent){

@@ -16,7 +16,9 @@ class Exception {
        currentThread exception set i,this get i
        i ++
      }
-     puts currentThread exception message
+    if getLength currentThread exception message; == 0 {
+        puts "is 0";
+    }
     currentThread throwTarget drf
    }
 }

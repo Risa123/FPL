@@ -160,3 +160,5 @@ fix removed incorrectly working unreachable statement check
 fix while and if not checking if expression returns bool
 0.1.0 snapshot 16
 fix access modifiers
+fix set method expects expressions as arguments instead of atoms
+fix set method checks  value type
