@@ -33,10 +33,11 @@ public interface IFunction {
 	  for(int i = 0; i < count;++i) {
 		  var c = id.codePointAt(i);
 		 if(isCIdChar(c,first)) {
-			 b.appendCodePoint(c);
+		 	b.appendCodePoint(c);
 		 }else {
 			b.append(Character.getName(c).replace(' ','_')) ;
 		 }
+		 first = false;
 	  }
 	  return b.toString();
   }

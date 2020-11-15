@@ -162,3 +162,4 @@ fix while and if not checking if expression returns bool
 fix access modifiers
 fix set method expects expressions as arguments instead of atoms
 fix set method checks  value type
+fix valid C identifier check

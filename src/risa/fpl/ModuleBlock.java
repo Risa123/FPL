@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.ATwoPassBlock;
-import risa.fpl.function.exp.Function;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
