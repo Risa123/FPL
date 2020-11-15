@@ -8,7 +8,6 @@ import risa.fpl.parser.Atom;
 
 public class SubEnv extends AEnv {
   protected final AEnv superEnv;
-  private boolean exitStatement;
   public SubEnv(AEnv superEnv) {
 	  this.superEnv = superEnv;
   }
@@ -25,15 +24,9 @@ public class SubEnv extends AEnv {
           return superEnv.getType(atom);
       }
       return super.getType(atom);
-    }
-    public TypeInfo getReturnType() {
-	 return ((SubEnv)superEnv).getReturnType();
- }
- public boolean containsExitStatement() {
-	 return exitStatement;
- }
- public void exitStatement() {
-	 exitStatement = true;
+  }
+  public TypeInfo getReturnType() {
+      return ((SubEnv)superEnv).getReturnType();
  }
  @Override
  public FPL getFPL()  {

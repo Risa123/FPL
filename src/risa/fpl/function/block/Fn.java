@@ -32,7 +32,7 @@ public class Fn extends AFunctionBlock {
 	    String cID;
 	    if(env.hasModifier(Modifier.NATIVE)) {
 	    	cID = id.getValue();
-	    	if(!IFunction.isCId(id.getValue())) {
+	    	if(IFunction.notCID(id.getValue())) {
 	    		throw new CompilerException(id,"invalid C identifier");
 	    	}
 	    }else {

@@ -54,7 +54,7 @@ public class TypeInfo {
 	  return name;
   }
   public void addField(String name, IField value) {
-	  fields.put(name, value);
+	  fields.put(name,value);
   }
   //returns null if field cannot be accessed from Env from
   public IField getField(String name,AEnv from) {

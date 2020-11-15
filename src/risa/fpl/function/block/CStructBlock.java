@@ -19,7 +19,7 @@ public final class CStructBlock extends ABlock {
         if(env.hasTypeInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"this type is already declared");
         }
-        if(!IFunction.isCId(cID)){
+        if(IFunction.notCID(cID)){
             throw new CompilerException(id,"invalid C identifier");
         }
         var b  = new BuilderWriter(writer);

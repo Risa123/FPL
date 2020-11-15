@@ -10,18 +10,18 @@ import risa.fpl.parser.ExpIterator;
 
 
 public interface IFunction {
-  static boolean isCId(String id) {
+  static boolean notCID(String id) {
 	  var first = true;
 	  var count = id.codePointCount(0,id.length());
 	  for(int i = 0; i < count;++i) {
 		  if(!isCIdChar(id.codePointAt(i),first)) {
-			  return false;
+			  return true;
 		  }
 		  if(first) {
 			  first = false;
 		  }
 	  }
-	  return true;
+	  return false;
   }
   static boolean isCIdChar(int c,boolean first) {
 	  return c == '_' || c <= 127 && Character.isAlphabetic(c) || first && Character.isDigit(c);

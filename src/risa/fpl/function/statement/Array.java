@@ -34,7 +34,7 @@ public final class Array implements IFunction {
 	    String cID;
 	    if(env.hasModifier(Modifier.NATIVE)) {
 	    	cID = id.getValue();
-	    	if(!IFunction.isCId(cID)) {
+	    	if(IFunction.notCID(cID)) {
 	    		throw new CompilerException(id,"invalid C identifier");
 	    	}
 	    }else {

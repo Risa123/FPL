@@ -58,7 +58,7 @@ public final class Var implements IFunction {
 			String cID;
 			if(env.hasModifier(Modifier.NATIVE)) {
 				cID = id.getValue();
-				if(!IFunction.isCId(cID)) {
+				if(IFunction.notCID(cID)) {
 					throw new CompilerException(id,cID + " is not valid C identifier");
 				}
 			}else {
