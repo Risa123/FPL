@@ -163,3 +163,5 @@ fix access modifiers
 fix set method expects expressions as arguments instead of atoms
 fix set method checks  value type
 fix valid C identifier check
+fix char cast expecting float instead of integer
+fix cast causing C compilation error

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.ClassOwnedSubEnv;
 import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.AExp;
@@ -37,7 +38,7 @@ public final class ConditionalBlock extends ABlock{
 				list.add(exp);
 			}
 		}
-		var ret = new List(expLine,expCharNum,list,false).compile(writer,new SubEnv(env),it);
+		var ret = new List(expLine,expCharNum,list,false).compile(writer,new ClassOwnedSubEnv(env),it);
 		if( ret != TypeInfo.BOOL){
 			throw new CompilerException(expLine,expCharNum,"expression expected to return bool instead of " + ret);
 		}
@@ -56,7 +57,7 @@ public final class ConditionalBlock extends ABlock{
 				}else {
 					writer.write("else{\n");
 				}
-				elseExp.compile(writer,new SubEnv(env),it);
+				elseExp.compile(writer,new ClassOwnedSubEnv(env),it);
 				if(elseExp instanceof List) {
 					writer.write("}\n");
 				}

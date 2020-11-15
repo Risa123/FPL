@@ -44,14 +44,12 @@ public class Fn extends AFunctionBlock {
 	    }
 		b.write(cID);
         TypeInfo self = null;
-        ClassInfo classType = null;
         if(env instanceof  ClassEnv cEnv){
             self = cEnv.getInstanceType();
-            classType = self.getClassInfo();
         }else if(env instanceof InterfaceEnv e){
             self = e.getType();
         }
-        var fnEnv = new FnEnv(env,returnType,classType);
+        var fnEnv = new FnEnv(env,returnType);
 		var args = parseArguments(b,it,fnEnv,self);
 		if(it.hasNext()) {
 		    if(env.hasModifier(Modifier.ABSTRACT)){
@@ -60,7 +58,7 @@ public class Fn extends AFunctionBlock {
 			b.write("{\n");
 			var block = it.nextList();
 			block.compile(b,fnEnv,it);
-			if(!fnEnv.isReturnUsed() && returnType != TypeInfo.VOID) {
+			if(fnEnv.notReturnUsed() && returnType != TypeInfo.VOID) {
 				throw new CompilerException(block,"there is no return in this block and this function doesn't return void");
 			}
 			b.write("}\n");

@@ -16,9 +16,6 @@ class Exception {
        currentThread exception cast byte* set i,this cast byte* get i
        i ++
      }
-    if getLength currentThread exception message; == 0 {
-        puts "is 0";
-    }
     currentThread throwTarget drf
    }
 }

@@ -16,11 +16,11 @@ import java.io.IOException;
 
 public final class Main implements IFunction {
     @Override
-    public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException,CompilerException {
         if(!(env instanceof ModuleEnv modEnv)){
             throw new CompilerException(line,charNum,"this can only be used in main module");
         }
-        var fnEnv = new FnEnv(env, NumberInfo.INT,null);
+        var fnEnv = new FnEnv(env,NumberInfo.INT);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("argv",new Variable(new PointerInfo(TypeInfo.STRING),"argv","argv"));
         writer.write(modEnv.getInitializer("_init"));
@@ -31,12 +31,12 @@ public final class Main implements IFunction {
             if(!e.isInitCalled()){
                 e.initCalled();
                 writer.write("void ");
-                writer.write(e.getInitializerCall());
-                writer.write(e.getInitializerCall());
+                writer.write(e.getInitializerCall()); //declaration
+                writer.write(e.getInitializerCall()); //call
             }
         }
         it.nextList().compile(writer,fnEnv,it);
-        if(!fnEnv.isReturnUsed()){
+        if(fnEnv.notReturnUsed()){
             writer.write("return 0;\n}\n");
         }
         writer.write("int main(int argc,char** argv){\n");

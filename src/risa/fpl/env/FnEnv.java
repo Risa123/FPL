@@ -6,17 +6,15 @@ import risa.fpl.function.statement.Return;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TypeInfo;
 
-public final class FnEnv extends SubEnv implements IClassOwnedEnv{
+public final class FnEnv extends ClassOwnedSubEnv implements IClassOwnedEnv{
 	private static final Return RETURN = new Return();
 	private static final ConditionalBlock IF = new ConditionalBlock("if");
 	private static final ConditionalBlock WHILE = new ConditionalBlock("while");
 	private static final Break BREAK = new Break();
 	private final TypeInfo returnType;
 	private boolean returnUsed;
-	private final ClassInfo classType;
-	public FnEnv(AEnv superEnv,TypeInfo returnType,ClassInfo classType) {
+	public FnEnv(AEnv superEnv,TypeInfo returnType) {
 		super(superEnv);
-		this.classType = classType;
 		this.returnType  = returnType;
 	    addFunction("return",RETURN);
 	    addFunction("if",IF);
@@ -28,11 +26,7 @@ public final class FnEnv extends SubEnv implements IClassOwnedEnv{
 		returnUsed = true;
 		return returnType;
 	}
-	public boolean isReturnUsed() {
-		return returnUsed;
+	public boolean notReturnUsed() {
+		return !returnUsed;
 	}
-    @Override
-    public ClassInfo getClassType() {
-        return classType;
-    }
 }
