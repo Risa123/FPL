@@ -8,6 +8,9 @@ public class ClassOwnedSubEnv extends SubEnv implements IClassOwnedEnv {
     }
     @Override
     public ClassInfo getClassType() {
-        return ((IClassOwnedEnv)superEnv).getClassType();
+        if(superEnv instanceof IClassOwnedEnv e){
+            return e.getClassType();
+        }
+        return null;
     }
 }

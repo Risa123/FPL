@@ -21,6 +21,7 @@ public class TypeInfo {
 	  CHAR.addField("==",new BinaryOperator(BOOL,CHAR,"=="));
 	  CHAR.addField("!=",new BinaryOperator(BOOL,CHAR,"!="));
 	  STRING.addField("get",new GetElement(CHAR));
+	  STRING.addField("cast",new Cast(STRING));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
 	  BOOL.addField("&&",new BinaryOperator(BOOL,BOOL,"&&"));
       BOOL.addField("&",new BinaryOperator(BOOL,BOOL,"&"));
@@ -71,7 +72,7 @@ public class TypeInfo {
           if(from instanceof SubEnv sub && field.getAccessModifier() == AccessModifier.INTERNAL && this instanceof InstanceInfo i && i.getModule() == sub.getModule()){
               return field;
           }else if(from instanceof IClassOwnedEnv e){
-              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType().getName().equals(classInfo.getName())){
+              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() != null && e.getClassType().getName().equals(classInfo.getName())){
                   return field;
               }else if(field.getAccessModifier() == AccessModifier.PROTECTED){
                   return field;
