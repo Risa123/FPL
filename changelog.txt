@@ -165,3 +165,4 @@ fix set method checks  value type
 fix valid C identifier check
 fix char cast expecting float instead of integer
 fix cast causing C compilation error
+fix method calls causing C compilation error

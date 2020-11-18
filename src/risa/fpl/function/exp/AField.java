@@ -34,7 +34,6 @@ public abstract class AField implements IField {
     public boolean appendSemicolon() {
         return true;
     }
-
     @Override
     public AccessModifier getAccessModifier() {
         return accessModifier;

@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
@@ -11,14 +12,14 @@ import risa.fpl.info.TypeInfo;
 public final class List extends AExp {
 	private final ArrayList<AExp>exps;
 	private final boolean statement;
-	public List(int line, int charNum,ArrayList<AExp>exps,boolean statement) {
+	public List(int line, int charNum,ArrayList<AExp>exps,boolean statement){
 		super(line,charNum);
 		this.exps = exps;
 		this.statement = statement;
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator) throws CompilerException,IOException {
-	   TypeInfo ret = null; //has to be null see line 28
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator) throws CompilerException,IOException{
+	   TypeInfo ret = null; //has to be null see line 27
 	   var it = new ExpIterator(exps,getLine(),getCharNum());
 	   var appendSemicolon = false;
 	   while(it.hasNext()) {
