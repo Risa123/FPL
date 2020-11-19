@@ -38,9 +38,6 @@ Thread* currentThread
 fn void defaultExceptionHandler {
   file_setBuffer stdout,nil,IO_NO_BUFFER,0L
   puts "exception happened:"
-  if currentThread exception getMessage; cast void* == nil {
-    puts "nil"
-  }
   free currentThread exception cast void*
   exit 1
 }
@@ -53,6 +50,9 @@ fn uint getLength string* this {
   return length
 }
 fn bool equals string* this string str {
+   if this == str ref {
+      return true
+   }
    var len getLength this
    if len != getLength str ref {
       return false

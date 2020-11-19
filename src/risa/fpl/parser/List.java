@@ -22,24 +22,31 @@ public final class List extends AExp {
 	   TypeInfo ret = null; //has to be null see line 27
 	   var it = new ExpIterator(exps,getLine(),getCharNum());
 	   var appendSemicolon = false;
+	   BuilderWriter b = null;
 	   while(it.hasNext()) {
 		   var exp = it.next();
 		   if(exp instanceof Atom atom) {
               if(ret == null) {
             	  var f =  env.getFunction(atom);
-                  ret = f.compile(writer,env,it,exp.getLine(),exp.getCharNum());
+            	  b = new BuilderWriter(writer);
+                  ret = f.compile(b,env,it,exp.getLine(),exp.getCharNum());
                   appendSemicolon = f.appendSemicolon() && statement;
               }else{
             	 var field = ret.getField(atom.getValue(),env);
             	 if(field == null) {
             		 throw new CompilerException(atom,ret + " has no field called " + atom);
             	 }
-            	 ret = field.compile(writer,env,it,atom.getLine(),atom.getCharNum());
+            	 field.setPrevCode(b.getCode());
+            	 b = new BuilderWriter(writer);
+            	 ret = field.compile(b,env,it,atom.getLine(),atom.getCharNum());
               }
 		   }else if(exp instanceof List) {
 			   exp.compile(writer,env,it);
 		   }
 	   }
+	   if(b != null){
+           writer.write(b.getCode());
+       }
 	   if(appendSemicolon) {
 	   	 writer.write(";\n");
 	   }

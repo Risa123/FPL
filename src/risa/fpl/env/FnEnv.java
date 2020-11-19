@@ -3,7 +3,6 @@ package risa.fpl.env;
 import risa.fpl.function.block.ConditionalBlock;
 import risa.fpl.function.statement.Break;
 import risa.fpl.function.statement.Return;
-import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TypeInfo;
 
 public final class FnEnv extends ClassOwnedSubEnv{

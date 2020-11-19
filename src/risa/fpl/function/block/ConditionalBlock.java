@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassOwnedSubEnv;
-import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;

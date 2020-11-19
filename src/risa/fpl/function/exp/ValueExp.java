@@ -15,7 +15,7 @@ import risa.fpl.tokenizer.TokenType;
 public class ValueExp extends AField {
     protected final TypeInfo type;
     protected final String code;
-    public ValueExp(TypeInfo type, String code, AccessModifier accessModifier) {
+    public ValueExp(TypeInfo type,String code,AccessModifier accessModifier) {
         super(accessModifier);
     	this.type = type;
     	this.code = code;
@@ -24,7 +24,7 @@ public class ValueExp extends AField {
         this(type,code,AccessModifier.PUBLIC);
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException, CompilerException {
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
 		if(it.hasNext()) {
 			if(it.peek() instanceof Atom atom) {
 				if(atom.getType() == TokenType.ARG_SEPARATOR) {
@@ -39,7 +39,7 @@ public class ValueExp extends AField {
 		writer.write(code);
 		return type;
 	}
-	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws CompilerException, IOException {
+	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
 		var field = type.getField(atom.getValue(),env);
 		if(field == null) {
 			throw new CompilerException(atom,type + " has no field  called " + atom);
