@@ -34,11 +34,13 @@ class Thread {
  }
 }
 Thread* currentThread
+native fn int putchar char c
 #these functions will be made inaccessible by compiler
 fn void defaultExceptionHandler {
   file_setBuffer stdout,nil,IO_NO_BUFFER,0L
   puts "exception happened:"
-  puts currentThread exception getMessage
+  #puts currentThread exception getMessage
+  putchar currentThread exception getMessage;get 0
   free currentThread exception cast void*
   exit 1
 }

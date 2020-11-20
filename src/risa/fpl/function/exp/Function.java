@@ -27,7 +27,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
 	private final FunctionType type;
 	private boolean calledOnPointer;
 	private final String implName;
-    public Function(String name, TypeInfo returnType, String cname, TypeInfo[] args,FunctionType type, TypeInfo self, AccessModifier accessModifier,String implName) {
+    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,FunctionType type,TypeInfo self,AccessModifier accessModifier,String implName){
        super(name,cname,true);
        this.returnType = returnType;
        this.args = args;
@@ -63,7 +63,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
         return accessModifier;
     }
     @Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         if(isVirtual()){
             if(self instanceof InstanceInfo i){
                 writer.write("((" + i.getClassDataType() + ")");
@@ -101,8 +101,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
         }
 		var argList = new ArrayList<TypeInfo>();
 		while(it.hasNext()) {
-		   var test = it.peek();
-		   if(test instanceof List){
+		   if(it.peek() instanceof List){
 		       break;
            }
 		   var exp = it.nextAtom();
@@ -115,7 +114,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
 				   writer.write(',');
 			   }
 			   var buffer = new BuilderWriter(writer);
-			   var type = exp.compile(buffer, env, it);
+			   var type = exp.compile(buffer,env,it);
 			   writer.write(type.ensureCast(type,buffer.getCode()));
 			   argList.add(type);
 		   }
@@ -133,7 +132,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
         prev_code = code;
     }
     @Override
-    public void writePrev(BufferedWriter writer) throws IOException {
+    public void writePrev(BufferedWriter writer)throws IOException{
         if(prev_code == null){
            if(self != null){
                writer.write("this");
@@ -147,8 +146,8 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
     public String getPrevCode() {
         return prev_code;
     }
-    public static Function newStatic(String name,TypeInfo returnType,TypeInfo[]args, ClassEnv env){
-        var cname = "static" + env.getNameSpace()  + IFunction.toCId(name) ;
+    public static Function newStatic(String name,TypeInfo returnType,TypeInfo[]args,ClassEnv env){
+        var cname = "static" + env.getNameSpace()  + IFunction.toCId(name);
         return new Function("new",returnType,cname,args,FunctionType.NORMAL,null,AccessModifier.PUBLIC,cname);
     }
     public final TypeInfo getReturnType(){
