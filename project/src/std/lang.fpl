@@ -53,9 +53,6 @@ fn uint getLength string* this {
   return length
 }
 fn bool equals string* this string str {
-   if this == str ref {
-      return true
-   }
    var len getLength this
    if len != getLength str ref {
       return false

@@ -128,7 +128,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
 		return returnType;
 	}
     @Override
-    public void setPrevCode(String code) {
+    public void setPrevCode(String code){
         prev_code = code;
     }
     @Override
@@ -143,7 +143,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
         }
     }
     @Override
-    public String getPrevCode() {
+    public String getPrevCode(){
         return prev_code;
     }
     public static Function newStatic(String name,TypeInfo returnType,TypeInfo[]args,ClassEnv env){
