@@ -64,6 +64,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
     }
     @Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+        var bWriter = new BuilderWriter(writer);
         if(isVirtual()){
             if(self instanceof InstanceInfo i){
                 writer.write("((" + i.getClassDataType() + ")");
@@ -125,6 +126,14 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
 		    throw new CompilerException(line,charNum,"incorrect arguments expected" + Arrays.toString(args) + " instead of " + Arrays.toString(array));
         }
 		writer.write(')');
+        if(it.hasNext() && returnType != TypeInfo.VOID){
+            var id = it.nextID();
+            var field = returnType.getField(id.getValue(),env);
+            if(field == null){
+                throw new CompilerException(id,returnType + " has no field called " + id);
+            }
+            return field.compile(writer,env,it,id.getLine(),id.getCharNum());
+        }
 		return returnType;
 	}
     @Override
@@ -184,7 +193,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
     public Function makeMethod(TypeInfo ofType){
         var args = new TypeInfo[this.args.length - 1];
         if (args.length > 0) {
-            System.arraycopy(this.args, 1, args, 0, args.length);
+            System.arraycopy(this.args,1,args,0,args.length);
         }
         return new Function(getName(),returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
     }

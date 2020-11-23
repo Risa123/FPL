@@ -31,7 +31,7 @@ public final class Variable extends ValueExp {
        this(type,code,false,id,false,null,AccessModifier.PUBLIC);
     }
 	@Override
-	protected TypeInfo onField(Atom atom, BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws CompilerException, IOException {
+	protected TypeInfo onField(Atom atom, BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws CompilerException,IOException{
 	    var value = atom.getValue();
 		if(value.equals("=")) {
 		   if(constant) {
@@ -62,20 +62,20 @@ public final class Variable extends ValueExp {
 			    return t;
             }
 		}
-		return super.onField(atom, writer, env, it, line, charNum);
+		return super.onField(atom,writer,env,it,line,charNum);
 	}
 
 	@Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException,CompilerException{
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=")){
 		    throw new CompilerException(line,charNum,"variable " + id + " not defined");
         }
 		if(instanceType != null && getPrevCode() == null){
 		    setPrevCode("((" + instanceType.getCname() + "*)this)->");
         }
-		return super.compile(writer, env, it, line, charNum);
+		return super.compile(writer,env,it,line,charNum);
 	}
-	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException, CompilerException {
+	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException,CompilerException{
             switch (operator) {
                 case "+=", "-=", "/=", "*=" -> {
                     process(operator,writer,it,env);
@@ -105,7 +105,7 @@ public final class Variable extends ValueExp {
     private void process(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException, CompilerException {
 	    writer.write(code);
         writer.write(operator);
-        execute(it,writer, env);
+        execute(it,writer,env);
     }
     private void execute(ExpIterator it,BufferedWriter writer,AEnv env) throws CompilerException, IOException {
 	    var list = new ArrayList<AExp>();
