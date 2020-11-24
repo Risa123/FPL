@@ -64,7 +64,6 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
     }
     @Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        var bWriter = new BuilderWriter(writer);
         if(isVirtual()){
             if(self instanceof InstanceInfo i){
                 writer.write("((" + i.getClassDataType() + ")");

@@ -1,32 +1,32 @@
 
-abstract class AExp {
+abstract class AExp{
   private int line;charNum
-  this int line int charNum {
+  this int line int charNum{
     this line = line
     this charNum = charNum
   }
-  fn int getLine {
+  fn int getLine{
     return line
   }
-  fn int getCharNum {
+  fn int getCharNum{
     return charNum
   }
   abstract fn void compile
 }
-class Atom AExp {
+class Atom AExp{
    private string value
-   this int line int charNum string value;line,charNum {
+   this int line int charNum string value;line,charNum{
     this value = value
   }
-  override fn void compile {
+  override fn void compile{
 
   }
 }
 class List AExp {
- this int line int charNum;line,charNum {
+ this int line int charNum;line,charNum{
 
  }
- override fn void compile {
+ override fn void compile{
 
  }
 }
