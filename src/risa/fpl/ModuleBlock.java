@@ -53,6 +53,7 @@ public final class ModuleBlock extends ATwoPassBlock {
                    env.getAndRemove("defaultExceptionHandler");
                    makeMethod("getLength",TypeInfo.STRING);
                    makeMethod("equals",TypeInfo.STRING);
+                   makeMethod("toString",TypeInfo.BOOL);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
