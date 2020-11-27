@@ -170,4 +170,4 @@ fix method calls causing C compilation error
 toString added to bool
 isDigit,isLetter,isWhitespace,isControl added to char
 fix function argument parsing
-fix segmentation fault
+fix IOException.getMessage is null

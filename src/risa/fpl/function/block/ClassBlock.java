@@ -23,9 +23,9 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
-public final class ClassBlock extends ATwoPassBlock implements IFunction {
+public final class ClassBlock extends ATwoPassBlock implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException,CompilerException{
 		if(!(env instanceof ModuleEnv modEnv)){
 		    throw new CompilerException(line,charNum,"can only be used on module level");
         }
@@ -65,7 +65,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction {
                     }else{
                         throw new CompilerException(typeID,"can only inherit from other classes");
                     }
-                    cEnv.getInstanceType().setPrimaryParent(parentType);
+                    cEnv.setPrimaryParent(parentType);
                 }
             }
         }

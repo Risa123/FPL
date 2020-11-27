@@ -165,15 +165,15 @@ public class TypeInfo {
       }
       return list;
   }
-  public boolean isIntegerNumber(){
+  public boolean notIntegerNumber(){
       if(this instanceof NumberInfo n){
-          return !n.isFloatingPoint();
+          return n.isFloatingPoint();
       }
-      return false;
+      return true;
   }
   public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
       if(expCode.endsWith(";\n")){ //caused by Var
-          expCode = expCode.substring(0, expCode.length() - 2);
+          expCode = expCode.substring(0,expCode.length() - 2);
       }
       var npType = to;
       if(npType instanceof PointerInfo p) {

@@ -15,7 +15,7 @@ import risa.fpl.function.statement.Var;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 
-public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
+public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implicitConstructor = new StringBuilder();
 	private final String cname,nameSpace,dataType,dataName;
 	private final ClassInfo classType;
@@ -26,7 +26,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
 	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
 	private static final AddModifier OVERRIDE = new AddModifier(Modifier.OVERRIDE);
-	public ClassEnv(ModuleEnv superEnv,String cname,String id) {
+	public ClassEnv(ModuleEnv superEnv,String cname,String id){
 		super(superEnv);
 		super.addFunction("this",new Constructor());
 		super.addFunction("protected",PROTECTED);
@@ -45,11 +45,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
 	}
 	@Override
-	public void addFunction(String name,IFunction value) {
+	public void addFunction(String name,IFunction value){
 		if(value instanceof IField field) {
 			instanceType.addField(name,field);
         }else{
-		    super.addFunction(name, value);
+		    super.addFunction(name,value);
         }
 	}
 	public void appendToImplicitConstructor(String code) {
@@ -117,7 +117,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
         instanceType.appendToDeclaration(getFunctionDeclarations());
     }
     @Override
-    public IFunction getFunction(Atom name) throws CompilerException {
+    public IFunction getFunction(Atom name)throws CompilerException{
 	    var field = instanceType.getField(name.getValue(),this);
 	    if(field != null){
 	        return field;
@@ -144,10 +144,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
 	    return cname + i.getCname() + "_impl";
     }
     public String getDataDefinition(){
-	    var b = new StringBuilder();
-        b.append("static ").append(dataType).append(' ');
-        b.append(dataName).append(";\n");
-        return b.toString();
+        return "static " + dataType + ' ' + dataName + ";\n";
     }
     public void parentConstructorCalled(){
 	    parentConstructorCalled = true;
@@ -157,5 +154,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv {
     }
     public String getDataName(){
 	    return dataName;
+    }
+    public void setPrimaryParent(InstanceInfo parent){
+        instanceType.setPrimaryParent(parent);
+
     }
 }

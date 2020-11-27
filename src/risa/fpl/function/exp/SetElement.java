@@ -41,7 +41,7 @@ public final class SetElement extends AField {
 		var indexExp = new List(line,beginChar,list,true);
 		var tmpWriter = new BuilderWriter(writer);
 	    var indexType = indexExp.compile(tmpWriter,env,it);
-	    if(!indexType.isIntegerNumber()) {
+	    if(indexType.notIntegerNumber()) {
 	    	throw new CompilerException(indexExp,"integer number expected");
 	    }
 	    var code = tmpWriter.getCode();

@@ -32,7 +32,7 @@ public final class GetElement extends AField {
 		}
 		var indexExp = new List(line,charNum,list,false);
 		var indexType = indexExp.compile(writer,env,it);
-		if(!indexType.isIntegerNumber()){
+		if(indexType.notIntegerNumber()){
 		    throw new CompilerException(indexExp,"integer number expected");
         }
 		writer.write(']');

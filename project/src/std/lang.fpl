@@ -36,7 +36,6 @@ class Thread{
 Thread* currentThread
 #these functions will be made inaccessible by compiler
 fn void defaultExceptionHandler{
-  file_setBuffer stdout,nil,IO_NO_BUFFER,0L
   puts "exception happened:"
   puts currentThread exception getMessage
   free currentThread exception cast void*
