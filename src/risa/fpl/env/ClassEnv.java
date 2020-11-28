@@ -68,13 +68,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		return additionalCode + implicitConstructor.toString();
 	}
 	public String getImplicitConstructor(){
-	    var b = new StringBuilder("void ");
-	    b.append(IFunction.INTERNAL_METHOD_PREFIX);
-	    b.append(nameSpace).append("_init(");
-	    b.append(cname).append("* this){\n");
-	    b.append(getImplicitConstructorCode());
-	    b.append("}\n");
-	    return b.toString();
+        return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init(" + cname + "* this){\n" + getImplicitConstructorCode() + "}\n";
     }
     public void addMethod(Function method,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
@@ -157,6 +151,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public void setPrimaryParent(InstanceInfo parent){
         instanceType.setPrimaryParent(parent);
-
+        for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
+            appendToInitializer(getDataName() + "." + method.getImplName() +"=" + method.getCname() + ";\n");
+        }
     }
 }

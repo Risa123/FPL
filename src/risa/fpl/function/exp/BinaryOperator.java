@@ -11,13 +11,13 @@ import risa.fpl.parser.ExpIterator;
 public class BinaryOperator extends AField {
    private final TypeInfo returnType,operandType;
    private final String operator;
-   public BinaryOperator(TypeInfo returnType,TypeInfo operandType,String operator) {
+   public BinaryOperator(TypeInfo returnType,TypeInfo operandType,String operator){
 	   this.operandType = operandType;
 	   this.returnType = returnType;
 	   this.operator = operator;
-   }
+    }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
 	    writePrev(writer);
 	    writer.write(operator);
 	    var exp = it.next();

@@ -5,7 +5,7 @@ import java.io.Reader;
 
 import risa.fpl.CompilerException;
 
-public final class Tokenizer {
+public final class Tokenizer{
 	  private final Reader reader;
 	  private int line = 1,charNum = 1,c;
 	  private boolean readNext = true,forceEnd;
@@ -15,16 +15,16 @@ public final class Tokenizer {
 	  public Tokenizer(Reader reader) {
 		  this.reader = reader;
 	  }
-	  public void close() throws IOException {
+	  public void close()throws IOException{
 		  reader.close();
 	  }
-	  public boolean hasNext() throws IOException {
+	  public boolean hasNext()throws IOException{
 	      if(forceEnd){
 	          return false;
           }
 		  return reader.ready() || !readNext;
 	  }
-	  private Token nextPrivate() throws IOException, CompilerException {
+	  private Token nextPrivate() throws IOException,CompilerException{
 		  read();
 		  if(c == '(') {
 			  while(hasNext() && read() != ')');
@@ -49,14 +49,16 @@ public final class Tokenizer {
 			  if(c == '+' || c == '-') {
 				  b.appendCodePoint(c);
 				  read();
-				  if(!Character.isDigit(c)) {
-					  if(notSeparator(c)) {
-						 b.appendCodePoint(c);
-					  }else{
-					      readNext = false;
+				  if(Character.isDigit(c)){
+					 b.appendCodePoint(c);
+				  }else{
+                      if(notSeparator(c)) {
+                          b.appendCodePoint(c);
+                      }else{
+                          readNext = false;
                       }
-					  return new Token(line,charNum,b.toString(),TokenType.ID);
-				  }
+                      return new Token(line,charNum,b.toString(),TokenType.ID);
+                  }
 				  signed = true;
 			  }else if(c == '0'){
 			  	read();
@@ -210,7 +212,7 @@ public final class Tokenizer {
 		  while((token = nextPrivate())  == null || token.type() != TokenType.NEW_LINE && (token.value().isEmpty() || token.value().isBlank()));
 		  return token;
 	  }
-	  private int read() throws IOException {
+	  private int read()throws IOException{
 		  if(readNext) {
 			 c = reader.read();
 			 if(c == '\n') {
@@ -224,14 +226,14 @@ public final class Tokenizer {
 		  }
 		  return c;
 	  }
-	  private boolean notSeparator(int c) {
+	  private boolean notSeparator(int c){
           if( c == '#' || c == '{' || c == ',' || c == ';' || c == '(' || c == '\n' || c == ':' || c == '}') {
               readNext = false;
               return false;
           }
 		  return !Character.isWhitespace(c);
 	  }
-	  public Token peek() throws IOException,CompilerException{
+	  public Token peek()throws IOException,CompilerException{
 	      if(current == null){
 	          current = next();
           }

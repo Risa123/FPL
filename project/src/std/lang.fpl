@@ -65,7 +65,7 @@ fn bool equals string* this string str{
 #char methods
 fn bool isDigit char* this{
   var c this drf cast int
-  return true
+  return c >= 48; && c <= 57
 }
 #bool toString
 fn string toString bool* this{

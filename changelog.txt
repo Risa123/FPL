@@ -169,5 +169,7 @@ fix method calls causing C compilation error
 0.1.0 snapshot 17
 toString added to bool
 isDigit,isLetter,isWhitespace,isControl added to char
+; no longer considered name of method
 fix function argument parsing
-fix IOException.getMessage is null
+fix inherited virtual methods are null
+fix negative number literals causing compiler crash

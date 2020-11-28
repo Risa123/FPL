@@ -3,3 +3,10 @@ use std.backend
 fn void exit int exitCode {
   exit exitCode
 }
+fn int execute string cmd{
+  var exitCode execute cmd
+  if exitCode == -1{
+
+  }
+  return exitCode
+}
