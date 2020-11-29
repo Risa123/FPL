@@ -39,7 +39,9 @@ public final class Tokenizer{
 			  builder.appendCodePoint(read());
 			  if(c == '\\' && hasNext()){
 				  builder.appendCodePoint(read());
-			  }
+			  }else if(c == 's' && hasNext() && read() == 'p'){
+                  return new Token(line,charNum,"' '",TokenType.CHAR);
+              }
 			  builder.append("'");
 			  return new Token(line,charNum,builder.toString(),TokenType.CHAR);
 		  }else if(c == '+' || c == '-' || Character.isDigit(c)) {

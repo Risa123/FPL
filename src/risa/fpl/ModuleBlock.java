@@ -50,10 +50,20 @@ public final class ModuleBlock extends ATwoPassBlock {
                writer.write(env.getFunctionDeclarations());
                writer.write(env.getFunctionCode());
                if(name.equals("std.lang")){
-                   env.getAndRemove("defaultExceptionHandler");
                    makeMethod("getLength",TypeInfo.STRING);
                    makeMethod("equals",TypeInfo.STRING);
                    makeMethod("toString",TypeInfo.BOOL);
+                   makeMethod("isDigit",TypeInfo.CHAR);
+                   makeMethod("isControl",TypeInfo.CHAR);
+                   makeMethod("isWhitespace",TypeInfo.CHAR);
+                   makeMethod("isUpper",TypeInfo.CHAR);
+                   makeMethod("isLower",TypeInfo.CHAR);
+                   makeMethod("isBlank",TypeInfo.CHAR);
+                   makeMethod("isHexDigit",TypeInfo.CHAR);
+                   makeMethod("isPrint",TypeInfo.CHAR);
+                   makeMethod("isPunct",TypeInfo.CHAR);
+                   makeMethod("toLower",TypeInfo.CHAR);
+                   makeMethod("toUpper",TypeInfo.CHAR);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));

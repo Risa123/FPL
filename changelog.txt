@@ -168,8 +168,12 @@ fix cast causing C compilation error
 fix method calls causing C compilation error
 0.1.0 snapshot 17
 toString added to bool
-isDigit,isLetter,isWhitespace,isControl added to char
+isDigit,isLetter,isWhitespace,isControl,isPrint,isGraph,isPunct,isHexDigit,toLower,toUpper added to char
 ; no longer considered name of method
+defaultExceptionHandler is made accessible
+char can be implicitly converted int and vice versa
 fix function argument parsing
 fix inherited virtual methods are null
 fix negative number literals causing compiler crash
+fix space character is written as $sp
+fix std.lang.Thread constructor from wiki implemented

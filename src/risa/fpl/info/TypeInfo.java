@@ -193,6 +193,12 @@ public class TypeInfo {
   }
   @Override
   public boolean equals(Object o){
+      if(o == TypeInfo.CHAR && this instanceof NumberInfo n && !n.isFloatingPoint()){
+          return true;
+      }
+      if(this == TypeInfo.CHAR && o instanceof NumberInfo n && !n.isFloatingPoint()){
+          return true;
+      }
       if(o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this)){
           return true;
       }

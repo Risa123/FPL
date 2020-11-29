@@ -26,6 +26,9 @@ class Thread{
    Exception* exception
    throwTargetType throwTarget
  }
+ this string name{
+   this name = name
+ }
  fn void setName string name{
    this name = name
  }
@@ -34,13 +37,13 @@ class Thread{
  }
 }
 Thread* currentThread
-#these functions will be made inaccessible by compiler
 fn void defaultExceptionHandler{
   puts "exception happened:"
   puts currentThread exception getMessage
   free currentThread exception cast void*
   exit 1
 }
+#these functions will be made inaccessible by compiler
 #string methods
 fn uint getLength string* this{
   var length 0
@@ -66,6 +69,55 @@ fn bool equals string* this string str{
 fn bool isDigit char* this{
   var c this drf cast int
   return c >= 48; && c <= 57
+}
+fn bool isWhitespace char* this{
+  var c this drf cast int
+  return c <= 32; || c == 127
+}
+fn bool isControl char* this{
+  var c this drf cast int
+  return c <= 31; || c == 127
+}
+fn bool isLetter char* this{
+  var c this drf cast int
+  return c >= 65; &&  c <= 132; || c >= 97; && c <= 122
+}
+fn bool isLower char* this{
+  var c this drf cast int
+  return c <= 122; || c >= 97
+}
+fn bool isUpper char* this{
+  var c this drf cast int
+  return c <= 90; || c >= 65
+}
+fn bool isBlank char* this{
+  return this drf == $sp ; || this drf == $\t
+}
+fn bool isHexDigit char* this{
+  var c this drf cast int
+  return isDigit this; || c >= 65; && c <= 70; || c >= 97; && c <= 102
+}
+fn bool isPrint char* this{
+  var c this drf cast int
+  return c <= 176; || c >= 32
+}
+fn bool isGraph char* this{
+  return isPrint this; || this drf == $sp
+}
+fn bool isPunct char* this{
+  return isGraph this; && isLetter this
+}
+fn char toLower char* this{
+  if isUpper this{
+     return $a cast int + this drf cast int  - $A
+  }
+  return this drf
+}
+fn char toUpper char* this{
+ if isLower this{
+   return $A cast int + this drf cast int  - $a
+ }
+ return this drf
 }
 #bool toString
 fn string toString bool* this{
