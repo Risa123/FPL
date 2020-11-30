@@ -14,7 +14,7 @@ import risa.fpl.parser.ExpIterator;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public final class Main implements IFunction {
+public final class Main implements IFunction{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException,CompilerException {
         if(!(env instanceof ModuleEnv modEnv)){
@@ -42,8 +42,6 @@ public final class Main implements IFunction {
         writer.write("int main(int argc,char** argv){\n");
         writer.write("_Thread mainThread = static_std_lang_Thread_new(\"Main\");\n");
         writer.write("_std_lang_currentThread = &mainThread;\n");
-        writer.write("void _std_lang_defaultExceptionHandler();\n");
-        writer.write("_std_lang_currentThread->_throwTarget = &_std_lang_defaultExceptionHandler;\n");
         writer.write("return fpl_main(argc,argv);\n}");
         return TypeInfo.VOID;
     }

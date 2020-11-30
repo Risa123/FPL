@@ -134,6 +134,7 @@ public final class Var implements IFunction {
 					if(env instanceof  ClassEnv e){
 					    e.appendToImplicitConstructor("this->" + cID + b.getCode() + ";\n");
                     }else if(env instanceof  ModuleEnv e){
+
                        e.appendToInitializer(cID + b.getCode() + ";\n");
 					}else{
                         writer.write(b.getCode());

@@ -28,6 +28,7 @@ class Thread{
  }
  this string name{
    this name = name
+   throwTarget = &defaultExceptionHandler
  }
  fn void setName string name{
    this name = name
