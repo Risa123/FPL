@@ -24,36 +24,27 @@ public final class Var implements IFunction {
     }
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+        var bWriter = new BuilderWriter(writer);
         if(type != null && it.hasNext()){
            if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
                it.next();
                return type.getClassInfo();
            }
         }
-		if(env.hasModifier(Modifier.NATIVE)) {
-			writer.write("extern ");
-		}
-		if(type != null && !(type instanceof PointerInfo p && p.isFunctionPointer())) {
-			if(env.hasModifier(Modifier.CONST) && !(env instanceof ANameSpacedEnv)) {
-				writer.write("const ");
-			}
-			if(env instanceof ClassEnv && (!type.isPrimitive() || type instanceof PointerInfo p && !p.getType().isPrimitive())){
-			    writer.write("struct ");
-            }
-			writer.write(type.getCname());
-			writer.write(' ');
-		}
-		var first = true;
 		while(it.hasNext()) {
-			if(first) {
-				first = false;
-			}else {
-				if(type == null) {
-					writer.write(';');
-				}else {
-					writer.write(',');
-				}
-			}
+            if(env.hasModifier(Modifier.NATIVE)) {
+                bWriter.write("extern ");
+            }
+            if(type != null && !(type instanceof PointerInfo p && p.isFunctionPointer())) {
+                if(env.hasModifier(Modifier.CONST) && !(env instanceof ANameSpacedEnv)) {
+                    bWriter.write("const ");
+                }
+                if(env instanceof ClassEnv && (!type.isPrimitive() || type instanceof PointerInfo p && !p.getType().isPrimitive())){
+                    bWriter.write("struct ");
+                }
+                bWriter.write(type.getCname());
+                bWriter.write(' ');
+            }
 			var id = it.nextID();
 			String cID;
 			if(env.hasModifier(Modifier.NATIVE)) {
@@ -74,9 +65,9 @@ public final class Var implements IFunction {
 			var declaredOnly = true;
 			if(type != null) {
 			    if(type instanceof PointerInfo p && p.isFunctionPointer()){
-			       writer.write(p.getFunctionPointerDeclaration(cID));
+			       bWriter.write(p.getFunctionPointerDeclaration(cID));
                 }else{
-                    writer.write(cID);
+                    bWriter.write(cID);
                 }
 			}
             var type = this.type;
@@ -94,7 +85,7 @@ public final class Var implements IFunction {
                         throw new CompilerException(id,"C structures can only contain declarations");
                     }
 					declaredOnly = false;
-					var b = new BuilderWriter(writer);
+					var b = new BuilderWriter(bWriter);
 					b.write('=');
                     var list = new ArrayList<AExp>();
                     list.add(exp);
@@ -105,7 +96,7 @@ public final class Var implements IFunction {
                         }
                         list.add(expPart);
                     }
-                    var buffer = new BuilderWriter(writer);
+                    var buffer = new BuilderWriter(bWriter);
 					var expType  = new List(exp.getLine(),exp.getCharNum(),list,true).compile(buffer,env,it);
 					if(type != null){
                         if(!type.equals(expType)) {
@@ -117,27 +108,26 @@ public final class Var implements IFunction {
                     }
 					if(type == null) {
 						if(env.hasModifier(Modifier.CONST) && !(env instanceof  ANameSpacedEnv)) {
-							writer.write("const ");
+							bWriter.write("const ");
 						}
 						if(expType  instanceof PointerInfo p && p.isFunctionPointer()){
-                            writer.write(p.getFunctionPointerDeclaration(cID));
+                            bWriter.write(p.getFunctionPointerDeclaration(cID));
                         }else{
 						    if(!expType.isPrimitive() || (expType instanceof  PointerInfo p && !p.getType().isPrimitive())){
-						        writer.write("struct ");
+						        bWriter.write("struct ");
                             }
-                            writer.write(expType.getCname());
-                            writer.write(' ');
-                            writer.write(cID);
+                            bWriter.write(expType.getCname());
+                            bWriter.write(' ');
+                            bWriter.write(cID);
                         }
 					}
 					type = expType;
 					if(env instanceof  ClassEnv e){
 					    e.appendToImplicitConstructor("this->" + cID + b.getCode() + ";\n");
                     }else if(env instanceof  ModuleEnv e){
-
                        e.appendToInitializer(cID + b.getCode() + ";\n");
 					}else{
-                        writer.write(b.getCode());
+                        bWriter.write(b.getCode());
                     }
 				}
 			}else if(type == null) {
@@ -146,9 +136,15 @@ public final class Var implements IFunction {
             if(env instanceof ClassEnv || env instanceof ModuleEnv) {
                 declaredOnly = false;
             }
+            bWriter.write(";\n");
             TypeInfo instanceType = null;
             if(env instanceof ClassEnv e){
                 instanceType = e.getInstanceType();
+            }
+            if(env instanceof ModuleEnv  e){
+                e.appendVariableDeclaration(bWriter.getCode());
+            }else{
+                writer.write(bWriter.getCode());
             }
 			var v = new Variable(type,cID,declaredOnly,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
 			env.addFunction(id.getValue(),v);

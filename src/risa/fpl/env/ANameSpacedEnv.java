@@ -7,7 +7,6 @@ public abstract class ANameSpacedEnv extends SubEnv {
     private final StringBuilder initializer = new StringBuilder();
     private String initializerName;
     private final StringBuilder functionCode = new StringBuilder(), functionDeclarations = new StringBuilder();
-    private final StringBuilder variableDeclarations = new StringBuilder();
     public ANameSpacedEnv(AEnv superEnv) {
         super(superEnv);
     }
@@ -42,11 +41,5 @@ public abstract class ANameSpacedEnv extends SubEnv {
     }
     public void appendFunctionDeclarations(String code){
         functionDeclarations.append(code);
-    }
-    public String getVariableDeclarations(){
-        return variableDeclarations.toString();
-    }
-    public void appendVariableDeclaration(String code){
-        variableDeclarations.append(code);
     }
 }
