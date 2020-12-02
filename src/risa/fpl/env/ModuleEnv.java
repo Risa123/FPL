@@ -21,6 +21,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	private boolean getRequestFromOutSide,initCalled;
     private final StringBuilder variableDeclarations = new StringBuilder();
 	private final ArrayList<TypeInfo> cDeclaredTypes = new ArrayList<>();
+	private final StringBuilder variableDeclarations = new StringBuilder();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -152,5 +153,8 @@ public final class ModuleEnv extends ANameSpacedEnv {
     }
     public void appendVariableDeclaration(String code){
         variableDeclarations.append(code);
+    }
+    public void appendVariableDeclaration(String code){
+	    variableDeclarations.append(code);
     }
 }

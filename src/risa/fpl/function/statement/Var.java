@@ -33,16 +33,6 @@ public final class Var implements IFunction {
 		if(env.hasModifier(Modifier.NATIVE)) {
 			writer.write("extern ");
 		}
-		if(type != null && !(type instanceof PointerInfo p && p.isFunctionPointer())) {
-			if(env.hasModifier(Modifier.CONST) && !(env instanceof ANameSpacedEnv)) {
-				writer.write("const ");
-			}
-			if(env instanceof ClassEnv && (!type.isPrimitive() || type instanceof PointerInfo p && !p.getType().isPrimitive())){
-			    writer.write("struct ");
-            }
-			writer.write(type.getCname());
-			writer.write(' ');
-		}
 		var first = true;
 		while(it.hasNext()) {
 			if(first) {
