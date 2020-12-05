@@ -21,8 +21,8 @@ public final class ModuleBlock extends ATwoPassBlock {
    private final List exps;
    private ModuleEnv env;
    private final FPL fpl;
-   public ModuleBlock(Path sourceFile,FPL fpl) throws IOException, CompilerException {
-       this.sourceFile = sourceFile.subpath(2, sourceFile.getNameCount()).toString();
+   public ModuleBlock(Path sourceFile,FPL fpl)throws IOException,CompilerException{
+       this.sourceFile = sourceFile.subpath(2,sourceFile.getNameCount()).toString();
 	   cFile = fpl.getOutputDirectory() + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
 	   this.fpl = fpl;
 	   var name = new StringBuilder();
@@ -75,7 +75,7 @@ public final class ModuleBlock extends ATwoPassBlock {
            }
        }
    }
-   public ModuleEnv getModule(Atom name) throws CompilerException,IOException {
+   public ModuleEnv getModule(Atom name)throws CompilerException,IOException{
 	   var mod = fpl.getModule(name.getValue());
 	   if(mod == null) {
 		   throw new CompilerException(name,"module " + name + " not found");

@@ -1,7 +1,7 @@
 (#this module is imported automatically)
 use std.backend
 
-class Exception {
+class Exception{
    private string message
    this string message{
      this message = message
