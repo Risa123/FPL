@@ -19,7 +19,6 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
 	private boolean getRequestFromOutSide,initCalled;
-    private final StringBuilder variableDeclarations = new StringBuilder();
 	private final ArrayList<TypeInfo> cDeclaredTypes = new ArrayList<>();
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
@@ -148,11 +147,8 @@ public final class ModuleEnv extends ANameSpacedEnv {
 		functions.remove(name);
 		return (Function)f;
 	}
-    public String getVariableDeclarations(){
-        return variableDeclarations.toString();
-    }
-    public void appendVariableDeclaration(String code){
-        variableDeclarations.append(code);
+	public String getVariableDeclarations(){
+	    return variableDeclarations.toString();
     }
     public void appendVariableDeclaration(String code){
 	    variableDeclarations.append(code);
