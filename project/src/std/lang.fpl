@@ -36,6 +36,9 @@ class Thread{
  fn string getName{
    return name
  }
+ fn void setExceptionHandler throwTargetType exceptionHandler{
+
+ }
 }
 Thread* currentThread
 fn void defaultExceptionHandler{

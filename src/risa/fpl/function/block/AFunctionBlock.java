@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class AFunctionBlock extends ABlock{
- protected final   TypeInfo[]parseArguments(BufferedWriter writer, ExpIterator it, FnEnv env, TypeInfo owner) throws CompilerException, IOException {
+ protected final TypeInfo[]parseArguments(BufferedWriter writer, ExpIterator it, FnEnv env, TypeInfo owner)throws CompilerException,IOException{
         writer.write('(');
         var args = new ArrayList<TypeInfo>();
         var first = owner == null;
@@ -49,7 +49,7 @@ public abstract class AFunctionBlock extends ABlock{
             if(env.hasFunctionInCurrentEnv(argName.getValue())) {
                 throw new CompilerException(argName,"there is already argument called " + argName);
             }
-            env.addFunction(argName.getValue(), new Variable(argType,IFunction.toCId(argName.getValue()),argName.getValue()));
+            env.addFunction(argName.getValue(),new Variable(argType,IFunction.toCId(argName.getValue()),argName.getValue()));
         }
         writer.write(')');
         var array = new TypeInfo[args.size()];

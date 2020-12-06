@@ -91,7 +91,7 @@ public class TypeInfo {
   public final String getName(){
       return name;
   }
-  public final String getCname(){
+  public String getCname(){
       return cname;
   }
   public final String getDeclaration(){

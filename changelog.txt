@@ -181,3 +181,4 @@ fix std.lang.Thread constructor from wiki implemented
 setExceptionHandler added to Thread
 try-catch-finally block added
 fix C compilation error
+fix function pointer as function argument C compilation error

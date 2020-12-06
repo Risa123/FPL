@@ -1,5 +1,5 @@
 use {
-  compiler.tokenizer
+  risa.fpl.tokenizer
   std.io.file
   std.backend
 }

@@ -16,13 +16,9 @@ import risa.fpl.parser.ExpIterator;
 public class Fn extends AFunctionBlock {
 	private boolean appendSemicolon;
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException, CompilerException {
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
 	    var b = new BuilderWriter(writer);
-		var returnTypeAtom = it.nextID();
-		if(returnTypeAtom.getValue().equals("<>")){ //generic function
-		    returnTypeAtom = it.nextID();
-        }
-		var returnType = env.getType(returnTypeAtom);
+		var returnType = env.getType(it.nextID());
 		b.write(returnType.getCname());
 		b.write(' ');
 		var id = it.nextID();
