@@ -28,7 +28,7 @@ class Thread{
  }
  this string name{
    this name = name
-   throwTarget = &defaultExceptionHandler
+   setExceptionHandler &defaultExceptionHandler
  }
  fn void setName string name{
    this name = name
@@ -37,7 +37,7 @@ class Thread{
    return name
  }
  fn void setExceptionHandler throwTargetType exceptionHandler{
-
+    throwTarget = exceptionHandler
  }
 }
 Thread* currentThread

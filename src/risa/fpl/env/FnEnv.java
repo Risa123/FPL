@@ -1,6 +1,7 @@
 package risa.fpl.env;
 
 import risa.fpl.function.block.ConditionalBlock;
+import risa.fpl.function.block.TryCatchFinally;
 import risa.fpl.function.statement.Break;
 import risa.fpl.function.statement.Return;
 import risa.fpl.info.TypeInfo;
@@ -10,6 +11,7 @@ public final class FnEnv extends ClassOwnedSubEnv{
 	private static final ConditionalBlock IF = new ConditionalBlock("if");
 	private static final ConditionalBlock WHILE = new ConditionalBlock("while");
 	private static final Break BREAK = new Break();
+	private static final TryCatchFinally TRY_CATCH_FINALLY = new TryCatchFinally();
 	private final TypeInfo returnType;
 	private boolean returnUsed;
 	public FnEnv(AEnv superEnv,TypeInfo returnType) {
@@ -19,6 +21,7 @@ public final class FnEnv extends ClassOwnedSubEnv{
 	    addFunction("if",IF);
 	    addFunction("while",WHILE);
 	    addFunction("break",BREAK);
+	    addFunction("try",TRY_CATCH_FINALLY);
 	}
 	@Override
 	public TypeInfo getReturnType() {
