@@ -2,19 +2,19 @@ use std.io.base
 
 class Token {
   private {
-   int line;charNum
+   int line;wordNum
     string value
   }
-  this int line int charNum string value {
+  this int line int wordNum string value {
     this line = line
-    this charNum = charNum
+    this wordNum = wordNum
     this value = value
   }
   fn int getLine {
     return line
   }
-  fn int getCharNum {
-    return charNum
+  fn int getWordNUm {
+    return wordNum
   }
   fn string getValue {
     return value
@@ -22,19 +22,10 @@ class Token {
 }
 class Tokenizer{
  private {
-    int line 1;charNum 1
+    int line 1;wordNum 1
     bool readNext true
     char c
     Readable readable
-    fn char read {
-       if readNext {
-         var p c ref
-         readable read p cast byte*,1
-       }{
-         readNext = false
-       }
-       return c
-    }
  }
  this Readable readable{
     this readable = readable

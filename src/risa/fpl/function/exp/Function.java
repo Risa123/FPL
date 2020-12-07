@@ -91,7 +91,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
 		    if(calledOnPointer){
 		      calledOnPointer = false;
 		      writer.write("(" + self.getCname() + "*)");
-            }else if(!(self instanceof InterfaceInfo) && prev_code != null){
+            }else if(!(self instanceof InterfaceInfo) && prev_code != null /*to prevent &this when calling method on implicit this*/){
                 writer.write('&');
             }
 		    writePrev(writer);

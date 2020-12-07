@@ -3,7 +3,12 @@ use {
   std.io.file
   std.backend
 }
-main {
-  FileReader reader "notfound"
-  reader close
+main{
+  try{
+      FileReader reader "notfound"
+  }catch IOException ex{
+
+  }finally{
+    reader close
+  }
 }

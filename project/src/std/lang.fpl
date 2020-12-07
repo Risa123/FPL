@@ -21,7 +21,10 @@ class Exception{
 }
 fpointer void throwTargetType
 class Thread{
- private string name
+ private{
+   string name
+   throwTargetType exceptionHandler
+ }
  internal{
    Exception* exception
    throwTargetType throwTarget
@@ -38,6 +41,7 @@ class Thread{
  }
  fn void setExceptionHandler throwTargetType exceptionHandler{
     throwTarget = exceptionHandler
+    this exceptionHandler = exceptionHandler
  }
 }
 Thread* currentThread
