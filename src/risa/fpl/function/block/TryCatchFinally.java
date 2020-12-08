@@ -13,15 +13,17 @@ import java.io.IOException;
 public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        var tryBlock = it.nextList();
+        it.nextList().compile(writer,env,it);
         while(it.hasNext()){
-            var exp = it.next();
+            var exp = it.peek();
             if(exp instanceof Atom blockName && blockName.getType() == TokenType.ID){
                 if(blockName.getValue().equals("catch")){
+                    it.next();
                     var expType = it.nextID();
                     var expName = it.nextID();
                     it.nextList().compile(writer,env,it);
                 }else if(blockName.getValue().equals("finally")){
+                    it.next();
                     it.nextList().compile(writer,env,it);
                 }else{
                     break;
