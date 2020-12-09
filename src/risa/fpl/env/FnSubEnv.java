@@ -2,8 +2,9 @@ package risa.fpl.env;
 
 import risa.fpl.info.ClassInfo;
 
-public class ClassOwnedSubEnv extends SubEnv implements IClassOwnedEnv {
-    public ClassOwnedSubEnv(AEnv superEnv) {
+public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
+
+    public FnSubEnv(AEnv superEnv) {
         super(superEnv);
     }
     @Override
@@ -12,5 +13,8 @@ public class ClassOwnedSubEnv extends SubEnv implements IClassOwnedEnv {
             return e.getClassType();
         }
         return null;
+    }
+    public int getCatchNum() {
+        return ((FnSubEnv)superEnv).getCatchNum();
     }
 }

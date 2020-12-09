@@ -179,7 +179,7 @@ fix space character is written as $sp
 fix std.lang.Thread constructor from wiki implemented
 0.1.0
 setExceptionHandler added to Thread
-try-catch-finally block added
+try-catch-finally block added depends on labels as values gcc feature
 fix compilation error
 fix function pointer as function argument compilation error
 fix this dereference compilation error
