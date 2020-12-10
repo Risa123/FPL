@@ -14,11 +14,13 @@ import java.io.IOException;
 public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        var catchLabel = "catch" + ((FnSubEnv)env).getCatchNum();
+        var count = ((FnSubEnv)env).getCatchNum();
+        var catchLabel = "catch" + count;
+        var catchEndLabel = "catch_end" + count;
         writer.write("_std_lang_currentThread->_throwTarget=&&" + catchLabel + ";\n");
         it.nextList().compile(writer,env,it);
+        writer.write("goto " + catchEndLabel + ";\n");
         var hasFin = false;
-        writer.write("goto " + catchLabel + ";\n");
         while(it.hasNext()){
             var exp = it.peek();
             if(exp instanceof Atom blockName && blockName.getType() == TokenType.ID){
@@ -32,7 +34,7 @@ public final class TryCatchFinally extends ABlock{
                     var expName = it.nextID();
                     it.nextList().compile(writer,env,it);
                 }else if(blockName.getValue().equals("finally")){
-
+                    writer.write(catchEndLabel + ":\n");
                     if(hasFin){
                         throw new CompilerException(blockName,"multiple declarations of finally");
                     }
@@ -45,6 +47,9 @@ public final class TryCatchFinally extends ABlock{
             }else{
                 break;
             }
+        }
+        if(!hasFin){
+            writer.write(catchEndLabel + ":\n");
         }
         return TypeInfo.VOID;
     }

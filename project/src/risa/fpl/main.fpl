@@ -7,7 +7,7 @@ main{
   try{
       FileReader reader "notfound"
   }catch IOException ex{
-
+    puts "IOException caught"
   }finally{
     reader close
   }
