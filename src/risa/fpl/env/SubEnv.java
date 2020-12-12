@@ -12,24 +12,24 @@ public class SubEnv extends AEnv {
 	  this.superEnv = superEnv;
   }
   @Override
-  public IFunction getFunction(Atom atom) throws CompilerException {
-	if(!hasFunctionInCurrentEnv(atom.getValue())) {
+  public IFunction getFunction(Atom atom)throws CompilerException{
+	if(!hasFunctionInCurrentEnv(atom.getValue())){
 		return superEnv.getFunction(atom);
 	}
 	return super.getFunction(atom);
    }
    @Override
-   public TypeInfo getType(Atom atom) throws CompilerException {
+   public TypeInfo getType(Atom atom)throws CompilerException{
       if(!hasTypeInCurrentEnv(atom.getValue())){
           return superEnv.getType(atom);
       }
       return super.getType(atom);
   }
-  public TypeInfo getReturnType() {
+  public TypeInfo getReturnType(){
       return ((SubEnv)superEnv).getReturnType();
  }
  @Override
- public FPL getFPL()  {
+ public FPL getFPL(){
       return superEnv.getFPL();
  }
  public ModuleEnv getModule(){

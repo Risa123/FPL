@@ -16,7 +16,11 @@ class Exception{
        currentThread exception cast byte* set i,this cast byte* get i
        i ++
      }
-    currentThread throwTarget drf
+     #inline assembly version of computed goto
+     asm "leaq	_std_lang_currentThread(%rip), %rax"
+     asm "movq	(%rax), %rax"
+     asm "movq	24(%rax), %rax" #throwTarget follows after data and name
+     asm "jmp	*%rax"
    }
 }
 fpointer void throwTargetType
