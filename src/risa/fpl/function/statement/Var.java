@@ -9,6 +9,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -79,6 +80,9 @@ public final class Var implements IFunction {
                 var decl = "";
                 if(env.hasModifier(Modifier.NATIVE)){
                     decl = "extern ";
+                }
+                if(env instanceof  ClassEnv && varType instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
+                   decl += "struct ";
                 }
                 if(varType instanceof PointerInfo p && p.isFunctionPointer()){
                   decl += p.getFunctionPointerDeclaration(cID);

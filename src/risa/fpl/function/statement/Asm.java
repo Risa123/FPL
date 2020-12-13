@@ -17,7 +17,7 @@ public final class Asm implements IFunction {
         if(code.getType() != TokenType.STRING){
             throw new CompilerException(code,"assembly code as string literal expected");
         }
-        writer.write("asm(" + code.getValue() + ");\n");
+        writer.write("asm(" + code.getValue() + ")");
         return TypeInfo.VOID;
     }
 }

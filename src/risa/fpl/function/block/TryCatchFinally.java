@@ -17,7 +17,7 @@ public final class TryCatchFinally extends ABlock{
         var count = ((FnSubEnv)env).getCatchNum();
         var catchLabel = "catch" + count;
         var catchEndLabel = "catch_end" + count;
-        writer.write("_std_lang_currentThread->_throwTarget=&&" + catchLabel + ";\n");
+        writer.write("_std_lang_currentThread->_current_eh_entry->_target=&&" + catchLabel + ";\n");
         it.nextList().compile(writer,env,it);
         writer.write("goto " + catchEndLabel + ";\n");
         var hasFin = false;
