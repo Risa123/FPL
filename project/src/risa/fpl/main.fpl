@@ -5,11 +5,10 @@ use {
 }
 main{
   try{
-    Exception ex "test"
-    ex throw
-  }catch Exception ex{
-    puts "caught"
+      FileReader reader "notfound"
+  }catch IOException ex{
+    puts "IOException caught"
   }finally{
-    puts "finally"
+    reader close
   }
 }

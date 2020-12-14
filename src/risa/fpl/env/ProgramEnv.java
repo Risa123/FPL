@@ -8,7 +8,6 @@ import risa.fpl.function.block.Fn;
 import risa.fpl.function.block.InterfaceBlock;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.statement.Array;
-import risa.fpl.function.statement.Asm;
 import risa.fpl.function.statement.FPointer;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.NumberInfo;
@@ -53,7 +52,6 @@ public final class ProgramEnv extends AEnv {
 	  addFunction("fpointer",new FPointer());
 	  addFunction("cstruct",new CStructBlock());
 	  addFunction("if_flag",new IfFlag());
-	  addFunction("asm",new Asm());
   }
   @Override
   public FPL getFPL(){
