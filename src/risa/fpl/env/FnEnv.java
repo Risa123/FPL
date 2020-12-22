@@ -14,7 +14,6 @@ public final class FnEnv extends FnSubEnv{
 	private static final TryCatchFinally TRY_CATCH_FINALLY = new TryCatchFinally();
 	private final TypeInfo returnType;
 	private boolean returnUsed;
-	private int catchNum;
 	public FnEnv(AEnv superEnv,TypeInfo returnType) {
 		super(superEnv);
 		this.returnType  = returnType;
@@ -32,8 +31,4 @@ public final class FnEnv extends FnSubEnv{
 	public boolean notReturnUsed() {
 		return !returnUsed;
 	}
-	@Override
-    public int getCatchNum(){
-	    return catchNum++;
-    }
 }

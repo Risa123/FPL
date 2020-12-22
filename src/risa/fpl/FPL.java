@@ -45,7 +45,7 @@ public final class FPL {
     	var path = Paths.get(outputDirectory);
         if(Files.exists(path)){
             for(var p:Files.walk(path).sorted(Comparator.reverseOrder()).collect(Collectors.toList())){
-                Files.deleteIfExists(p);
+                Files.delete(p);
             }
         }
     	Files.createDirectory(path);

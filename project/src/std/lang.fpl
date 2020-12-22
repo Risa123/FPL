@@ -16,13 +16,11 @@ class Exception{
        currentThread exception cast byte* set i,this cast byte* get i
        i ++
      }
-     #asembly part of throwing
      asm "leaq	_std_lang_currentThread(%rip), %rax"
      asm "movq	(%rax), %rax"
      asm "movq	32(%rax), %rax" #current_eh_entry
      asm "movq   16(%rax),%rax" #target
-     asm "movq %rsp,%rbp" #discard this function's frame
-     asm "add %rsp,16" #skip pre-prologue base pointer and address of caller
+     asm "leaq 16(%rsp),%rsp"
      asm "jmp *%rax" #jump to target
    }
 }
