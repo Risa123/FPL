@@ -16,12 +16,20 @@ class Exception{
        currentThread exception cast byte* set i,this cast byte* get i
        i ++
      }
-     asm "leaq	_std_lang_currentThread(%rip), %rax"
-     asm "movq	(%rax), %rax"
-     asm "movq	32(%rax), %rax" #current_eh_entry
-     asm "movq   16(%rax),%rax" #target
-     asm "leaq 16(%rsp),%rsp"
-     asm "jmp *%rax" #jump to target
+     if_flag x86_64{
+        asm "leaq _std_lang_currentThread(%rip), %rax"
+        asm "movq (%rax), %rax"
+        asm "movq 32(%rax), %rax" #current_eh_entry
+        asm "movq 16(%rax),%rax" #target
+        asm "jmp *%rax" #jump to target
+     }
+     if_flag x86{
+        asm "lea _std_lang_currentThread(%eip), %eax"
+        asm "mov (%eax), %eax"
+        asm "mov 16(%eax), %eax" #current_eh_entry
+        asm "mov 8(%eax),%eax" #target
+        asm "jmp *%eax" #jump to target
+     }
    }
 }
 fpointer void throwTargetType

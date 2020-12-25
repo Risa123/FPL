@@ -18,7 +18,7 @@ public final class FPL {
     public FPL(String project, PrintStream errStream)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
-        if(!build.containsKey("mainModule") && !build.containsKey("cc") && build.containsKey("outputFile")){
+        if(!build.containsKey("mainModule") || !build.containsKey("cc") || build.containsKey("outputFile")){
             throw new CompilerException(0,0,"invalid build file");
         }
     	this.cc = build.getProperty("cc");
