@@ -47,3 +47,30 @@ fn int file_flush void* file{
 fn int file_setBuffer void* file byte* buffer int mode memory size{
    return setvbuf file,buffer,mode,size
 }
+cstruct context_data{
+  if_flag x86_64{
+    long rbx;rsp;rbp;r12;r13;r14;r15;eip
+  }
+  if_flag x86{
+    int ebx;esp;ebp;r12;r13;r14;r15;rip
+  }
+}
+#rcx is register for first argument on x86_64 win
+asm "context_save:"
+#saving registers
+asm "movq %rbx,0(%rcx)"
+asm "movq %rsp,8(%rcx)"
+asm "movq %rbp,16(%rcx)"
+asm "movq %r12,24(%rcx)"
+asm "movq %r13,32(%rcx)"
+asm "movq %r14,40(%rcx)"
+asm "movq %r15,48(%rcx)"
+asm "movq 0(%rsp),%rdx" #get rta
+asm "movq %rdx,56(%rcx)" #save rip
+asm "xorl %eax,%eax"
+asm "ret"
+asm "context_restore:"
+
+asm "ret"
+asm ".globl context_save"
+asm ".globl context_restore"

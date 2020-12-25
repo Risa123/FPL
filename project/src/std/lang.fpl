@@ -34,8 +34,9 @@ class Exception{
 }
 fpointer void throwTargetType
 private class EH_entry{
-  EH_entry* prev;
+  EH_entry* prev
   throwTargetType target
+  context_data context
 }
 class Thread{
  private{

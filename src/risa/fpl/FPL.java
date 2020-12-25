@@ -18,8 +18,10 @@ public final class FPL {
     public FPL(String project, PrintStream errStream)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
-        if(!build.containsKey("mainModule") || !build.containsKey("cc") || build.containsKey("outputFile")){
-            throw new CompilerException(0,0,"invalid build file");
+        if(!build.containsKey("mainModule") || !build.containsKey("cc") || !build.containsKey("outputFile")){
+            var ex = new CompilerException(0,0,"invalid build file");
+            ex.setSourceFile("build.properties");
+            throw ex;
         }
     	this.cc = build.getProperty("cc");
     	this.output = build.getProperty("outputFile");

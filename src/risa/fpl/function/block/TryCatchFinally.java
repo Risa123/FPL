@@ -13,15 +13,14 @@ import java.io.IOException;
 public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        writer.write("if(){\n");
+        writer.write("if(context_save(_std_lang_currentThread->current_eh_entry)){\n");
         it.nextList().compile(writer,env,it);
+        writer.write("}\n");
         var hasFin = false;
-        var firstCatch = true;
         while(it.hasNext()){
             var exp = it.peek();
             if(exp instanceof Atom blockName && blockName.getType() == TokenType.ID){
                 if(blockName.getValue().equals("catch")){
-
                     if(hasFin){
                         throw new CompilerException(exp,"catch can only come before finally");
                     }
