@@ -16,42 +16,29 @@ class Exception{
        currentThread exception cast byte* set i,this cast byte* get i
        i ++
      }
-     if_flag x86_64{
-        asm "leaq _std_lang_currentThread(%rip), %rax"
-        asm "movq (%rax), %rax"
-        asm "movq 32(%rax), %rax" #current_eh_entry
-        asm "movq 16(%rax),%rax" #target
-        asm "jmp *%rax" #jump to target
-     }
-     if_flag x86{
-        asm "lea _std_lang_currentThread(%eip), %eax"
-        asm "mov (%eax), %eax"
-        asm "mov 16(%eax), %eax" #current_eh_entry
-        asm "mov 8(%eax),%eax" #target
-        asm "jmp *%eax" #jump to target
-     }
+
    }
 }
 fpointer void throwTargetType
-private class EH_entry{
-  EH_entry* prev
+private class EHentry{
+  EHentry* prev
   throwTargetType target
-  context_data context
+  contextData context
 }
 class Thread{
  private{
    string name
-   EH_entry* first
+   EHentry* first
  }
  internal{
    Exception* exception
-   EH_entry* current_eh_entry
+   EHentry* currentEHentry
  }
  this string name{
    this name = name
-   first = EH_entry:alloc
+   first = EHentry:alloc
    setExceptionHandler &defaultExceptionHandler
-   current_eh_entry = first
+   currentEHentry = first
  }
  fn void setName string name{
    this name = name

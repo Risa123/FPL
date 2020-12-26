@@ -1,32 +1,32 @@
-use {
+use{
  std.io.base
  std.backend
 }
-abstract class FileHandler Closeable {
+abstract class FileHandler Closeable{
    protected void* handle
-   this string name string mode {
-      handle = file_open name,mode
-      if handle == nil {
+   this string name string mode{
+      handle = fileOpen name,mode
+      if handle == nil{
         IOException ex "unable to open file"
         ex throw
       }
    }
-   override fn void close {
-     file_close handle
+   override fn void close{
+     fileClose handle
    }
 }
-class FileWriter FileHandler Writable {
+class FileWriter FileHandler Writable{
   this string name;name,"w"
-  override fn void write byte* p memory size {
-      file_write handle,p,size
+  override fn void write byte* p memory size{
+      fileWrite handle,p,size
   }
 }
 class FileReader FileHandler  Readable{
   this string name;name,"r"
   override fn void read byte* p memory size{
-     file_read handle,p,size
+     fileRead handle,p,size
   }
-  override fn bool ready {
-    return file_eof handle
+  override fn bool ready{
+    return fileEOF handle
   }
 }

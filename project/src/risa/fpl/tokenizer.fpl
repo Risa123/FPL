@@ -1,19 +1,19 @@
 use std.io.base
 
-class Token {
-  private {
+class Token{
+  private{
    int line;wordNum
     string value
   }
-  this int line int wordNum string value {
+  this int line int wordNum string value{
     this line = line
     this wordNum = wordNum
     this value = value
   }
-  fn int getLine {
+  fn int getLine{
     return line
   }
-  fn int getWordNUm {
+  fn int getWordNum{
     return wordNum
   }
   fn string getValue {
@@ -30,10 +30,10 @@ class Tokenizer{
  this Readable readable{
     this readable = readable
  }
- fn void close {
+ fn void close{
    readable close
  }
- fn bool hasNext {
+ fn bool hasNext{
     return readable ready; || readNext !
  }
 }
