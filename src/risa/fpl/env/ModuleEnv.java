@@ -14,14 +14,14 @@ import risa.fpl.function.exp.Variable;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
-public final class ModuleEnv extends ANameSpacedEnv {
+public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
 	private boolean getRequestFromOutSide,initCalled;
 	private final ArrayList<TypeInfo> cDeclaredTypes = new ArrayList<>();
 	private final StringBuilder variableDeclarations = new StringBuilder();
-	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock) {
+	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
 		nameSpace = IFunction.toCId(moduleBlock.getName().replace('.','_'));
@@ -29,7 +29,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
 		    addFunction("main",new Main());
         }
 	}
-	public void  importModule(Atom name,BufferedWriter writer) throws CompilerException, IOException {
+	public void  importModule(Atom name,BufferedWriter writer)throws CompilerException,IOException{
 		var mod = moduleBlock.getModule(name);
 		importedModules.add(mod);
         var typesToImport = new ArrayList<>(mod.types.values());
@@ -47,14 +47,14 @@ public final class ModuleEnv extends ANameSpacedEnv {
                        rIt.remove();
                    }
                }
-               if (declaredContains(importedRequiredTypes)) {
+               if(declaredContains(importedRequiredTypes)){
                    writer.write(type.getDeclaration());
                    it.remove();
                    cDeclaredTypes.add(type);
                }
            }
         }
-		for(var func:mod.functions.values()) {
+		for(var func:mod.functions.values()){
 			if(func instanceof Function f) {
 				if(f.getAccessModifier() != AccessModifier.PRIVATE){
                     writer.write(f.getDeclaration());
@@ -71,8 +71,8 @@ public final class ModuleEnv extends ANameSpacedEnv {
         }
 	}
 	@Override
-	public TypeInfo getType(Atom name) throws CompilerException {
-		for(var mod:importedModules) {
+	public TypeInfo getType(Atom name)throws CompilerException{
+		for(var mod:importedModules){
 			if(mod.hasTypeInCurrentEnv(name.getValue())){
 			    return mod.getType(name);
             }
@@ -80,8 +80,8 @@ public final class ModuleEnv extends ANameSpacedEnv {
 		return super.getType(name);
 	}
 	@Override
-	public IFunction getFunction(Atom name) throws CompilerException {
-		for(var mod:importedModules) {
+	public IFunction getFunction(Atom name)throws CompilerException{
+		for(var mod:importedModules){
 			if(mod.hasFunctionInCurrentEnv(name.getValue())){
 			   mod.requestFromOutSide();
 			   return mod.getFunction(name);
@@ -105,7 +105,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
 		return superEnv.getFunction(name);
 	}
 	@Override
-	public String getNameSpace(IFunction caller) {
+	public String getNameSpace(IFunction caller){
 	    if(!hasModifier(Modifier.NATIVE) && accessModifier == AccessModifier.PRIVATE){
 	        return "";
         }
@@ -143,9 +143,7 @@ public final class ModuleEnv extends ANameSpacedEnv {
 	    return this;
     }
     public Function getAndRemove(String name){
-		var f = functions.get(name);
-		functions.remove(name);
-		return (Function)f;
+		return (Function)functions.remove(name);
 	}
 	public String getVariableDeclarations(){
 	    return variableDeclarations.toString();

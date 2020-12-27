@@ -49,10 +49,10 @@ fn int fileSetBuffer void* file byte* buffer int mode memory size{
 }
 cstruct contextData{
   if_flag x86_64{
-    long rbx;rsp;rbp;r12;r13;r14;r15;eip
+    long rbx;rsp;rbp;r12;r13;r14;r15;rip
   }
   if_flag x86{
-    int ebx;esp;ebp;r12;r13;r14;r15;rip
+    int ebx;esp;ebp;r12;r13;r14;r15;eip
   }
 }
 #rcx is register for first argument on x86_64 win
