@@ -24,7 +24,7 @@ public interface IFunction {
 	  return false;
   }
   static boolean isCIdChar(int c,boolean first) {
-	  return c == '_' || c <= 127 && Character.isAlphabetic(c) || first && Character.isDigit(c);
+	  return c == '_' || c <= 127 && Character.isAlphabetic(c) || !first && Character.isDigit(c);
   }
   static String toCId(String id) {
 	  var b = new StringBuilder("_");

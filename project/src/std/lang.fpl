@@ -23,7 +23,7 @@ fpointer void throwTargetType
 private class EHentry{
   EHentry* prev
   throwTargetType target
-  contextData context
+  ContextData context
 }
 class Thread{
  private{

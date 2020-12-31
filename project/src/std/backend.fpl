@@ -47,7 +47,7 @@ fn int fileFlush void* file{
 fn int fileSetBuffer void* file byte* buffer int mode memory size{
    return setvbuf file,buffer,mode,size
 }
-cstruct contextData{
+cstruct ContextData{
   if_flag x86_64{
     long rbx;rsp;rbp;r12;r13;r14;r15;rip
   }
