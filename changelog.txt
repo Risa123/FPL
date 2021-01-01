@@ -186,5 +186,5 @@ fix function pointer as function argument compilation error
 fix this dereference compilation error
 fix recursive pointer to struct field declaration C compilation error
 fix validity of build file is now properly checked
-fix cstruct import C error
-fix digits not valid C id char
+fix type import C error
+fix digits not valid part of C identifier

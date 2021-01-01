@@ -48,9 +48,11 @@ public final class ModuleEnv extends ANameSpacedEnv{
                    }
                }
                if(declaredContains(importedRequiredTypes)){
-                   writer.write(type.getDeclaration());
+                   if(TypeInfo.notContains(cDeclaredTypes,type)){
+                       writer.write(type.getDeclaration());
+                       cDeclaredTypes.add(type);
+                   }
                    it.remove();
-                   cDeclaredTypes.add(type);
                }
            }
         }

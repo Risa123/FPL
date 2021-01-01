@@ -4,6 +4,8 @@ native {
  fn void free void* p
  fn void exit int exitCode
  fn void* realloc void* p memory new_size
+ fn void contextRestore ContextData context
+ fn int contextSave ContextData data
  private {
     fn memory fwrite void* p memory size memory nmen
     fn bool feof void* file
@@ -108,5 +110,5 @@ if_flag x86{
 asm "xorl %eax,%eax"
 asm "incl %eax"
 asm "ret"
-asm ".globl saveContext"
-asm ".globl restoreContext"
+asm ".globl contextSave"
+asm ".globl contextRestore"

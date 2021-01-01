@@ -14,7 +14,7 @@ import java.io.IOException;
 public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        writer.write("if(saveContext(_std_lang_currentThread->_currentEHentry->_context)){\n");
+        writer.write("if(contextSave(_std_lang_currentThread->_currentEHentry->_context) == 0){\n");
         it.nextList().compile(writer,new FnSubEnv(env),it);
         writer.write("}\n");
         var hasFin = false;
@@ -28,7 +28,9 @@ public final class TryCatchFinally extends ABlock{
                     it.next();
                     var expType = it.nextID();
                     var expName = it.nextID();
+                    writer.write("else{\n");
                     it.nextList().compile(writer,new FnSubEnv(env),it);
+                    writer.write("}\n");
                 }else if(blockName.getValue().equals("finally")){
                     if(hasFin){
                         throw new CompilerException(blockName,"multiple declarations of finally");

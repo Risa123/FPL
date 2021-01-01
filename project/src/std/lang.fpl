@@ -16,7 +16,7 @@ class Exception{
        currentThread exception cast byte* set i,this cast byte* get i
        i ++
      }
-
+     contextRestore currentThread currentEHentry context
    }
 }
 fpointer void throwTargetType
