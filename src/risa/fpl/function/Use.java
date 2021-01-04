@@ -26,33 +26,17 @@ public final class Use implements IFunction{
 			if(it.hasNext()) {
 				throw new CompilerException(exp,"only block expected");
 			}
-			addFromList(exp,modules);
+			//addFromList(exp,modules);
 		}else {
 		    modules.add((Atom)exp);
 			while(it.hasNext()) {
 				modules.add(it.nextID());
 			}
 		}
-		for(var mod:modules) {
-		    ((ModuleEnv)env).importModule(mod,writer);
-		}
+        ((ModuleEnv)env).importModules(modules,writer);
 		return TypeInfo.VOID;
 	}
-	private void addFromList(AExp exp,ArrayList<Atom>modules) throws CompilerException {
-		for(var mod:((List)exp).getExps()) {
-			if(mod instanceof Atom atom) {
-				if(atom.getType() != TokenType.ID) {
-					throw new CompilerException(atom,"identifier expected");
-				}
-				if(atom.getValue().equals("std.lang")){
-				    throw new CompilerException(atom,"this module is imported automatically");
-                }
-				modules.add(atom);
-			}else {
-				addFromList(mod,modules);
-			}
-		}
-	}
+
 	@Override
 	public boolean appendSemicolon() {
 		return false;

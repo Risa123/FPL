@@ -19,7 +19,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
 	private boolean getRequestFromOutSide,initCalled;
-	private final ArrayList<TypeInfo> cDeclaredTypes = new ArrayList<>();
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
@@ -29,47 +28,52 @@ public final class ModuleEnv extends ANameSpacedEnv{
 		    addFunction("main",new Main());
         }
 	}
-	public void  importModule(Atom name,BufferedWriter writer)throws CompilerException,IOException{
-		var mod = moduleBlock.getModule(name);
-		importedModules.add(mod);
-        var typesToImport = new ArrayList<>(mod.types.values());
-        while(!typesToImport.isEmpty()){
-           var it = typesToImport.iterator();
-           while(it.hasNext()) {
-               var type = it.next();
-               var importedRequiredTypes = new ArrayList<>(type.getRequiredTypes());
-               var rIt = importedRequiredTypes.iterator();
-               while(rIt.hasNext()){
-                   var t = rIt.next();
-                   if(TypeInfo.notContains(typesToImport,t) && TypeInfo.notContains(cDeclaredTypes,t)){
-                       writer.write(t.getDeclaration());
-                       cDeclaredTypes.add(t);
-                       rIt.remove();
+	public void importModules(ArrayList<Atom>modules,BufferedWriter writer)throws CompilerException,IOException{
+	    var types = new ArrayList<TypeInfo>();
+	    var declared = new ArrayList<TypeInfo>();
+	    for(var modName:modules){
+            var mod = moduleBlock.getModule(modName);
+	        importedModules.add(mod);
+	        for(var type:mod.types.values()){
+	            if(TypeInfo.notContains(types,type)){
+	                types.add(type);
+                }
+            }
+        }
+	    while(!types.isEmpty()){
+	        var it = types.iterator();
+	        while(it.hasNext()){
+               var t = it.next();
+               var hasAll = true;
+               for(var rt:t.getRequiredTypes()){
+                   if(TypeInfo.notContains(declared,rt)){
+                       hasAll = false;
+                       break;
                    }
                }
-               if(declaredContains(importedRequiredTypes)){
-                   if(TypeInfo.notContains(cDeclaredTypes,type)){
-                       writer.write(type.getDeclaration());
-                       cDeclaredTypes.add(type);
-                   }
+               if(hasAll){
+                   declared.add(t);
+                   writer.write(t.getDeclaration());
                    it.remove();
                }
-           }
-        }
-		for(var func:mod.functions.values()){
-			if(func instanceof Function f) {
-				if(f.getAccessModifier() != AccessModifier.PRIVATE){
-                    writer.write(f.getDeclaration());
-                }
-			}else if(func instanceof Variable v){
-			    writer.write(v.getExternDeclaration());
             }
-		}
-		if(!mod.initCalled){
-		    mod.initCalled = true;
-		    writer.write("void ");
-		    writer.write(mod.getInitializerCall());
-		    appendToInitializer(mod.getInitializerCall());
+        }
+		for(var mod:importedModules){
+            for(var func:mod.functions.values()){
+                if(func instanceof Function f){
+                    if(f.getAccessModifier() != AccessModifier.PRIVATE){
+                        writer.write(f.getDeclaration());
+                    }
+                }else if(func instanceof Variable v){
+                    writer.write(v.getExternDeclaration());
+                }
+            }
+            if(!mod.initCalled){
+                mod.initCalled = true;
+                writer.write("void ");
+                writer.write(mod.getInitializerCall());
+                appendToInitializer(mod.getInitializerCall());
+            }
         }
 	}
 	@Override
@@ -131,14 +135,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public boolean isInitCalled(){
 	    return initCalled;
-    }
-    private boolean declaredContains(ArrayList<TypeInfo>types){
-        for(var type:types){
-            if(TypeInfo.notContains(cDeclaredTypes,type)){
-                return false;
-            }
-        }
-        return true;
     }
     @Override
     public ModuleEnv getModule(){

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.ATwoPassBlock;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.parser.Parser;
@@ -43,9 +44,12 @@ public final class ModuleBlock extends ATwoPassBlock {
            compiled = true;
            try(var writer = Files.newBufferedWriter(Paths.get(cFile))){
                env = new ModuleEnv(fpl.getEnv(), this);
+               var modulesToImport = new ArrayList<Atom>();
                if(!(name.equals("std.lang") || name.equals("std.backend"))){
-                   env.importModule(new Atom(0,0,"std.lang",TokenType.ID),writer);
+                   modulesToImport.add(new Atom(0,0,"std.lang",TokenType.ID));
                }
+
+               env.importModules(modulesToImport,writer);
                compile(writer,env,exps);
                writer.write(env.getVariableDeclarations());
                writer.write(env.getFunctionDeclarations());
@@ -102,4 +106,19 @@ public final class ModuleBlock extends ATwoPassBlock {
    public void makeMethod(String name,TypeInfo ofType){
        ofType.addField(name,env.getAndRemove(name).makeMethod(ofType));
    }
+   private void addFromList(AExp exp, ArrayList<Atom>modules)throws CompilerException{
+        for(var mod:((List)exp).getExps()){
+            if(mod instanceof Atom atom) {
+                if(atom.getType() != TokenType.ID){
+                    throw new CompilerException(atom,"identifier expected");
+                }
+                if(atom.getValue().equals("std.lang")){
+                    throw new CompilerException(atom,"this module is imported automatically");
+                }
+                modules.add(atom);
+            }else {
+                addFromList(mod,modules);
+            }
+        }
+    }
 }

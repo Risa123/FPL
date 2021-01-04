@@ -11,9 +11,9 @@ import risa.fpl.parser.ExpIterator;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public final class CStructBlock extends ABlock {
+public final class CStructBlock extends ABlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var id = it.nextID();
         var cID = id.getValue();
         if(env.hasTypeInCurrentEnv(id.getValue())){

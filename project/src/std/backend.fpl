@@ -1,4 +1,4 @@
-native {
+native{
  fn int puts string str
  fn void* malloc memory size
  fn void free void* p
@@ -6,7 +6,7 @@ native {
  fn void* realloc void* p memory new_size
  fn void contextRestore ContextData context
  fn int contextSave ContextData data
- private {
+ private{
     fn memory fwrite void* p memory size memory nmen
     fn bool feof void* file
     fn int system string cmd
@@ -28,16 +28,16 @@ int IO_NO_BUFFER 0x0004 #_IONBF
 fn int execute string cmd {
   return system cmd
 }
-fn void fileClose void* file {
+fn void fileClose void* file{
   fclose file
 }
-fn void* fileOpen string name string mode {
+fn void* fileOpen string name string mode{
    return fopen name,mode
 }
-fn memory fileRead void* file byte* p memory size {
+fn memory fileRead void* file byte* p memory size{
   return fread p cast void*,size,1,file
 }
-fn memory fileWrite void* file byte* p memory size {
+fn memory fileWrite void* file byte* p memory size{
   return fwrite p cast void*,size,1
 }
 fn bool fileEOF void* file{
@@ -49,66 +49,97 @@ fn int fileFlush void* file{
 fn int fileSetBuffer void* file byte* buffer int mode memory size{
    return setvbuf file,buffer,mode,size
 }
+cstruct Float128{
+  if_flag x86_64{
+    [] ulong 2 part
+  }
+}
 cstruct ContextData{
   if_flag x86_64{
-    long rbx;rsp;rbp;r12;r13;r14;r15;rip
+    long frame;rbx;rsp;rbp;rsi;rdi;r12;r13;r14;r15;rip;spare
+    Float128 Xmm6;Xmm7;Xmm8;Xmm9;Xmm10;Xmm11;Xmm12;Xmm13;Xmm14;Xmm15
   }
   if_flag x86{
-    int ebx;esp;ebp;r12;r13;r14;r15;eip
+    int ebp;ebx;edi;esi;esp;eip
   }
 }
-#rcx is register for first argument on x86_64 win
 asm "contextSave:"
-#saving registers
-if_flag x86_64{
- asm "movq %rbx,0(%rcx)"
- asm "movq %rsp,8(%rcx)"
- asm "movq %rbp,16(%rcx)"
- asm "movq %r12,24(%rcx)"
- asm "movq %r13,32(%rcx)"
- asm "movq %r14,40(%rcx)"
- asm "movq %r15,48(%rcx)"
- asm "movq 0(%rsp),%rdx" #get rta
- asm "movq %rdx,56(%rcx)" #save save instruction pointer
- asm "xorl %eax,%eax"
-}
 if_flag x86{
- asm "mov %ebx,0(%ecx)"
- asm "mov %esp,4(%ecx)"
- asm "mov %ebp,8(%ecx)"
- asm "mov %r12,12(%ecx)"
- asm "mov %r13,16(%ecx)"
- asm "mov %r14,20(%ecx)"
- asm "mov %r15,24(%ecx)"
- asm "mov 0(%esp),%edx" #get rta
- asm "mov %edx,56(%ecx)" #save save instruction pointer
+ asm "movl 4(%esp),%ecx" #context data
+ #saving registers
+ asm "movl %ebp,0(%ecx)"
+ asm "movl %ebx,4(%ecx)"
+ asm "movl %edi,8(%ecx)"
+ asm "movl %esi,12(%ecx)"
+ asm "movl %esp,16(%ecx)"
+ asm "movl 0(%esp),%eax"
+ asm "movl %eax,20(%ecx)" #save eip
+ asm "xorl %eax,%eax
+ asm "retl"
 }
-asm "xorl %eax,%eax"
-asm "ret"
+if_flag x86_64{
+  asm "xorq %rdx,%rdx"
+  asm "movq %rdx,(%rcx)"
+  asm "movq %rbx,0x8(%rcx)"
+  asm "leaq 0x8(%rsp),%rax"
+  asm "movq %rax,0x10(%rcx)" #save rsp
+  asm "movq %rbp,0x18(%rcx)"
+  asm "movq %rsi,0x20(%rcx)"
+  asm "movq %rdi,0x28(%rcx)"
+  asm "movq %r12,0x30(%rcx)"
+  asm "movq %r13,0x38(%rcx)"
+  asm "movq %r14,0x40(%rcx)"
+  asm "movq %r15,0x48(%rcx)"
+  asm "movq (%rsp),%rax"
+  asm "movq %rax,0x50(%rcx)" #save rip
+  asm "movdqa %xmm6,0x60(%rcx)"
+  asm "movdqa %xmm7,0x70(%rcx)"
+  asm "movdqa %xmm8,0x80(%rcx)"
+  asm "movdqa %xmm9,0x90(%rcx)"
+  asm "movdqa %xmm10,0xa0(%rcx)"
+  asm "movdqa %xmm11,0xb0(%rcx)"
+  asm "movdqa %xmm12,0xc0(%rcx)"
+  asm "movdqa %xmm13,0xd0(%rcx)"
+  asm "movdqa %xmm14,0xe0(%rcx)"
+  asm "movdqa %xmm15,0xf0(%rcx)"
+  asm "xorq %rax,%rax"
+  asm "retq"
+}
 asm "contextRestore:"
-#restoring registers
-if_flag x86_64{
- asm "movq 0(%rcx),%rbx"
- asm "movq 8(%rcx),%rsp"
- asm "movq 16(%rcx),%rbp"
- asm "movq 24(%rcx),%r12"
- asm "movq 32(%rcx),%r13"
- asm "movq 40(%rcx),%r14"
- asm "movq 48(%rcx),%r15"
- asm "movq %rdx,0(%rsp)"
-}
 if_flag x86{
- asm "mov 0(%ecx),%ebx"
- asm "mov 4(%ecx),%esp"
- asm "mov 8(%ecx),%ebp"
- asm "mov 12(%ecx),%r12"
- asm "mov 16(%ecx),%r13"
- asm "mov 20(%ecx),%r14"
- asm "mov 24(%ecx),%r15"
- asm "mov %edx,0(%esp)"
+ asm "movl 4(%esp),%ecx"
+ asm "movl 8(%esp),%eax" #context data
+ asm "movl 0(%ecx),%ebp"
+ asm "movl 4(%ecx),%ebx"
+ asm "movl 8(%ecx),%edi"
+ asm "movl 12(%ecx),%esi"
+ asm "movl 16(%ecx),%esp"
+ asm "addl $4,%esp"
+ asm "jmp *20(%ecx)"
 }
-asm "xorl %eax,%eax"
-asm "incl %eax"
-asm "ret"
+if_flag x86_64{
+ asm "movq %rdx,%rax"
+ asm "movq 0x8(%rcx),%rbx"
+ asm "movq 0x18(%rcx),%rbp"
+ asm "movq 0x20(%rcx),%rsi"
+ asm "movq 0x28(%rcx),%rdi"
+ asm "movq 0x30(%rcx),%r12"
+ asm "movq 0x38(%rcx),%r13"
+ asm "movq 0x40(%rcx),%r14"
+ asm "movq 0x48(%rcx),%r15"
+ asm "movdqa 0x60(%rcx),%xmm6"
+ asm "movdqa 0x70(%rcx),%xmm7"
+ asm "movdqa 0x80(%rcx),%xmm8"
+ asm "movdqa 0x90(%rcx),%xmm9"
+ asm "movdqa 0xa0(%rcx),%xmm10"
+ asm "movdqa 0xb0(%rcx),%xmm11"
+ asm "movdqa 0xc0(%rcx),%xmm12"
+ asm "movdqa 0xd0(%rcx),%xmm13"
+ asm "movdqa 0xe0(%rcx),%xmm14"
+ asm "movdqa 0xf0(%rcx),%xmm15"
+ asm "movq 0x50(%rcx),%rdx"
+ asm "movq 0x10(%rcx),%rsp"
+ asm "jmp *%rdx"
+}
 asm ".globl contextSave"
 asm ".globl contextRestore"

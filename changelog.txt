@@ -181,10 +181,12 @@ fix std.lang.Thread constructor from wiki implemented
 setExceptionHandler added to Thread
 try-catch-finally block added depends on inline assembly
 error in build file now has build.properties as file instead of null
+contextSave and contextRestore added to std.backend
 fix compilation error
 fix function pointer as function argument compilation error
 fix this dereference compilation error
 fix recursive pointer to struct field declaration C compilation error
 fix validity of build file is now properly checked
 fix type import C error
+fix cstruct import C error
 fix digits not valid part of C identifier
