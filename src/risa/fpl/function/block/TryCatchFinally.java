@@ -26,8 +26,8 @@ public final class TryCatchFinally extends ABlock{
                         throw new CompilerException(exp,"catch can only come before finally");
                     }
                     it.next();
-                    var expType = it.nextID();
-                    var expName = it.nextID();
+                    var exType = it.nextID();
+                    var exName = it.nextID();
                     writer.write("else{\n");
                     it.nextList().compile(writer,new FnSubEnv(env),it);
                     writer.write("}\n");

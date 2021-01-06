@@ -2,7 +2,6 @@ package risa.fpl.function;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
@@ -16,9 +15,8 @@ import risa.fpl.tokenizer.TokenType;
 
 public final class Use implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-		var modules = new ArrayList<Atom>();
-		if(!(env instanceof ModuleEnv)) {
+	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum)throws IOException,CompilerException{
+		if(!(env instanceof ModuleEnv e)) {
 			throw new CompilerException(line,charNum,"can only be used on module level");
 		}
 		var exp = it.next();
@@ -26,17 +24,30 @@ public final class Use implements IFunction{
 			if(it.hasNext()) {
 				throw new CompilerException(exp,"only block expected");
 			}
-			//addFromList(exp,modules);
+			addFromList(exp,e);
 		}else {
-		    modules.add((Atom)exp);
+		    e.addModuleToImport((Atom)exp);
 			while(it.hasNext()) {
-				modules.add(it.nextID());
+				e.addModuleToImport(it.nextID());
 			}
 		}
-        ((ModuleEnv)env).importModules(modules,writer);
 		return TypeInfo.VOID;
 	}
-
+    private void addFromList(AExp exp,ModuleEnv env)throws CompilerException,IOException{
+        for(var mod:((List)exp).getExps()){
+            if(mod instanceof Atom atom) {
+                if(atom.getType() != TokenType.ID){
+                    throw new CompilerException(atom,"identifier expected");
+                }
+                if(atom.getValue().equals("std.lang")){
+                    throw new CompilerException(atom,"this module is imported automatically");
+                }
+                env.addModuleToImport(atom);
+            }else {
+                addFromList(mod,env);
+            }
+        }
+    }
 	@Override
 	public boolean appendSemicolon() {
 		return false;

@@ -28,15 +28,30 @@ public final class ModuleEnv extends ANameSpacedEnv{
 		    addFunction("main",new Main());
         }
 	}
-	public void importModules(ArrayList<Atom>modules,BufferedWriter writer)throws CompilerException,IOException{
+	private void addRequiredTypes(TypeInfo type,ArrayList<TypeInfo>types){
+	    for(var t:type.getRequiredTypes()){
+	       if(notContains(types,t)){
+               types.add(t);
+               addRequiredTypes(t,types);
+           }
+        }
+    }
+    private boolean notContains(ArrayList<TypeInfo>types,TypeInfo type){
+	    for(var t:types){
+	        if(t == type){
+	            return false;
+            }
+        }
+	    return true;
+    }
+	public void importModules(BufferedWriter writer)throws CompilerException,IOException{
 	    var types = new ArrayList<TypeInfo>();
 	    var declared = new ArrayList<TypeInfo>();
-	    for(var modName:modules){
-            var mod = moduleBlock.getModule(modName);
-	        importedModules.add(mod);
+	    for(var mod:importedModules){
 	        for(var type:mod.types.values()){
-	            if(TypeInfo.notContains(types,type)){
+	            if(notContains(types,type)){
 	                types.add(type);
+	                addRequiredTypes(type,types);
                 }
             }
         }
@@ -46,7 +61,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
                var t = it.next();
                var hasAll = true;
                for(var rt:t.getRequiredTypes()){
-                   if(TypeInfo.notContains(declared,rt)){
+                   if(notContains(declared,rt)){
                        hasAll = false;
                        break;
                    }
@@ -148,5 +163,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public void appendVariableDeclaration(String code){
 	    variableDeclarations.append(code);
+    }
+    public void addModuleToImport(Atom module)throws CompilerException,IOException{
+	    importedModules.add(moduleBlock.getModule(module));
     }
 }

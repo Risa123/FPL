@@ -107,8 +107,8 @@ if_flag x86_64{
 }
 asm "contextRestore:"
 if_flag x86{
- asm "movl 4(%esp),%ecx"
- asm "movl 8(%esp),%eax" #context data
+ asm "movl 4(%esp),%ecx" #context data
+ asm "movl $1,%eax"
  asm "movl 0(%ecx),%ebp"
  asm "movl 4(%ecx),%ebx"
  asm "movl 8(%ecx),%edi"
@@ -118,7 +118,7 @@ if_flag x86{
  asm "jmp *20(%ecx)"
 }
 if_flag x86_64{
- asm "movq %rdx,%rax"
+ asm "movq $1,%rax"
  asm "movq 0x8(%rcx),%rbx"
  asm "movq 0x18(%rcx),%rbp"
  asm "movq 0x20(%rcx),%rsi"

@@ -217,15 +217,4 @@ public class TypeInfo {
   public TypeInfo getPrimaryParent(){
       return primaryParent;
   }
-  /**
-   same as !ArrayList.contains but uses == instead of equals
-   **/
-  public static boolean notContains(ArrayList<TypeInfo>list,TypeInfo type){
-      for(var t:list){
-          if(t == type){
-              return false;
-          }
-      }
-      return true;
-  }
 }
