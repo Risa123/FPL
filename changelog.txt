@@ -182,6 +182,7 @@ setExceptionHandler added to Thread
 try-catch-finally block added depends on inline assembly
 error in build file now has build.properties as file instead of null
 contextSave and contextRestore added to std.backend
+align feature added to cstruct
 fix compilation error
 fix function pointer as function argument compilation error
 fix this dereference compilation error

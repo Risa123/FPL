@@ -49,7 +49,7 @@ fn int fileFlush void* file{
 fn int fileSetBuffer void* file byte* buffer int mode memory size{
    return setvbuf file,buffer,mode,size
 }
-cstruct Float128{
+cstruct Float128 align 16{
   if_flag x86_64{
     [] ulong 2 part
   }

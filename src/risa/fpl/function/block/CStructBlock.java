@@ -6,7 +6,9 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.CStructEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -23,14 +25,27 @@ public final class CStructBlock extends ABlock{
             throw new CompilerException(id,"invalid C identifier");
         }
         var b  = new BuilderWriter(writer);
+        var next = it.next();
+        var align = "";
+        if(next instanceof Atom a){
+            if(!a.getValue().equals("align")){
+                throw new CompilerException(a,"align expected");
+            }
+            var arg = it.nextAtom();
+            if(arg.getType() != TokenType.UINT && arg.getType() != TokenType.ULONG){
+                throw new CompilerException(arg,"integer number expected");
+            }
+            next = it.nextList();
+            align = " __attribute__((aligned(" + arg.getValue() + ")))";
+        }
         b.write("typedef struct " + cID + "{\n");
         var sEnv = new CStructEnv(env,cID);
-        it.nextList().compile(b,sEnv,it);
-        b.write("}" + cID + ";\n");
+        next.compile(b,sEnv,it);
+        b.write("}" + cID +  align +";\n");
         var type = sEnv.getType();
         writer.write(b.getCode());
         type.appendToDeclaration(b.getCode());
         type.buildDeclaration();
-        return  TypeInfo.VOID;
+        return TypeInfo.VOID;
     }
 }
