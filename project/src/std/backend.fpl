@@ -3,9 +3,9 @@ native{
  fn void* malloc memory size
  fn void free void* p
  fn void exit int exitCode
- fn void* realloc void* p memory new_size
+ fn void* realloc void* p memory newSize
  fn void contextRestore ContextData context
- fn int contextSave ContextData data
+ fn int contextSave ContextData context
  private{
     fn memory fwrite void* p memory size memory nmen
     fn bool feof void* file
@@ -25,7 +25,7 @@ void* stderr __acrt_iob_func STDERR_INDEX
 int IO_FULL_BUFFER 0x0000 #_IOFLBF
 int IO_LINE_BUFFER 0x0040 #_IOLBF
 int IO_NO_BUFFER 0x0004 #_IONBF
-fn int execute string cmd {
+fn int execute string cmd{
   return system cmd
 }
 fn void fileClose void* file{

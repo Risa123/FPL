@@ -190,3 +190,4 @@ fix recursive pointer to struct field declaration C compilation error
 fix validity of build file is now properly checked
 fix type import C error
 fix digits not valid part of C identifier
+fix cstruct not defined

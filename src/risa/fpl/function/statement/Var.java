@@ -16,13 +16,13 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
-public final class Var implements IFunction {
+public final class Var implements IFunction{
     private final TypeInfo type;
     public Var(TypeInfo type) {
     	this.type = type;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         if(type != null && it.hasNext()){
            if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
                it.next();
@@ -32,7 +32,7 @@ public final class Var implements IFunction {
 		if(env.hasModifier(Modifier.NATIVE) && env instanceof ClassEnv) {
             throw new CompilerException(line,charNum,"native variables can only be declared in modules");
 		}
-		while(it.hasNext()) {
+		while(it.hasNext()){
             var id = it.nextAtom();
             if(id.getType() == TokenType.ID){
                 var cID = IFunction.toCId(id.getValue());
@@ -77,11 +77,14 @@ public final class Var implements IFunction {
                     onlyDeclared = false;
                 }
                 var varType = Objects.requireNonNullElse(this.type,expType);
+                if(!varType.isPrimitive()){
+                    onlyDeclared = false;
+                }
                 var decl = "";
                 if(env.hasModifier(Modifier.NATIVE)){
                     decl = "extern ";
                 }
-                if(env instanceof  ClassEnv && varType instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
+                if(env instanceof  ClassEnv && varType instanceof PointerInfo p && p.getType()instanceof InstanceInfo){
                    decl += "struct ";
                 }
                 if(varType instanceof PointerInfo p && p.isFunctionPointer()){

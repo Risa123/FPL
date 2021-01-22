@@ -1,15 +1,13 @@
-use {
+use{
   risa.fpl.tokenizer
   std.io.file
   std.backend
 }
 main{
-  try{
-      Exception ex "test"
-      ex throw
-  }catch Exception ex{
-    puts "caught"
-  }finally{
-    puts "finally"
+  ContextData context
+  if contextSave context; == 1{
+    puts "context restored"
+    exit 0
   }
+  contextRestore context
 }
