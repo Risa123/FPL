@@ -183,6 +183,8 @@ try-catch-finally block added depends on inline assembly
 error in build file now has build.properties as file instead of null
 contextSave and contextRestore added to std.backend
 align feature added to cstruct
+x86_64 renamed to x64
+variable mainThread is available in main function
 fix compilation error
 fix function pointer as function argument compilation error
 fix this dereference compilation error

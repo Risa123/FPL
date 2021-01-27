@@ -29,7 +29,7 @@ public final class Var implements IFunction{
                return type.getClassInfo();
            }
         }
-		if(env.hasModifier(Modifier.NATIVE) && env instanceof ClassEnv) {
+		if(env.hasModifier(Modifier.NATIVE) && env instanceof ClassEnv){
             throw new CompilerException(line,charNum,"native variables can only be declared in modules");
 		}
 		while(it.hasNext()){
@@ -84,7 +84,7 @@ public final class Var implements IFunction{
                 if(env.hasModifier(Modifier.NATIVE)){
                     decl = "extern ";
                 }
-                if(env instanceof  ClassEnv && varType instanceof PointerInfo p && p.getType()instanceof InstanceInfo){
+                if(env instanceof  ClassEnv && varType instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
                    decl += "struct ";
                 }
                 if(varType instanceof PointerInfo p && p.isFunctionPointer()){

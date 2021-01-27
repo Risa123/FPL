@@ -9,7 +9,9 @@ import risa.fpl.function.exp.Variable;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -23,9 +25,11 @@ public final class Main implements IFunction{
         var fnEnv = new FnEnv(env,NumberInfo.INT);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("argv",new Variable(new PointerInfo(TypeInfo.STRING),"argv","argv"));
+        fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread", TokenType.ID)),"mainThread","mainThread"));
         writer.write(modEnv.getInitializer("_init"));
         modEnv.initCalled();
-        writer.write("static int fpl_main(int argc,char** argv){\n");
+        writer.write("int main(int argc,char** argv){\n");
+        writer.write("void ");
         writer.write(modEnv.getInitializerCall());
         for(var e:modEnv.getModuleEnvironments()){
             if(!e.isInitCalled()){
@@ -35,14 +39,12 @@ public final class Main implements IFunction{
                 writer.write(e.getInitializerCall()); //call
             }
         }
+        writer.write("_Thread mainThread = static_std_lang_Thread_new(\"Main\");\n");
+        writer.write("_std_lang_currentThread = &mainThread;\n");
         it.nextList().compile(writer,fnEnv,it);
         if(fnEnv.notReturnUsed()){
             writer.write("return 0;\n}\n");
         }
-        writer.write("int main(int argc,char** argv){\n");
-        writer.write("_Thread mainThread = static_std_lang_Thread_new(\"Main\");\n");
-        writer.write("_std_lang_currentThread = &mainThread;\n");
-        writer.write("return fpl_main(argc,argv);\n}");
         return TypeInfo.VOID;
     }
 }

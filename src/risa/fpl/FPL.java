@@ -15,7 +15,7 @@ public final class FPL {
 	private final ProgramEnv env = new ProgramEnv(this);
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();
 	private final ArrayList<String>flags = new ArrayList<>();
-    public FPL(String project, PrintStream errStream)throws IOException,CompilerException{
+    public FPL(String project,PrintStream errStream)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
         if(!build.containsKey("mainModule") || !build.containsKey("cc") || !build.containsKey("outputFile")){
@@ -29,9 +29,7 @@ public final class FPL {
     	outputDirectory = project + "/output";
         mainModule = build.getProperty("mainModule");
         Collections.addAll(flags,build.getProperty("flags","").split(","));
-        var it = Files.walk(Paths.get(project + "/src")).iterator();
-        while(it.hasNext()){
-            var p = it.next();
+        for(var p:Files.walk(Paths.get(project + "/src")).collect(Collectors.toList())){
             if(p.toString().endsWith(".fpl")){
                 var mod = new ModuleBlock(p,this);
                 modules.put(mod.getName(),mod);
@@ -39,7 +37,7 @@ public final class FPL {
         }
         switch(System.getProperty("os.arch")){
             case "x86" -> flags.add("x86");
-            case "amd64" -> flags.add("x86_64");
+            case "amd64" -> flags.add("x64");
             case "ia64" -> flags.add("ia64");
         }
     }

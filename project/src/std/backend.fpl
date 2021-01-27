@@ -67,7 +67,7 @@ asm "contextSave:"
 if_flag x86{
  asm "movl 4(%esp),%ecx" #context data
  #saving registers
- asm "movl %ebp,0(%ecx)"
+ asm "movl %ebp,(%ecx)"
  asm "movl %ebx,4(%ecx)"
  asm "movl %edi,8(%ecx)"
  asm "movl %esi,12(%ecx)"
@@ -77,7 +77,7 @@ if_flag x86{
  asm "xorl %eax,%eax
  asm "retl"
 }
-if_flag x86_64{
+if_flag x64{
   asm "xorq %rdx,%rdx"
   asm "movq %rdx,(%rcx)"
   asm "movq %rbx,0x8(%rcx)"
@@ -108,8 +108,8 @@ if_flag x86_64{
 asm "contextRestore:"
 if_flag x86{
  asm "movl 4(%esp),%ecx" #context data
- asm "movl $1,%eax"
- asm "movl 0(%ecx),%ebp"
+ asm "movl $1,%eax" #return 1
+ asm "movl (%ecx),%ebp"
  asm "movl 4(%ecx),%ebx"
  asm "movl 8(%ecx),%edi"
  asm "movl 12(%ecx),%esi"
@@ -117,8 +117,8 @@ if_flag x86{
  asm "addl $4,%esp"
  asm "jmp *20(%ecx)"
 }
-if_flag x86_64{
- asm "movq $1,%rax"
+if_flag x64{
+ asm "movq $1,%rax" #return 1
  asm "movq 0x8(%rcx),%rbx"
  asm "movq 0x18(%rcx),%rbp"
  asm "movq 0x20(%rcx),%rsi"
