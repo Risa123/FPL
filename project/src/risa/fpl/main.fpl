@@ -3,11 +3,24 @@ use{
   std.io.file
   std.backend
 }
+ContextData context
 main{
-  try{
-        Exception ex "test"
-        ex throw
-      }catch Exception ex{
-        puts "caught"
-      }
+  if contextSave context; == 0{
+    puts "first run"
+  }{
+    puts "context restored"
+    exit 0
+  }
+  restore
+}
+fn void restore{
+  contextRestore context
+}
+fn void placeholder{
+ try{
+         Exception ex "test"
+         ex throw
+       }catch Exception ex{
+         puts "caught"
+       }
 }

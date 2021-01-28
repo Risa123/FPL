@@ -193,3 +193,4 @@ fix validity of build file is now properly checked
 fix type import C error
 fix digits not valid part of C identifier
 fix cstruct not defined
+fix main C error

@@ -1,5 +1,6 @@
 package risa.fpl.function.block;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnEnv;
@@ -28,23 +29,25 @@ public final class Main implements IFunction{
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread", TokenType.ID)),"mainThread","mainThread"));
         writer.write(modEnv.getInitializer("_init"));
         modEnv.initCalled();
-        writer.write("int main(int argc,char** argv){\n");
-        writer.write("void ");
-        writer.write(modEnv.getInitializerCall());
+        var b = new BuilderWriter(writer);
+        b.write("int main(int argc,char** argv){\n");
+        b.write("void ");
+        b.write(modEnv.getInitializerCall());
         for(var e:modEnv.getModuleEnvironments()){
             if(!e.isInitCalled()){
                 e.initCalled();
-                writer.write("void ");
-                writer.write(e.getInitializerCall()); //declaration
-                writer.write(e.getInitializerCall()); //call
+                b.write("void ");
+                b.write(e.getInitializerCall()); //declaration
+                b.write(e.getInitializerCall()); //call
             }
         }
-        writer.write("_Thread mainThread = static_std_lang_Thread_new(\"Main\");\n");
-        writer.write("_std_lang_currentThread = &mainThread;\n");
-        it.nextList().compile(writer,fnEnv,it);
+        b.write("_Thread mainThread = static_std_lang_Thread_new(\"Main\");\n");
+        b.write("_std_lang_currentThread = &mainThread;\n");
+        it.nextList().compile(b,fnEnv,it);
         if(fnEnv.notReturnUsed()){
-            writer.write("return 0;\n}\n");
+            b.write("return 0;\n}\n");
         }
+        modEnv.appendFunctionCode(b.getCode());
         return TypeInfo.VOID;
     }
 }
