@@ -179,12 +179,13 @@ public class TypeInfo {
       if(npType instanceof PointerInfo p) {
           npType = p.getType();
       }
-      if(this != npType && !primitive && getConversionMethodCName(to) != null /*would return null for nil pointer*/){
+      var convName = getConversionMethodCName(to);
+      if(this != npType && !primitive && convName != null /*would return null for nil pointer*/){
           var prefix = "";
           if(!comesFromPointer){
               prefix = "&";
           }
-          return getConversionMethodCName(to) + "(" + prefix +  expCode + ")";
+          return convName + "(" + prefix +  expCode + ")";
       }
       return expCode;
   }

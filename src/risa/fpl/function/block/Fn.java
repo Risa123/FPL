@@ -13,7 +13,7 @@ import risa.fpl.function.exp.ValueExp;
 import risa.fpl.info.*;
 import risa.fpl.parser.ExpIterator;
 
-public class Fn extends AFunctionBlock {
+public class Fn extends AFunctionBlock{
 	private boolean appendSemicolon;
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
@@ -26,12 +26,12 @@ public class Fn extends AFunctionBlock {
            throw new CompilerException(id,"main function can only be declared using build-in function main");
         }
 	    String cID;
-	    if(env.hasModifier(Modifier.NATIVE)) {
+	    if(env.hasModifier(Modifier.NATIVE)){
 	    	cID = id.getValue();
-	    	if(IFunction.notCID(id.getValue())) {
+	    	if(IFunction.notCID(id.getValue())){
 	    		throw new CompilerException(id,"invalid C identifier");
 	    	}
-	    }else {
+	    }else{
 	    	cID = "";
 	    	if(!env.hasModifier(Modifier.ABSTRACT) && env instanceof ANameSpacedEnv tmp){
 	    	    cID = tmp.getNameSpace(this);
@@ -47,18 +47,18 @@ public class Fn extends AFunctionBlock {
         }
         var fnEnv = new FnEnv(env,returnType);
 		var args = parseArguments(b,it,fnEnv,self);
-		if(it.hasNext()) {
+		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
 		        throw new CompilerException(line,charNum,"abstract methods can only be declared");
             }
 			b.write("{\n");
 			var block = it.nextList();
 			block.compile(b,fnEnv,it);
-			if(fnEnv.notReturnUsed() && returnType != TypeInfo.VOID) {
+			if(fnEnv.notReturnUsed() && returnType != TypeInfo.VOID){
 				throw new CompilerException(block,"there is no return in this block and this function doesn't return void");
 			}
 			b.write("}\n");
-		}else {
+		}else{
 		    if(!(env.hasModifier(Modifier.ABSTRACT) || env.hasModifier(Modifier.NATIVE))){
 		        throw new CompilerException(line,charNum,"block required");
             }
@@ -90,10 +90,8 @@ public class Fn extends AFunctionBlock {
                 if(!parentMethod.equalSignature(f)){
                     throw new CompilerException(line,charNum,"this method doesn't have signature of one it overrides");
                 }
-            }else{
-                if(parentField != null){
-                    throw new CompilerException(line,charNum,"override is required");
-                }
+            }else if(parentField != null){
+                throw new CompilerException(line,charNum,"override is required");
             }
             if(env.hasModifier(Modifier.OVERRIDE) || env.hasModifier(Modifier.VIRTUAL)){
                 String methodImplName;
@@ -126,7 +124,7 @@ public class Fn extends AFunctionBlock {
 		return TypeInfo.VOID;
 	}
 	@Override
-	public boolean appendSemicolon() {
+	public boolean appendSemicolon(){
 		return appendSemicolon;
 	}
 }

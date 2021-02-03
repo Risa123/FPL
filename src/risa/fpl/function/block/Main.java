@@ -19,7 +19,7 @@ import java.io.IOException;
 
 public final class Main implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException,CompilerException {
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         if(!(env instanceof ModuleEnv modEnv)){
             throw new CompilerException(line,charNum,"this can only be used in main module");
         }
@@ -30,8 +30,7 @@ public final class Main implements IFunction{
         writer.write(modEnv.getInitializer("_init"));
         modEnv.initCalled();
         var b = new BuilderWriter(writer);
-        b.write("int main(int argc,char** argv){\n");
-        b.write("void ");
+        b.write("int main(int argc,char** argv){\nvoid ");
         b.write(modEnv.getInitializerCall());
         for(var e:modEnv.getModuleEnvironments()){
             if(!e.isInitCalled()){
@@ -41,7 +40,8 @@ public final class Main implements IFunction{
                 b.write(e.getInitializerCall()); //call
             }
         }
-        b.write("_Thread mainThread = static_std_lang_Thread_new(\"Main\");\n");
+        b.write("_Thread mainThread;\n");
+        b.write("I_std_lang_Thread_init(&mainThread);\n");
         b.write("_std_lang_currentThread = &mainThread;\n");
         it.nextList().compile(b,fnEnv,it);
         if(fnEnv.notReturnUsed()){
