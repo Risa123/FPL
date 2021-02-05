@@ -5,16 +5,13 @@ use{
 }
 ContextData context
 main{
-  test
-}
-fn void test{
   if contextSave context; == 0{
-      puts "first run"
-    }{
-      puts "context restored"
-      exit 0
-    }
-    restore
+        puts "first run"
+      }{
+        puts "context restored"
+        exit 0
+      }
+      restore
 }
 fn void restore{
   contextRestore context

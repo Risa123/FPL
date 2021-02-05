@@ -185,6 +185,7 @@ contextSave and contextRestore added to std.backend
 align feature added to cstruct
 x86_64 renamed to x64
 variable mainThread is available in main function
+if arguments and with ; attributes noreturn and returnsTwice can be applied
 fix compilation error
 fix function pointer as function argument compilation error
 fix this dereference compilation error

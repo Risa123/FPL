@@ -4,8 +4,8 @@ native{
  fn void free void* p
  fn void exit int exitCode
  fn void* realloc void* p memory newSize
- fn void contextRestore ContextData context
- fn int contextSave ContextData context
+ fn void contextRestore ContextData context;noReturn
+ fn int contextSave ContextData context;returnsTwice
  private{
     fn memory fwrite void* p memory size memory nmen
     fn bool feof void* file

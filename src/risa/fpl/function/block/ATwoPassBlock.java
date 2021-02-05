@@ -21,7 +21,7 @@ public abstract class ATwoPassBlock{
             info.writer = new BuilderWriter(writer);
             infos.add(info);
         }
-        for(int i = 0; i < 2 && !infos.isEmpty();++i){
+        for(int i = 0; i < 3 && !infos.isEmpty();++i){ //three passes necessary in some cases
             var it = infos.iterator();
             while(it.hasNext()){
                 var info = it.next();

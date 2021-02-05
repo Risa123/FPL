@@ -19,7 +19,7 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
-public class Function extends TypeInfo implements IField,ICalledOnPointer {
+public class Function extends TypeInfo implements IField,ICalledOnPointer{
 	private final TypeInfo[]args;
 	private final TypeInfo self,returnType;
 	private String prev_code;
@@ -100,7 +100,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
             }
         }
 		var argList = new ArrayList<TypeInfo>();
-		while(it.hasNext()) {
+		while(it.hasNext()){
 		   if(it.peek() instanceof List){
 		       break;
            }
@@ -194,6 +194,8 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer {
         if (args.length > 0) {
             System.arraycopy(this.args,1,args,0,args.length);
         }
-        return new Function(getName(),returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
+        var f = new Function(getName(),returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
+        f.buildDeclaration();
+        return f;
     }
 }

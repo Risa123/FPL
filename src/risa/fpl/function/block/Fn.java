@@ -2,6 +2,7 @@ package risa.fpl.function.block;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -11,7 +12,10 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.info.*;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.parser.List;
+import risa.fpl.tokenizer.TokenType;
 
 public class Fn extends AFunctionBlock{
 	private boolean appendSemicolon;
@@ -47,6 +51,35 @@ public class Fn extends AFunctionBlock{
         }
         var fnEnv = new FnEnv(env,returnType);
 		var args = parseArguments(b,it,fnEnv,self);
+        if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
+            it.next();
+            var attrs = new ArrayList<String>();
+            while(it.hasNext()){
+               if(it.peek() instanceof List){
+                   break;
+               }else{
+                   var attr = it.nextID();
+                   if(attrs.contains(attr.getValue())){
+                       throw new CompilerException(attr,"attribute duplicity");
+                   }
+                   attrs.add(attr.getValue());
+                   switch(attr.getValue()){
+                       case "noReturn":
+                           if(attrs.contains("returnsTwice")){
+                               throw new CompilerException(attr,"noReturn is mutually exclusive with returnsTwice");
+                           }
+                           break;
+                       case "returnsTwice":
+                           if(attrs.contains("noReturn")){
+                               throw new CompilerException(attr,"returnsTwice is mutually exclusive with noReturn");
+                           }
+                           break;
+                       default:
+                           throw new CompilerException(attr,"no attribute is called " + attr);
+                   }
+               }
+            }
+        }
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
 		        throw new CompilerException(line,charNum,"abstract methods can only be declared");
