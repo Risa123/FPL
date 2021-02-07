@@ -2,7 +2,7 @@ native{
  fn int puts string str
  fn void* malloc memory size
  fn void free void* p
- fn void exit int exitCode
+ fn void exit int exitCode;noReturn
  fn void* realloc void* p memory newSize
  fn void contextRestore ContextData context;noReturn
  fn int contextSave ContextData context;returnsTwice
@@ -50,12 +50,12 @@ fn int fileSetBuffer void* file byte* buffer int mode memory size{
    return setvbuf file,buffer,mode,size
 }
 cstruct Float128 align 16{
-  if_flag x86_64{
+  if_flag x64{
     [] ulong 2 part
   }
 }
 cstruct ContextData{
-  if_flag x86_64{
+  if_flag x64{
     long frame;rbx;rsp;rbp;rsi;rdi;r12;r13;r14;r15;rip;spare
     Float128 Xmm6;Xmm7;Xmm8;Xmm9;Xmm10;Xmm11;Xmm12;Xmm13;Xmm14;Xmm15
   }

@@ -51,9 +51,13 @@ public class Fn extends AFunctionBlock{
         }
         var fnEnv = new FnEnv(env,returnType);
 		var args = parseArguments(b,it,fnEnv,self);
+		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
             it.next();
             var attrs = new ArrayList<String>();
+            if(it.hasNext()){
+                attrCode.append("__attribute__((");
+            }
             while(it.hasNext()){
                if(it.peek() instanceof List){
                    break;
@@ -64,20 +68,25 @@ public class Fn extends AFunctionBlock{
                    }
                    attrs.add(attr.getValue());
                    switch(attr.getValue()){
-                       case "noReturn":
-                           if(attrs.contains("returnsTwice")){
+                       case "noReturn" ->{
+                           if (attrs.contains("returnsTwice")) {
                                throw new CompilerException(attr,"noReturn is mutually exclusive with returnsTwice");
                            }
-                           break;
-                       case "returnsTwice":
-                           if(attrs.contains("noReturn")){
-                               throw new CompilerException(attr,"returnsTwice is mutually exclusive with noReturn");
+                           attrCode.append("__noreturn__");
+                       }
+                       case "returnsTwice" ->{
+                           if (attrs.contains("noReturn")) {
+                               throw new CompilerException(attr, "returnsTwice is mutually exclusive with noReturn");
                            }
-                           break;
-                       default:
-                           throw new CompilerException(attr,"no attribute is called " + attr);
+                           attrCode.append("__returns_twice__");
+                       }
+                       default -> throw new CompilerException(attr,"no attribute is called " + attr);
                    }
                }
+            }
+            if(attrCode.length() > 0){
+                attrCode.append("))");
+                b.write(attrCode.toString());
             }
         }
 		if(it.hasNext()){
@@ -113,7 +122,7 @@ public class Fn extends AFunctionBlock{
         }else{
             type = FunctionType.NORMAL;
         }
-        var f = new Function(id.getValue(),returnType,cID,args,type,self,env.getAccessModifier(),implName);
+        var f = new Function(id.getValue(),returnType,cID,args,type,self,env.getAccessModifier(),implName,attrCode.toString());
         if(self != null){
             var parentField = self.getField(id.getValue(),env);
             if(env.hasModifier(Modifier.OVERRIDE)){

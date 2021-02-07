@@ -27,7 +27,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
 	private final FunctionType type;
 	private boolean calledOnPointer;
 	private final String implName;
-    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,FunctionType type,TypeInfo self,AccessModifier accessModifier,String implName){
+    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,FunctionType type,TypeInfo self,AccessModifier accessModifier,String implName,String attrCode){
        super(name,cname,true);
        this.returnType = returnType;
        this.args = args;
@@ -39,6 +39,8 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
             appendToDeclaration("extern ");
         }
         appendToDeclaration(returnType.getCname());
+        appendToDeclaration(' ');
+        appendToDeclaration(attrCode);
         appendToDeclaration(' ');
         appendToDeclaration(cname);
         appendToDeclaration('(');
@@ -57,6 +59,9 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
         }
         appendToDeclaration(");\n");
         buildDeclaration();
+    }
+    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,FunctionType type,TypeInfo self,AccessModifier accessModifier,String implName){
+        this(name,returnType,cname,args,type,self,accessModifier,implName,"");
     }
     @Override
     public AccessModifier getAccessModifier() {
@@ -194,8 +199,6 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
         if (args.length > 0) {
             System.arraycopy(this.args,1,args,0,args.length);
         }
-        var f = new Function(getName(),returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
-        f.buildDeclaration();
-        return f;
+        return new Function(getName(),returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
     }
 }
