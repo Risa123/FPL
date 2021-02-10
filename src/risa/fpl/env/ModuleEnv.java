@@ -83,12 +83,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
                     writer.write(v.getExternDeclaration());
                 }
             }
-            if(!mod.initCalled){
-                mod.initCalled = true;
-                writer.write("void ");
-                writer.write(mod.getInitializerCall());
-                appendToInitializer(mod.getInitializerCall());
-            }
         }
 	}
 	@Override
@@ -166,5 +160,13 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public void addModuleToImport(Atom module)throws CompilerException,IOException{
 	    importedModules.add(moduleBlock.getModule(module));
+    }
+    public boolean allDependenciesInitCalled(){
+	    for(var m:importedModules){
+	        if(!m.initCalled){
+	            return false;
+            }
+        }
+	    return true;
     }
 }

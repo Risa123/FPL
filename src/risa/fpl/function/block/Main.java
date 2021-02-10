@@ -16,6 +16,7 @@ import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public final class Main implements IFunction{
     @Override
@@ -30,14 +31,19 @@ public final class Main implements IFunction{
         writer.write(modEnv.getInitializer("_init"));
         modEnv.initCalled();
         var b = new BuilderWriter(writer);
-        b.write("int main(int argc,char** argv){\nvoid ");
-        b.write(modEnv.getInitializerCall());
-        for(var e:modEnv.getModuleEnvironments()){
-            if(!e.isInitCalled()){
-                e.initCalled();
-                b.write("void ");
-                b.write(e.getInitializerCall()); //declaration
-                b.write(e.getInitializerCall()); //call
+        b.write("int main(int argc,char** argv){\n");
+        var modules = (ArrayList<ModuleEnv>)modEnv.getModuleEnvironments().clone();
+        while(!modules.isEmpty()){
+            var iterator = modules.iterator();
+            while(iterator.hasNext()){
+                var e = iterator.next();
+                if(e.allDependenciesInitCalled()){
+                    e.initCalled();
+                    b.write("void ");
+                    b.write(e.getInitializerCall()); //declaration
+                    b.write(e.getInitializerCall()); //call
+                    iterator.remove();
+                }
             }
         }
         b.write("_Thread mainThread;\n");

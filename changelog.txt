@@ -195,3 +195,4 @@ fix type import C error
 fix digits not valid part of C identifier
 fix cstruct not defined
 fix main C error
+fix module initializers not called main block
