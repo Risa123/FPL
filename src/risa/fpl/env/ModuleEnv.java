@@ -142,9 +142,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public void initCalled(){
 	    initCalled = true;
     }
-    public boolean isInitCalled(){
-	    return initCalled;
-    }
     @Override
     public ModuleEnv getModule(){
 	    return this;

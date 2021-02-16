@@ -29,7 +29,6 @@ public final class Main implements IFunction{
         fnEnv.addFunction("argv",new Variable(new PointerInfo(TypeInfo.STRING),"argv","argv"));
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread", TokenType.ID)),"mainThread","mainThread"));
         writer.write(modEnv.getInitializer("_init"));
-        modEnv.initCalled();
         var b = new BuilderWriter(writer);
         b.write("int main(int argc,char** argv){\n");
         var modules = (ArrayList<ModuleEnv>)modEnv.getModuleEnvironments().clone();

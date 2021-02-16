@@ -3,18 +3,13 @@ use{
   std.io.file
   std.backend
 }
-ContextData context
 main{
-  if contextSave context; == 0{
-        puts "first run"
-      }{
+      ContextData context
+      if contextSave context; == 1{
         puts "context restored"
         exit 0
       }
-      restore
-}
-fn void restore{
-  contextRestore context
+      contextRestore context
 }
 fn void placeholder{
  try{
