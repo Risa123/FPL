@@ -114,10 +114,18 @@ public class TypeInfo {
       declaration = declarationBuilder.toString();
   }
   private void addRequiredType(TypeInfo type){
-      if(!type.isPrimitive()){
+      if(!type.isPrimitive() && type.notContains(requiredTypes)){
          requiredTypes.add(type);
       }
   }
+  public boolean notContains(ArrayList<TypeInfo>types){
+        for(var t:types){
+            if(t == this){
+                return false;
+            }
+        }
+        return true;
+    }
   public final void appendToDeclaration(String code){
       declarationBuilder.append(code);
   }

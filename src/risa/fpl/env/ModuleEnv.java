@@ -30,38 +30,31 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	}
 	private void addRequiredTypes(TypeInfo type,ArrayList<TypeInfo>types){
 	    for(var t:type.getRequiredTypes()){
-	       if(notContains(types,t)){
+	       if(t.notContains(types)){
                types.add(t);
                addRequiredTypes(t,types);
            }
         }
-    }
-    private boolean notContains(ArrayList<TypeInfo>types,TypeInfo type){
-	    for(var t:types){
-	        if(t == type){
-	            return false;
-            }
-        }
-	    return true;
     }
 	public void importModules(BufferedWriter writer)throws CompilerException,IOException{
 	    var types = new ArrayList<TypeInfo>();
 	    var declared = new ArrayList<TypeInfo>();
 	    for(var mod:importedModules){
 	        for(var type:mod.types.values()){
-	            if(notContains(types,type)){
+	            if(type.notContains(types)){
 	                types.add(type);
 	                addRequiredTypes(type,types);
                 }
             }
         }
+	    //types are stuck in list fix this
 	    while(!types.isEmpty()){
 	        var it = types.iterator();
 	        while(it.hasNext()){
                var t = it.next();
                var hasAll = true;
                for(var rt:t.getRequiredTypes()){
-                   if(notContains(declared,rt)){
+                   if(rt.notContains(declared)){
                        hasAll = false;
                        break;
                    }

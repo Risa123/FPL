@@ -4,7 +4,7 @@ import risa.fpl.function.exp.BinaryOperator;
 import risa.fpl.function.exp.Cast;
 import risa.fpl.function.exp.ValueExp;
 
-public final class NumberInfo extends TypeInfo {
+public final class NumberInfo extends TypeInfo{
 	public static final NumberInfo BYTE = new NumberInfo("byte","char",1);
 	public static final NumberInfo UBYTE = new NumberInfo("ubyte","unsigned char",1);
 	public static final NumberInfo SBYTE = new NumberInfo("sbyte","signed char",1);
@@ -19,11 +19,27 @@ public final class NumberInfo extends TypeInfo {
 	public static final NumberInfo ULONG = new NumberInfo("ulong","unsigned long",8);
 	public static final NumberInfo FLOAT = new NumberInfo("float","float",4,true);
 	public static final NumberInfo DOUBLE = new NumberInfo("double","double",8,true);
-	public static final NumberInfo MEMORY = new NumberInfo("memory","unsigned long",8);
+	public static final NumberInfo MEMORY;
+	static{
+	  var type = "";
+	  var size = 0;
+        switch(System.getProperty("os.arch")){
+            case "ia64", "amd64" ->{
+                size = 8;
+                type = "unsigned long long";
+            }
+            case "x86" ->{
+                size = 4;
+                type = "unsigned int";
+            }
+            default -> throw new IllegalStateException("unsupported system");
+        }
+	  MEMORY = new NumberInfo("memory",type,size);
+    }
 	public static final TypeInfo NUMBER = new TypeInfo("number","");
     private final int size;
     private final boolean floatingPoint;
-	public NumberInfo(String name, String cname,int size,boolean floatingPoint) {
+	public NumberInfo(String name, String cname,int size,boolean floatingPoint){
 		super(name, cname,true);
 		this.size = size;
 		this.floatingPoint = floatingPoint;
@@ -45,12 +61,12 @@ public final class NumberInfo extends TypeInfo {
         addField("|",new BinaryOperator(this,this,"|"));
         addField("&",new BinaryOperator(this,this,"&"));
 	}
-	public NumberInfo(String name,String cname,int size) {
+	public NumberInfo(String name,String cname,int size){
 		this(name,cname,size,false);
 		addField("%",new BinaryOperator(this,this,"%"));
 	}
     @Override
-    public void setClassInfo(ClassInfo info) {
+    public void setClassInfo(ClassInfo info){
         super.setClassInfo(info);
         getClassInfo().addField("getObjectSize",new ValueExp(NumberInfo.MEMORY,"sizeof " + getCname()));
     }

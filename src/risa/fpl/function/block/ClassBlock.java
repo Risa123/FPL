@@ -121,7 +121,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
             var args = constructor.getArguments();
             var compiledArgs = constructorArguments(args);
             writer.write(compiledArgs);
-            writer.write("){\nvoid* malloc(unsigned long);\n");
+            writer.write("){\nvoid* malloc(unsigned long long);\n");
             writer.write(type.getCname());
             writer.write("* p=malloc(sizeof(");
             writer.write(type.getCname());

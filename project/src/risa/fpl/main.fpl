@@ -3,13 +3,18 @@ use{
   std.io.file
   std.backend
 }
+native{
+  fn void longjmp ContextData context int value;noReturn
+  fn int _setjmp ContextData context void* ctx;returnsTwice
+  fn void* __builtin_frame_address uint level
+}
 main{
       ContextData context
-      if contextSave context; == 1{
+      if _setjmp context,__builtin_frame_address 0;; == 1{
         puts "context restored"
         exit 0
       }
-      contextRestore context
+      longjmp context,1
 }
 fn void placeholder{
  try{

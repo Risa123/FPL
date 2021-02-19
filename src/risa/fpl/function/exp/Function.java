@@ -15,6 +15,7 @@ import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
@@ -130,7 +131,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
 		    throw new CompilerException(line,charNum,"incorrect arguments expected" + Arrays.toString(args) + " instead of " + Arrays.toString(array));
         }
 		writer.write(')');
-        if(it.hasNext() && returnType != TypeInfo.VOID){
+        if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == TokenType.ID){
             var id = it.nextID();
             var field = returnType.getField(id.getValue(),env);
             if(field == null){
