@@ -56,7 +56,7 @@ cstruct Float128 align 16{
 }
 cstruct ContextData{
   if_flag x64{
-    Float128 x
+    Float128* x
   }
   if_flag x86{
     int ebp;ebx;edi;esi;esp;eip

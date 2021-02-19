@@ -198,4 +198,4 @@ fix main C error
 fix module initializers not called main block
 fix memory type is now uses the proper C type
 fix nested function call
-fix cstruct field types not included on import c error
+fix cstruct field pointer types not inclued in C file
