@@ -4,8 +4,8 @@ native{
  fn void free void* p
  fn void exit int exitCode;noReturn
  fn void* realloc void* p memory newSize
- fn void contextRestore ContextData context;noReturn
- fn int contextSave ContextData context;returnsTwice
+ fn void contextRestore Context context;noReturn
+ fn int contextSave Context context;returnsTwice
  private{
     fn memory fwrite void* p memory size memory nmen
     fn bool feof void* file
@@ -54,13 +54,8 @@ cstruct Float128 align 16{
     [] memory 2 part
   }
 }
-cstruct ContextData{
-  if_flag x64{
-    Float128* x
-  }
-  if_flag x86{
-    int ebp;ebx;edi;esi;esp;eip
-  }
+if_flag x64{
+ typedef Context [] 16 Float128
 }
 asm "contextSave:"
 if_flag x86{

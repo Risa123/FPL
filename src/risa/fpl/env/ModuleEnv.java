@@ -47,7 +47,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
             }
         }
-	    //types are stuck in list fix this
 	    while(!types.isEmpty()){
 	        var it = types.iterator();
 	        while(it.hasNext()){

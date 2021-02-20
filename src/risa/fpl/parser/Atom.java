@@ -8,10 +8,10 @@ import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.tokenizer.TokenType;
 
-public final class Atom extends AExp {
+public final class Atom extends AExp{
 	private final String value;
 	private final TokenType type;
-	public Atom(int line, int charNum,String value,TokenType type) {
+	public Atom(int line, int charNum,String value,TokenType type){
 		super(line, charNum);
 		this.value = value;
 		this.type = type;
@@ -21,7 +21,7 @@ public final class Atom extends AExp {
 		return env.getFunction(this).compile(writer,env,it,getLine(),getCharNum());
 	}
 	@Override
-	public String toString() {
+	public String toString(){
 		return value;
 	}
 	public String getValue(){
@@ -29,5 +29,8 @@ public final class Atom extends AExp {
     }
     public TokenType getType(){
 	    return type;
+    }
+    public boolean notIndexLiteral(){
+	    return type != TokenType.UINT && type != TokenType.ULONG;
     }
 }

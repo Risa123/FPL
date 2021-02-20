@@ -4,12 +4,14 @@ import risa.fpl.env.AEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 
-public final class PointerInfo extends TypeInfo {
+public final class PointerInfo extends TypeInfo{
 	private final TypeInfo type;
-	public PointerInfo(TypeInfo type) {
+	private final boolean array;
+	public PointerInfo(TypeInfo type,boolean array){
 	    super(type.getName() +"*",type.getCname() + "*",true);
         this.type = type;
-        if(type != TypeInfo.VOID) {
+        this.array = array;
+        if(type != TypeInfo.VOID){
             addField("+", new BinaryOperator(this, NumberInfo.MEMORY, "+"));
             addField("-", new BinaryOperator(this, NumberInfo.MEMORY, "-"));
             addField("*", new BinaryOperator(this, NumberInfo.MEMORY, "*"));
@@ -17,7 +19,7 @@ public final class PointerInfo extends TypeInfo {
             addField("%", new BinaryOperator(this, NumberInfo.MEMORY, "%"));
             addField("get",new GetElement(type));
             addField("set",new SetElement(type));
-            if (type instanceof Function f) {
+            if(type instanceof Function f){
                addField("drf",new FunctionDereference(f));
             }else{
               addField("drf",new Dereference(type));
@@ -31,8 +33,11 @@ public final class PointerInfo extends TypeInfo {
         addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
         addField("cast", new Cast(this));
 	}
+	public PointerInfo(TypeInfo type){
+	    this(type,false);
+    }
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(Object o){
 		if(o instanceof PointerInfo p) {
 			return type.equals(p.type);
 		}else return o == TypeInfo.NIL;
@@ -66,7 +71,7 @@ public final class PointerInfo extends TypeInfo {
         return b.toString();
     }
     @Override
-    public IField getField(String name,AEnv from) {
+    public IField getField(String name,AEnv from){
 	    var field = super.getField(name,from);
 	    if(field == null){
 	        field = type.getField(name,from);
@@ -74,11 +79,11 @@ public final class PointerInfo extends TypeInfo {
 	    return field;
     }
     @Override
-    public String getConversionMethodCName(TypeInfo type) {
+    public String getConversionMethodCName(TypeInfo type){
         return this.type.getConversionMethodCName(type);
     }
     @Override
-    public String ensureCast(TypeInfo to, String expCode) {
+    public String ensureCast(TypeInfo to, String expCode){
         return type.ensureCast(to,expCode,true);
     }
     public TypeInfo getType(){
@@ -91,5 +96,8 @@ public final class PointerInfo extends TypeInfo {
 	        return getFunctionPointerDeclaration(IFunction.toCId(getName()));
         }
         return super.getCname();
+    }
+    public boolean isArray(){
+	    return array;
     }
 }

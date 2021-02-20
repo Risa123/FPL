@@ -19,7 +19,7 @@ public final class CStructBlock extends ABlock{
         var id = it.nextID();
         var cID = id.getValue();
         if(env.hasTypeInCurrentEnv(id.getValue())){
-            throw new CompilerException(id,"this type is already declared");
+            throw new CompilerException(id,"type " + id +  " is already declared");
         }
         if(IFunction.notCID(cID)){
             throw new CompilerException(id,"invalid C identifier");
@@ -31,12 +31,18 @@ public final class CStructBlock extends ABlock{
             if(!a.getValue().equals("align")){
                 throw new CompilerException(a,"align expected");
             }
-            var arg = it.nextAtom();
-            if(arg.getType() != TokenType.UINT && arg.getType() != TokenType.ULONG){
-                throw new CompilerException(arg,"integer number expected");
+            var arg = it.next();
+            var alignValue = "";
+            if(arg instanceof Atom argAtom){
+                if(argAtom.notIndexLiteral()){
+                    throw new CompilerException(arg,"integer number expected");
+                }
+                alignValue = "(" + argAtom +  ")";
+                next = it.nextList();
+            }else{
+               next = arg;
             }
-            next = it.nextList();
-            align = " __attribute__((aligned(" + arg.getValue() + ")))";
+            align = " __attribute__((aligned" + alignValue + "))";
         }
         b.write("typedef struct " + cID + "{\n");
         var sEnv = new CStructEnv(env,cID);

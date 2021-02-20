@@ -27,7 +27,7 @@ public final class InterfaceBlock implements IFunction {
         var id = it.nextID();
         var idV = id.getValue();
         if(env.hasTypeInCurrentEnv(idV)){
-            throw new CompilerException(id,"this type is already declared");
+            throw new CompilerException(id,"this type " + idV + " is already declared");
         }
         var cID = IFunction.toCId(idV);
         var iEnv = new InterfaceEnv(env,idV);

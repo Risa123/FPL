@@ -116,6 +116,8 @@ public class TypeInfo {
   private void addRequiredType(TypeInfo type){
       if(!type.isPrimitive() && type.notContains(requiredTypes)){
          requiredTypes.add(type);
+      }else if(type instanceof PointerInfo p && !p.getType().isPrimitive() && p.isArray()){
+          requiredTypes.add(p.getType());
       }
   }
   public boolean notContains(ArrayList<TypeInfo>types){

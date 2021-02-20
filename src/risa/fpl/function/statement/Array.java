@@ -13,12 +13,11 @@ import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
 
-public final class Array implements IFunction {
+public final class Array implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
-		if(env.hasModifier(Modifier.CONST)) {
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+		if(env.hasModifier(Modifier.CONST)){
 			writer.write("const ");
 		}
 		var type = env.getType(it.nextID());
@@ -27,7 +26,7 @@ public final class Array implements IFunction {
         }
 		writer.write(type.getCname());
 		var lenAtom = it.nextAtom();
-	    if(lenAtom.getType() != TokenType.UINT && lenAtom.getType() != TokenType.ULONG) {
+	    if(lenAtom.notIndexLiteral()){
 	    	throw new CompilerException(line,charNum,"array length expected instead of " + lenAtom);
 	    }
 	    var id = it.nextID();
@@ -37,7 +36,7 @@ public final class Array implements IFunction {
 	    	if(IFunction.notCID(cID)) {
 	    		throw new CompilerException(id,"invalid C identifier");
 	    	}
-	    }else {
+	    }else{
 	    	cID = IFunction.toCId(id.getValue());
 	    }
 	    writer.write(' ');
@@ -54,10 +53,10 @@ public final class Array implements IFunction {
 	    if(env instanceof ClassEnv e){
 	        instanceType = e.getInstanceType();
         }
-	    var v = new Variable(new PointerInfo(type),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
+	    var v = new Variable(new PointerInfo(type,true),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
 	    env.addFunction(id.getValue(),v);
-	    if(it.hasNext()) {
-	    	while(it.hasNext()) {
+	    if(it.hasNext()){
+	    	while(it.hasNext()){
 		    	var exp = it.next();
 		    	if(first) {
 		    		first = false;
