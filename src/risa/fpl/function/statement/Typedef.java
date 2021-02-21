@@ -1,8 +1,10 @@
 package risa.fpl.function.statement;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.IFunction;
+import risa.fpl.info.CustomTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -31,12 +33,13 @@ public final class Typedef implements IFunction{
         if(t == null){
             throw new CompilerException(originalType,"type " + originalType + " not found");
         }
-        writer.write(t.getCname());
-        writer.write(' ');
-        writer.write(IFunction.toCId(type.getValue()));
-        writer.write(after);
-        writer.write(";\n");
-        env.addType(type.getValue(),t);
+        var b = new BuilderWriter(writer);
+        b.write(t.getCname());
+        b.write(' ');
+        b.write(IFunction.toCId(type.getValue()));
+        b.write(after);
+        writer.write(b.getCode());
+        env.addType(type.getValue(),new CustomTypeInfo(type.getValue(),t,b.getCode()));
         return TypeInfo.VOID;
     }
 }

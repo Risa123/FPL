@@ -12,6 +12,7 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.info.*;
+import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
@@ -94,7 +95,19 @@ public class Fn extends AFunctionBlock{
 		        throw new CompilerException(line,charNum,"abstract methods can only be declared");
             }
 			b.write("{\n");
-			var block = it.nextList();
+			var block = it.next();
+			if(block instanceof Atom a){
+			    if(!a.getValue().equals("=")){
+			        throw new CompilerException(a,"= expected");
+                }
+			    it.next();
+			    var list = new ArrayList<AExp>();
+			    while(it.hasNext()){
+			        list.add(it.next());
+                }
+			    new List(block.getLine(),block.getCharNum(),list,true).compile(writer,fnEnv,it);
+                fnEnv.getReturnType();
+            }
 			block.compile(b,fnEnv,it);
 			if(fnEnv.notReturnUsed() && returnType != TypeInfo.VOID){
 				throw new CompilerException(block,"there is no return in this block and this function doesn't return void");

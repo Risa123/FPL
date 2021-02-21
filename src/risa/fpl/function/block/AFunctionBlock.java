@@ -25,9 +25,12 @@ public abstract class AFunctionBlock extends ABlock{
             writer.write("* this");
             env.addFunction("this",new Variable(new PointerInfo(owner),"this","this"));
         }
-        while(it.hasNext()) {
+        while(it.hasNext()){
             var peeked = it.peek();
-            if(peeked instanceof List || ((Atom)peeked).getType() == TokenType.END_ARGS) {
+            if(peeked instanceof List || ((Atom)peeked).getType() == TokenType.END_ARGS){
+                break;
+            }
+            if(((Atom)peeked).getValue().equals("=")){
                 break;
             }
             if(first) {

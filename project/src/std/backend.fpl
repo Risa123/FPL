@@ -4,8 +4,6 @@ native{
  fn void free void* p
  fn void exit int exitCode;noReturn
  fn void* realloc void* p memory newSize
- fn void contextRestore Context context;noReturn
- fn int contextSave Context context;returnsTwice
  private{
     fn memory fwrite void* p memory size memory nmen
     fn bool feof void* file
@@ -16,6 +14,9 @@ native{
     fn int fflush void* file
     fn void* __acrt_iob_func uint index
     fn int setvbuf void* file byte* buffer int mode memory size
+    fn bool _setjmp Context context void* frame
+    fn void longjmp Context context
+    fn void* __builtin_frame_address uint level
  }
 }
 private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
@@ -25,30 +26,14 @@ void* stderr __acrt_iob_func STDERR_INDEX
 int IO_FULL_BUFFER 0x0000 #_IOFLBF
 int IO_LINE_BUFFER 0x0040 #_IOLBF
 int IO_NO_BUFFER 0x0004 #_IONBF
-fn int execute string cmd{
-  return system cmd
-}
-fn void fileClose void* file{
-  fclose file
-}
-fn void* fileOpen string name string mode{
-   return fopen name,mode
-}
-fn memory fileRead void* file byte* p memory size{
-  return fread p cast void*,size,1,file
-}
-fn memory fileWrite void* file byte* p memory size{
-  return fwrite p cast void*,size,1
-}
-fn bool fileEOF void* file{
-   return feof file
-}
-fn int fileFlush void* file{
-  return fflush file
-}
-fn int fileSetBuffer void* file byte* buffer int mode memory size{
-   return setvbuf file,buffer,mode,size
-}
+alias execute system
+alias fileClose fclose
+alias fileOpen fopen
+fn memory fileRead void* file byte* p memory size = fread p cast void*,size,1,file
+fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1
+alias fileEOF feof
+alias fileFlush fflush
+fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
 cstruct Float128 align 16{
   if_flag x64{
     [] memory 2 part
@@ -57,83 +42,3 @@ cstruct Float128 align 16{
 if_flag x64{
  typedef Context [] 16 Float128
 }
-asm "contextSave:"
-if_flag x86{
- asm "movl 4(%esp),%ecx" #context data
- #saving registers
- asm "movl %ebp,(%ecx)"
- asm "movl %ebx,4(%ecx)"
- asm "movl %edi,8(%ecx)"
- asm "movl %esi,12(%ecx)"
- asm "movl %esp,16(%ecx)"
- asm "movl 0(%esp),%eax"
- asm "movl %eax,20(%ecx)" #save eip
- asm "xorl %eax,%eax
- asm "retl"
-}
-if_flag x64{
-  asm "xorq %rdx,%rdx"
-  asm "movq %rdx,(%rcx)"
-  asm "movq %rbx,0x8(%rcx)"
-  asm "leaq 0x8(%rsp),%rax"
-  asm "movq %rax,0x10(%rcx)" #save rsp
-  asm "movq %rbp,0x18(%rcx)"
-  asm "movq %rsi,0x20(%rcx)"
-  asm "movq %rdi,0x28(%rcx)"
-  asm "movq %r12,0x30(%rcx)"
-  asm "movq %r13,0x38(%rcx)"
-  asm "movq %r14,0x40(%rcx)"
-  asm "movq %r15,0x48(%rcx)"
-  asm "movq (%rsp),%rax"
-  asm "movq %rax,0x50(%rcx)" #save rip
-  asm "movdqa %xmm6,0x60(%rcx)"
-  asm "movdqa %xmm7,0x70(%rcx)"
-  asm "movdqa %xmm8,0x80(%rcx)"
-  asm "movdqa %xmm9,0x90(%rcx)"
-  asm "movdqa %xmm10,0xa0(%rcx)"
-  asm "movdqa %xmm11,0xb0(%rcx)"
-  asm "movdqa %xmm12,0xc0(%rcx)"
-  asm "movdqa %xmm13,0xd0(%rcx)"
-  asm "movdqa %xmm14,0xe0(%rcx)"
-  asm "movdqa %xmm15,0xf0(%rcx)"
-  asm "xorq %rax,%rax"
-  asm "retq"
-}
-asm "contextRestore:"
-if_flag x86{
- asm "movl 4(%esp),%ecx" #context data
- asm "movl $1,%eax" #return 1
- asm "movl (%ecx),%ebp"
- asm "movl 4(%ecx),%ebx"
- asm "movl 8(%ecx),%edi"
- asm "movl 12(%ecx),%esi"
- asm "movl 16(%ecx),%esp"
- asm "addl $4,%esp"
- asm "jmp *20(%ecx)"
-}
-if_flag x64{
- asm "movq $1,%rax" #return 1
- asm "movq 0x8(%rcx),%rbx"
- asm "movq 0x18(%rcx),%rbp"
- asm "movq 0x20(%rcx),%rsi"
- asm "movq 0x28(%rcx),%rdi"
- asm "movq 0x30(%rcx),%r12"
- asm "movq 0x38(%rcx),%r13"
- asm "movq 0x40(%rcx),%r14"
- asm "movq 0x48(%rcx),%r15"
- asm "movdqa 0x60(%rcx),%xmm6"
- asm "movdqa 0x70(%rcx),%xmm7"
- asm "movdqa 0x80(%rcx),%xmm8"
- asm "movdqa 0x90(%rcx),%xmm9"
- asm "movdqa 0xa0(%rcx),%xmm10"
- asm "movdqa 0xb0(%rcx),%xmm11"
- asm "movdqa 0xc0(%rcx),%xmm12"
- asm "movdqa 0xd0(%rcx),%xmm13"
- asm "movdqa 0xe0(%rcx),%xmm14"
- asm "movdqa 0xf0(%rcx),%xmm15"
- asm "movq 0x50(%rcx),%rdx"
- asm "movq 0x10(%rcx),%rsp"
- asm "jmp *%rdx"
-}
-asm ".globl contextSave"
-asm ".globl contextRestore"

@@ -186,8 +186,9 @@ align feature added to cstruct
 x86_64 renamed to x64
 variable mainThread is available in main function
 if arguments and with ; attributes noReturn and returnsTwice can be applied
-typedef function added
+typedef statement added
 this type is already defined error message change to type (type) is already defined
+alias statement added
 fix compilation error
 fix function pointer as function argument compilation error
 fix this dereference compilation error
@@ -201,3 +202,4 @@ fix module initializers not called main block
 fix memory type is now uses the proper C type
 fix nested function call
 fix pointer to struct field C error
+fix non-id atoms considered fields

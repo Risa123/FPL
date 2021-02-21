@@ -33,6 +33,7 @@ public final class ProgramEnv extends AEnv{
       addFunction("class",new ClassBlock());
       addFunction("var",new Var(null));
       addFunction("[]",new Array());
+      addFunction("alias",new Alias());
       addType("void",TypeInfo.VOID,false);
 	  addType("byte",NumberInfo.BYTE);
 	  addType("sbyte",NumberInfo.SBYTE);

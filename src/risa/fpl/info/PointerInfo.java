@@ -89,7 +89,6 @@ public final class PointerInfo extends TypeInfo{
     public TypeInfo getType(){
 	    return type;
     }
-
     @Override
     public String getCname(){
 	    if(type instanceof Function){

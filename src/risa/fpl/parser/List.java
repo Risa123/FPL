@@ -32,7 +32,7 @@ public final class List extends AExp {
             	  b = new BuilderWriter(writer);
                   ret = f.compile(b,env,it,exp.getLine(),exp.getCharNum());
                   appendSemicolon = f.appendSemicolon() && statement;
-              }else if(atom.getType() != TokenType.END_ARGS){
+              }else if(atom.getType() == TokenType.ID){
             	 var field = ret.getField(atom.getValue(),env);
             	 if(field == null) {
             		 throw new CompilerException(atom,ret + " has no field called " + atom);
