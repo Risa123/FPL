@@ -4,10 +4,10 @@ use{
   std.backend
 }
 main{
- try{
-   Exception e "test"
-   e throw
- }catch Exception e{
-
+ Context context
+ if contextSave context{
+   puts "context restored"
+   exit 0
  }
+ contextRestore context
 }

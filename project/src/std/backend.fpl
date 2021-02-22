@@ -14,8 +14,8 @@ native{
     fn int fflush void* file
     fn void* __acrt_iob_func uint index
     fn int setvbuf void* file byte* buffer int mode memory size
-    fn bool _setjmp Context context void* frame
-    fn void longjmp Context context
+    fn int _setjmp Context context void* frame
+    fn void longjmp Context context int value
     fn void* __builtin_frame_address uint level
  }
 }
@@ -34,6 +34,8 @@ fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1
 alias fileEOF feof
 alias fileFlush fflush
 fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
+fn bool contextSave Context context = _setjmp context,__builtin_frame_address 0
+fn void contextRestore Context context = longjmp context,1
 cstruct Float128 align 16{
   if_flag x64{
     [] memory 2 part

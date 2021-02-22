@@ -12,8 +12,6 @@ public final class CustomTypeInfo extends TypeInfo{
         addRequiredType(original);
         appendToDeclaration("typedef ");
         appendToDeclaration(declaration);
-        appendToDeclaration(' ');
-        appendToDeclaration(getCname());
         appendToDeclaration(";\n");
         buildDeclaration();
     }

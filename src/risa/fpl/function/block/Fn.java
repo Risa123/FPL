@@ -90,6 +90,7 @@ public class Fn extends AFunctionBlock{
                 b.write(attrCode.toString());
             }
         }
+        var oneLine = false;
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
 		        throw new CompilerException(line,charNum,"abstract methods can only be declared");
@@ -97,18 +98,17 @@ public class Fn extends AFunctionBlock{
 			b.write("{\n");
 			var block = it.next();
 			if(block instanceof Atom a){
+			    oneLine = true;
 			    if(!a.getValue().equals("=")){
 			        throw new CompilerException(a,"= expected");
                 }
-			    it.next();
-			    var list = new ArrayList<AExp>();
-			    while(it.hasNext()){
-			        list.add(it.next());
-                }
-			    new List(block.getLine(),block.getCharNum(),list,true).compile(writer,fnEnv,it);
+			    block = it.next();
                 fnEnv.getReturnType();
             }
 			block.compile(b,fnEnv,it);
+			if(oneLine){
+			    b.write(";\n");
+            }
 			if(fnEnv.notReturnUsed() && returnType != TypeInfo.VOID){
 				throw new CompilerException(block,"there is no return in this block and this function doesn't return void");
 			}

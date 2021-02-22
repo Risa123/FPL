@@ -3,6 +3,7 @@ package risa.fpl.function.statement;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.Function;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -16,7 +17,11 @@ public final class Alias implements IFunction{
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);
         }
-        env.addFunction(id.getValue(),env.getFunction(it.nextID()));
+        var f = env.getFunction(it.nextID());
+        if(f instanceof Function){
+            f = ((Function) f).changeAccessModifier(env.getAccessModifier());
+        }
+        env.addFunction(id.getValue(),f);
         return TypeInfo.VOID;
     }
 }

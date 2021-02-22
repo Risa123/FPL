@@ -189,6 +189,8 @@ if arguments and with ; attributes noReturn and returnsTwice can be applied
 typedef statement added
 this type is already defined error message change to type (type) is already defined
 alias statement added
+inline functions added
+attribute forceInline added
 fix compilation error
 fix function pointer as function argument compilation error
 fix this dereference compilation error

@@ -202,4 +202,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
         }
         return new Function(getName(),returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
     }
+    public Function changeAccessModifier(AccessModifier accessModifier){
+        return new Function(getName(),returnType,getCname(),args,type,self,accessModifier,implName);
+    }
 }
