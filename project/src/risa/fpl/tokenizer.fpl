@@ -10,15 +10,9 @@ class Token{
     this wordNum = wordNum
     this value = value
   }
-  fn int getLine{
-    return line
-  }
-  fn int getWordNum{
-    return wordNum
-  }
-  fn string getValue {
-    return value
-  }
+  fn int getLine = line
+  fn int getWordNum = wordNum
+  fn string getValue = value
 }
 class Tokenizer{
  private {
@@ -30,10 +24,6 @@ class Tokenizer{
  this Readable readable{
     this readable = readable
  }
- fn void close{
-   readable close
- }
- fn bool hasNext{
-    return readable ready; || readNext !
- }
+ fn void close = readable close
+ fn bool hasNext = readable ready; || readNext !
 }

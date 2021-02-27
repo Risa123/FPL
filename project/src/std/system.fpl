@@ -1,8 +1,6 @@
 use std.backend std.io.base
 
-fn void exit int exitCode {
-  exit exitCode
-}
+alias exit exit
 fn int execute string cmd{
   var exitCode execute cmd
   if exitCode == -1{

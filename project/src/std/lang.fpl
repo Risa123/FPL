@@ -6,9 +6,7 @@ class Exception{
    this string message{
      this message = message
    }
-   virtual fn string getMessage{
-     return message
-   }
+   virtual fn string getMessage = message
    fn void throw{
      currentThread exception = malloc getObjectSize
      memory i 0L
@@ -40,12 +38,8 @@ class Thread{
    setExceptionHandler &defaultExceptionHandler
    currentEHentry = first
  }
- fn void setName string name{
-   this name = name
- }
- fn string getName{
-   return name
- }
+ fn void setName string name = name = name
+ fn string getName = name
  fn void setExceptionHandler throwTargetType exceptionHandler{
     first target = exceptionHandler
  }
@@ -115,12 +109,8 @@ fn bool isPrint char* this{
   var c this drf cast int
   return c <= 176; || c >= 32
 }
-fn bool isGraph char* this{
-  return isPrint this; || this drf == $sp
-}
-fn bool isPunct char* this{
-  return isGraph this; && isLetter this
-}
+fn bool isGraph char* this = isPrint this; || this drf == $sp
+fn bool isPunct char* this = isGraph this; && isLetter this
 fn char toLower char* this{
   if isUpper this{
      return $a cast int + this drf cast int  - $A

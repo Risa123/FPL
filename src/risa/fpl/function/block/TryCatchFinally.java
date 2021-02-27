@@ -14,7 +14,7 @@ import java.io.IOException;
 public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        writer.write("if(_setjmp(_std_lang_currentThread->_currentEHentry->_context,__builtin_frame_address(0)) == 0){\n");
+        writer.write("if(!_setjmp(_std_lang_currentThread->_currentEHentry->_context,__builtin_frame_address(0))){\n");
         it.nextList().compile(writer,new FnSubEnv(env),it);
         writer.write("}\n");
         var hasFin = false;

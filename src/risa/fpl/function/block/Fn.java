@@ -12,7 +12,6 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.info.*;
-import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
@@ -22,10 +21,7 @@ public class Fn extends AFunctionBlock{
 	private boolean appendSemicolon;
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-	    var b = new BuilderWriter(writer);
 		var returnType = env.getType(it.nextID());
-		b.write(returnType.getCname());
-		b.write(' ');
 		var id = it.nextID();
         if(env instanceof  ModuleEnv e && e.isMain() && id.getValue().equals("main")){
            throw new CompilerException(id,"main function can only be declared using build-in function main");
@@ -43,7 +39,6 @@ public class Fn extends AFunctionBlock{
 	    	}
 	    	cID += IFunction.toCId(id.getValue());
 	    }
-		b.write(cID);
         TypeInfo self = null;
         if(env instanceof  ClassEnv cEnv){
             self = cEnv.getInstanceType();
@@ -51,6 +46,10 @@ public class Fn extends AFunctionBlock{
             self = e.getType();
         }
         var fnEnv = new FnEnv(env,returnType);
+        var b = new BuilderWriter(writer);
+        b.write(returnType.getCname());
+        b.write(' ');
+        b.write(cID);
 		var args = parseArguments(b,it,fnEnv,self);
 		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
@@ -104,6 +103,9 @@ public class Fn extends AFunctionBlock{
                 }
 			    block = it.next();
                 fnEnv.getReturnType();
+            }
+			if(oneLine && returnType != TypeInfo.VOID){
+			    b.write("return ");
             }
 			block.compile(b,fnEnv,it);
 			if(oneLine){

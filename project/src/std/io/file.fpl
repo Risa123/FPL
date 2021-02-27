@@ -11,22 +11,14 @@ abstract class FileHandler Closeable{
         ex throw
       }
    }
-   override fn void close{
-     fileClose handle
-   }
+   override fn void close = fileClose handle
 }
 class FileWriter FileHandler Writable{
   this string name;name,"w"
-  override fn void write byte* p memory size{
-      fileWrite handle,p,size
-  }
+  override fn void write byte* p memory size = fileWrite handle,p,size
 }
 class FileReader FileHandler  Readable{
   this string name;name,"r"
-  override fn void read byte* p memory size{
-     fileRead handle,p,size
-  }
-  override fn bool ready{
-    return fileEOF handle
-  }
+  override fn void read byte* p memory size = fileRead handle,p,size
+  override fn bool ready = fileEOF handle
 }
