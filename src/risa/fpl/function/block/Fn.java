@@ -22,6 +22,7 @@ public class Fn extends AFunctionBlock{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
 		var returnType = env.getType(it.nextID());
+        var b = new BuilderWriter(writer);
 		var id = it.nextID();
         if(env instanceof  ModuleEnv e && e.isMain() && id.getValue().equals("main")){
            throw new CompilerException(id,"main function can only be declared using build-in function main");
@@ -46,11 +47,11 @@ public class Fn extends AFunctionBlock{
             self = e.getType();
         }
         var fnEnv = new FnEnv(env,returnType);
-        var b = new BuilderWriter(writer);
-        b.write(returnType.getCname());
-        b.write(' ');
-        b.write(cID);
-		var args = parseArguments(b,it,fnEnv,self);
+        var headWriter = new BuilderWriter(writer);
+        headWriter.write(returnType.getCname());
+        headWriter.write(' ');
+        headWriter.write(cID);
+		var args = parseArguments(headWriter,it,fnEnv,self);
 		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
             it.next();
@@ -86,35 +87,76 @@ public class Fn extends AFunctionBlock{
             }
             if(attrCode.length() > 0){
                 attrCode.append("))");
-                b.write(attrCode.toString());
+                headWriter.write(attrCode.toString());
             }
         }
         var oneLine = false;
+        var macroDeclaration = new StringBuilder();
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
 		        throw new CompilerException(line,charNum,"abstract methods can only be declared");
             }
-			b.write("{\n");
-			var block = it.next();
-			if(block instanceof Atom a){
-			    oneLine = true;
-			    if(!a.getValue().equals("=")){
-			        throw new CompilerException(a,"= expected");
+            var block = it.next();
+            if(block instanceof Atom a){
+                oneLine = true;
+                if(!(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE))){
+                    macroDeclaration.append("#define ");
+                    macroDeclaration.append(cID);
+                    macroDeclaration.append('(');
+                    if(self != null){
+                        macroDeclaration.append("this");
+                    }
+                    var first = true;
+                    for(var arg:args.keySet()){
+                        if(first){
+                            if(self != null){
+                                macroDeclaration.append(',');
+                            }
+                            first = false;
+                        }else{
+                            macroDeclaration.append(',');
+                        }
+                        macroDeclaration.append(IFunction.toCId(arg));
+                    }
+                    macroDeclaration.append(')');
                 }
-			    block = it.next();
+                if(!a.getValue().equals("=")){
+                    throw new CompilerException(a,"= expected");
+                }
+                block = it.next();
                 fnEnv.getReturnType();
             }
-			if(oneLine && returnType != TypeInfo.VOID){
+            b.write(macroDeclaration.toString());
+			if(macroDeclaration.isEmpty()){
+                b.write(headWriter.getCode());
+                b.write("{\n");
+            }
+			if(macroDeclaration.isEmpty() && oneLine && returnType != TypeInfo.VOID){
 			    b.write("return ");
             }
-			block.compile(b,fnEnv,it);
-			if(oneLine){
+			var code = new BuilderWriter(writer);
+			block.compile(code,fnEnv,it);
+			if(!macroDeclaration.isEmpty() && oneLine){
+			    macroDeclaration.append('(');
+			    var c = code.getCode();
+			    if(c.endsWith(";\n")){
+			      c =  c.substring(0,c.length() - 2);
+                }
+			    macroDeclaration.append(c);
+			    macroDeclaration.append(")\n");
+            }
+			b.write(code.getCode());
+			if(oneLine && macroDeclaration.isEmpty()){
 			    b.write(";\n");
+            }else{
+			    b.write('\n');
             }
 			if(fnEnv.notReturnUsed() && returnType != TypeInfo.VOID){
 				throw new CompilerException(block,"there is no return in this block and this function doesn't return void");
 			}
-			b.write("}\n");
+			if(macroDeclaration.isEmpty()){
+                b.write("}\n");
+            }
 		}else{
 		    if(!(env.hasModifier(Modifier.ABSTRACT) || env.hasModifier(Modifier.NATIVE))){
 		        throw new CompilerException(line,charNum,"block required");
@@ -137,7 +179,10 @@ public class Fn extends AFunctionBlock{
         }else{
             type = FunctionType.NORMAL;
         }
-        var f = new Function(id.getValue(),returnType,cID,args,type,self,env.getAccessModifier(),implName,attrCode.toString());
+        var f = new Function(id.getValue(),returnType,cID,args.values().toArray(new TypeInfo[0]), type,self,env.getAccessModifier(),implName,attrCode.toString());
+        if(!macroDeclaration.isEmpty()){
+            f.setDeclaration(macroDeclaration.toString());
+        }
         if(self != null){
             var parentField = self.getField(id.getValue(),env);
             if(env.hasModifier(Modifier.OVERRIDE)){

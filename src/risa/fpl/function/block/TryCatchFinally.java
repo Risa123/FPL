@@ -3,9 +3,11 @@ package risa.fpl.function.block;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnSubEnv;
+import risa.fpl.function.exp.Variable;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
@@ -14,7 +16,7 @@ import java.io.IOException;
 public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        writer.write("if(!_setjmp(_std_lang_currentThread->_currentEHentry->_context,__builtin_frame_address(0))){\n");
+        writer.write("if(!_std_backend_contextSave(_std_lang_currentThread->_currentEHentry->_context)){\n");
         it.nextList().compile(writer,new FnSubEnv(env),it);
         writer.write("}\n");
         var hasFin = false;
@@ -26,10 +28,33 @@ public final class TryCatchFinally extends ABlock{
                         throw new CompilerException(exp,"catch can only come before finally");
                     }
                     it.next();
-                    var exType = it.nextID();
-                    var exName = it.nextID();
-                    writer.write("else{\n");
-                    it.nextList().compile(writer,new FnSubEnv(env),it);
+                    List block;
+                    writer.write("else");
+                    var nextExp = it.next();
+                    TypeInfo exInfo;
+                    if(nextExp instanceof List){
+                        block = (List)nextExp;
+                        exInfo = env.getType(new Atom(0,0,"Exception",TokenType.ID));
+                    }else if(nextExp instanceof Atom exType && exType.getType() == TokenType.ID){
+                        if(exType.getValue().equals("Exception")){
+                            throw new CompilerException(exType,"unnecessary Exception ID");
+                        }
+                        writer.write(" if(_std_lang_currentThread->_exception->object_data==&");
+                        exInfo = env.getType(exType);
+                        writer.write(exInfo.getCname());
+                        writer.write("_data)");
+                        block = it.nextList();
+                    }else{
+                        throw new CompilerException(nextExp,"exception type or block expected");
+                    }
+                    writer.write("{\n");
+                    writer.write(exInfo.getCname());
+                    writer.write(" ex;\nmemcpy(&ex,_std_lang_currentThread->_exception,sizeof(");
+                    writer.write(exInfo.getCname());
+                    writer.write("));\n");
+                    var blockEnv = new FnSubEnv(env);
+                    blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
+                    block.compile(writer,blockEnv,it);
                     writer.write("}\n");
                 }else if(blockName.getValue().equals("finally")){
                     if(hasFin){

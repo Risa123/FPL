@@ -1,13 +1,14 @@
 use{
   risa.fpl.tokenizer
   std.io.file
+  std.io.base
   std.backend
 }
 main{
- Context context
- if contextSave context{
-   puts "context restored"
-   exit 0
+ try{
+   FileReader reader "test.txt"
+   reader close
+ }catch IOException{
+   puts ex getMessage
  }
- contextRestore context
 }

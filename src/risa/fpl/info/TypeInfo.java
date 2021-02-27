@@ -228,4 +228,7 @@ public class TypeInfo {
   public TypeInfo getPrimaryParent(){
       return primaryParent;
   }
+  public void setDeclaration(String declaration){
+      this.declaration = declaration;
+  }
 }

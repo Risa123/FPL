@@ -13,12 +13,12 @@ import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public abstract class AFunctionBlock extends ABlock{
- protected final TypeInfo[]parseArguments(BufferedWriter writer, ExpIterator it, FnEnv env, TypeInfo owner)throws CompilerException,IOException{
+ protected final LinkedHashMap<String,TypeInfo> parseArguments(BufferedWriter writer, ExpIterator it, FnEnv env, TypeInfo owner)throws CompilerException,IOException{
         writer.write('(');
-        var args = new ArrayList<TypeInfo>();
+        var args = new LinkedHashMap<String,TypeInfo>();
         var first = owner == null;
         if(!first){
             writer.write(owner.getCname());
@@ -39,8 +39,8 @@ public abstract class AFunctionBlock extends ABlock{
                 writer.write(',');
             }
             var argType = env.getType(it.nextID());
-            args.add(argType);
             var argName = it.nextID();
+            args.put(argName.getValue(),argType);
             var argNameCID = IFunction.toCId(argName.getValue());
             if(argType instanceof PointerInfo p && p.isFunctionPointer()){
                 writer.write(p.getFunctionPointerDeclaration(argNameCID));
@@ -55,8 +55,6 @@ public abstract class AFunctionBlock extends ABlock{
             env.addFunction(argName.getValue(),new Variable(argType,IFunction.toCId(argName.getValue()),argName.getValue()));
         }
         writer.write(')');
-        var array = new TypeInfo[args.size()];
-        args.toArray(array);
-        return array;
+        return args;
     }
 }

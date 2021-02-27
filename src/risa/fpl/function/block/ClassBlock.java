@@ -115,6 +115,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         }
         var allocName = "static" + cEnv.getNameSpace() + "_alloc";
         type.appendToDeclaration(b.getCode());
+        type.appendToDeclaration("extern " + cEnv.getDataDefinition());
         cEnv.appendDeclarations();
         if(!env.hasModifier(Modifier.ABSTRACT)){
             writer.write(cID + "* " + allocName + "(");

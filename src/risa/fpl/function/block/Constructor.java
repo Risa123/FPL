@@ -14,9 +14,9 @@ import risa.fpl.tokenizer.TokenType;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public final class Constructor extends AFunctionBlock {
+public final class Constructor extends AFunctionBlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException,CompilerException {
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var cEnv = (ClassEnv)env;
         var type = cEnv.getInstanceType();
         var b = new BuilderWriter(writer);
@@ -25,7 +25,8 @@ public final class Constructor extends AFunctionBlock {
         b.write(cEnv.getNameSpace(this));
         b.write("_init");
         var fEnv = new FnEnv(env,TypeInfo.VOID);
-        var constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType(), parseArguments(b,it,fEnv,type),cEnv.getNameSpace(this));
+        var args =  parseArguments(b,it,fEnv,type).values().toArray(new TypeInfo[0]);
+        var constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType(),args,cEnv.getNameSpace(this));
         type.setConstructor(constructor);
         b.write("{\n");
         var hasParentConstructor = false;

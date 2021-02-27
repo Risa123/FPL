@@ -15,14 +15,14 @@ import risa.fpl.parser.ExpIterator;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public final class FPointer extends AFunctionBlock {
+public final class FPointer extends AFunctionBlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException,CompilerException {
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var returnType = env.getType(it.nextID());
         var id = it.nextID();
         var cID = IFunction.toCId(id.getValue());
         var args = parseArguments(new BuilderWriter(writer),it,new FnEnv(env,returnType),null);
-        var f = new Function(id.getValue(),returnType,cID,args, FunctionType.NORMAL,null,env.getAccessModifier(),"");
+        var f = new Function(id.getValue(),returnType,cID,args.values().toArray(new TypeInfo[0]), FunctionType.NORMAL,null,env.getAccessModifier(),"");
         env.addType(id.getValue(),new PointerInfo(f));
         return TypeInfo.VOID;
     }

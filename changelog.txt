@@ -191,6 +191,7 @@ this type is already defined error message change to type (type) is already defi
 alias statement added
 inline functions added
 attribute forceInline added
+finished try-catch-finally
 fix compilation error
 fix function pointer as function argument compilation error
 fix this dereference compilation error

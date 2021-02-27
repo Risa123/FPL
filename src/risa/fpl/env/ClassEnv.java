@@ -138,7 +138,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    return cname + i.getCname() + "_impl";
     }
     public String getDataDefinition(){
-        return "static " + dataType + ' ' + dataName + ";\n";
+        return dataType + ' ' + dataName + ";\n";
     }
     public void parentConstructorCalled(){
 	    parentConstructorCalled = true;

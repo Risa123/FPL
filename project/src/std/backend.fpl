@@ -5,7 +5,7 @@ native{
  fn void exit int exitCode;noReturn
  fn void* realloc void* p memory newSize
  private{
-    fn memory fwrite void* p memory size memory nmen
+    fn memory fwrite void* p memory size memory nmen void* file
     fn bool feof void* file
     fn int system string cmd
     fn void* fopen string name string mode
@@ -30,7 +30,7 @@ alias execute system
 alias fileClose fclose
 alias fileOpen fopen
 fn memory fileRead void* file byte* p memory size = fread p cast void*,size,1,file
-fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1
+fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1,file
 alias fileEOF feof
 alias fileFlush fflush
 fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
