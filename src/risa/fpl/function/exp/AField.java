@@ -43,9 +43,9 @@ public abstract class AField implements IField{
     public AccessModifier getAccessModifier(){
         return accessModifier;
     }
-    public TypeInfo compileChainedCall(TypeInfo returnType,BufferedWriter writer,AEnv env,ExpIterator it,String prevCode)throws IOException,CompilerException {
-         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.ID){
-           var id = it.nextID();
+    public TypeInfo compileChainedCall(TypeInfo returnType,BufferedWriter writer,AEnv env,ExpIterator it,String prevCode)throws IOException,CompilerException{
+         if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == TokenType.ID){
+           it.next();
            var field = returnType.getField(id.getValue(),env);
            if(field == null){
                throw new CompilerException(id,returnType + " has not field called " + id);

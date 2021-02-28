@@ -70,39 +70,40 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
     }
     @Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+        var b = new BuilderWriter(writer);
         if(isVirtual()){
             if(self instanceof InstanceInfo i){
-                writer.write("((" + i.getClassDataType() + ")");
+                b.write("((" + i.getClassDataType() + ")");
             }
             if(getPrevCode() == null){
-                writer.write("this");
+                b.write("this");
             }else{
-                writer.write(getPrevCode());
+                b.write(getPrevCode());
             }
             if(self instanceof InterfaceInfo){
-                writer.write(".impl->");
+                b.write(".impl->");
             }else{
                 if(calledOnPointer || getPrevCode() == null){
-                    writer.write("->");
+                    b.write("->");
                 }else{
-                    writer.write('.');
+                    b.write('.');
                 }
-                writer.write("object_data)->");
+                b.write("object_data)->");
             }
         }
-		writer.write(implName);
-		writer.write('(');
+		b.write(implName);
+		b.write('(');
 		var first = self == null;
 		if(self != null){
 		    if(calledOnPointer){
 		      calledOnPointer = false;
-		      writer.write("(" + self.getCname() + "*)");
+		      b.write("(" + self.getCname() + "*)");
             }else if(!(self instanceof InterfaceInfo) && prev_code != null /*to prevent &this when calling method on implicit this*/){
-                writer.write('&');
+                b.write('&');
             }
-		    writePrev(writer);
+		    writePrev(b);
 		    if(self instanceof InterfaceInfo){
-		        writer.write(".instance");
+		        b.write(".instance");
             }
         }
 		var argList = new ArrayList<TypeInfo>();
@@ -117,11 +118,11 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
 			   if(first) {
 				   first = false;
 			   }else {
-				   writer.write(',');
+				   b.write(',');
 			   }
-			   var buffer = new BuilderWriter(writer);
+			   var buffer = new BuilderWriter(b);
 			   var type = exp.compile(buffer,env,it);
-			   writer.write(type.ensureCast(type,buffer.getCode()));
+			   b.write(type.ensureCast(type,buffer.getCode()));
 			   argList.add(type);
 		   }
 		}
@@ -130,15 +131,21 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
 		if(!Arrays.equals(args,array)){
 		    throw new CompilerException(line,charNum,"incorrect arguments expected" + Arrays.toString(args) + " instead of " + Arrays.toString(array));
         }
-		writer.write(')');
+		b.write(')');
         if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == TokenType.ID){
             var id = it.nextID();
             var field = returnType.getField(id.getValue(),env);
             if(field == null){
                 throw new CompilerException(id,returnType + " has no field called " + id);
             }
+            if(field instanceof Cast){
+                field.setPrevCode(b.getCode());
+            }else{
+                writer.write(b.getCode());
+            }
             return field.compile(writer,env,it,id.getLine(),id.getCharNum());
         }
+        writer.write(b.getCode());
 		return returnType;
 	}
     @Override

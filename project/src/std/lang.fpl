@@ -8,7 +8,7 @@ class Exception{
    }
    virtual fn string getMessage = message
    fn void throw{
-     currentThread exception = malloc getObjectSize
+     currentThread exception = malloc getObjectSize; cast Exception*
      memory i 0L
      while i < getObjectSize{
        currentThread exception cast byte* set i,this cast byte* get i
@@ -27,6 +27,11 @@ class Thread{
  private{
    string name
    EHentry* first
+   fn void addEHentry {
+     var prev currentEHentry
+     currentEHentry = EHentry:alloc
+     currentEHentry prev = prev
+   }
  }
  internal{
    Exception* exception

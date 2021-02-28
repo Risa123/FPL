@@ -32,9 +32,10 @@ public final class TryCatchFinally extends ABlock{
                     writer.write("else");
                     var nextExp = it.next();
                     TypeInfo exInfo;
+                    var exception = env.getType(new Atom(0,0,"Exception",TokenType.ID));
                     if(nextExp instanceof List){
                         block = (List)nextExp;
-                        exInfo = env.getType(new Atom(0,0,"Exception",TokenType.ID));
+                        exInfo = exception;
                     }else if(nextExp instanceof Atom exType && exType.getType() == TokenType.ID){
                         if(exType.getValue().equals("Exception")){
                             throw new CompilerException(exType,"unnecessary Exception ID");
@@ -47,11 +48,15 @@ public final class TryCatchFinally extends ABlock{
                     }else{
                         throw new CompilerException(nextExp,"exception type or block expected");
                     }
+                    if(exception.equals(exInfo)){
+                        throw new CompilerException(nextExp,"invalid exception");
+                    }
                     writer.write("{\n");
                     writer.write(exInfo.getCname());
                     writer.write(" ex;\nmemcpy(&ex,_std_lang_currentThread->_exception,sizeof(");
                     writer.write(exInfo.getCname());
                     writer.write("));\n");
+                    writer.write("free(_std_lang_currentThread->_exception);\n");
                     var blockEnv = new FnSubEnv(env);
                     blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
                     block.compile(writer,blockEnv,it);

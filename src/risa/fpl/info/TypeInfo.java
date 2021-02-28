@@ -202,6 +202,10 @@ public class TypeInfo {
   public String ensureCast(TypeInfo to,String expCode){
       return ensureCast(to,expCode,false);
   }
+
+    /**
+     *checks if type can be implicitly  converted or is  this one
+     */
   @Override
   public boolean equals(Object o){
       if(o == TypeInfo.CHAR && this instanceof NumberInfo n && !n.isFloatingPoint()){
@@ -213,7 +217,7 @@ public class TypeInfo {
       if(o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this)){
           return true;
       }
-      return super.equals(o);
+      return ((TypeInfo)o).cname.equals(cname);
   }
   public String getConversionMethodCName(TypeInfo type){
       return conversionMethodCNames.get(type);

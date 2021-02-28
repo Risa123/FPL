@@ -206,3 +206,6 @@ fix memory type is now uses the proper C type
 fix nested function call
 fix pointer to struct field C error
 fix non-id atoms considered fields
+fix variable def methods added return type check
+fix static field return type check
+fix call on function return C error

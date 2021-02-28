@@ -2,7 +2,6 @@ package risa.fpl.function.exp;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
@@ -10,17 +9,15 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
-import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.parser.List;
 
-public final class Variable extends ValueExp {
+public final class Variable extends ValueExp{
 	private boolean onlyDeclared;
 	private final String id;
 	private final boolean constant;
 	private final TypeInfo instanceType;
-	public Variable(TypeInfo type, String code, boolean onlyDeclared, String id, boolean constant,TypeInfo instanceType, AccessModifier mod) {
+	public Variable(TypeInfo type,String code,boolean onlyDeclared,String id,boolean constant,TypeInfo instanceType,AccessModifier mod){
 		super(type, code,mod);
 		this.onlyDeclared = onlyDeclared;
 		this.id = id;
@@ -31,10 +28,10 @@ public final class Variable extends ValueExp {
        this(type,code,false,id,false,null,AccessModifier.PUBLIC);
     }
 	@Override
-	protected TypeInfo onField(Atom atom, BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws CompilerException,IOException{
+	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
 	    var value = atom.getValue();
-		if(value.equals("=")) {
-		   if(constant) {
+		if(value.equals("=")){
+		   if(constant){
 			  throw new CompilerException(line,charNum,"constant cannot be redefined");    	
 			}
 		    writePrev(writer);
@@ -43,7 +40,7 @@ public final class Variable extends ValueExp {
 			onlyDeclared = false;
 		    execute(it,writer,env);
 		    return TypeInfo.VOID;
-		}else if(value.equals("ref")) {
+		}else if(value.equals("ref")){
             writer.write('&');
             writePrev(writer);
 		    writer.write(code);
@@ -53,7 +50,7 @@ public final class Variable extends ValueExp {
            if((t = processOperator(value,writer,it,env)) != null){
                return t;
            }
-        }else if(type instanceof NumberInfo) {
+        }else if(type instanceof NumberInfo){
 			if(constant) {
 				throw new CompilerException(line,charNum,"constant cannot be redefined");
 			}
@@ -66,7 +63,7 @@ public final class Variable extends ValueExp {
 	}
 
 	@Override
-	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=")){
 		    throw new CompilerException(line,charNum,"variable " + id + " not defined");
         }
@@ -76,8 +73,8 @@ public final class Variable extends ValueExp {
 		return super.compile(writer,env,it,line,charNum);
 	}
 	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException,CompilerException{
-            switch (operator) {
-                case "+=", "-=", "/=", "*=" -> {
+            switch (operator){
+                case "+=", "-=", "/=", "*=" ->{
                     process(operator,writer,it,env);
                     return TypeInfo.VOID;
                 }
@@ -102,19 +99,17 @@ public final class Variable extends ValueExp {
             }
 	    return null;
     }
-    private void process(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException, CompilerException {
+    private void process(String operator,BufferedWriter writer,ExpIterator it,AEnv env)throws IOException,CompilerException{
 	    writer.write(code);
         writer.write(operator);
         execute(it,writer,env);
     }
-    private void execute(ExpIterator it,BufferedWriter writer,AEnv env) throws CompilerException, IOException {
-	    var list = new ArrayList<AExp>();
-	    var first = it.nextAtom();
-	    list.add(first);
-	    while(it.hasNext()){
-	        list.add(it.next());
+    private void execute(ExpIterator it,BufferedWriter writer,AEnv env)throws CompilerException,IOException{
+	    var exp = it.next();
+	    var ret = exp.compile(writer,env,it);
+	    if(!type.equals(ret)){
+	        throw new CompilerException(exp,"expression expected to return  " + type + " instead of " + ret);
         }
-	    new List(first.getLine(),first.getCharNum(),list,true).compile(writer,env,it);
     }
     public TypeInfo getType(){
 	    return type;
