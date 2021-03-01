@@ -36,8 +36,10 @@ fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file
 if_flag x64{
  typedef Context [] 32 memory
  fn bool contextSave Context context = _setjmp context,__builtin_frame_address 0
- private native fn int _setjmp Context context void* frame
- native fn void* __builtin_frame_address uint level
+ private native{
+  fn int _setjmp Context context void* frame
+  fn void* __builtin_frame_address uint level
+ }
 }
 if_flag x86{
  typedef Context [] 16 memory

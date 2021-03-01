@@ -4,6 +4,7 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnSubEnv;
+import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -18,6 +19,9 @@ public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         writer.write("_std_lang_Thread_addEHentry(_std_lang_currentThread);\n");
+        var backend = env.getFPL().getModule("std.backend").getEnv();
+        var dec =(Function)backend.getFunction(new Atom(0,0,"contextSave",TokenType.ID));
+        writer.write(dec.getDeclaration());
         writer.write("if(!_std_backend_contextSave(_std_lang_currentThread->_currentEHentry->_context)){\n");
         it.nextList().compile(writer,new FnSubEnv(env),it);
         writer.write("}\n");

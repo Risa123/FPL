@@ -26,19 +26,19 @@ public final class ModuleBlock extends ATwoPassBlock {
 	   cFile = fpl.getOutputDirectory() + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
 	   this.fpl = fpl;
 	   var name = new StringBuilder();
-	   for(int i = 2;i < sourceFile.getNameCount() - 1;++i) {
+	   for(int i = 2;i < sourceFile.getNameCount() - 1;++i){
 			name.append(sourceFile.getName(i)).append('.');
 	   }
 	   name.append(sourceFile.getFileName().toString().split("\\.")[0]);
 	   this.name = name.toString();
-	   try (var parser = new Parser(Files.newBufferedReader(sourceFile))){
+	   try(var parser = new Parser(Files.newBufferedReader(sourceFile))){
 		   exps = parser.parse();
-	   }catch(CompilerException e) {
+	   }catch(CompilerException e){
 		   e.setSourceFile(this.sourceFile);
 		   throw e;
 	   }
    }
-   public void compile() throws IOException,CompilerException {
+   public void compile()throws IOException,CompilerException{
        if (!compiled) {
            compiled = true;
            try(var writer = Files.newBufferedWriter(Paths.get(cFile))){
@@ -104,5 +104,8 @@ public final class ModuleBlock extends ATwoPassBlock {
    }
    public void makeMethod(String name,TypeInfo ofType){
        ofType.addField(name,env.getAndRemove(name).makeMethod(ofType));
+   }
+   public ModuleEnv getEnv(){
+       return env;
    }
 }

@@ -2,7 +2,6 @@ use{
   risa.fpl.tokenizer
   std.io.file
   std.io.base
-  std.backend
 }
 class CompilerException Exception{
  this string message;message
@@ -15,6 +14,6 @@ main{
     Exception ex "test"
       ex throw
   }catch{
-    puts "caught"
+
   }
 }

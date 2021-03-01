@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import risa.fpl.env.ProgramEnv;
 
-public final class FPL {
+public final class FPL{
 	private final String cc,output,outputDirectory,mainModule;
 	private final PrintStream errStream;
 	private final ProgramEnv env = new ProgramEnv(this);
@@ -50,7 +50,7 @@ public final class FPL {
         }
     	Files.createDirectory(path);
     	var files = new StringBuilder();
-    	for(var name:modules.keySet()) {
+    	for(var name:modules.keySet()){
     	  if(!name.equals(mainModule)){
               compileModule(name,files);
           }
@@ -59,9 +59,9 @@ public final class FPL {
     	var err = Runtime.getRuntime().exec(cc + " -o " + output + files).getErrorStream();
         errStream.print(new String(err.readAllBytes()));
     }
-    ModuleBlock getModule(String name)throws IOException,CompilerException{
+    public ModuleBlock getModule(String name)throws IOException,CompilerException{
     	var mod = modules.get(name);
-    	if(mod != null) {
+    	if(mod != null){
     		mod.compile();
     	}
     	return mod;

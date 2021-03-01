@@ -190,7 +190,6 @@ typedef statement added
 this type is already defined error message change to type (type) is already defined
 alias statement added
 inline functions added
-attribute forceInline added
 finished try-catch-finally
 fix compilation error
 fix function pointer as function argument compilation error
@@ -209,3 +208,5 @@ fix non-id atoms considered fields
 fix variable def methods added return type check
 fix static field return type check
 fix call on function return C error
+0.1.1
+fix try-catch-finally C linker error
