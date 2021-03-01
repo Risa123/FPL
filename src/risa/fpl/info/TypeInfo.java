@@ -202,7 +202,6 @@ public class TypeInfo {
   public String ensureCast(TypeInfo to,String expCode){
       return ensureCast(to,expCode,false);
   }
-
     /**
      *checks if type can be implicitly  converted or is  this one
      */

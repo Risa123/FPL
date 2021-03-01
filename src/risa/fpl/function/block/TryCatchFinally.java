@@ -1,5 +1,6 @@
 package risa.fpl.function.block;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnSubEnv;
@@ -16,10 +17,12 @@ import java.io.IOException;
 public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+        writer.write("_std_lang_Thread_addEHentry(_std_lang_currentThread);\n");
         writer.write("if(!_std_backend_contextSave(_std_lang_currentThread->_currentEHentry->_context)){\n");
         it.nextList().compile(writer,new FnSubEnv(env),it);
         writer.write("}\n");
         var hasFin = false;
+        var finallyCode = "";
         while(it.hasNext()){
             var exp = it.peek();
             if(exp instanceof Atom blockName && blockName.getType() == TokenType.ID){
@@ -48,15 +51,12 @@ public final class TryCatchFinally extends ABlock{
                     }else{
                         throw new CompilerException(nextExp,"exception type or block expected");
                     }
-                    if(exception.equals(exInfo)){
+                    if(!exception.equals(exInfo)){
                         throw new CompilerException(nextExp,"invalid exception");
                     }
                     writer.write("{\n");
                     writer.write(exInfo.getCname());
-                    writer.write(" ex;\nmemcpy(&ex,_std_lang_currentThread->_exception,sizeof(");
-                    writer.write(exInfo.getCname());
-                    writer.write("));\n");
-                    writer.write("free(_std_lang_currentThread->_exception);\n");
+                    writer.write(" ex;\n_std_lang_Exception_copyAndFree(_std_lang_currentThread->_exception,&ex);\n");
                     var blockEnv = new FnSubEnv(env);
                     blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
                     block.compile(writer,blockEnv,it);
@@ -67,7 +67,9 @@ public final class TryCatchFinally extends ABlock{
                     }
                     hasFin = true;
                     it.next();
-                    it.nextList().compile(writer,new FnSubEnv(env),it);
+                    var b = new BuilderWriter(writer);
+                    it.nextList().compile(b,new FnSubEnv(env),it);
+                    finallyCode = b.getCode();
                 }else{
                     break;
                 }
@@ -75,6 +77,9 @@ public final class TryCatchFinally extends ABlock{
                 break;
             }
         }
+        writer.write("{\n_std_lang_Thread_removeEHentry(_std_lang_currentThread);\n");
+        writer.write(finallyCode);
+        writer.write("}\n");
         return TypeInfo.VOID;
     }
 }

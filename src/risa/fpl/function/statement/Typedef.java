@@ -16,7 +16,7 @@ public final class Typedef implements IFunction{
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         writer.write("typedef ");
         var type = it.nextID();
-        if(env.hasTypeInCurrentEnv(type.getValue())){
+        if(env.hasTypeInCurrentEnv(type.getValue()) && env.getType(type) instanceof CustomTypeInfo t && t.isPrimitive()){
             throw new CompilerException(type,"type " + type + " is already defined");
         }
         var originalType = it.nextID();

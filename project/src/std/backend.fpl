@@ -14,11 +14,10 @@ native{
     fn int fflush void* file
     fn void* __acrt_iob_func uint index
     fn int setvbuf void* file byte* buffer int mode memory size
-    fn int _setjmp Context context void* frame
-    fn void longjmp Context context int value
-    fn void* __builtin_frame_address uint level
+     fn void longjmp Context context int value
  }
 }
+fn void contextRestore Context context = longjmp context,1
 private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
 void* stdin __acrt_iob_func STDIN_INDEX
 void* stdout __acrt_iob_func STDOUT_INDEX
@@ -34,13 +33,17 @@ fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1,
 alias fileEOF feof
 alias fileFlush fflush
 fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
-fn bool contextSave Context context = _setjmp context,__builtin_frame_address 0
-fn void contextRestore Context context = longjmp context,1
-cstruct Float128 align 16{
-  if_flag x64{
-    [] memory 2 part
-  }
-}
 if_flag x64{
- typedef Context [] 16 Float128
+ typedef Context [] 32 memory
+ fn bool contextSave Context context = _setjmp context,__builtin_frame_address 0
+ private native fn int _setjmp Context context void* frame
+ native fn void* __builtin_frame_address uint level
+}
+if_flag x86{
+ typedef Context [] 16 memory
+ private native fn bool _setjmp3 Context context void* frame
+ fn bool contextSave Context context = _setjmp3 context,nil
+}
+if_flag ia64{
+ typedef Context [] 66 memory
 }

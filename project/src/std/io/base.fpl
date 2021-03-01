@@ -1,14 +1,14 @@
 
-interface Closeable {
+interface Closeable{
   fn void close
 }
-interface Writable Closeable {
+interface Writable Closeable{
   fn void write byte* p memory size
 }
-interface Readable Closeable {
+interface Readable Closeable{
   fn void read byte* p memory size
   fn bool ready
 }
-class IOException Exception {
+class IOException Exception{
   this string message;message
 }

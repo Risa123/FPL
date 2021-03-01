@@ -2,21 +2,21 @@ use std.io.base
 
 class Token{
   private{
-   int line;wordNum
+   int line;tokenNum
     string value
   }
-  this int line int wordNum string value{
+  this int line int tokenNum string value{
     this line = line
-    this wordNum = wordNum
+    this tokenNum = tokenNum
     this value = value
   }
   fn int getLine = line
-  fn int getWordNum = wordNum
+  fn int getTokenNum = tokenNum
   fn string getValue = value
 }
 class Tokenizer{
  private {
-    int line 1;wordNum 1
+    int line 1;tokenNum 1
     bool readNext true
     char c
     Readable readable

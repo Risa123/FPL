@@ -1,6 +1,9 @@
 use std.backend std.io.base
 
-alias exit exit
+fn void exit int exitCode{
+ currentThread freeEHentries
+ exit exitCode
+}
 fn int execute string cmd{
   var exitCode execute cmd
   if exitCode == -1{

@@ -6,8 +6,9 @@ import risa.fpl.function.exp.IField;
 
 public final class CustomTypeInfo extends TypeInfo{
     private final TypeInfo original;
+    private boolean complete;
     public CustomTypeInfo(String name,TypeInfo original,String declaration){
-        super(name,IFunction.toCId(name),original.isPrimitive());
+        super(name,IFunction.toCId(name));
         this.original = original;
         addRequiredType(original);
         appendToDeclaration("typedef ");
@@ -22,5 +23,13 @@ public final class CustomTypeInfo extends TypeInfo{
     @Override
     public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
         return original.ensureCast(to,expCode,comesFromPointer);
+    }
+    public boolean isComplete(){
+        return complete;
+    }
+    @Override
+    public void buildDeclaration(){
+        complete = true;
+        super.buildDeclaration();
     }
 }

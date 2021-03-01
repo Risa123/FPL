@@ -1,0 +1,20 @@
+use{
+  risa.fpl.tokenizer
+  std.io.file
+  std.io.base
+  std.backend
+}
+class CompilerException Exception{
+ this string message;message
+}
+interface IFunction{
+ fn void compile
+}
+main{
+  try{
+    Exception ex "test"
+      ex throw
+  }catch{
+    puts "caught"
+  }
+}

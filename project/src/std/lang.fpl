@@ -2,58 +2,79 @@
 use std.backend
 
 class Exception{
-   private string message
+   private{
+     string message
+     fn void copy Exception* to{
+       memory i 0L
+       while i < getObjectSize{
+          to cast byte* set i,this cast byte* get i
+          i ++
+       }
+     }
+   }
    this string message{
      this message = message
    }
    virtual fn string getMessage = message
    fn void throw{
-     currentThread exception = malloc getObjectSize; cast Exception*
-     memory i 0L
-     while i < getObjectSize{
-       currentThread exception cast byte* set i,this cast byte* get i
-       i ++
+     if currentThread currentEHentry == nil{
+       currentThread exceptionHandler drf this
+       return
      }
+     currentThread exception = malloc getObjectSize; cast Exception*
+     copy currentThread exception
      contextRestore currentThread currentEHentry context
    }
+   internal fn void copyAndFree Exception* to{
+     copy to
+     free this cast void*
+   }
 }
-fpointer void throwTargetType
+fpointer void ExceptionHandlerType Exception* ex
 private class EHentry{
   EHentry* prev
-  throwTargetType target
   Context context
 }
 class Thread{
- private{
-   string name
-   EHentry* first
-   fn void addEHentry {
-     var prev currentEHentry
-     currentEHentry = EHentry:alloc
-     currentEHentry prev = prev
-   }
- }
+ private string name
  internal{
    Exception* exception
    EHentry* currentEHentry
+   ExceptionHandlerType exceptionHandler
+   fn void addEHentry{
+        var prev currentEHentry
+        currentEHentry = EHentry:alloc
+        currentEHentry prev = prev
+    }
+    fn void removeEHentry{
+      var prev currentEHentry prev
+      free currentEHentry cast void*
+      currentEHentry = prev
+    }
+ }
+ (#do not call)
+ fn void freeEHentries{
+   while currentEHentry != nil{
+     var prev currentEHentry prev
+     free currentEHentry cast void*
+     currentEHentry = prev
+   }
  }
  this string name{
    this name = name
-   first = EHentry:alloc
+   currentEHentry = nil
    setExceptionHandler &defaultExceptionHandler
-   currentEHentry = first
  }
  fn void setName string name = this name = name
  fn string getName = name
- fn void setExceptionHandler throwTargetType exceptionHandler{
-    first target = exceptionHandler
+ fn void setExceptionHandler ExceptionHandlerType exceptionHandler{
+   this exceptionHandler = exceptionHandler
  }
 }
 Thread* currentThread
-fn void defaultExceptionHandler{
+fn void defaultExceptionHandler Exception* ex{
   puts "exception happened:"
-  puts currentThread exception getMessage
-  free currentThread exception cast void*
+  puts ex getMessage
   exit 1
 }
 #these functions will be made inaccessible by compiler
