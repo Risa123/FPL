@@ -1,0 +1,6 @@
+
+class ArrayList ;T;{
+ private{
+  T* array
+ }
+}

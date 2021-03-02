@@ -39,6 +39,11 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
 		InstanceInfo parentType = null;
 		List block = null;
 		var interfaces = new ArrayList<InterfaceInfo>();
+		var templateArgs = new ArrayList<Atom>();
+		if(it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
+		    it.next();
+		    templateArgs = IFunction.parseTemplateArguments(it);
+        }
         while(it.hasNext()){
             var exp = it.next();
             if(exp instanceof List l){
