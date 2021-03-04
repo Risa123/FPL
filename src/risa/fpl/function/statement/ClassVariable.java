@@ -59,7 +59,7 @@ public final class ClassVariable extends Function{
             for(var arg:args){
                 types.add(env.getType(arg));
             }
-            varType = tType.generateTypeFor(types);
+            varType = tType.generateTypeFor(types,writer);
             id = it.nextID(); // identifier follows after template arguments
         }else{
           varType = type;

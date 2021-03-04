@@ -66,7 +66,7 @@ public final class FPL{
     	}
     	return mod;
     }
-    String getOutputDirectory(){
+    public String getOutputDirectory(){
         return outputDirectory;
     }
     ProgramEnv getEnv(){
@@ -79,6 +79,10 @@ public final class FPL{
         var mod = getModule(name);
         files.append(' ');
         files.append(mod.getCFile());
+        for(var file:mod.getEnv().getTemplateFiles()){
+            files.append(' ');
+            files.append(file);
+        }
     }
 	public static void main(String[] args)throws IOException{
 		if(args.length != 1) {

@@ -26,7 +26,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
 	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
 	private static final AddModifier OVERRIDE = new AddModifier(Modifier.OVERRIDE);
-	public ClassEnv(ModuleEnv superEnv,String id,boolean templateClass){
+	public ClassEnv(ModuleEnv superEnv,String id,TemplateStatus templateStatus){
 		super(superEnv);
 		super.addFunction("this",new Constructor());
 		super.addFunction("protected",PROTECTED);
@@ -36,7 +36,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		var cname = IFunction.toCId(id);
 		this.nameSpace = superEnv.getNameSpace(null) + cname;
 		classType = new ClassInfo(id);
-		if(templateClass){
+		if(templateStatus == TemplateStatus.TEMPLATE){
             instanceType = new TemplateTypeInfo(id,superEnv);
         }else{
             instanceType = new InstanceInfo(id,superEnv);
@@ -45,7 +45,12 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		instanceType.addField("cast",new Cast(instanceType));
 		dataType = cname + "_data_type";
 		dataName = cname + "_data";
-		superEnv.addType(id,instanceType);
+        /*
+         *checking if not generating from template to prevent generated type form displacing the template
+         */
+		if(templateStatus != TemplateStatus.GENERATING){
+            superEnv.addType(id,instanceType);
+        }
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
 	}
 	@Override

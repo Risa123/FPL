@@ -7,10 +7,7 @@ import java.util.LinkedHashMap;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
-import risa.fpl.env.ClassEnv;
-import risa.fpl.env.Modifier;
-import risa.fpl.env.ModuleEnv;
+import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
@@ -39,10 +36,10 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         ClassEnv cEnv;
 		if(it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
 		    it.next();
-            cEnv = new ClassEnv(modEnv,idV,true);
+            cEnv = new ClassEnv(modEnv,idV, TemplateStatus.TEMPLATE);
 		    templateArgs = IFunction.parseTemplateArguments(it,cEnv);
         }else{
-		    cEnv = new ClassEnv(modEnv,idV,false);
+		    cEnv = new ClassEnv(modEnv,idV,TemplateStatus.INSTANCE);
         }
         while(it.hasNext()){
             var exp = it.next();
