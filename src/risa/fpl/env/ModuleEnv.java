@@ -11,6 +11,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
@@ -157,5 +158,14 @@ public final class ModuleEnv extends ANameSpacedEnv{
             }
         }
 	    return true;
+    }
+    public ArrayList<String>getTemplateFiles(){
+	    var files = new ArrayList<String>();
+	    for(var type:types.values()){
+	        if(type instanceof TemplateTypeInfo t){
+	            files.addAll(t.getTemplateFiles());
+            }
+        }
+	    return files;
     }
 }

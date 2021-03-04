@@ -1,15 +1,16 @@
 package risa.fpl.info;
 
 import risa.fpl.env.ModuleEnv;
+import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.GetObjectInfo;
 import risa.fpl.function.exp.ValueExp;
 
-public final class InstanceInfo extends TypeInfo{
+public class InstanceInfo extends TypeInfo{
     private String attributesCode,implCode;
     private final ModuleEnv module;
     private boolean complete;
-    public InstanceInfo(String name, String cname,ModuleEnv module) {
-        super(name,cname);
+    public InstanceInfo(String name,ModuleEnv module){
+        super(name,IFunction.toCId(name));
         this.module = module;
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
     }
@@ -35,12 +36,12 @@ public final class InstanceInfo extends TypeInfo{
         return complete;
     }
     @Override
-    public void buildDeclaration() {
+    public void buildDeclaration(){
         complete = true;
         super.buildDeclaration();
     }
     @Override
-    public void setClassInfo(ClassInfo info) {
+    public void setClassInfo(ClassInfo info){
         super.setClassInfo(info);
         getClassInfo().addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + getCname() + ")"));
     }

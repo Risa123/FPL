@@ -17,7 +17,7 @@ import risa.fpl.parser.Atom;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implicitConstructor = new StringBuilder();
-	private final String cname,nameSpace,dataType,dataName;
+	private final String nameSpace,dataType,dataName;
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
@@ -26,17 +26,21 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
 	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
 	private static final AddModifier OVERRIDE = new AddModifier(Modifier.OVERRIDE);
-	public ClassEnv(ModuleEnv superEnv,String cname,String id){
+	public ClassEnv(ModuleEnv superEnv,String id,boolean templateClass){
 		super(superEnv);
 		super.addFunction("this",new Constructor());
 		super.addFunction("protected",PROTECTED);
 		super.addFunction("virtual",VIRTUAL);
 		super.addFunction("override",OVERRIDE);
 		super.addFunction("internal",INTERNAL);
+		var cname = IFunction.toCId(id);
 		this.nameSpace = superEnv.getNameSpace(null) + cname;
-		this.cname = cname;
 		classType = new ClassInfo(id);
-		instanceType = new InstanceInfo(id,cname,superEnv);
+		if(templateClass){
+            instanceType = new TemplateTypeInfo(id,superEnv);
+        }else{
+            instanceType = new InstanceInfo(id,superEnv);
+        }
 		instanceType.setClassInfo(classType);
 		instanceType.addField("cast",new Cast(instanceType));
 		dataType = cname + "_data_type";
@@ -55,7 +59,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	public void appendToImplicitConstructor(String code) {
 		implicitConstructor.append(code);
 	}
-	public String getImplicitConstructorCode() {
+	public String getImplicitConstructorCode(){
 	    var additionalCode = "";
         var primaryParent = instanceType.getPrimaryParent();
         //check for implicit constructor
@@ -68,7 +72,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		return additionalCode + implicitConstructor.toString();
 	}
 	public String getImplicitConstructor(){
-        return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init(" + cname + "* this){\n" + getImplicitConstructorCode() + "}\n";
+        return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init(" + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
     }
     public void addMethod(Function method,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
@@ -135,7 +139,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    return b.toString();
     }
     public String getImplOf(InterfaceInfo i){
-	    return cname + i.getCname() + "_impl";
+	    return instanceType.getCname() + i.getCname() + "_impl";
     }
     public String getDataDefinition(){
         return dataType + ' ' + dataName + ";\n";

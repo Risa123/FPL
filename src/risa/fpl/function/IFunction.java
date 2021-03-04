@@ -3,6 +3,7 @@ package risa.fpl.function;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
@@ -48,26 +49,34 @@ public interface IFunction{
   default boolean appendSemicolon(){
 	  return true;
   }
-  static ArrayList<Atom>parseTemplateArguments(ExpIterator it)throws CompilerException{
-     var list = new ArrayList<Atom>();
-     while(it.hasNext()){
-         var exp = it.next();
-         if(exp instanceof Atom typeID){
-             if(typeID.getType() == TokenType.ID){
-                 if(list.contains(typeID)){
-                     throw new CompilerException(typeID,"duplicate template argument");
-                 }
-                 list.add(typeID);
-             }else if(typeID.getType() == TokenType.END_ARGS){
-                 break;
-             }else{
-                 throw new CompilerException(exp,"template argument or ; expected");
-             }
-         }else{
-             throw new CompilerException(exp,"template argument or ; expected");
-         }
+  static LinkedHashMap<String,TypeInfo> parseTemplateArguments(ExpIterator it,AEnv env)throws CompilerException{
+     var args = new LinkedHashMap<String,TypeInfo>();
+     for(var arg:getTemplateArguments(it)){
+         args.put(arg.getValue(),TypeInfo.OBJECT);
+         env.addType(arg.getValue(),TypeInfo.OBJECT);
      }
-     return list;
+     return args;
+  }
+  static ArrayList<Atom>getTemplateArguments(ExpIterator it)throws CompilerException{
+      var list = new ArrayList<Atom>();
+      while(it.hasNext()){
+          var exp = it.next();
+          if(exp instanceof Atom typeID){
+              if(typeID.getType() == TokenType.ID){
+                  if(list.contains(typeID)){
+                      throw new CompilerException(typeID,"duplicate template argument");
+                  }
+                  list.add(typeID);
+              }else if(typeID.getType() == TokenType.END_ARGS){
+                  break;
+              }else{
+                  throw new CompilerException(exp,"template argument or ; expected");
+              }
+          }else{
+              throw new CompilerException(exp,"template argument or ; expected");
+          }
+      }
+      return list;
   }
   String INTERNAL_METHOD_PREFIX = "I";
 }
