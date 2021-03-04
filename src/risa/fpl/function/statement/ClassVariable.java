@@ -70,11 +70,19 @@ public final class ClassVariable extends Function{
         writer.write(cID);
         writer.write(";\n");
         setPrevCode(cID);
-        super.compile(writer,env,it,id.getLine(),id.getCharNum());
+        if(type instanceof TemplateTypeInfo){
+            varType.getConstructor().setPrevCode(cID);
+            ((ClassVariable)varType.getConstructor()).superCompile(writer,env,it,id.getLine(),id.getCharNum());
+        }else{
+            super.compile(writer,env,it,id.getLine(),id.getCharNum());
+        }
         env.addFunction(id.getValue(),new Variable(type,IFunction.toCId(id.getValue()),id.getValue()));
     }
 	public void compileAsParentConstructor(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
        calledOnPointer();
+       super.compile(writer,env,it,line,charNum);
+    }
+    private void superCompile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
        super.compile(writer,env,it,line,charNum);
     }
 }

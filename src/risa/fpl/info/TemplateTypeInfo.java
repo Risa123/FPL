@@ -40,7 +40,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
         var path = mod.getFPL().getOutputDirectory() + "/" + mod.getNameSpace().substring(1) + cName +".c";
         templateFiles.add(path);
         var writer = Files.newBufferedWriter(Paths.get(path));
-        new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,false);
+        new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
         writer.write(cEnv.getFunctionDeclarations());
         writer.write(cEnv.getFunctionCode());
         writer.close();

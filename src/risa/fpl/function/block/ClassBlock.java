@@ -81,10 +81,10 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
 		    cWriter = new BuilderWriter(writer);
             ((TemplateTypeInfo)cEnv.getInstanceType()).setDataForGeneration(block,interfaces,templateArgs);
         }
-        compileClassBlock(cWriter,cEnv,modEnv,id,block,interfaces,templateArgs != null);
+        compileClassBlock(cWriter,cEnv,modEnv,id,block,interfaces,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
 		return TypeInfo.VOID;
 	}
-	public  void compileClassBlock(BufferedWriter writer,ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,boolean templateClass)throws CompilerException,IOException{
+	public  void compileClassBlock(BufferedWriter writer,ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException,IOException{
         var b = new BuilderWriter(writer);
         var type = cEnv.getInstanceType();
         var parentType = type.getPrimaryParent();
@@ -123,7 +123,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         writer.write(b.getCode() + cEnv.getDataDefinition());
         var constructor = type.getConstructor();
         if(constructor == null){
-            constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this));
+            constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this)); //here
             cEnv.addMethod(constructor,cEnv.getImplicitConstructor());
             type.setConstructor(constructor);
         }
@@ -157,7 +157,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
             classType.addField("new",newMethod);
             type.appendToDeclaration(newMethod.getDeclaration());
         }
-        if(!modEnv.hasModifier(Modifier.ABSTRACT)){
+        if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){
             modEnv.addFunction(id.getValue(),constructor);
         }
         for(var i:interfaces){
@@ -196,7 +196,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                 }
             }
         }
-        if(!templateClass){
+        if(templateStatus != TemplateStatus.TEMPLATE){
             type.buildDeclaration();
             modEnv.appendFunctionDeclarations(cEnv.getFunctionDeclarations());
             modEnv.appendFunctionCode(cEnv.getFunctionCode());
