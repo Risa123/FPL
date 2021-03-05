@@ -17,7 +17,7 @@ public interface IFunction{
   static boolean notCID(String id){
 	  var first = true;
 	  var count = id.codePointCount(0,id.length());
-	  for(int i = 0; i < count;++i) {
+	  for(int i = 0; i < count;++i){
 		  if(!isCIdChar(id.codePointAt(i),first)){
 			  return true;
 		  }
@@ -34,11 +34,11 @@ public interface IFunction{
 	  var b = new StringBuilder("_");
 	  var count = id.codePointCount(0,id.length());
 	  var first = true;
-	  for(int i = 0; i < count;++i) {
+	  for(int i = 0; i < count;++i){
 		  var c = id.codePointAt(i);
-		 if(isCIdChar(c,first)) {
+		 if(isCIdChar(c,first)){
 		 	b.appendCodePoint(c);
-		 }else {
+		 }else{
 			b.append(Character.getName(c).replace(' ','_')) ;
 		 }
 		 first = false;

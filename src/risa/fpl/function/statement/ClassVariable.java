@@ -60,7 +60,7 @@ public final class ClassVariable extends Function{
                 types.add(env.getType(arg));
             }
             varType = tType.generateTypeFor(types,writer);
-            id = it.nextID(); // identifier follows after template arguments
+            id = it.nextID(); //identifier follows after template arguments
         }else{
           varType = type;
         }
@@ -75,6 +75,9 @@ public final class ClassVariable extends Function{
             ((ClassVariable)varType.getConstructor()).superCompile(writer,env,it,id.getLine(),id.getCharNum());
         }else{
             super.compile(writer,env,it,id.getLine(),id.getCharNum());
+        }
+        if(env.hasFunctionInCurrentEnv(id.getValue())){
+            throw new CompilerException(id,"there is already a function called " + id);
         }
         env.addFunction(id.getValue(),new Variable(type,IFunction.toCId(id.getValue()),id.getValue()));
     }

@@ -56,6 +56,13 @@ public final class FPL{
           }
     	}
     	compileModule(mainModule,files);
+    	//template files are present only after module compilation
+    	for(var mod:modules.values()){
+    	    for(var file:mod.getEnv().getTemplateFiles()){
+    	        files.append(' ');
+    	        files.append(file);
+            }
+        }
     	var err = Runtime.getRuntime().exec(cc + " -o " + output + files).getErrorStream();
         errStream.print(new String(err.readAllBytes()));
     }
@@ -79,10 +86,6 @@ public final class FPL{
         var mod = getModule(name);
         files.append(' ');
         files.append(mod.getCFile());
-        for(var file:mod.getEnv().getTemplateFiles()){
-            files.append(' ');
-            files.append(file);
-        }
     }
 	public static void main(String[] args)throws IOException{
 		if(args.length != 1) {

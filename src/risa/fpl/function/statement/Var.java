@@ -9,7 +9,6 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
-import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -18,7 +17,7 @@ import risa.fpl.tokenizer.TokenType;
 
 public final class Var implements IFunction{
     private final TypeInfo type;
-    public Var(TypeInfo type) {
+    public Var(TypeInfo type){
     	this.type = type;
     }
 	@Override
