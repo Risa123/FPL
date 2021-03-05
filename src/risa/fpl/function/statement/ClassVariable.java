@@ -34,7 +34,7 @@ public final class ClassVariable extends Function{
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var id = it.nextAtom();
 		if(id.getType() == TokenType.ID){
-            compileVariable(writer,id,env,it,null);
+            compileVariable(writer,id,env,it);
         }else if(id.getType() == TokenType.CLASS_SELECTOR){
 		    if(it.peek() instanceof Atom atom && atom.getType() == TokenType.ID){
 		        it.next();
@@ -46,20 +46,16 @@ public final class ClassVariable extends Function{
             }
 		    return classType;
         }else if(id.getType() == TokenType.END_ARGS){
-            compileVariable(writer,null,env,it,IFunction.getTemplateArguments(it));
+            compileVariable(writer,null,env,it);
         }else{
 		    throw new CompilerException(id,"variable identifier or : expected");
         }
 		return TypeInfo.VOID;
 	}
-	private void compileVariable(BufferedWriter writer,Atom id,AEnv env,ExpIterator it,ArrayList<Atom> args)throws IOException,CompilerException{
+	private void compileVariable(BufferedWriter writer,Atom id,AEnv env,ExpIterator it)throws IOException,CompilerException{
         TypeInfo varType;
         if(type instanceof TemplateTypeInfo tType){
-            var types = new ArrayList<TypeInfo>();
-            for(var arg:args){
-                types.add(env.getType(arg));
-            }
-            varType = tType.generateTypeFor(types,writer);
+            varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),writer);
             id = it.nextID(); //identifier follows after template arguments
         }else{
           varType = type;

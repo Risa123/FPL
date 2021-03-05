@@ -10,6 +10,7 @@ import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;
+import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -31,6 +32,17 @@ public final class Var implements IFunction{
 		if(env.hasModifier(Modifier.NATIVE) && env instanceof ClassEnv){
             throw new CompilerException(line,charNum,"native variables can only be declared in modules");
 		}
+		var decType = type;
+		if(it.peek() instanceof Atom begin && begin.getType() == TokenType.END_ARGS){
+		    it.next();
+		    if(type instanceof TemplateTypeInfo tType){
+		        decType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),writer);
+            }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
+                decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),writer));
+            }else{
+		        throw new CompilerException(line,charNum,"template type expected");
+            }
+        }
 		while(it.hasNext()){
             var id = it.nextAtom();
             if(id.getType() == TokenType.ID){
@@ -48,7 +60,7 @@ public final class Var implements IFunction{
                         if(env.hasModifier(Modifier.CONST) && !(env instanceof  ClassEnv)){
                             throw new CompilerException(id,"constant has to be defined");
                         }
-                        if(this.type == null){
+                        if(decType == null){
                             throw new CompilerException(exp,"definition required");
                         }
                     }else{
@@ -63,7 +75,7 @@ public final class Var implements IFunction{
                     if(env.hasModifier(Modifier.CONST) && !(env instanceof ClassEnv)){
                         throw new CompilerException(id,"constant has to be defined");
                     }
-                    if(this.type == null){
+                    if(decType == null){
                         throw new CompilerException(id,"definition required");
                     }
                     onlyDeclared = true;
@@ -75,7 +87,7 @@ public final class Var implements IFunction{
                 if(env instanceof ModuleEnv || env instanceof ClassEnv){
                     onlyDeclared = false;
                 }
-                var varType = Objects.requireNonNullElse(this.type,expType);
+                var varType = Objects.requireNonNullElse(decType,expType);
                 if(!varType.isPrimitive()){
                     onlyDeclared = false;
                 }

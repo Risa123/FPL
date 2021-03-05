@@ -70,13 +70,21 @@ public interface IFunction{
               }else if(typeID.getType() == TokenType.END_ARGS){
                   break;
               }else{
-                  throw new CompilerException(exp,"template argument or ; expected");
+                  throw new CompilerException(exp,"template argument or ; expected instead of " + typeID);
               }
           }else{
               throw new CompilerException(exp,"template argument or ; expected");
           }
       }
       return list;
+  }
+  static ArrayList<TypeInfo>parseTemplateGeneration(ExpIterator it,AEnv env)throws CompilerException{
+      var args = getTemplateArguments(it);
+      var types = new ArrayList<TypeInfo>();
+      for(var arg:args){
+          types.add(env.getType(arg));
+      }
+      return types;
   }
   String INTERNAL_METHOD_PREFIX = "I";
 }
