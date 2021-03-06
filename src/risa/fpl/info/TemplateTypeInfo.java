@@ -1,9 +1,7 @@
 package risa.fpl.info;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.ClassEnv;
-import risa.fpl.env.ModuleEnv;
-import risa.fpl.env.TemplateStatus;
+import risa.fpl.env.*;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
@@ -26,7 +24,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
     public TemplateTypeInfo(String name,ModuleEnv module){
         super(name,module);
     }
-    public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,BufferedWriter targetWriter)throws CompilerException,IOException{
+    public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,AEnv env)throws CompilerException,IOException{
        if(!generatedTypes.containsKey(args)){
            var mod = getModule();
            var name = new StringBuilder(getName());
@@ -47,7 +45,11 @@ public final class TemplateTypeInfo extends InstanceInfo{
            writer.write(cEnv.getFunctionDeclarations());
            writer.write(cEnv.getFunctionCode());
            writer.close();
-           targetWriter.write(cEnv.getInstanceType().getDeclaration());
+           if(env instanceof ANameSpacedEnv e){
+               e.addTemplateInstance(cEnv.getInstanceType());
+           }else{
+               ((FnSubEnv)env).addTemplateInstance(cEnv.getInstanceType());
+           }
            generatedTypes.put(args,cEnv.getInstanceType());
            return cEnv.getInstanceType();
        }

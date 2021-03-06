@@ -53,7 +53,7 @@ public class Fn extends AFunctionBlock{
         headWriter.write(cID);
 		var args = parseArguments(headWriter,it,fnEnv,self);
 		var attrCode = new StringBuilder();
-        if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
+        if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
             it.next();
             var attrs = new ArrayList<String>();
             if(it.hasNext()){

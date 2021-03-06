@@ -2,7 +2,7 @@ native{
  fn int puts string str
  fn void* malloc memory size
  fn void free void* p
- fn void exit int exitCode;noReturn
+ fn void exit int exitCode:noReturn
  fn void* realloc void* p memory newSize
  private{
     fn memory fwrite void* p memory size memory nmen void* file

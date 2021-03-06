@@ -10,5 +10,5 @@ interface Readable Closeable{
   fn bool ready
 }
 class IOException Exception{
-  this string message;message
+  this string message:message
 }

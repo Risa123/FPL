@@ -116,6 +116,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public String getNameSpace(){
 	    return nameSpace;
     }
+    @Override
+    public void addTemplateInstance(InstanceInfo type){
+        ((ANameSpacedEnv)superEnv).addTemplateInstance(type);
+    }
+
     public void appendDeclarations(){
         instanceType.appendToDeclaration(getFunctionDeclarations());
     }

@@ -60,8 +60,9 @@ public interface IFunction{
   static ArrayList<Atom>getTemplateArguments(ExpIterator it)throws CompilerException{
       var list = new ArrayList<Atom>();
       while(it.hasNext()){
-          var exp = it.next();
+          var exp = it.peek();
           if(exp instanceof Atom typeID){
+              it.next();
               if(typeID.getType() == TokenType.ID){
                   if(list.contains(typeID)){
                       throw new CompilerException(typeID,"duplicate template argument");
@@ -73,7 +74,7 @@ public interface IFunction{
                   throw new CompilerException(exp,"template argument or ; expected instead of " + typeID);
               }
           }else{
-              throw new CompilerException(exp,"template argument or ; expected");
+              break;
           }
       }
       return list;

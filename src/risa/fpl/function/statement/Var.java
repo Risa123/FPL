@@ -36,9 +36,9 @@ public final class Var implements IFunction{
 		if(it.peek() instanceof Atom begin && begin.getType() == TokenType.END_ARGS){
 		    it.next();
 		    if(type instanceof TemplateTypeInfo tType){
-		        decType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),writer);
+		        decType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env);
             }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
-                decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),writer));
+                decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env));
             }else{
 		        throw new CompilerException(line,charNum,"template type expected");
             }

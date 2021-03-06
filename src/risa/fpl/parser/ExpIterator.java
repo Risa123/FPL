@@ -39,7 +39,7 @@ public final class ExpIterator {
   public Atom nextID() throws CompilerException {
 	  var atom = nextAtom();
 	  if(atom.getType() != TokenType.ID) {
-		  throw new CompilerException(atom,"identifier expected");
+		  throw new CompilerException(atom,"identifier expected instead of " + atom);
 	  }
 	  return atom;
   }

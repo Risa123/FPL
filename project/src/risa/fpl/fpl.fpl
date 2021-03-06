@@ -5,11 +5,14 @@ use{
   std.collection
 }
 class CompilerException Exception{
- this string message;message
+ this string message:message
 }
 interface IFunction{
  fn void compile
 }
 main{
- ArrayList*;int; list
+
+}
+fn void test ArrayList;int; arg{
+
 }

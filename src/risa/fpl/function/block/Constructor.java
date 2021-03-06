@@ -30,7 +30,7 @@ public final class Constructor extends AFunctionBlock{
         type.setConstructor(constructor);
         b.write("{\n");
         var hasParentConstructor = false;
-        if(it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
+        if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
             var callStart = it.next();
             var parentType = type.getPrimaryParent();
             if(parentType == null){

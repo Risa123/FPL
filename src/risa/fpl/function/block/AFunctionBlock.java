@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 public abstract class AFunctionBlock extends ABlock{
- protected final LinkedHashMap<String,TypeInfo> parseArguments(BufferedWriter writer, ExpIterator it, FnEnv env, TypeInfo owner)throws CompilerException,IOException{
+ protected final LinkedHashMap<String,TypeInfo>parseArguments(BufferedWriter writer,ExpIterator it,FnEnv env,TypeInfo owner)throws CompilerException,IOException{
         writer.write('(');
         var args = new LinkedHashMap<String,TypeInfo>();
         var first = owner == null;
@@ -27,19 +27,22 @@ public abstract class AFunctionBlock extends ABlock{
         }
         while(it.hasNext()){
             var peeked = it.peek();
-            if(peeked instanceof List || ((Atom)peeked).getType() == TokenType.END_ARGS){
+            if(peeked instanceof List || ((Atom)peeked).getValue().equals("=") || ((Atom)peeked).getType() == TokenType.CLASS_SELECTOR){
                 break;
             }
-            if(((Atom)peeked).getValue().equals("=")){
-                break;
-            }
-            if(first) {
+            if(first){
                 first = false;
             }else {
                 writer.write(',');
             }
             var argType = env.getType(it.nextID());
-            var argName = it.nextID();
+            var argName = it.nextAtom();
+            if(argName.getType() == TokenType.END_ARGS){
+                IFunction.parseTemplateGeneration(it,env);
+                argName = it.nextID();
+            }else if(argName.getType() != TokenType.ID){
+                throw new CompilerException(argName,"identifier or ; expected");
+            }
             args.put(argName.getValue(),argType);
             var argNameCID = IFunction.toCId(argName.getValue());
             if(argType instanceof PointerInfo p && p.isFunctionPointer()){
@@ -49,7 +52,7 @@ public abstract class AFunctionBlock extends ABlock{
                 writer.write(' ');
                 writer.write(argNameCID);
             }
-            if(env.hasFunctionInCurrentEnv(argName.getValue())) {
+            if(env.hasFunctionInCurrentEnv(argName.getValue())){
                 throw new CompilerException(argName,"there is already argument called " + argName);
             }
             env.addFunction(argName.getValue(),new Variable(argType,IFunction.toCId(argName.getValue()),argName.getValue()));

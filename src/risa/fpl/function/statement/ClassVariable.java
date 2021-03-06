@@ -2,7 +2,6 @@ package risa.fpl.function.statement;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
@@ -55,7 +54,7 @@ public final class ClassVariable extends Function{
 	private void compileVariable(BufferedWriter writer,Atom id,AEnv env,ExpIterator it)throws IOException,CompilerException{
         TypeInfo varType;
         if(type instanceof TemplateTypeInfo tType){
-            varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),writer);
+            varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env);
             id = it.nextID(); //identifier follows after template arguments
         }else{
           varType = type;

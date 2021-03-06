@@ -50,6 +50,7 @@ public final class ModuleBlock extends ATwoPassBlock {
                compile(b,env,exps);
                env.importModules(writer);
                writer.write(b.getCode());
+               writer.write(env.getTemplateInstanceDeclarations());
                writer.write(env.getVariableDeclarations());
                writer.write(env.getFunctionDeclarations());
                writer.write(env.getFunctionCode());

@@ -2,12 +2,13 @@ package risa.fpl.env;
 
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
+import risa.fpl.info.InstanceInfo;
 
-public abstract class ANameSpacedEnv extends SubEnv {
+public abstract class ANameSpacedEnv extends SubEnv{
     private final StringBuilder initializer = new StringBuilder();
     private String initializerName;
-    private final StringBuilder functionCode = new StringBuilder(), functionDeclarations = new StringBuilder();
-    public ANameSpacedEnv(AEnv superEnv) {
+    private final StringBuilder functionCode = new StringBuilder(),functionDeclarations = new StringBuilder();
+    public ANameSpacedEnv(AEnv superEnv){
         super(superEnv);
     }
     public final void appendToInitializer(String code){
@@ -42,4 +43,5 @@ public abstract class ANameSpacedEnv extends SubEnv {
     public void appendFunctionDeclarations(String code){
         functionDeclarations.append(code);
     }
+    public abstract void addTemplateInstance(InstanceInfo type);
 }

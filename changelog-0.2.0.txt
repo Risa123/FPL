@@ -2,3 +2,6 @@
 added alias and typedef to fpl-udl
 added templates
 class can now have template arguments
+attribute beginning symbol changed to :
+parent constructor call symbol changed to :
+"identifier expected" error message changed to "identifier expected instead of (atom)"

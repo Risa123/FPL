@@ -11,6 +11,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -20,7 +21,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
 	private boolean getRequestFromOutSide,initCalled;
-	private final StringBuilder variableDeclarations = new StringBuilder();
+	private final StringBuilder variableDeclarations = new StringBuilder(),templateInstanceDeclaration = new StringBuilder();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -123,7 +124,11 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public String getNameSpace(){
 	    return nameSpace;
     }
-	public void requestFromOutSide(){
+    @Override
+    public void addTemplateInstance(InstanceInfo type){
+        templateInstanceDeclaration.append(type.getDeclaration());
+    }
+    public void requestFromOutSide(){
 	    getRequestFromOutSide = true;
     }
     public boolean isMain(){
@@ -167,5 +172,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
             }
         }
 	    return files;
+    }
+    public String getTemplateInstanceDeclarations(){
+	    return templateInstanceDeclaration.toString();
     }
 }
