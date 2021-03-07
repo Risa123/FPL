@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -51,24 +52,30 @@ public interface IFunction{
   }
   static LinkedHashMap<String,TypeInfo> parseTemplateArguments(ExpIterator it,AEnv env)throws CompilerException{
      var args = new LinkedHashMap<String,TypeInfo>();
-     for(var arg:getTemplateArguments(it)){
+     for(var arg:getTemplateArguments(it,false)){
          args.put(arg.getValue(),TypeInfo.OBJECT);
          env.addType(arg.getValue(),TypeInfo.OBJECT);
      }
      return args;
   }
-  static ArrayList<Atom>getTemplateArguments(ExpIterator it)throws CompilerException{
+  static ArrayList<Atom>getTemplateArguments(ExpIterator it,boolean classVariable)throws CompilerException{
       var list = new ArrayList<Atom>();
       while(it.hasNext()){
           var exp = it.peek();
           if(exp instanceof Atom typeID){
-              it.next();
               if(typeID.getType() == TokenType.ID){
                   if(list.contains(typeID)){
                       throw new CompilerException(typeID,"duplicate template argument");
                   }
                   list.add(typeID);
+                  it.next();
               }else if(typeID.getType() == TokenType.END_ARGS){
+                  it.next();
+                  break;
+              }else if(typeID.getType() == TokenType.CLASS_SELECTOR){
+                  if(!classVariable){
+                      throw new CompilerException(typeID,"; expected");
+                  }
                   break;
               }else{
                   throw new CompilerException(exp,"template argument or ; expected instead of " + typeID);
@@ -80,12 +87,21 @@ public interface IFunction{
       return list;
   }
   static ArrayList<TypeInfo>parseTemplateGeneration(ExpIterator it,AEnv env)throws CompilerException{
-      var args = getTemplateArguments(it);
+      return parseTemplateGeneration(it,env,false);
+  }
+  static ArrayList<TypeInfo>parseTemplateGeneration(ExpIterator it,AEnv env,boolean classVariable)throws CompilerException{
+      var args = getTemplateArguments(it,classVariable);
       var types = new ArrayList<TypeInfo>();
       for(var arg:args){
           types.add(env.getType(arg));
       }
       return types;
+  }
+  static TypeInfo generateTypeFor(TypeInfo template,Atom typeAtom,ExpIterator it,AEnv env,boolean classVariable)throws CompilerException,IOException{
+      if(template instanceof TemplateTypeInfo tType){
+          return tType.generateTypeFor(parseTemplateGeneration(it,env,classVariable),env);
+      }
+      throw new CompilerException(typeAtom,"template type expected instead of " + template);
   }
   String INTERNAL_METHOD_PREFIX = "I";
 }

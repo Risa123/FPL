@@ -5,6 +5,7 @@ import risa.fpl.env.FnEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;
+import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -35,10 +36,11 @@ public abstract class AFunctionBlock extends ABlock{
             }else {
                 writer.write(',');
             }
-            var argType = env.getType(it.nextID());
+            var argTypeAtom = it.nextID();
+            var argType = env.getType(argTypeAtom);
             var argName = it.nextAtom();
             if(argName.getType() == TokenType.END_ARGS){
-                IFunction.parseTemplateGeneration(it,env);
+                argType = IFunction.generateTypeFor(argType,argTypeAtom,it,env,false);
                 argName = it.nextID();
             }else if(argName.getType() != TokenType.ID){
                 throw new CompilerException(argName,"identifier or ; expected");

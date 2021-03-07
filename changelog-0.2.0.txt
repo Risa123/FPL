@@ -5,3 +5,5 @@ class can now have template arguments
 attribute beginning symbol changed to :
 parent constructor call symbol changed to :
 "identifier expected" error message changed to "identifier expected instead of (atom)"
+fix unsupported system error message corrected to unsupported architecture
+fix C compilation of floating point numbers

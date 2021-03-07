@@ -11,8 +11,5 @@ interface IFunction{
  fn void compile
 }
 main{
-
-}
-fn void test ArrayList;int; arg{
-
+ [] ArrayList;int; 2 list
 }

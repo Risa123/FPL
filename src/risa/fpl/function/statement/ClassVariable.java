@@ -35,26 +35,25 @@ public final class ClassVariable extends Function{
 		if(id.getType() == TokenType.ID){
             compileVariable(writer,id,env,it);
         }else if(id.getType() == TokenType.CLASS_SELECTOR){
-		    if(it.peek() instanceof Atom atom && atom.getType() == TokenType.ID){
-		        it.next();
-		        var field = classType.getField(atom.getValue(),env);
-		        if(field == null){
-		            throw new CompilerException(atom,classType + " has no field called " + atom);
-		        }
-		        return field.compile(writer,env,it,line,atom.getCharNum());
-            }
-		    return classType;
+		    return compileClassSelector(it,env,writer,classType);
         }else if(id.getType() == TokenType.END_ARGS){
-            compileVariable(writer,null,env,it);
+            var varType = compileVariable(writer,null,env,it);
+            if(it.peek() instanceof Atom atom && atom.getType() == TokenType.CLASS_SELECTOR){
+                it.next();
+                return compileClassSelector(it,env,writer,varType.getClassInfo());
+            }
         }else{
 		    throw new CompilerException(id,"variable identifier or : expected");
         }
 		return TypeInfo.VOID;
 	}
-	private void compileVariable(BufferedWriter writer,Atom id,AEnv env,ExpIterator it)throws IOException,CompilerException{
+	private TypeInfo compileVariable(BufferedWriter writer,Atom id,AEnv env,ExpIterator it)throws IOException,CompilerException{
         TypeInfo varType;
         if(type instanceof TemplateTypeInfo tType){
-            varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env);
+            varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env,true),env);
+            if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
+                return varType;
+            }
             id = it.nextID(); //identifier follows after template arguments
         }else{
           varType = type;
@@ -75,6 +74,7 @@ public final class ClassVariable extends Function{
             throw new CompilerException(id,"there is already a function called " + id);
         }
         env.addFunction(id.getValue(),new Variable(type,IFunction.toCId(id.getValue()),id.getValue()));
+        return null;
     }
 	public void compileAsParentConstructor(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
        calledOnPointer();
@@ -82,5 +82,16 @@ public final class ClassVariable extends Function{
     }
     private void superCompile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
        super.compile(writer,env,it,line,charNum);
+    }
+    private TypeInfo compileClassSelector(ExpIterator it,AEnv env,BufferedWriter writer,TypeInfo classType)throws CompilerException,IOException{
+        if(it.peek() instanceof Atom atom && atom.getType() == TokenType.ID){
+            it.next();
+            var field = classType.getField(atom.getValue(),env);
+            if(field == null){
+                throw new CompilerException(atom,classType + " has no field called " + atom);
+            }
+            return field.compile(writer,env,it,atom.getLine(),atom.getCharNum());
+        }
+        return classType;
     }
 }

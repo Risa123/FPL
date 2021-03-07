@@ -95,6 +95,7 @@ public final class Tokenizer{
 						  if(signed){
 							  throw new CompilerException(line,charNum,"floating point number cannot be signed");
 						  }
+						  b.append('.');
 					  }else if(c == 'F'){
 						  type = TokenType.FLOAT;
 						  if(!floatingPoint) {

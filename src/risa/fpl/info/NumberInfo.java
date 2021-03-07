@@ -24,7 +24,7 @@ public final class NumberInfo extends TypeInfo{
 	  var type = "";
 	  var size = 0;
         switch(System.getProperty("os.arch")){
-            case "ia64", "amd64" ->{
+            case "ia64","amd64" ->{
                 size = 8;
                 type = "unsigned long long";
             }
@@ -32,7 +32,7 @@ public final class NumberInfo extends TypeInfo{
                 size = 4;
                 type = "unsigned int";
             }
-            default -> throw new IllegalStateException("unsupported system");
+            default -> throw new IllegalStateException("unsupported architecture");
         }
 	  MEMORY = new NumberInfo("memory",type,size);
     }

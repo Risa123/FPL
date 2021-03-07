@@ -33,14 +33,13 @@ public final class Var implements IFunction{
             throw new CompilerException(line,charNum,"native variables can only be declared in modules");
 		}
 		var decType = type;
-		if(it.peek() instanceof Atom begin && begin.getType() == TokenType.END_ARGS){
-		    it.next();
+		if(it.checkTemplate()){
 		    if(type instanceof TemplateTypeInfo tType){
 		        decType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env);
             }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
                 decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env));
             }else{
-		        throw new CompilerException(line,charNum,"template type expected");
+		        throw new CompilerException(line,charNum,"template type expected instead of " + type);
             }
         }
 		while(it.hasNext()){

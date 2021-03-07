@@ -6,16 +6,16 @@ import java.util.Iterator;
 import risa.fpl.CompilerException;
 import risa.fpl.tokenizer.TokenType;
 
-public final class ExpIterator {
+public final class ExpIterator{
   private final Iterator<AExp>it;
   private AExp peeked;
   private  int lastLine,lastCharNum;
-  public ExpIterator(ArrayList<AExp>exps,int firstLine,int firstCharNum) {
+  public ExpIterator(ArrayList<AExp>exps,int firstLine,int firstCharNum){
 	  this.it = exps.iterator();
 	  lastLine = firstLine;
 	  lastCharNum = firstCharNum;
   }
-  public AExp next() throws CompilerException {
+  public AExp next()throws CompilerException{
 	  if(peeked != null) {
 		  var r = peeked;
 		  peeked = null;
@@ -29,34 +29,41 @@ public final class ExpIterator {
 	  lastCharNum = exp.getCharNum();
 	  return exp;
   }
-  public Atom nextAtom() throws CompilerException {
+  public Atom nextAtom()throws CompilerException{
 	  var exp = next();
-	  if(!(exp instanceof Atom)) {
+	  if(!(exp instanceof Atom)){
 		 throw new CompilerException(exp,"atom expected");
 	  }
 	  return(Atom) exp;
   }
-  public Atom nextID() throws CompilerException {
+  public Atom nextID()throws CompilerException{
 	  var atom = nextAtom();
-	  if(atom.getType() != TokenType.ID) {
+	  if(atom.getType() != TokenType.ID){
 		  throw new CompilerException(atom,"identifier expected instead of " + atom);
 	  }
 	  return atom;
   }
-  public boolean hasNext() {
+  public boolean hasNext(){
 	  return it.hasNext() || peeked != null;
   }
-  public List nextList() throws CompilerException {
+  public List nextList()throws CompilerException{
 	  var list = next();
 	  if(!(list instanceof List)) {
 		  throw new CompilerException(list,"list expected");
 	  }
 	  return (List)list;
   }
-  public AExp peek() throws CompilerException {
+  public AExp peek()throws CompilerException{
 	  if(peeked == null) {
 		  peeked = next();
 	  }
 	  return peeked;
   }
+  public boolean checkTemplate()throws CompilerException{
+        var result = it.hasNext() && peek() instanceof Atom atom && atom.getType() == TokenType.END_ARGS;
+        if(result){
+            next();
+        }
+        return result;
+    }
 }
