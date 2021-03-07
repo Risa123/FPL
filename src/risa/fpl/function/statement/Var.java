@@ -35,9 +35,9 @@ public final class Var implements IFunction{
 		var decType = type;
 		if(it.checkTemplate()){
 		    if(type instanceof TemplateTypeInfo tType){
-		        decType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env);
+		        decType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum());
             }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
-                decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env));
+                decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum()));
             }else{
 		        throw new CompilerException(line,charNum,"template type expected instead of " + type);
             }
@@ -48,6 +48,9 @@ public final class Var implements IFunction{
                 var cID = IFunction.toCId(id.getValue());
                 if(env instanceof ModuleEnv e){
                     cID = e.getNameSpace() + cID;
+                }
+                if(env.hasFunctionInCurrentEnv(id.getValue())){
+                    throw new CompilerException(id,"there is already a function called " + id);
                 }
                 var onlyDeclared = false;
                 TypeInfo expType = null;

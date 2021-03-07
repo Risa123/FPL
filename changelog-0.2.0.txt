@@ -1,4 +1,5 @@
-0.2.0 snapshot 1
+0.2.0
+snapshot 1
 added alias and typedef to fpl-udl
 added templates
 class can now have template arguments
@@ -7,3 +8,7 @@ parent constructor call symbol changed to :
 "identifier expected" error message changed to "identifier expected instead of (atom)"
 fix unsupported system error message corrected to unsupported architecture
 fix C compilation of floating point numbers
+snapshot 2
+fix variable redeclaration check added
+fix argument count check added
+fix templates

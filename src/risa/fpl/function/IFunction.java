@@ -99,7 +99,7 @@ public interface IFunction{
   }
   static TypeInfo generateTypeFor(TypeInfo template,Atom typeAtom,ExpIterator it,AEnv env,boolean classVariable)throws CompilerException,IOException{
       if(template instanceof TemplateTypeInfo tType){
-          return tType.generateTypeFor(parseTemplateGeneration(it,env,classVariable),env);
+          return tType.generateTypeFor(parseTemplateGeneration(it,env,classVariable),env,it.getLastLine(),it.getLastCharNum());
       }
       throw new CompilerException(typeAtom,"template type expected instead of " + template);
   }

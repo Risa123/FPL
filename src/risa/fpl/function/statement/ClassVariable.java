@@ -38,7 +38,7 @@ public final class ClassVariable extends Function{
 		    return compileClassSelector(it,env,writer,classType);
         }else if(id.getType() == TokenType.END_ARGS){
             var varType = compileVariable(writer,null,env,it);
-            if(it.peek() instanceof Atom atom && atom.getType() == TokenType.CLASS_SELECTOR){
+            if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() == TokenType.CLASS_SELECTOR){
                 it.next();
                 return compileClassSelector(it,env,writer,varType.getClassInfo());
             }
@@ -50,7 +50,7 @@ public final class ClassVariable extends Function{
 	private TypeInfo compileVariable(BufferedWriter writer,Atom id,AEnv env,ExpIterator it)throws IOException,CompilerException{
         TypeInfo varType;
         if(type instanceof TemplateTypeInfo tType){
-            varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env,true),env);
+            varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env,true),env,it.getLastLine(),it.getLastCharNum());
             if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
                 return varType;
             }

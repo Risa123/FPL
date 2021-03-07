@@ -7,7 +7,6 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,7 +23,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
     public TemplateTypeInfo(String name,ModuleEnv module){
         super(name,module);
     }
-    public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,AEnv env)throws CompilerException,IOException{
+    public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
        if(!generatedTypes.containsKey(args)){
            var mod = getModule();
            var name = new StringBuilder(getName());
@@ -33,6 +32,9 @@ public final class TemplateTypeInfo extends InstanceInfo{
            }
            var cEnv = new ClassEnv(mod,name.toString(),TemplateStatus.GENERATING);
            var cName = new StringBuilder(getCname());
+           if(args.size() != templateArgs.size()){
+               throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + args.size());
+           }
            for(int i = 0;i < templateArgs.size();++i){
                cName.append('_');
                cName.append(args.get(i).getCname().replaceAll("\\*","_p"));

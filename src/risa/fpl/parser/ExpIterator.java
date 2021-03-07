@@ -60,10 +60,16 @@ public final class ExpIterator{
 	  return peeked;
   }
   public boolean checkTemplate()throws CompilerException{
-        var result = it.hasNext() && peek() instanceof Atom atom && atom.getType() == TokenType.END_ARGS;
+        var result = hasNext() && peek() instanceof Atom atom && atom.getType() == TokenType.END_ARGS;
         if(result){
             next();
         }
         return result;
+    }
+    public int getLastLine(){
+      return lastLine;
+    }
+    public int getLastCharNum(){
+      return lastCharNum;
     }
 }
