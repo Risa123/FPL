@@ -77,6 +77,48 @@ fn void defaultExceptionHandler Exception* ex{
   puts ex getMessage
   exit 1
 }
+fn void* realloc void* p memory newSize{
+  p = realloc p,newSize
+  if p == nil{
+    Exception ex "reallocation of memory failed"
+    ex throw
+  }
+  return p
+}
+fn void* malloc memory size{
+  var p malloc size
+  if p == nil{
+    Exception ex "allocation of memory failed"
+    ex throw
+  }
+  return p
+}
+alias free free
+class ArrayList ;T{
+ private{
+  T* array
+  memory len
+ }
+ this{
+   array = nil
+   len = 0
+ }
+ fn T get memory index{
+   return array get index
+ }
+ fn void set memory index T value{
+   if index >= len{
+      Exception ex "index out of bounds"
+      ex throw
+   }
+   array set index,value
+ }
+ fn void add T value{
+   if array == nil{
+      array = malloc T:getInstanceSize;cast void*
+   }
+ }
+}
 #these functions will be made inaccessible by compiler
 #string methods
 fn uint getLength string* this{
@@ -149,7 +191,7 @@ fn char toUpper char* this{
  }
  return this drf
 }
-#bool toString
+#string methods
 fn string toString bool* this{
    if this drf{
      return "true"

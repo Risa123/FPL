@@ -9,6 +9,9 @@ parent constructor call symbol changed to :
 fix unsupported system error message corrected to unsupported architecture
 fix C compilation of floating point numbers
 snapshot 2
+functions malloc,realloc and free added to std.lang
 fix variable redeclaration check added
 fix argument count check added
 fix templates
+fix disallow recursive module dependencies
+fix NPE caused by cast

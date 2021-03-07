@@ -42,6 +42,9 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    var types = new ArrayList<TypeInfo>();
 	    var declared = new ArrayList<TypeInfo>();
 	    for(var mod:importedModules){
+	        if(mod.importedModules.contains(this)){
+	            throw new CompilerException(0,0,"recursive dependency of module " + moduleBlock.getName() + " in module " + mod.moduleBlock.getName());
+            }
 	        for(var type:mod.types.values()){
 	            if(type.notContains(types)){
 	                types.add(type);
@@ -69,10 +72,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
 		for(var mod:importedModules){
             for(var func:mod.functions.values()){
-                if(func instanceof Function f){
-                    if(f.getAccessModifier() != AccessModifier.PRIVATE){
-                        writer.write(f.getDeclaration());
-                    }
+                if(func instanceof Function f && f.getAccessModifier() != AccessModifier.PRIVATE){
+                    writer.write(f.getDeclaration());
                 }else if(func instanceof Variable v){
                     writer.write(v.getExternDeclaration());
                 }

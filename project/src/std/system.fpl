@@ -12,19 +12,3 @@ fn int execute string cmd{
   }
   return exitCode
 }
-fn void* realloc void* p memory newSize{
-  p = realloc p,newSize
-  if p == nil{
-    Exception ex "reallocation of memory failed"
-    ex throw
-  }
-  return p
-}
-fn void* malloc memory size{
-  var p malloc size
-  if p == nil{
-    Exception ex "allocation of memory failed"
-    ex throw
-  }
-  return p
-}
