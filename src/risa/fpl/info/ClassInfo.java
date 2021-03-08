@@ -18,10 +18,12 @@ public final class ClassInfo extends TypeInfo{
     public static final ClassInfo SLONG = new ClassInfo("slong");
     public static final ClassInfo DOUBLE = new ClassInfo("double");
     public static final ClassInfo FLOAT = new ClassInfo("float");
+    public static final ClassInfo OBJECT = new ClassInfo("object");
     static{
         TypeInfo.CHAR.setClassInfo(CHAR);
         TypeInfo.BOOL.setClassInfo(BOOL);
         TypeInfo.STRING.setClassInfo(STRING);
+        TypeInfo.OBJECT.setClassInfo(OBJECT);
         NumberInfo.UBYTE.setClassInfo(UBYTE);
         NumberInfo.SBYTE.setClassInfo(SBYTE);
         NumberInfo.BYTE.setClassInfo(BYTE);
@@ -37,7 +39,7 @@ public final class ClassInfo extends TypeInfo{
         NumberInfo.FLOAT.setClassInfo(FLOAT);
         NumberInfo.DOUBLE.setClassInfo(DOUBLE);
     }
-    public ClassInfo(String name) {
+    public ClassInfo(String name){
         super(name + " class","",false);
     }
 }

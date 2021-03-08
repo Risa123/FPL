@@ -43,6 +43,25 @@ public final class TemplateTypeInfo extends InstanceInfo{
            var path = mod.getFPL().getOutputDirectory() + "/" + mod.getNameSpace().substring(1) + cName +".c";
            templateFiles.add(path);
            var writer = Files.newBufferedWriter(Paths.get(path));
+           var types = new ArrayList<TypeInfo>();
+           addRequiredTypes(types,this);
+           while(!types.isEmpty()){
+             var it = types.iterator();
+             while(it.hasNext()){
+                 var declaredAll = true;
+                 var type = it.next();
+                 for(var rt:type.getRequiredTypes()){
+                     if(!rt.notContains(types)){
+                         declaredAll = false;
+                         break;
+                     }
+                 }
+                 if(declaredAll){
+                     writer.write(type.getDeclaration());
+                     it.remove();
+                 }
+             }
+           }
            new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
            writer.write(cEnv.getFunctionDeclarations());
            writer.write(cEnv.getFunctionCode());
@@ -64,5 +83,13 @@ public final class TemplateTypeInfo extends InstanceInfo{
     }
     public ArrayList<String>getTemplateFiles(){
         return templateFiles;
+    }
+    private void addRequiredTypes(ArrayList<TypeInfo>types,TypeInfo type){
+        for(var t:type.getRequiredTypes()){
+            if(t.notContains(types)){
+                types.add(t);
+                addRequiredTypes(types,t);
+            }
+        }
     }
 }

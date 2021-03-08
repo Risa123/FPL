@@ -11,7 +11,13 @@ import risa.fpl.function.exp.*;
 
 public class TypeInfo {
   public static final TypeInfo VOID = new TypeInfo("void","void",true);
-  public static final TypeInfo OBJECT = new TypeInfo("object","");
+  public static final TypeInfo OBJECT = new TypeInfo("object",""){
+      @Override
+      public void setClassInfo(ClassInfo info){
+          addField("getObjectSize",new ValueExp(NumberInfo.MEMORY,null));
+          super.setClassInfo(info);
+      }
+  };
   public static final TypeInfo BOOL = new TypeInfo("bool","char",true);
   public static final TypeInfo STRING = new TypeInfo("string","char*",true);
   public static final TypeInfo CHAR = new TypeInfo("char","char",true);

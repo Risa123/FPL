@@ -104,6 +104,10 @@ class ArrayList ;T{
    len = 0
  }
  fn T get memory index{
+   if index >= len{
+     Exception ex "index out of bounds"
+     ex throw
+   }
    return array get index
  }
  fn void set memory index T value{
@@ -115,7 +119,7 @@ class ArrayList ;T{
  }
  fn void add T value{
    if array == nil{
-      array = malloc T:getInstanceSize;cast void*
+      array = malloc value getObjectSize;cast T*
    }
  }
 }

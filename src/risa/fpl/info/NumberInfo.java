@@ -2,23 +2,10 @@ package risa.fpl.info;
 
 import risa.fpl.function.exp.BinaryOperator;
 import risa.fpl.function.exp.Cast;
+import risa.fpl.function.exp.UnaryOperator;
 import risa.fpl.function.exp.ValueExp;
 
 public final class NumberInfo extends TypeInfo{
-	public static final NumberInfo BYTE = new NumberInfo("byte","char",1);
-	public static final NumberInfo UBYTE = new NumberInfo("ubyte","unsigned char",1);
-	public static final NumberInfo SBYTE = new NumberInfo("sbyte","signed char",1);
-	public static final NumberInfo SHORT = new NumberInfo("short","short",2);
-	public static final NumberInfo SSHORT = new NumberInfo("sshort","signed short",2);
-	public static final NumberInfo USHORT = new NumberInfo("ushort","unsigned short",2);
-	public static final NumberInfo INT = new NumberInfo("int","int",4);
-	public static final NumberInfo UINT = new NumberInfo("uint","unsigned int",4);
-	public static final NumberInfo SINT = new NumberInfo("sint","signed int",4);
-	public static final NumberInfo LONG = new NumberInfo("long","long",8);
-	public static final NumberInfo SLONG = new NumberInfo("slong","signed long",8);
-	public static final NumberInfo ULONG = new NumberInfo("ulong","unsigned long",8);
-	public static final NumberInfo FLOAT = new NumberInfo("float","float",4,true);
-	public static final NumberInfo DOUBLE = new NumberInfo("double","double",8,true);
 	public static final NumberInfo MEMORY;
 	static{
 	  var type = "";
@@ -36,6 +23,20 @@ public final class NumberInfo extends TypeInfo{
         }
 	  MEMORY = new NumberInfo("memory",type,size);
     }
+    public static final NumberInfo BYTE = new NumberInfo("byte","char",1);
+    public static final NumberInfo UBYTE = new NumberInfo("ubyte","unsigned char",1);
+    public static final NumberInfo SBYTE = new NumberInfo("sbyte","signed char",1);
+    public static final NumberInfo SHORT = new NumberInfo("short","short",2);
+    public static final NumberInfo SSHORT = new NumberInfo("sshort","signed short",2);
+    public static final NumberInfo USHORT = new NumberInfo("ushort","unsigned short",2);
+    public static final NumberInfo INT = new NumberInfo("int","int",4);
+    public static final NumberInfo UINT = new NumberInfo("uint","unsigned int",4);
+    public static final NumberInfo SINT = new NumberInfo("sint","signed int",4);
+    public static final NumberInfo LONG = new NumberInfo("long","long",8);
+    public static final NumberInfo SLONG = new NumberInfo("slong","signed long",8);
+    public static final NumberInfo ULONG = new NumberInfo("ulong","unsigned long",8);
+    public static final NumberInfo FLOAT = new NumberInfo("float","float",4,true);
+    public static final NumberInfo DOUBLE = new NumberInfo("double","double",8,true);
 	public static final TypeInfo NUMBER = new TypeInfo("number","");
     private final int size;
     private final boolean floatingPoint;
@@ -43,6 +44,7 @@ public final class NumberInfo extends TypeInfo{
 		super(name, cname,true);
 		this.size = size;
 		this.floatingPoint = floatingPoint;
+		addField("getObjectSize",new UnaryOperator(MEMORY,"sizeof ",false));
 		addField("==",new BinaryOperator(TypeInfo.BOOL,this,"=="));
 		addField("!=",new BinaryOperator(TypeInfo.BOOL,this,"!="));
 		addField(">",new BinaryOperator(TypeInfo.BOOL,this,">"));
@@ -68,7 +70,7 @@ public final class NumberInfo extends TypeInfo{
     @Override
     public void setClassInfo(ClassInfo info){
         super.setClassInfo(info);
-        getClassInfo().addField("getObjectSize",new ValueExp(NumberInfo.MEMORY,"sizeof " + getCname()));
+        getClassInfo().addField("getInstanceSize",new ValueExp(MEMORY,"sizeof " + getCname()));
     }
     @Override
 	public boolean equals(Object o) {

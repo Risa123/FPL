@@ -90,13 +90,13 @@ public final class FPL{
 	public static void main(String[] args)throws IOException{
 		if(args.length != 1) {
 			System.err.println("<project directory> expected");
-			System.exit(1);
+			System.exit(2);
 		}
 		try{
 			new FPL(args[0],System.err).compile();
 		}catch (CompilerException e){
 			System.err.println(e.getMessage());
-			System.exit(2);
+			System.exit(3);
 		}
 	}
 	Collection<ModuleBlock> getModules(){
