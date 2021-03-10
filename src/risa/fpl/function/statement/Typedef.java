@@ -19,6 +19,9 @@ public final class Typedef implements IFunction{
         if(env.hasTypeInCurrentEnv(type.getValue()) && env.getType(type) instanceof CustomTypeInfo t && t.isPrimitive()){
             throw new CompilerException(type,"type " + type + " is already defined");
         }
+        if(env.hasFunctionInCurrentEnv(type.getValue())){
+            throw new CompilerException(type,"type cannot be declared identifier for declaration function occupied");
+        }
         var originalType = it.nextID();
         var after = "";
         if(originalType.getValue().equals("[]")){
@@ -30,6 +33,9 @@ public final class Typedef implements IFunction{
            originalType = it.nextID();
         }
         var t = env.getType(originalType);
+        if(it.checkTemplate()){
+           t =  IFunction.generateTypeFor(t,originalType,it,env,false);
+        }
         if(t == null){
             throw new CompilerException(originalType,"type " + originalType + " not found");
         }

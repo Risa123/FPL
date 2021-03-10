@@ -68,11 +68,6 @@ public final class NumberInfo extends TypeInfo{
 		addField("%",new BinaryOperator(this,this,"%"));
 	}
     @Override
-    public void setClassInfo(ClassInfo info){
-        super.setClassInfo(info);
-        getClassInfo().addField("getInstanceSize",new ValueExp(MEMORY,"sizeof " + getCname()));
-    }
-    @Override
 	public boolean equals(Object o) {
 		if(o instanceof NumberInfo n) {
 			if(!floatingPoint && n.floatingPoint) {

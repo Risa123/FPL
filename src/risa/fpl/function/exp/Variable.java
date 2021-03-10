@@ -24,7 +24,7 @@ public final class Variable extends ValueExp{
 		this.constant = constant;
 		this.instanceType = instanceType;
 	}
-    public Variable(TypeInfo type,String code,String id) {
+    public Variable(TypeInfo type,String code,String id){
        this(type,code,false,id,false,null,AccessModifier.PUBLIC);
     }
 	@Override
@@ -73,12 +73,13 @@ public final class Variable extends ValueExp{
 		return super.compile(writer,env,it,line,charNum);
 	}
 	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException,CompilerException{
-            switch (operator){
+            switch(operator){
                 case "+=", "-=", "/=", "*=" ->{
                     process(operator,writer,it,env);
                     return TypeInfo.VOID;
                 }
                 case "++","--","p+","p-" ->{
+                    writePrev(writer);
                     writer.write(code);
                     if(operator.equals("p+")){
                         operator = "++";

@@ -1,5 +1,7 @@
 package risa.fpl.info;
 
+import risa.fpl.function.exp.ValueExp;
+
 public final class ClassInfo extends TypeInfo{
     public static final ClassInfo CHAR = new ClassInfo("char");
     public static final ClassInfo BOOL = new ClassInfo("bool");
@@ -38,6 +40,12 @@ public final class ClassInfo extends TypeInfo{
         NumberInfo.SLONG.setClassInfo(SLONG);
         NumberInfo.FLOAT.setClassInfo(FLOAT);
         NumberInfo.DOUBLE.setClassInfo(DOUBLE);
+        CHAR.addSize(NumberInfo.CHAR);
+        BOOL.addSize(TypeInfo.BOOL);
+        STRING.addSize(TypeInfo.STRING);
+    }
+    private void addSize(TypeInfo instance){
+        addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof " + instance.getCname()));
     }
     public ClassInfo(String name){
         super(name + " class","",false);

@@ -5,12 +5,7 @@ class Exception{
    private{
      string message
      fn void copy Exception* to{
-       memory i 0L
-       while i < getObjectSize{
-          to cast byte* set i,this cast byte* get i
-          i ++
-       }
-     }
+       memoryCopy
    }
    this string message{
      this message = message
@@ -92,6 +87,14 @@ fn void* malloc memory size{
     ex throw
   }
   return p
+}
+private void memoryCopy byte* src byte* dest memory size{
+    memory i 0L
+    while i < getObjectSize{
+     dest set i,src get i
+     i ++
+    }
+    }
 }
 alias free free
 class ArrayList;T{

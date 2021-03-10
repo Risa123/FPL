@@ -104,7 +104,11 @@ public final class ModuleBlock extends ATwoPassBlock {
        return list;
    }
    public void makeMethod(String name,TypeInfo ofType){
-       ofType.addField(name,env.getAndRemove(name).makeMethod(ofType));
+       var func = env.getAndRemove(name);
+       if(func == null){
+           return;
+       }
+       ofType.addField(name,func.makeMethod(ofType));
    }
    public ModuleEnv getEnv(){
        return env;

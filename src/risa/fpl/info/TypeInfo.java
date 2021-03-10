@@ -37,6 +37,9 @@ public class TypeInfo {
       BOOL.addField("!=",new BinaryOperator(BOOL,BOOL,"!="));
 	  NIL.addField("==",new BinaryOperator(BOOL,NIL,"=="));
       NIL.addField("!=",new BinaryOperator(BOOL,NIL,"!="));
+      BOOL.addSize();
+      CHAR.addSize();
+      STRING.addSize();
   }
   private final String name,cname;
   private String declaration = "";
@@ -246,5 +249,8 @@ public class TypeInfo {
   }
   public void setDeclaration(String declaration){
       this.declaration = declaration;
+  }
+  private void addSize(){
+      addField("getObjectSize",new UnaryOperator(NumberInfo.MEMORY,"sizeof ",false));
   }
 }
