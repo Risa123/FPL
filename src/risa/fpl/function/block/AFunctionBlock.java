@@ -5,7 +5,6 @@ import risa.fpl.env.FnEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;
-import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -45,6 +44,9 @@ public abstract class AFunctionBlock extends ABlock{
             }else if(argName.getType() != TokenType.ID){
                 throw new CompilerException(argName,"identifier or ; expected");
             }
+            if(args.containsKey(argName.getValue())){
+                throw new CompilerException(argName,"there is already argument called " + argName);
+            }
             args.put(argName.getValue(),argType);
             var argNameCID = IFunction.toCId(argName.getValue());
             if(argType instanceof PointerInfo p && p.isFunctionPointer()){
@@ -53,9 +55,6 @@ public abstract class AFunctionBlock extends ABlock{
                 writer.write(argType.getCname());
                 writer.write(' ');
                 writer.write(argNameCID);
-            }
-            if(env.hasFunctionInCurrentEnv(argName.getValue())){
-                throw new CompilerException(argName,"there is already argument called " + argName);
             }
             env.addFunction(argName.getValue(),new Variable(argType,IFunction.toCId(argName.getValue()),argName.getValue()));
         }

@@ -12,7 +12,6 @@ import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
-import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
@@ -32,7 +31,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	}
 	private void addRequiredTypes(TypeInfo type,ArrayList<TypeInfo>types){
 	    for(var t:type.getRequiredTypes()){
-	       if(t.notContains(types)){
+	       if(t.notIn(types)){
                types.add(t);
                addRequiredTypes(t,types);
            }
@@ -46,7 +45,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	            throw new CompilerException(0,0,"recursive dependency of module " + moduleBlock.getName() + " in module " + mod.moduleBlock.getName());
             }
 	        for(var type:mod.types.values()){
-	            if(type.notContains(types)){
+	            if(type.notIn(types)){
 	                types.add(type);
 	                addRequiredTypes(type,types);
                 }
@@ -58,7 +57,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
                var t = it.next();
                var hasAll = true;
                for(var rt:t.getRequiredTypes()){
-                   if(rt.notContains(declared)){
+                   if(rt.notIn(declared)){
                        hasAll = false;
                        break;
                    }
@@ -164,15 +163,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
             }
         }
 	    return true;
-    }
-    public ArrayList<String>getTemplateFiles(){
-	    var files = new ArrayList<String>();
-	    for(var type:types.values()){
-	        if(type instanceof TemplateTypeInfo t){
-	            files.addAll(t.getTemplateFiles());
-            }
-        }
-	    return files;
     }
     public String getTemplateInstanceDeclarations(){
 	    return templateInstanceDeclaration.toString();

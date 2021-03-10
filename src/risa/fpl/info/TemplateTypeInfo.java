@@ -7,9 +7,9 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -18,7 +18,6 @@ public final class TemplateTypeInfo extends InstanceInfo{
     private List block;
     private ArrayList<InterfaceInfo>interfaces;
     private LinkedHashMap<String,TypeInfo>templateArgs;
-    private final ArrayList<String>templateFiles = new ArrayList<>();
     private final HashMap<ArrayList<TypeInfo>,InstanceInfo>generatedTypes = new HashMap<>();
     public TemplateTypeInfo(String name,ModuleEnv module){
         super(name,module);
@@ -26,41 +25,21 @@ public final class TemplateTypeInfo extends InstanceInfo{
     public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
        if(!generatedTypes.containsKey(args)){
            var mod = getModule();
+           var path = env.getFPL().getOutputDirectory() + "/" + mod.getNameSpace().substring(1) + ".fpl.c";
+           var writer = new BufferedWriter(new FileWriter(path,true));
            var name = new StringBuilder(getName());
            for(var arg:args){
                name.append(arg.getName());
+               if(!(mod.hasTypeInCurrentEnv(arg.getName()) && mod.getType(new Atom(0,0,arg.getName(),TokenType.ID)).identical(arg))){
+                   writer.write(arg.getDeclaration());
+               }
            }
            var cEnv = new ClassEnv(mod,name.toString(),TemplateStatus.GENERATING);
-           var cName = new StringBuilder(getCname());
            if(args.size() != templateArgs.size()){
                throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + args.size());
            }
            for(int i = 0;i < templateArgs.size();++i){
-               cName.append('_');
-               cName.append(args.get(i).getCname().replaceAll("\\*","_p"));
                cEnv.addType((String)templateArgs.keySet().toArray()[i],args.get(i));
-           }
-           var path = mod.getFPL().getOutputDirectory() + "/" + mod.getNameSpace().substring(1) + cName +".c";
-           templateFiles.add(path);
-           var writer = Files.newBufferedWriter(Paths.get(path));
-           var types = new ArrayList<TypeInfo>();
-           addRequiredTypes(types,this);
-           while(!types.isEmpty()){
-             var it = types.iterator();
-             while(it.hasNext()){
-                 var declaredAll = true;
-                 var type = it.next();
-                 for(var rt:type.getRequiredTypes()){
-                     if(!rt.notContains(types)){
-                         declaredAll = false;
-                         break;
-                     }
-                 }
-                 if(declaredAll){
-                     writer.write(type.getDeclaration());
-                     it.remove();
-                 }
-             }
            }
            new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
            writer.write(cEnv.getFunctionDeclarations());
@@ -80,16 +59,5 @@ public final class TemplateTypeInfo extends InstanceInfo{
         this.block = block;
         this.interfaces = interfaces;
         this.templateArgs = templateArgs;
-    }
-    public ArrayList<String>getTemplateFiles(){
-        return templateFiles;
-    }
-    private void addRequiredTypes(ArrayList<TypeInfo>types,TypeInfo type){
-        for(var t:type.getRequiredTypes()){
-            if(t.notContains(types)){
-                types.add(t);
-                addRequiredTypes(types,t);
-            }
-        }
     }
 }

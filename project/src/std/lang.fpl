@@ -94,7 +94,7 @@ fn void* malloc memory size{
   return p
 }
 alias free free
-class ArrayList ;T{
+class ArrayList;T{
  private{
   T* array
   memory len
@@ -118,10 +118,12 @@ class ArrayList ;T{
    array set index,value
  }
  fn void add T value{
+   len ++
    if array == nil{
       array = malloc value getObjectSize;cast T*
+   }{
+    array = realloc array cast void*,len * value getObjectSize; cast T*
    }
- }
 }
 #these functions will be made inaccessible by compiler
 #string methods

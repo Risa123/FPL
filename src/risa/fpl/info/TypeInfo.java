@@ -120,13 +120,13 @@ public class TypeInfo {
       declaration = declarationBuilder.toString();
   }
   protected void addRequiredType(TypeInfo type){
-      if(!type.isPrimitive() && type.notContains(requiredTypes)){
+      if(!type.isPrimitive() && type.notIn(requiredTypes)){
          requiredTypes.add(type);
       }else if(type instanceof PointerInfo p && !p.getType().isPrimitive() && p.isArray()){
           requiredTypes.add(p.getType());
       }
   }
-  public boolean notContains(ArrayList<TypeInfo>types){
+  public boolean notIn(ArrayList<TypeInfo>types){
         for(var t:types){
             if(t == this){
                 return false;
@@ -222,7 +222,14 @@ public class TypeInfo {
       if(o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this)){
           return true;
       }
-      return ((TypeInfo)o).cname.equals(cname);
+      return identical((TypeInfo)o);
+  }
+  public boolean identical(TypeInfo type){
+      var nameResult = cname.equals(type.cname);
+      if(type instanceof InstanceInfo i && this instanceof InstanceInfo thisI){
+          return nameResult && thisI.getModule().getNameSpace().equals(i.getModule().getNameSpace());
+      }
+      return nameResult;
   }
   public String getConversionMethodCName(TypeInfo type){
       return conversionMethodCNames.get(type);

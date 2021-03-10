@@ -196,10 +196,10 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                 }
             }
         }
-        type.buildDeclaration(); //only adds required types
         if(templateStatus != TemplateStatus.TEMPLATE){
             modEnv.appendFunctionDeclarations(cEnv.getFunctionDeclarations());
             modEnv.appendFunctionCode(cEnv.getFunctionCode());
+            type.buildDeclaration();
             modEnv.appendFunctionCode(cEnv.getInitializer("_cinit"));
             modEnv.appendToInitializer(cEnv.getInitializerCall());
         }

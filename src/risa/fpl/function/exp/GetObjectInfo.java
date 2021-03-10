@@ -2,6 +2,7 @@ package risa.fpl.function.exp;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.IClassOwnedEnv;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
@@ -23,17 +24,17 @@ public final class GetObjectInfo extends AField implements  ICalledOnPointer{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var prev = new BuilderWriter(writer);
-        prev.write("((" + self.getClassDataType());
-        writePrev(prev);
-        if(!calledOnPointer){
-            prev.write(')');
-            if(getPrevCode() == null){
-                prev.write("this");
-            }
+        prev.write("((" + self.getClassDataType() + ")");
+        var calledOnThis = getPrevCode() == null && self.getClassInfo() == ((IClassOwnedEnv)env).getClassType();
+        if(calledOnThis){
+            prev.write("this");
+        }
+        writePrev(prev); //prev code not null
+        if(calledOnPointer || calledOnThis){
             prev.write("->");
-        }else{
             calledOnPointer = false;
-            prev.write("&).");
+        }else{
+            prev.write('.');
         }
         prev.write("object_data)->" + field);
         return  compileChainedCall(returnType,writer,env,it,prev.getCode());

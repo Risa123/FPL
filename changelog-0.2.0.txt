@@ -18,3 +18,4 @@ fix NPE caused by static call on template argument
 fix number type:getObjectSize renamed to getInstanceSize
 fix getObjectSize added to all number types
 fix changed error code for wrong arguments to 2 and 3 for compilation error
+fix getObjetSize C error
