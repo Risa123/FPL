@@ -21,6 +21,7 @@ public final class ClassInfo extends TypeInfo{
     public static final ClassInfo DOUBLE = new ClassInfo("double");
     public static final ClassInfo FLOAT = new ClassInfo("float");
     public static final ClassInfo OBJECT = new ClassInfo("object");
+    public static final ClassInfo MEMORY = new ClassInfo("memory");
     static{
         TypeInfo.CHAR.setClassInfo(CHAR);
         TypeInfo.BOOL.setClassInfo(BOOL);
@@ -40,12 +41,28 @@ public final class ClassInfo extends TypeInfo{
         NumberInfo.SLONG.setClassInfo(SLONG);
         NumberInfo.FLOAT.setClassInfo(FLOAT);
         NumberInfo.DOUBLE.setClassInfo(DOUBLE);
+        NumberInfo.MEMORY.setClassInfo(MEMORY);
         CHAR.addSize(NumberInfo.CHAR);
         BOOL.addSize(TypeInfo.BOOL);
         STRING.addSize(TypeInfo.STRING);
+        UBYTE.addSize(NumberInfo.UBYTE);
+        SBYTE.addSize(NumberInfo.SBYTE);
+        BYTE.addSize(NumberInfo.BYTE);
+        SHORT.addSize(NumberInfo.SHORT);
+        SSHORT.addSize(NumberInfo.SSHORT);
+        USHORT.addSize(NumberInfo.USHORT);
+        UINT.addSize(NumberInfo.UINT);
+        SINT.addSize(NumberInfo.SINT);
+        INT.addSize(NumberInfo.INT);
+        ULONG.addSize(NumberInfo.ULONG);
+        SLONG.addSize(NumberInfo.SLONG);
+        LONG.addSize(NumberInfo.LONG);
+        FLOAT.addSize(NumberInfo.FLOAT);
+        DOUBLE.addSize(NumberInfo.DOUBLE);
+        OBJECT.addSize(TypeInfo.OBJECT);
     }
     private void addSize(TypeInfo instance){
-        addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof " + instance.getCname()));
+        addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + instance.getCname() + ")"));
     }
     public ClassInfo(String name){
         super(name + " class","",false);

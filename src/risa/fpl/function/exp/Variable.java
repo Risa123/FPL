@@ -38,7 +38,7 @@ public final class Variable extends ValueExp{
 		    writer.write(code);
 			writer.write('=');
 			onlyDeclared = false;
-		    execute(it,writer,env);
+		    execute(it,writer,env,""); //not drf equals
 		    return TypeInfo.VOID;
 		}else if(value.equals("ref")){
             writer.write('&');
@@ -103,13 +103,17 @@ public final class Variable extends ValueExp{
     private void process(String operator,BufferedWriter writer,ExpIterator it,AEnv env)throws IOException,CompilerException{
 	    writer.write(code);
         writer.write(operator);
-        execute(it,writer,env);
+        execute(it,writer,env,operator);
     }
-    private void execute(ExpIterator it,BufferedWriter writer,AEnv env)throws CompilerException,IOException{
+    private void execute(ExpIterator it,BufferedWriter writer,AEnv env,String operator)throws CompilerException,IOException{
 	    var exp = it.next();
 	    var ret = exp.compile(writer,env,it);
-	    if(!type.equals(ret)){
-	        throw new CompilerException(exp,"expression expected to return  " + type + " instead of " + ret);
+	    var t = type;
+	    if(operator.equals("=") && type instanceof PointerInfo p){
+	        t = p.getType();
+        }
+	    if(!t.equals(ret)){
+	        throw new CompilerException(exp,"expression expected to return  " + t + " instead of " + ret);
         }
     }
     public TypeInfo getType(){

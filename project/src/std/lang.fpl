@@ -2,11 +2,7 @@
 use std.backend
 
 class Exception{
-   private{
-     string message
-     fn void copy Exception* to{
-       memoryCopy
-   }
+   private string message
    this string message{
      this message = message
    }
@@ -17,11 +13,11 @@ class Exception{
        return
      }
      currentThread exception = malloc getObjectSize; cast Exception*
-     copy currentThread exception
+     memoryCopy this cast byte*,currentThread exception cast byte*,getObjectSize
      contextRestore currentThread currentEHentry context
    }
    internal fn void copyAndFree Exception* to{
-     copy to
+     memoryCopy this cast byte*,to cast byte*,getObjectSize
      free this cast void*
    }
 }
@@ -88,12 +84,11 @@ fn void* malloc memory size{
   }
   return p
 }
-private void memoryCopy byte* src byte* dest memory size{
+private fn void memoryCopy byte* src byte* dest memory size{
     memory i 0L
-    while i < getObjectSize{
+    while i < size{
      dest set i,src get i
      i ++
-    }
     }
 }
 alias free free
@@ -124,8 +119,10 @@ class ArrayList;T{
    len ++
    if array == nil{
       array = malloc value getObjectSize;cast T*
+      array drf= value
    }{
-    array = realloc array cast void*,len * value getObjectSize; cast T*
+    array = realloc array cast void*,len * T:getInstanceSize; cast T*
+    memoryCopy value ref cast byte*,array cast byte*,T:getInstanceSize
    }
 }
 #these functions will be made inaccessible by compiler

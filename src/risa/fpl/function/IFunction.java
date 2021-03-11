@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.function.statement.ClassVariable;
+import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -53,8 +55,14 @@ public interface IFunction{
   static LinkedHashMap<String,TypeInfo> parseTemplateArguments(ExpIterator it,AEnv env)throws CompilerException{
      var args = new LinkedHashMap<String,TypeInfo>();
      for(var arg:getTemplateArguments(it,false)){
-         args.put(arg.getValue(),TypeInfo.OBJECT);
-         env.addType(arg.getValue(),TypeInfo.OBJECT);
+         var argType = new TypeInfo(arg.getValue(),"");
+         argType.setPrimaryParent(TypeInfo.OBJECT);
+         var cls = new ClassInfo(arg.getValue());
+         argType.setClassInfo(cls);
+         cls.setPrimaryParent(ClassInfo.OBJECT);
+         args.put(arg.getValue(),argType);
+         env.addType(arg.getValue(),argType);
+         env.addFunction(arg.getValue(),new ClassVariable(argType,cls,new TypeInfo[0],""));
      }
      return args;
   }

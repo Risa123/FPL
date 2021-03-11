@@ -8,8 +8,8 @@ import risa.fpl.function.exp.ValueExp;
 public final class NumberInfo extends TypeInfo{
 	public static final NumberInfo MEMORY;
 	static{
-	  var type = "";
-	  var size = 0;
+	    String type;
+	    int size;
         switch(System.getProperty("os.arch")){
             case "ia64","amd64" ->{
                 size = 8;
@@ -21,7 +21,7 @@ public final class NumberInfo extends TypeInfo{
             }
             default -> throw new IllegalStateException("unsupported architecture");
         }
-	  MEMORY = new NumberInfo("memory",type,size);
+	    MEMORY = new NumberInfo("memory",type,size);
     }
     public static final NumberInfo BYTE = new NumberInfo("byte","char",1);
     public static final NumberInfo UBYTE = new NumberInfo("ubyte","unsigned char",1);

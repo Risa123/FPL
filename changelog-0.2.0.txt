@@ -10,6 +10,8 @@ fix unsupported system error message corrected to unsupported architecture
 fix C compilation of floating point numbers
 snapshot 2
 functions malloc,realloc and free added to std.lang
+errors in template now show type named after template argument instead of object
+ArrayList added to std.lang
 fix variable redeclaration check added
 fix argument count check added
 fix templates
@@ -22,3 +24,4 @@ fix changed error code for wrong arguments to 2 and 3 for compilation error
 fix getObjetSize C error
 fix variable method inc/dec  C error
 fix template added to typedef
+fix lone getInstanceSize call on line
