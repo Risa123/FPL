@@ -22,6 +22,7 @@ fix getObjectSize to all number types
 fix added getInstanceSize/getObjectSize to all primitives
 fix changed error code for wrong arguments to 2 and 3 for compilation error
 fix getObjetSize C error
-fix variable method inc/dec  C error
+fix variable method C errors
 fix template added to typedef
 fix lone getInstanceSize call on line
+fix reference chained call

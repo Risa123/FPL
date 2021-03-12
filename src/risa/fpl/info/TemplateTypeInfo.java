@@ -3,6 +3,7 @@ package risa.fpl.info;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.block.ClassBlock;
+import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
@@ -39,7 +40,10 @@ public final class TemplateTypeInfo extends InstanceInfo{
                throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + args.size());
            }
            for(int i = 0;i < templateArgs.size();++i){
-               cEnv.addType((String)templateArgs.keySet().toArray()[i],args.get(i));
+               var typeName = (String)templateArgs.keySet().toArray()[i];
+               var type = args.get(i);
+               cEnv.addType(typeName,type);
+               cEnv.addFunction(typeName,new ClassVariable(type,type.getClassInfo(),new TypeInfo[0],""));
            }
            new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
            writer.write(cEnv.getFunctionDeclarations());

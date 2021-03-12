@@ -11,6 +11,7 @@ import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.tokenizer.TokenType;
 
 public final class Variable extends ValueExp{
 	private boolean onlyDeclared;
@@ -44,7 +45,16 @@ public final class Variable extends ValueExp{
             writer.write('&');
             writePrev(writer);
 		    writer.write(code);
-			return new PointerInfo(type);
+		    var ret = new PointerInfo(type);
+		    if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == TokenType.ID){
+		        it.next();
+		        var field = ret.getField(id.getValue(),env);
+		        if(field == null){
+		            throw new CompilerException(id,ret + " has no field called " + id);
+                }
+		        return field.compile(writer,env,it,id.getLine(),id.getCharNum());
+            }
+			return ret;
 		}else if(type instanceof PointerInfo p && !p.isFunctionPointer()){
 		    TypeInfo t;
            if((t = processOperator(value,writer,it,env)) != null){
@@ -75,6 +85,7 @@ public final class Variable extends ValueExp{
 	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException,CompilerException{
             switch(operator){
                 case "+=", "-=", "/=", "*=" ->{
+                    writePrev(writer);
                     process(operator,writer,it,env);
                     return TypeInfo.VOID;
                 }
@@ -95,6 +106,7 @@ public final class Variable extends ValueExp{
                 return TypeInfo.VOID;
             }else if(type instanceof PointerInfo && operator.equals("drf=")){
                 writer.write('*');
+                writePrev(writer);
                 process("=",writer,it,env);
                 return TypeInfo.VOID;
             }

@@ -3,7 +3,6 @@ package risa.fpl.info;
 import risa.fpl.function.exp.BinaryOperator;
 import risa.fpl.function.exp.Cast;
 import risa.fpl.function.exp.UnaryOperator;
-import risa.fpl.function.exp.ValueExp;
 
 public final class NumberInfo extends TypeInfo{
 	public static final NumberInfo MEMORY;
@@ -11,11 +10,11 @@ public final class NumberInfo extends TypeInfo{
 	    String type;
 	    int size;
         switch(System.getProperty("os.arch")){
-            case "ia64","amd64" ->{
+            case "ia64","amd64"->{
                 size = 8;
                 type = "unsigned long long";
             }
-            case "x86" ->{
+            case "x86"->{
                 size = 4;
                 type = "unsigned int";
             }
@@ -40,7 +39,7 @@ public final class NumberInfo extends TypeInfo{
 	public static final TypeInfo NUMBER = new TypeInfo("number","");
     private final int size;
     private final boolean floatingPoint;
-	public NumberInfo(String name, String cname,int size,boolean floatingPoint){
+	public NumberInfo(String name,String cname,int size,boolean floatingPoint){
 		super(name, cname,true);
 		this.size = size;
 		this.floatingPoint = floatingPoint;
@@ -68,9 +67,9 @@ public final class NumberInfo extends TypeInfo{
 		addField("%",new BinaryOperator(this,this,"%"));
 	}
     @Override
-	public boolean equals(Object o) {
-		if(o instanceof NumberInfo n) {
-			if(!floatingPoint && n.floatingPoint) {
+	public boolean equals(Object o){
+		if(o instanceof NumberInfo n){
+			if(!floatingPoint && n.floatingPoint){
 				return false;
 			}
 			return size >= n.size;
