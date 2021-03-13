@@ -73,7 +73,7 @@ public final class ClassVariable extends Function{
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);
         }
-        env.addFunction(id.getValue(),new Variable(type,IFunction.toCId(id.getValue()),id.getValue()));
+        env.addFunction(id.getValue(),new Variable(varType,IFunction.toCId(id.getValue()),id.getValue()));
         return null;
     }
 	public void compileAsParentConstructor(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{

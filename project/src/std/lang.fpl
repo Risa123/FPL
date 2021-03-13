@@ -1,6 +1,9 @@
 (#this module is imported automatically)
 use std.backend
 
+class String{
+
+}
 class Exception{
    private string message
    this string message{
@@ -116,13 +119,14 @@ class ArrayList;T{
    array set index,value
  }
  fn void add T value{
+   var oldLen len
    len ++
    if array == nil{
       array = malloc value getObjectSize;cast T*
       array drf= value
    }{
     array = realloc array cast void*,len * T:getInstanceSize; cast T*
-    memoryCopy value ref cast byte*,array cast byte*,T:getInstanceSize
+    memoryCopy value ref cast byte*,array cast byte* + T:getInstanceSize * oldLen,T:getInstanceSize
    }
 }
 #these functions will be made inaccessible by compiler

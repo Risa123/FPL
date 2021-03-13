@@ -134,9 +134,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public boolean isMain(){
 	    return moduleBlock.isMain();
     }
-    public ArrayList<ModuleEnv> getModuleEnvironments(){
-	    return moduleBlock.getModuleEnvironments();
-    }
     public void initCalled(){
 	    initCalled = true;
     }
@@ -166,5 +163,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public String getTemplateInstanceDeclarations(){
 	    return templateInstanceDeclaration.toString();
+    }
+    public ArrayList<ModuleEnv>getImportedModules(){
+	    return importedModules;
     }
 }

@@ -123,7 +123,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         writer.write(b.getCode() + cEnv.getDataDefinition());
         var constructor = type.getConstructor();
         if(constructor == null){
-            constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this)); //here
+            constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this));
             cEnv.addMethod(constructor,cEnv.getImplicitConstructor());
             type.setConstructor(constructor);
         }
@@ -143,7 +143,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
             writer.write(type.getCname());
             writer.write("));\n");
             writer.write(constructorCall(constructor,"p"));
-            writer.write("\nreturn p;\n}\n");
+            writer.write("return p;\n}\n");
             var allocMethod = Function.newStatic("alloc",new PointerInfo(type),args,cEnv);
             var classType = cEnv.getClassType();
             classType.addField("alloc",allocMethod);

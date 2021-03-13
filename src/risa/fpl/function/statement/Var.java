@@ -55,6 +55,7 @@ public final class Var implements IFunction{
                 var onlyDeclared = false;
                 TypeInfo expType = null;
                 var expCode = "";
+                var constantExp = false;
                 if(it.hasNext()){
                     var exp = it.next();
                     if(exp instanceof Atom a && a.getType() == TokenType.END_ARGS){
@@ -70,6 +71,9 @@ public final class Var implements IFunction{
                             throw new CompilerException(exp,"native variables can only be declared");
                         }
                         var buffer = new BuilderWriter(writer);
+                        if(!it.hasNext() || it.peek() instanceof Atom p && p.getType() == TokenType.END_ARGS && exp instanceof Atom a && a.getType() != TokenType.ID){
+                            constantExp = true;
+                        }
                         expType = exp.compile(buffer,env,it);
                         expCode = buffer.getCode();
                     }
@@ -106,14 +110,21 @@ public final class Var implements IFunction{
                     decl += varType.getCname() + " " + cID;
                 }
                 if(env instanceof ModuleEnv mod){
-                    mod.appendVariableDeclaration(decl + ";\n");
+                    mod.appendVariableDeclaration(decl);
+                    if(!constantExp){
+                        mod.appendVariableDeclaration(";\n");
+                    }
                 }else{
                     writer.write(decl);
                 }
                 if(expType != null){
                     expCode = expType.ensureCast(this.type,expCode);
                     if(env instanceof ModuleEnv e){
-                        e.appendToInitializer(cID + "=" + expCode + ";\n");
+                       if(constantExp){
+                           e.appendVariableDeclaration("=" + expCode + ";\n");
+                       }else{
+                           e.appendToInitializer(cID + "=" + expCode + ";\n");
+                       }
                     }else if(env instanceof ClassEnv e){
                         e.appendToImplicitConstructor("this->" + cID + "=" + expCode + ";\n");
                     }else{
@@ -121,7 +132,9 @@ public final class Var implements IFunction{
                         writer.write(expCode);
                     }
                 }
-                writer.write(";\n");
+                if(it.hasNext()){
+                    writer.write(";\n");
+                }
                 env.addFunction(id.getValue(),new Variable(varType,cID,onlyDeclared,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
             }else if(id.getType() != TokenType.END_ARGS){
                 throw new CompilerException(id,"unexpected atom");

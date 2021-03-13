@@ -3,6 +3,7 @@ package risa.fpl.function.exp;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
@@ -42,9 +43,10 @@ public final class Variable extends ValueExp{
 		    execute(it,writer,env,""); //not drf equals
 		    return TypeInfo.VOID;
 		}else if(value.equals("ref")){
-            writer.write('&');
-            writePrev(writer);
-		    writer.write(code);
+		    var b = new BuilderWriter(writer);
+            b.write('&');
+            writePrev(b);
+		    b.write(code);
 		    var ret = new PointerInfo(type);
 		    if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == TokenType.ID){
 		        it.next();
@@ -52,8 +54,10 @@ public final class Variable extends ValueExp{
 		        if(field == null){
 		            throw new CompilerException(id,ret + " has no field called " + id);
                 }
+		        field.setPrevCode(b.getCode());
 		        return field.compile(writer,env,it,id.getLine(),id.getCharNum());
             }
+		    writer.write(b.getCode());
 			return ret;
 		}else if(type instanceof PointerInfo p && !p.isFunctionPointer()){
 		    TypeInfo t;

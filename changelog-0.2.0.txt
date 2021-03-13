@@ -12,6 +12,8 @@ snapshot 2
 functions malloc,realloc and free added to std.lang
 errors in template now show type named after template argument instead of object
 ArrayList added to std.lang
+contextSave and contextRestore support ia64
+better code generation
 fix variable redeclaration check added
 fix argument count check added
 fix templates

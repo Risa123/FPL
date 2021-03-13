@@ -6,7 +6,7 @@ import risa.fpl.info.InstanceInfo;
 
 public abstract class ANameSpacedEnv extends SubEnv{
     private final StringBuilder initializer = new StringBuilder();
-    private String initializerName;
+    private String initializerCall;
     private final StringBuilder functionCode = new StringBuilder(),functionDeclarations = new StringBuilder();
     public ANameSpacedEnv(AEnv superEnv){
         super(superEnv);
@@ -15,16 +15,21 @@ public abstract class ANameSpacedEnv extends SubEnv{
         initializer.append(code);
     }
     public final String getInitializer(String name){
-        var b = new StringBuilder("void ");
-        b.append(IFunction.INTERNAL_METHOD_PREFIX);
-        b.append(getNameSpace()).append(name);
-        initializerName = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + name +"();\n";
-        b.append("(){\n").append(initializer.toString());
-        b.append("}\n");
-        return b.toString();
+        if(initializer.isEmpty()){
+            initializerCall = "";
+        }else{
+            var b = new StringBuilder("void ");
+            initializerCall = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + name;
+            b.append(initializerCall);
+            initializerCall += "();\n";
+            b.append("(){\n").append(initializer.toString());
+            b.append("}\n");
+            return b.toString();
+        }
+        return "";
     }
     public final String getInitializerCall(){
-        return initializerName;
+        return initializerCall;
     }
     public abstract String getNameSpace(IFunction caller);
     public abstract String getNameSpace();
@@ -38,7 +43,7 @@ public abstract class ANameSpacedEnv extends SubEnv{
         functionCode.append(code);
     }
     public void appendFunctionDeclaration(Function func){
-        functionDeclarations.append(func.getDeclaration()).append(";\n");
+        functionDeclarations.append(func.getDeclaration());
     }
     public void appendFunctionDeclarations(String code){
         functionDeclarations.append(code);

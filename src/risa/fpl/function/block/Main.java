@@ -31,15 +31,14 @@ public final class Main implements IFunction{
         writer.write(modEnv.getInitializer("_init"));
         var b = new BuilderWriter(writer);
         b.write("int main(int argc,char** argv){\n");
-        var modules = (ArrayList<ModuleEnv>)modEnv.getModuleEnvironments().clone();
+        var modules = new ArrayList<ModuleEnv>();
+        addDependencies(modEnv,modules);
         while(!modules.isEmpty()){
             var iterator = modules.iterator();
             while(iterator.hasNext()){
                 var e = iterator.next();
                 if(e.allDependenciesInitCalled()){
                     e.initCalled();
-                    b.write("void ");
-                    b.write(e.getInitializerCall()); //declaration
                     b.write(e.getInitializerCall()); //call
                     iterator.remove();
                 }
@@ -54,5 +53,13 @@ public final class Main implements IFunction{
         }
         modEnv.appendFunctionCode(b.getCode());
         return TypeInfo.VOID;
+    }
+    private void addDependencies(ModuleEnv env,ArrayList<ModuleEnv>modules){
+       if(!modules.contains(env)){
+           modules.add(env);
+           for(var mod:env.getImportedModules()){
+               addDependencies(mod,modules);
+           }
+       }
     }
 }
