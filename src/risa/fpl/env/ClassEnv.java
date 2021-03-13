@@ -34,7 +34,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("override",OVERRIDE);
 		super.addFunction("internal",INTERNAL);
 		var cname = IFunction.toCId(id);
-		this.nameSpace = superEnv.getNameSpace(null) + cname;
+		nameSpace = superEnv.getNameSpace(null) + cname;
 		classType = new ClassInfo(id);
 		if(templateStatus == TemplateStatus.TEMPLATE){
             instanceType = new TemplateTypeInfo(id,superEnv);
@@ -55,7 +55,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	}
 	@Override
 	public void addFunction(String name,IFunction value){
-		if(value instanceof IField field) {
+		if(value instanceof IField field){
 			instanceType.addField(name,field);
         }else{
 		    super.addFunction(name,value);

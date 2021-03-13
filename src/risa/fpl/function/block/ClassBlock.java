@@ -53,7 +53,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                 }
                 var type = env.getType(typeID);
                 if(type.isPrimitive()){
-                    throw new CompilerException(typeID,"primitive types cannot inherited from");
+                    throw new CompilerException(typeID,"primitive types cannot be inherited from");
                 }
                 cEnv.getInstanceType().addParent(type);
                 if(type instanceof InterfaceInfo i){
@@ -64,6 +64,12 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                     }
                     if(type instanceof InstanceInfo t){
                         parentType = t;
+                        if(parentType instanceof TemplateTypeInfo tType){
+                            if(!it.checkTemplate()){
+                                throw new CompilerException(exp,"template arguments expected");
+                            }
+                            parentType = IFunction.generateTypeFor(t,typeID,it,env,false);
+                        }
                     }else{
                         throw new CompilerException(typeID,"can only inherit from other classes");
                     }
@@ -84,7 +90,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         compileClassBlock(cWriter,cEnv,modEnv,id,block,interfaces,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
 		return TypeInfo.VOID;
 	}
-	public  void compileClassBlock(BufferedWriter writer,ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException,IOException{
+	public void compileClassBlock(BufferedWriter writer,ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException,IOException{
         var b = new BuilderWriter(writer);
         var type = cEnv.getInstanceType();
         var parentType = type.getPrimaryParent();

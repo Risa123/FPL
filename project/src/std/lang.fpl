@@ -1,7 +1,7 @@
 (#this module is imported automatically)
 use std.backend
 
-class String{
+class String ArrayList;char{
 
 }
 class Exception{
@@ -128,6 +128,7 @@ class ArrayList;T{
     array = realloc array cast void*,len * T:getInstanceSize; cast T*
     memoryCopy value ref cast byte*,array cast byte* + T:getInstanceSize * oldLen,T:getInstanceSize
    }
+}
 }
 #these functions will be made inaccessible by compiler
 #string methods

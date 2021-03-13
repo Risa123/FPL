@@ -9,6 +9,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.ClassInfo;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -52,7 +53,7 @@ public interface IFunction{
   default boolean appendSemicolon(){
 	  return true;
   }
-  static LinkedHashMap<String,TypeInfo> parseTemplateArguments(ExpIterator it,AEnv env)throws CompilerException{
+  static LinkedHashMap<String,TypeInfo>parseTemplateArguments(ExpIterator it,AEnv env)throws CompilerException{
      var args = new LinkedHashMap<String,TypeInfo>();
      for(var arg:getTemplateArguments(it,false)){
          var argType = new TypeInfo(arg.getValue(),"");
@@ -105,7 +106,7 @@ public interface IFunction{
       }
       return types;
   }
-  static TypeInfo generateTypeFor(TypeInfo template,Atom typeAtom,ExpIterator it,AEnv env,boolean classVariable)throws CompilerException,IOException{
+  static InstanceInfo generateTypeFor(TypeInfo template, Atom typeAtom, ExpIterator it, AEnv env, boolean classVariable)throws CompilerException,IOException{
       if(template instanceof TemplateTypeInfo tType){
           return tType.generateTypeFor(parseTemplateGeneration(it,env,classVariable),env,it.getLastLine(),it.getLastCharNum());
       }

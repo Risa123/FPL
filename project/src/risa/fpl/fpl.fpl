@@ -12,5 +12,5 @@ interface IFunction{
  fn void compile
 }
 main{
- ArrayList;int;list
+
 }
