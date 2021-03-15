@@ -1,9 +1,10 @@
 (#this module is imported automatically)
 use std.backend
 
-class String ArrayList;char{
+class String{
 
 }
+ArrayList;char; list
 class Exception{
    private string message
    this string message{
@@ -178,7 +179,7 @@ fn bool isUpper char* this{
   return c <= 90; || c >= 65
 }
 fn bool isBlank char* this{
-  return this drf == $sp ; || this drf == $\t
+  return this drf == $\s ; || this drf == $\t
 }
 fn bool isHexDigit char* this{
   var c this drf cast int
@@ -188,7 +189,7 @@ fn bool isPrint char* this{
   var c this drf cast int
   return c <= 176; || c >= 32
 }
-fn bool isGraph char* this = isPrint this; || this drf == $sp
+fn bool isGraph char* this = isPrint this; || this drf == $\s
 fn bool isPunct char* this = isGraph this; && isLetter this
 fn char toLower char* this{
   if isUpper this{

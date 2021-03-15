@@ -39,6 +39,9 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
         if(type == FunctionType.NATIVE) {
             appendToDeclaration("extern ");
         }
+        if(accessModifier == AccessModifier.PRIVATE && type != FunctionType.NATIVE){
+            appendToDeclaration("static ");
+        }
         appendToDeclaration(returnType.getCname());
         appendToDeclaration(' ');
         appendToDeclaration(attrCode);

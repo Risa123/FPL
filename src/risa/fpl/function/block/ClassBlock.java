@@ -34,9 +34,9 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
 		var interfaces = new ArrayList<InterfaceInfo>();
 		LinkedHashMap<String,TypeInfo> templateArgs = null;
         ClassEnv cEnv;
-		if(it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
+		if(it.checkTemplate()){
 		    it.next();
-            cEnv = new ClassEnv(modEnv,idV, TemplateStatus.TEMPLATE);
+            cEnv = new ClassEnv(modEnv,idV,TemplateStatus.TEMPLATE);
 		    templateArgs = IFunction.parseTemplateArguments(it,cEnv);
         }else{
 		    cEnv = new ClassEnv(modEnv,idV,TemplateStatus.INSTANCE);
@@ -64,7 +64,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                     }
                     if(type instanceof InstanceInfo t){
                         parentType = t;
-                        if(parentType instanceof TemplateTypeInfo tType){
+                        if(parentType instanceof TemplateTypeInfo){
                             if(!it.checkTemplate()){
                                 throw new CompilerException(exp,"template arguments expected");
                             }

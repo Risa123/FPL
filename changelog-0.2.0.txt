@@ -14,6 +14,8 @@ errors in template now show type named after template argument instead of object
 ArrayList added to std.lang
 contextSave and contextRestore support ia64
 better code generation
+check for validity of special characters added
+$sp changed to $\s
 fix variable redeclaration check added
 fix argument count check added
 fix templates
@@ -27,4 +29,6 @@ fix getObjetSize C error
 fix variable method C errors
 fix template added to typedef
 fix lone getInstanceSize call on line
-fix reference chained call
+fix ref variable method chained call
+fix private non-native functions not being static in C
+fix C undefined reference template instancing in same file error

@@ -2,7 +2,7 @@ package risa.fpl;
 
 import java.io.BufferedWriter;
 
-public final class BuilderWriter extends BufferedWriter {
+public final class BuilderWriter extends BufferedWriter{
  private final StringBuilder builder = new StringBuilder();
  public BuilderWriter(BufferedWriter writer){
      super(writer);
@@ -15,7 +15,7 @@ public final class BuilderWriter extends BufferedWriter {
  public void write(String str){
 	builder.append(str);
  }
- public String getCode() {
+ public String getCode(){
 	 return builder.toString();
  }
 }

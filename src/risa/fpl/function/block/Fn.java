@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
@@ -48,6 +49,9 @@ public class Fn extends AFunctionBlock{
         }
         var fnEnv = new FnEnv(env,returnType);
         var headWriter = new BuilderWriter(writer);
+        if(env.getAccessModifier() == AccessModifier.PRIVATE){
+            headWriter.write("static ");
+        }
         headWriter.write(returnType.getCname());
         headWriter.write(' ');
         headWriter.write(cID);
@@ -148,7 +152,7 @@ public class Fn extends AFunctionBlock{
 			b.write(code.getCode());
 			if(oneLine && macroDeclaration.isEmpty()){
 			    b.write(";\n");
-            }else{
+            }else if(oneLine){
 			    b.write('\n');
             }
 			if(fnEnv.notReturnUsed() && returnType != TypeInfo.VOID){
