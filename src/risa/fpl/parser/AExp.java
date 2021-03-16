@@ -7,9 +7,9 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
 
-public abstract class AExp {
+public abstract class AExp{
  private final int line,charNum;
- public AExp(int line,int charNum) {
+ public AExp(int line,int charNum){
 	 this.line = line;
 	 this.charNum = charNum;
  }

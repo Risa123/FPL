@@ -35,7 +35,6 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
 		LinkedHashMap<String,TypeInfo> templateArgs = null;
         ClassEnv cEnv;
 		if(it.checkTemplate()){
-		    it.next();
             cEnv = new ClassEnv(modEnv,idV,TemplateStatus.TEMPLATE);
 		    templateArgs = IFunction.parseTemplateArguments(it,cEnv);
         }else{
@@ -223,7 +222,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         }
         return b.toString();
     }
-    private String constructorCall(Function constructor, String self){
+    private String constructorCall(Function constructor,String self){
 	    var b = new StringBuilder(constructor.getCname());
         b.append("(");
         b.append(self);

@@ -55,6 +55,8 @@ public interface IFunction{
   }
   static LinkedHashMap<String,TypeInfo>parseTemplateArguments(ExpIterator it,AEnv env)throws CompilerException{
      var args = new LinkedHashMap<String,TypeInfo>();
+     var lastLine = it.getLastLine();
+     var lastChar = it.getLastCharNum();
      for(var arg:getTemplateArguments(it,false)){
          var argType = new TypeInfo(arg.getValue(),"");
          argType.setPrimaryParent(TypeInfo.OBJECT);
@@ -64,6 +66,9 @@ public interface IFunction{
          args.put(arg.getValue(),argType);
          env.addType(arg.getValue(),argType);
          env.addFunction(arg.getValue(),new ClassVariable(argType,cls,new TypeInfo[0],""));
+     }
+     if(args.isEmpty()){
+         throw new CompilerException(lastLine,lastChar,"more than one argument expected");
      }
      return args;
   }
@@ -106,7 +111,7 @@ public interface IFunction{
       }
       return types;
   }
-  static InstanceInfo generateTypeFor(TypeInfo template, Atom typeAtom, ExpIterator it, AEnv env, boolean classVariable)throws CompilerException,IOException{
+  static InstanceInfo generateTypeFor(TypeInfo template,Atom typeAtom,ExpIterator it,AEnv env,boolean classVariable)throws CompilerException,IOException{
       if(template instanceof TemplateTypeInfo tType){
           return tType.generateTypeFor(parseTemplateGeneration(it,env,classVariable),env,it.getLastLine(),it.getLastCharNum());
       }

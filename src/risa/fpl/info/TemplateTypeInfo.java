@@ -23,6 +23,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
     public TemplateTypeInfo(String name,ModuleEnv module){
         super(name,module);
     }
+    //writes directly into file
     public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
        if(!generatedTypes.containsKey(args)){
            var mod = getModule();

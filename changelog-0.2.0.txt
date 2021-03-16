@@ -32,3 +32,4 @@ fix lone getInstanceSize call on line
 fix ref variable method chained call
 fix private non-native functions not being static in C
 fix C undefined reference template instancing in same file error
+fix template C error
