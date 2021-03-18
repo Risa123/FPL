@@ -129,7 +129,7 @@ public class TypeInfo {
           requiredTypes.add(p.getType());
       }
   }
-  public boolean notIn(ArrayList<TypeInfo>types){
+  public boolean notIn(ArrayList<TypeInfo> types){
         for(var t:types){
             if(t == this){
                 return false;

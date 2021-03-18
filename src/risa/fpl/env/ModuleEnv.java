@@ -12,6 +12,7 @@ import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
+import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
@@ -20,8 +21,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
 	private boolean getRequestFromOutSide,initCalled;
-	private final StringBuilder variableDeclarations = new StringBuilder(),templateInstanceDeclaration = new StringBuilder();
-	private final StringBuilder templateInstanceCode = new StringBuilder();
+	private final StringBuilder variableDeclarations = new StringBuilder();
+	private final ArrayList<TypeInfo> templateInstances = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -45,11 +46,21 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	        if(mod.importedModules.contains(this)){
 	            throw new CompilerException(0,0,"recursive dependency of module " + moduleBlock.getName() + " in module " + mod.moduleBlock.getName());
             }
+	        for(var type:mod.templateInstances){
+	            if(type.notIn(templateInstances)){
+	                templateInstances.add(type);
+                }
+            }
 	        for(var type:mod.types.values()){
 	            if(type.notIn(types)){
 	                types.add(type);
 	                addRequiredTypes(type,types);
                 }
+            }
+        }
+        for(var type:templateInstances){
+            if(type.notIn(types)){
+                types.add(type);
             }
         }
 	    while(!types.isEmpty()){
@@ -127,7 +138,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     @Override
     public void addTemplateInstance(InstanceInfo type){
-        templateInstanceDeclaration.append(type.getDeclaration());
+        templateInstances.add(type);
     }
     public void requestFromOutSide(){
 	    getRequestFromOutSide = true;
@@ -162,16 +173,16 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
 	    return true;
     }
-    public String getTemplateInstanceDeclarations(){
-	    return templateInstanceDeclaration.toString();
-    }
     public ArrayList<ModuleEnv>getImportedModules(){
 	    return importedModules;
     }
-    public void appendTemplateInstanceCode(String code){
-	  templateInstanceCode.append(code);
-    }
-    public String getTemplateInstanceCode(){
-	    return templateInstanceCode.toString();
+    public ArrayList<String>getInstanceFiles(){
+	    var files = new ArrayList<String>();
+	    for(var type:types.values()){
+	        if(type instanceof TemplateTypeInfo t){
+	            files.addAll(t.getInstanceFiles());
+            }
+        }
+	    return files;
     }
 }

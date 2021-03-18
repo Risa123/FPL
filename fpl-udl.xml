@@ -6,35 +6,35 @@
         </Settings>
         <KeywordLists>
             <Keywords name="Comments">00# 01 02 03( 04)</Keywords>
-            <Keywords name="Numbers, prefix1"></Keywords>
-            <Keywords name="Numbers, prefix2"></Keywords>
-            <Keywords name="Numbers, extras1"></Keywords>
-            <Keywords name="Numbers, extras2"></Keywords>
-            <Keywords name="Numbers, suffix1"></Keywords>
-            <Keywords name="Numbers, suffix2"></Keywords>
-            <Keywords name="Numbers, range"></Keywords>
+            <Keywords name="Numbers, prefix1"/>
+            <Keywords name="Numbers, prefix2"/>
+            <Keywords name="Numbers, extras1"/>
+            <Keywords name="Numbers, extras2"/>
+            <Keywords name="Numbers, suffix1"/>
+            <Keywords name="Numbers, suffix2"/>
+            <Keywords name="Numbers, range"/>
             <Keywords name="Operators1">* , ;</Keywords>
-            <Keywords name="Operators2"></Keywords>
-            <Keywords name="Folders in code1, open"></Keywords>
-            <Keywords name="Folders in code1, middle"></Keywords>
-            <Keywords name="Folders in code1, close"></Keywords>
-            <Keywords name="Folders in code2, open"></Keywords>
-            <Keywords name="Folders in code2, middle"></Keywords>
-            <Keywords name="Folders in code2, close"></Keywords>
-            <Keywords name="Folders in comment, open"></Keywords>
-            <Keywords name="Folders in comment, middle"></Keywords>
-            <Keywords name="Folders in comment, close"></Keywords>
+            <Keywords name="Operators2"/>
+            <Keywords name="Folders in code1, open"/>
+            <Keywords name="Folders in code1, middle"/>
+            <Keywords name="Folders in code1, close"/>
+            <Keywords name="Folders in code2, open"/>
+            <Keywords name="Folders in code2, middle"/>
+            <Keywords name="Folders in code2, close"/>
+            <Keywords name="Folders in comment, open"/>
+            <Keywords name="Folders in comment, middle"/>
+            <Keywords name="Folders in comment, close"/>
             <Keywords name="Keywords1">if while class int float double bool uint sint&#x000D;&#x000A;char string byte ubyte sbyte ushort short sshort&#x000D;&#x000A;use return var fn void const native slong ulong long null memory private protected interface abstract virtual this main override
                 finally catch fpointer cstruct try asm if_flag typedef alias
             </Keywords>
-            <Keywords name="Keywords2"></Keywords>
-            <Keywords name="Keywords3"></Keywords>
-            <Keywords name="Keywords4"></Keywords>
-            <Keywords name="Keywords5"></Keywords>
-            <Keywords name="Keywords6"></Keywords>
-            <Keywords name="Keywords7"></Keywords>
-            <Keywords name="Keywords8"></Keywords>
-            <Keywords name="Delimiters"></Keywords>
+            <Keywords name="Keywords2"/>
+            <Keywords name="Keywords3"/>
+            <Keywords name="Keywords4"/>
+            <Keywords name="Keywords5"/>
+            <Keywords name="Keywords6"/>
+            <Keywords name="Keywords7"/>
+            <Keywords name="Keywords8"/>
+            <Keywords name="Delimiters"/>
         </KeywordLists>
         <Styles>
             <WordsStyle name="DEFAULT" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />

@@ -1,10 +1,6 @@
 (#this module is imported automatically)
 use std.backend
 
-class String{
-
-}
-ArrayList;char; list
 class Exception{
    private string message
    this string message{
@@ -153,6 +149,10 @@ fn bool equals string* this string str{
    }
    return true
 }
+fn string concat string* this string str{
+  var resultLen getLength this; + getLength str ref
+  return string:alloc drf
+}
 #char methods
 fn bool isDigit char* this{
   var c this drf cast int
@@ -203,7 +203,7 @@ fn char toUpper char* this{
  }
  return this drf
 }
-#string methods
+#bool methods
 fn string toString bool* this{
    if this drf{
      return "true"

@@ -10,7 +10,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.tokenizer.TokenType;
 
-public final class List extends AExp {
+public final class List extends AExp{
 	private final ArrayList<AExp>exps;
 	private final boolean statement;
 	public List(int line, int charNum,ArrayList<AExp>exps,boolean statement){
@@ -24,9 +24,9 @@ public final class List extends AExp {
 	   var it = new ExpIterator(exps,getLine(),getCharNum());
 	   var appendSemicolon = false;
 	   BuilderWriter b = null;
-	   while(it.hasNext()) {
+	   while(it.hasNext()){
 		   var exp = it.next();
-		   if(exp instanceof Atom atom) {
+		   if(exp instanceof Atom atom){
               if(ret == null) {
             	  var f =  env.getFunction(atom);
             	  b = new BuilderWriter(writer);
@@ -41,20 +41,20 @@ public final class List extends AExp {
             	 b = new BuilderWriter(writer);
             	 ret = field.compile(b,env,it,atom.getLine(),atom.getCharNum());
               }
-		   }else if(exp instanceof List) {
+		   }else if(exp instanceof List){
 			   exp.compile(writer,env,it);
 		   }
 	   }
 	   if(b != null){
            writer.write(b.getCode());
        }
-	   if(appendSemicolon) {
+	   if(appendSemicolon){
 	   	 writer.write(";\n");
 	   }
 	   return ret;
 	}
 	@Override
-    public String toString() {
+    public String toString(){
 		return exps.toString();
 	}
 	public ArrayList<AExp>getExps(){

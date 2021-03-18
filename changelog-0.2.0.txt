@@ -16,6 +16,7 @@ contextSave and contextRestore support ia64
 better code generation
 check for validity of special characters added
 $sp changed to $\s
+alloc static method add to all classes
 fix variable redeclaration check added
 fix argument count check added
 fix templates
@@ -33,3 +34,5 @@ fix ref variable method chained call
 fix private non-native functions not being static in C
 fix C undefined reference template instancing in same file error
 fix template C error
+fix class instance initialization C error
+fix "there is no return in this block and this function doesn't return void" corrected to "there is no return in this function and this function doesn't return void"

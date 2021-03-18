@@ -42,27 +42,29 @@ public final class ClassInfo extends TypeInfo{
         NumberInfo.FLOAT.setClassInfo(FLOAT);
         NumberInfo.DOUBLE.setClassInfo(DOUBLE);
         NumberInfo.MEMORY.setClassInfo(MEMORY);
-        CHAR.addSize(NumberInfo.CHAR);
-        BOOL.addSize(TypeInfo.BOOL);
-        STRING.addSize(TypeInfo.STRING);
-        UBYTE.addSize(NumberInfo.UBYTE);
-        SBYTE.addSize(NumberInfo.SBYTE);
-        BYTE.addSize(NumberInfo.BYTE);
-        SHORT.addSize(NumberInfo.SHORT);
-        SSHORT.addSize(NumberInfo.SSHORT);
-        USHORT.addSize(NumberInfo.USHORT);
-        UINT.addSize(NumberInfo.UINT);
-        SINT.addSize(NumberInfo.SINT);
-        INT.addSize(NumberInfo.INT);
-        ULONG.addSize(NumberInfo.ULONG);
-        SLONG.addSize(NumberInfo.SLONG);
-        LONG.addSize(NumberInfo.LONG);
-        FLOAT.addSize(NumberInfo.FLOAT);
-        DOUBLE.addSize(NumberInfo.DOUBLE);
-        OBJECT.addSize(TypeInfo.OBJECT);
+        CHAR.addMethods(NumberInfo.CHAR);
+        BOOL.addMethods(TypeInfo.BOOL);
+        STRING.addMethods(TypeInfo.STRING);
+        UBYTE.addMethods(NumberInfo.UBYTE);
+        SBYTE.addMethods(NumberInfo.SBYTE);
+        BYTE.addMethods(NumberInfo.BYTE);
+        SHORT.addMethods(NumberInfo.SHORT);
+        SSHORT.addMethods(NumberInfo.SSHORT);
+        USHORT.addMethods(NumberInfo.USHORT);
+        UINT.addMethods(NumberInfo.UINT);
+        SINT.addMethods(NumberInfo.SINT);
+        INT.addMethods(NumberInfo.INT);
+        ULONG.addMethods(NumberInfo.ULONG);
+        SLONG.addMethods(NumberInfo.SLONG);
+        LONG.addMethods(NumberInfo.LONG);
+        FLOAT.addMethods(NumberInfo.FLOAT);
+        DOUBLE.addMethods(NumberInfo.DOUBLE);
+        OBJECT.addMethods(TypeInfo.OBJECT);
     }
-    private void addSize(TypeInfo instance){
+    private void addMethods(TypeInfo instance){
         addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + instance.getCname() + ")"));
+        var p = new PointerInfo(instance);
+        addField("alloc",new ValueExp(p,"((" + p.getCname() + ")malloc(sizeof(" + instance.getCname() + ")))" ));
     }
     public ClassInfo(String name){
         super(name + " class","",false);

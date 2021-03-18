@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,11 +57,11 @@ public final class FPL{
     	}
     	compileModule(mainModule,files);
     	for(var mod:modules.values()){
-            var code = mod.getEnv().getTemplateInstanceCode();
-            if(!code.isEmpty()){
-                try(var writer = Files.newBufferedWriter(Paths.get(mod.getCFile()),StandardOpenOption.APPEND)){
-                    writer.write(code);
-                }
+    	    for(var file:mod.getEnv().getInstanceFiles()){
+    	        files.append(' ');
+    	        files.append(outputDirectory);
+    	        files.append('/');
+    	        files.append(file);
             }
         }
     	var err = Runtime.getRuntime().exec(cc + " -o " + output + files).getErrorStream();
@@ -87,7 +86,7 @@ public final class FPL{
     private void compileModule(String name,StringBuilder files)throws IOException,CompilerException{
         var mod = getModule(name);
         files.append(' ');
-        files.append(mod.getCFile());
+        files.append(mod.getCPath());
     }
 	public static void main(String[] args)throws IOException{
 		if(args.length != 1) {

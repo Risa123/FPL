@@ -1,6 +1,5 @@
 package risa.fpl.info;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.block.ClassBlock;
@@ -9,9 +8,9 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,42 +20,48 @@ public final class TemplateTypeInfo extends InstanceInfo{
     private ArrayList<InterfaceInfo>interfaces;
     private LinkedHashMap<String,TypeInfo>templateArgs;
     private final HashMap<ArrayList<TypeInfo>,InstanceInfo>generatedTypes = new HashMap<>();
+    private final ArrayList<String>instanceFiles = new ArrayList<>();
     public TemplateTypeInfo(String name,ModuleEnv module){
         super(name,module);
     }
     public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
        if(!generatedTypes.containsKey(args)){
            var mod = getModule();
-           var writer = new BuilderWriter(new BufferedWriter(new FileWriter("x")));
-           var name = new StringBuilder(getName());
+           var cName = new StringBuilder(getCname());
            for(var arg:args){
-               name.append(arg.getName());
-               if(!(mod.hasTypeInCurrentEnv(arg.getName()) && mod.getType(new Atom(0,0,arg.getName(),TokenType.ID)).identical(arg))){
-                   writer.write(arg.getDeclaration());
+               cName.append(arg.getCname());
+           }
+           var file = mod.getNameSpace() + cName + ".c";
+           instanceFiles.add(file);
+           try(var writer = Files.newBufferedWriter(Paths.get(mod.getFPL().getOutputDirectory() + "/" + file))){
+               var name = new StringBuilder(getName());
+               for(var arg:args){
+                   name.append(arg.getName());
+                   if(!(mod.hasTypeInCurrentEnv(arg.getName()) && mod.getType(new Atom(0,0,arg.getName(),TokenType.ID)).identical(arg))){
+                       writer.write(arg.getDeclaration());
+                   }
                }
-           }
-           var cEnv = new ClassEnv(mod,name.toString(),TemplateStatus.GENERATING);
-           if(args.size() != templateArgs.size()){
-               throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + args.size());
-           }
-           for(int i = 0;i < templateArgs.size();++i){
-               var typeName = (String)templateArgs.keySet().toArray()[i];
-               var type = args.get(i);
-               cEnv.addType(typeName,type);
-               cEnv.addFunction(typeName,new ClassVariable(type,type.getClassInfo(),new TypeInfo[0],""));
-           }
-           new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
-           writer.close();
-           mod.appendTemplateInstanceCode(writer.getCode());
-           if(env != getModule()){
+               var cEnv = new ClassEnv(mod,name.toString(),TemplateStatus.GENERATING);
+               if(args.size() != templateArgs.size()){
+                   throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + args.size());
+               }
+               for(int i = 0;i < templateArgs.size();++i){
+                   var typeName = (String)templateArgs.keySet().toArray()[i];
+                   var type = args.get(i);
+                   cEnv.addType(typeName,type);
+                   cEnv.addFunction(typeName,new ClassVariable(type,type.getClassInfo(),new TypeInfo[0],""));
+               }
+               mod.importModules(writer);
+               new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
+               writer.write(cEnv.getFunctionCode());
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(cEnv.getInstanceType());
                }else{
                    ((FnSubEnv)env).addTemplateInstance(cEnv.getInstanceType());
                }
+               generatedTypes.put(args,cEnv.getInstanceType());
+               return cEnv.getInstanceType();
            }
-           generatedTypes.put(args,cEnv.getInstanceType());
-           return cEnv.getInstanceType();
        }
        return generatedTypes.get(args);
     }
@@ -64,5 +69,8 @@ public final class TemplateTypeInfo extends InstanceInfo{
         this.block = block;
         this.interfaces = interfaces;
         this.templateArgs = templateArgs;
+    }
+    public ArrayList<String>getInstanceFiles(){
+        return instanceFiles;
     }
 }

@@ -3,8 +3,10 @@ package risa.fpl.function.statement;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
@@ -31,19 +33,25 @@ public final class ClassVariable extends Function{
    }
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+        BuilderWriter b = new BuilderWriter(writer);
         var id = it.nextAtom();
 		if(id.getType() == TokenType.ID){
-            compileVariable(writer,id,env,it);
+            compileVariable(b,id,env,it);
         }else if(id.getType() == TokenType.CLASS_SELECTOR){
 		    return compileClassSelector(it,env,writer,classType);
         }else if(id.getType() == TokenType.END_ARGS){
-            var varType = compileVariable(writer,null,env,it);
+            var varType = compileVariable(b,null,env,it);
             if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() == TokenType.CLASS_SELECTOR){
                 it.next();
                 return compileClassSelector(it,env,writer,varType.getClassInfo());
             }
         }else{
 		    throw new CompilerException(id,"variable identifier or : expected");
+        }
+		if(env instanceof ModuleEnv mod){
+		    mod.appendToInitializer(b.getCode() + ";\n");
+        }else{
+		    writer.write(b.getCode());
         }
 		return TypeInfo.VOID;
 	}
