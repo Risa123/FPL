@@ -21,6 +21,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final String nameSpace;
 	private boolean getRequestFromOutSide,initCalled;
 	private final StringBuilder variableDeclarations = new StringBuilder(),templateInstanceDeclaration = new StringBuilder();
+	private final StringBuilder templateInstanceCode = new StringBuilder();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -166,5 +167,11 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public ArrayList<ModuleEnv>getImportedModules(){
 	    return importedModules;
+    }
+    public void appendTemplateInstanceCode(String code){
+	  templateInstanceCode.append(code);
+    }
+    public String getTemplateInstanceCode(){
+	    return templateInstanceCode.toString();
     }
 }

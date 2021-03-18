@@ -1,5 +1,6 @@
 package risa.fpl.info;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.block.ClassBlock;
@@ -23,12 +24,10 @@ public final class TemplateTypeInfo extends InstanceInfo{
     public TemplateTypeInfo(String name,ModuleEnv module){
         super(name,module);
     }
-    //writes directly into file
     public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
        if(!generatedTypes.containsKey(args)){
            var mod = getModule();
-           var path = env.getFPL().getOutputDirectory() + "/" + mod.getNameSpace().substring(1) + ".fpl.c";
-           var writer = new BufferedWriter(new FileWriter(path,true));
+           var writer = new BuilderWriter(new BufferedWriter(new FileWriter("x")));
            var name = new StringBuilder(getName());
            for(var arg:args){
                name.append(arg.getName());
@@ -47,13 +46,14 @@ public final class TemplateTypeInfo extends InstanceInfo{
                cEnv.addFunction(typeName,new ClassVariable(type,type.getClassInfo(),new TypeInfo[0],""));
            }
            new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
-           writer.write(cEnv.getFunctionDeclarations());
-           writer.write(cEnv.getFunctionCode());
            writer.close();
-           if(env instanceof ANameSpacedEnv e){
-               e.addTemplateInstance(cEnv.getInstanceType());
-           }else{
-               ((FnSubEnv)env).addTemplateInstance(cEnv.getInstanceType());
+           mod.appendTemplateInstanceCode(writer.getCode());
+           if(env != getModule()){
+               if(env instanceof ANameSpacedEnv e){
+                   e.addTemplateInstance(cEnv.getInstanceType());
+               }else{
+                   ((FnSubEnv)env).addTemplateInstance(cEnv.getInstanceType());
+               }
            }
            generatedTypes.put(args,cEnv.getInstanceType());
            return cEnv.getInstanceType();
