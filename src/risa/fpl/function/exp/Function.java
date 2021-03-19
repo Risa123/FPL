@@ -110,7 +110,6 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
             }
         }
 		var argList = new ArrayList<TypeInfo>();
-		var argNum = 0;
 		while(it.hasNext()){
 		   if(it.peek() instanceof List){
 		       break;
@@ -126,10 +125,12 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
 			   }
 			   var buffer = new BuilderWriter(b);
 			   var type = exp.compile(buffer,env,it);
-			   b.write(type.ensureCast(args[argList.size()],buffer.getCode()));
-			   argList.add(type);
+               argList.add(type);
+               if(argList.size() > args.length){
+                   throw new CompilerException(line,charNum,"incorrect arguments expected" + Arrays.toString(args) + " instead of " + argList);
+               }
+			   b.write(type.ensureCast(args[argList.size() - 1],buffer.getCode()));
 		   }
-		   argNum++;
 		}
 		var array = new TypeInfo[argList.size()];
 		argList.toArray(array);

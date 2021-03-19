@@ -24,7 +24,7 @@ public final class Tokenizer{
           }
 		  return reader.ready() || !readNext;
 	  }
-	  private Token nextPrivate() throws IOException,CompilerException{
+	  private Token nextPrivate()throws IOException,CompilerException{
 		  read();
 		  if(c == '('){
 			  while(hasNext() && read() != ')');
@@ -196,7 +196,13 @@ public final class Tokenizer{
 				  read();
 				  b.appendCodePoint(c);
 			  }while(c != '"');
-			  return new Token(line,charNum,b.toString(),TokenType.STRING);
+			  var id = b.toString();
+			  for(int i = 0; i < id.length();++i){
+			      if(id.charAt(i) > 127){
+			          throw new CompilerException(line,charNum,"this is not valid ascii string");
+                  }
+              }
+			  return new Token(line,charNum,id,TokenType.STRING);
 		  }else if(c == ':'){
 		      return new Token(line,charNum,":",TokenType.CLASS_SELECTOR);
           } else  if(notSeparator(c)){

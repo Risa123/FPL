@@ -64,21 +64,22 @@ public final class ModuleEnv extends ANameSpacedEnv{
             }
         }
 	    while(!types.isEmpty()){
+	        System.out.println(types);
 	        var it = types.iterator();
 	        while(it.hasNext()){
-               var t = it.next();
-               var hasAll = true;
-               for(var rt:t.getRequiredTypes()){
-                   if(rt.notIn(declared)){
-                       hasAll = false;
-                       break;
-                   }
-               }
-               if(hasAll){
-                   declared.add(t);
-                   writer.write(t.getDeclaration());
-                   it.remove();
-               }
+                var t = it.next();
+                var hasAll = true;
+                for(var rt:t.getRequiredTypes()){
+                    if(rt.notIn(declared)){
+                        hasAll = false;
+                        break;
+                    }
+                }
+                if(hasAll){
+                    declared.add(t);
+                    writer.write(t.getDeclaration());
+                    it.remove();
+                }
             }
         }
 		for(var mod:importedModules){
