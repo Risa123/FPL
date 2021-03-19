@@ -185,4 +185,13 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
 	    return files;
     }
+    public String getTypeDeclarations(){
+	    var b = new StringBuilder();
+	    for(var type:types.values()){
+	       if(!(type instanceof  Function)){
+               b.append(type.getDeclaration());
+           }
+        }
+	    return b.toString();
+    }
 }

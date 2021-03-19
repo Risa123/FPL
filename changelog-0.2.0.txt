@@ -38,3 +38,5 @@ fix C undefined reference template instancing in same file error
 fix template C error
 fix class instance initialization C error
 fix "there is no return in this block and this function doesn't return void" corrected to "there is no return in this function and this function doesn't return void"
+fix prohibited to cast to interface
+fix implicit conversion to function argument type

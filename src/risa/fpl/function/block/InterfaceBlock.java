@@ -18,9 +18,9 @@ import risa.fpl.tokenizer.TokenType;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public final class InterfaceBlock implements IFunction {
+public final class InterfaceBlock implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum) throws IOException, CompilerException {
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         if(!(env instanceof ModuleEnv)){
             throw new CompilerException(line,charNum,"interface can only be declared on module level");
         }

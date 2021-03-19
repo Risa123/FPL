@@ -35,7 +35,9 @@ public final class Cast extends AField{
           prev.write(".instance");
         }else if((type instanceof PointerInfo && self == TypeInfo.STRING) || (self instanceof PointerInfo && type == TypeInfo.STRING)){
 	       C_cast(prev,type.getCname());
-		}else{
+		}else if(type instanceof InterfaceInfo){
+	        throw new CompilerException(line,charNum,"cannot cast to interface");
+        }else{
 	        var npTarget = self;
 	        var npType = type;
 	        if(npTarget instanceof PointerInfo p){

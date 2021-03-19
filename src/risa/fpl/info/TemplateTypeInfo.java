@@ -52,6 +52,8 @@ public final class TemplateTypeInfo extends InstanceInfo{
                    cEnv.addFunction(typeName,new ClassVariable(type,type.getClassInfo(),new TypeInfo[0],""));
                }
                mod.importModules(writer);
+               writer.write(mod.getTypeDeclarations());
+               writer.write(mod.getVariableDeclarations());
                new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
                writer.write(cEnv.getFunctionCode());
                if(env instanceof ANameSpacedEnv e){

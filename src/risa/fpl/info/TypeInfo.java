@@ -9,7 +9,7 @@ import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
-public class TypeInfo {
+public class TypeInfo{
   public static final TypeInfo VOID = new TypeInfo("void","void",true);
   public static final TypeInfo OBJECT = new TypeInfo("object",""){
       @Override
@@ -22,7 +22,7 @@ public class TypeInfo {
   public static final TypeInfo STRING = new TypeInfo("string","char*",true);
   public static final TypeInfo CHAR = new TypeInfo("char","char",true);
   public static final TypeInfo NIL = new TypeInfo("nil","");
-  static {
+  static{
 	  CHAR.addField("cast",new Cast(CHAR));
 	  CHAR.addField("==",new BinaryOperator(BOOL,CHAR,"=="));
 	  CHAR.addField("!=",new BinaryOperator(BOOL,CHAR,"!="));
@@ -51,7 +51,7 @@ public class TypeInfo {
   private final ArrayList<TypeInfo>parents = new ArrayList<>(),requiredTypes = new ArrayList<>();
   private final HashMap<TypeInfo,String> conversionMethodCNames = new HashMap<>();
   private TypeInfo primaryParent;
-  public TypeInfo(String name,String cname,boolean primitive) {
+  public TypeInfo(String name,String cname,boolean primitive){
 	  this.name = name;
 	  this.cname = cname;
 	  this.primitive = primitive;
@@ -60,14 +60,14 @@ public class TypeInfo {
       this(name,cname,false);
   }
   @Override
-  public String toString() {
+  public String toString(){
 	  return name;
   }
-  public void addField(String name, IField value) {
+  public void addField(String name, IField value){
 	  fields.put(name,value);
   }
   //returns null if field cannot be accessed from Env from
-  public IField getField(String name,AEnv from) {
+  public IField getField(String name,AEnv from){
       var field = fields.get(name);
       if(field == null){
           for(var parent:parents){
@@ -172,7 +172,7 @@ public class TypeInfo {
           for(var field:parent.getMethodsOfType(type)){
               var found = false;
               for(var f:list){
-                  if(f.getName().equals(field.getName())) {
+                  if(f.getName().equals(field.getName())){
                       found = true;
                       break;
                   }
@@ -195,7 +195,7 @@ public class TypeInfo {
           expCode = expCode.substring(0,expCode.length() - 2);
       }
       var npType = to;
-      if(npType instanceof PointerInfo p) {
+      if(npType instanceof PointerInfo p){
           npType = p.getType();
       }
       var convName = getConversionMethodCName(to);

@@ -17,13 +17,11 @@ class Token{
 class Tokenizer{
  private{
     int line 1;tokenNum 1
-    bool readNext true
-    char c
     Readable readable
  }
  this Readable readable{
     this readable = readable
  }
  fn void close = readable close
- fn bool hasNext = readable ready; || readNext !
+ fn bool hasNext = readable ready
 }

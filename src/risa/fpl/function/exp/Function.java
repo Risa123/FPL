@@ -68,7 +68,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
         this(name,returnType,cname,args,type,self,accessModifier,implName,"");
     }
     @Override
-    public AccessModifier getAccessModifier() {
+    public AccessModifier getAccessModifier(){
         return accessModifier;
     }
     @Override
@@ -110,24 +110,26 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
             }
         }
 		var argList = new ArrayList<TypeInfo>();
+		var argNum = 0;
 		while(it.hasNext()){
 		   if(it.peek() instanceof List){
 		       break;
            }
 		   var exp = it.nextAtom();
-		   if(exp.getType() == TokenType.END_ARGS) {
+		   if(exp.getType() == TokenType.END_ARGS){
 			   break;
 		   }else if(exp.getType() != TokenType.ARG_SEPARATOR){
-			   if(first) {
+			   if(first){
 				   first = false;
-			   }else {
+			   }else{
 				   b.write(',');
 			   }
 			   var buffer = new BuilderWriter(b);
 			   var type = exp.compile(buffer,env,it);
-			   b.write(type.ensureCast(type,buffer.getCode()));
+			   b.write(type.ensureCast(args[argList.size()],buffer.getCode()));
 			   argList.add(type);
 		   }
+		   argNum++;
 		}
 		var array = new TypeInfo[argList.size()];
 		argList.toArray(array);

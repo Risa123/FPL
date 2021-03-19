@@ -12,5 +12,8 @@ interface IFunction{
  fn void compile
 }
 main{
-
+ FileReader reader "project/src/fpl/fpl.fpl"
+ Tokenizer tokenizer reader
+ test 8
 }
+fn void test{}
