@@ -10,7 +10,7 @@ import risa.fpl.tokenizer.TokenType;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public final class Asm implements IFunction {
+public final class Asm implements IFunction{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var code = it.nextAtom();

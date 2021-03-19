@@ -15,19 +15,19 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.tokenizer.TokenType;
 
-public abstract class AEnv {
+public abstract class AEnv{
   protected final HashMap<String,TypeInfo>types = new HashMap<>();
   protected final HashMap<String,IFunction>functions = new HashMap<>();
   protected AccessModifier accessModifier = AccessModifier.PUBLIC;
   private final ArrayList<Modifier>mods = new ArrayList<>();
-  public IFunction getFunction(Atom atom) throws CompilerException {
-	 switch(atom.getType()) {
+  public IFunction getFunction(Atom atom)throws CompilerException{
+	 switch(atom.getType()){
 	 case ID:
 		  if(atom.getValue().endsWith("*")) {
 			   return new Var(getType(atom));
 		   }
 		 var func = functions.get(atom.getValue());
-		 if(func == null) {
+		 if(func == null){
 			 throw new CompilerException(atom,"function " + atom + " not found" );
 		 }
 		 return func;
@@ -59,13 +59,13 @@ public abstract class AEnv {
 		   throw new CompilerException(atom.getLine(),atom.getCharNum(),"identifier or literal expected instead of " + atom.getType());
 	 }
   }
-  public boolean hasFunctionInCurrentEnv(String name) {
+  public boolean hasFunctionInCurrentEnv(String name){
 	  return functions.containsKey(name.replace("*",""));
   }
-  public void addFunction(String name,IFunction value) {
-	  functions.put(name, value);
+  public void addFunction(String name,IFunction value){
+	  functions.put(name,value);
   }
-  public TypeInfo getType(Atom atom) throws CompilerException {
+  public TypeInfo getType(Atom atom)throws CompilerException{
 	  if(atom.getType() != TokenType.ID) {
 		  throw new CompilerException(atom,"type identifier expected");
 	  }
@@ -81,7 +81,7 @@ public abstract class AEnv {
   public final boolean hasTypeInCurrentEnv(String name){
       return types.containsKey(name.replace("*","")); //remove pointer declarations
   }
-  public void addType(String name,TypeInfo type) {
+  public void addType(String name,TypeInfo type){
 	  addType(name,type,true);
   }
   public void addType(String name,TypeInfo type,boolean declaration){
@@ -90,13 +90,13 @@ public abstract class AEnv {
           addFunction(name,new Var(type));
       }
   }
-  public boolean hasModifier(Modifier mod) {
+  public boolean hasModifier(Modifier mod){
 	 return mods.contains(mod);
   }
-  public void addModifier(Modifier mod) {
+  public void addModifier(Modifier mod){
 	  mods.add(mod);
   }
-  public void removeModifier(Modifier mod) {
+  public void removeModifier(Modifier mod){
 	  mods.remove(mod);
   }
   public final void setAccessModifier(AccessModifier mod){

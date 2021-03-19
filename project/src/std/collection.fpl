@@ -1,1 +1,36 @@
 
+class ArrayList;T{
+ private{
+  T* array
+  memory len
+ }
+ this{
+   array = nil
+   len = 0
+ }
+ fn T get memory index{
+   if index >= len{
+     Exception ex "index out of bounds"
+     ex throw
+   }
+   return array get index
+ }
+ fn void set memory index T value{
+   if index >= len{
+      Exception ex "index out of bounds"
+      ex throw
+   }
+   array set index,value
+ }
+ fn void add T value{
+   var oldLen len
+   len ++
+   if array == nil{
+      array = malloc value getObjectSize;cast T*
+      array drf= value
+   }{
+    array = realloc array cast void*,len * T:getInstanceSize; cast T*
+    memoryCopy value ref cast byte*,array cast byte* + T:getInstanceSize * oldLen,T:getInstanceSize
+   }
+}
+}

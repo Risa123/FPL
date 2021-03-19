@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.ATwoPassBlock;
+import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
@@ -67,6 +68,7 @@ public final class ModuleBlock extends ATwoPassBlock{
                    makeMethod("isPunct",TypeInfo.CHAR);
                    makeMethod("toLower",TypeInfo.CHAR);
                    makeMethod("toUpper",TypeInfo.CHAR);
+                   makeMethod("new",ClassInfo.STRING);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
@@ -93,12 +95,15 @@ public final class ModuleBlock extends ATwoPassBlock{
    public boolean isMain(){
        return fpl.getMainModule().equals(name);
    }
-   public void makeMethod(String name,TypeInfo ofType){
+   private void makeMethod(String name,TypeInfo ofType){
        var func = env.getAndRemove(name);
        if(func == null){
            return;
        }
        ofType.addField(name,func.makeMethod(ofType));
+   }
+   private void makeMethod(String name,ClassInfo ofClass){
+       ofClass.addField(name,env.getAndRemove(name));
    }
    public ModuleEnv getEnv(){
        return env;

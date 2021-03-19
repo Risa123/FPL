@@ -9,7 +9,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
-public final class SetElement extends AField {
+public final class SetElement extends AField{
 	private final TypeInfo valueType;
 	public SetElement(TypeInfo valueType){
 		this.valueType = valueType;
@@ -23,7 +23,7 @@ public final class SetElement extends AField {
 		var indexExp = it.next();
 		var tmpWriter = new BuilderWriter(writer);
 	    var indexType = indexExp.compile(tmpWriter,env,it);
-	    if(indexType.notIntegerNumber()) {
+	    if(indexType.notIntegerNumber()){
 	    	throw new CompilerException(indexExp,"integer number expected");
 	    }
 	    var code = tmpWriter.getCode();

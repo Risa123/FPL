@@ -27,7 +27,7 @@ public final class FPointer extends AFunctionBlock{
         return TypeInfo.VOID;
     }
     @Override
-    public boolean appendSemicolon() {
+    public boolean appendSemicolon(){
         return true;
     }
 }

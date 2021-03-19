@@ -16,16 +16,16 @@ import risa.fpl.tokenizer.TokenType;
 public final class Use implements IFunction{
 	@Override
 	public TypeInfo compile(BufferedWriter writer, AEnv env, ExpIterator it, int line, int charNum)throws IOException,CompilerException{
-		if(!(env instanceof ModuleEnv e)) {
+		if(!(env instanceof ModuleEnv e)){
 			throw new CompilerException(line,charNum,"can only be used on module level");
 		}
 		var exp = it.next();
-		if(exp instanceof List) {
+		if(exp instanceof List){
 			if(it.hasNext()) {
 				throw new CompilerException(exp,"only block expected");
 			}
 			addFromList(exp,e);
-		}else {
+		}else{
 		    e.addModuleToImport((Atom)exp);
 			while(it.hasNext()) {
 				e.addModuleToImport(it.nextID());
@@ -49,7 +49,7 @@ public final class Use implements IFunction{
         }
     }
 	@Override
-	public boolean appendSemicolon() {
+	public boolean appendSemicolon(){
 		return false;
 	}
 }

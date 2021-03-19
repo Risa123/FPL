@@ -1,5 +1,5 @@
 package risa.fpl.function;
 
-public enum AccessModifier {
+public enum AccessModifier{
     PUBLIC,PRIVATE,PROTECTED,INTERNAL
 }

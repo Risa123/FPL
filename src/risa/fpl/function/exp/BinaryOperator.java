@@ -8,7 +8,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
-public class BinaryOperator extends AField {
+public final class BinaryOperator extends AField{
    private final TypeInfo returnType,operandType;
    private final String operator;
    public BinaryOperator(TypeInfo returnType,TypeInfo operandType,String operator){

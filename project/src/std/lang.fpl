@@ -84,7 +84,7 @@ fn void* malloc memory size{
   }
   return p
 }
-private fn void memoryCopy byte* src byte* dest memory size{
+fn void memoryCopy byte* src byte* dest memory size{
     memory i 0L
     while i < size{
      dest set i,src get i
@@ -92,41 +92,6 @@ private fn void memoryCopy byte* src byte* dest memory size{
     }
 }
 alias free free
-class ArrayList;T{
- private{
-  T* array
-  memory len
- }
- this{
-   array = nil
-   len = 0
- }
- fn T get memory index{
-   if index >= len{
-     Exception ex "index out of bounds"
-     ex throw
-   }
-   return array get index
- }
- fn void set memory index T value{
-   if index >= len{
-      Exception ex "index out of bounds"
-      ex throw
-   }
-   array set index,value
- }
- fn void add T value{
-   var oldLen len
-   len ++
-   if array == nil{
-      array = malloc value getObjectSize;cast T*
-      array drf= value
-   }{
-    array = realloc array cast void*,len * T:getInstanceSize; cast T*
-    memoryCopy value ref cast byte*,array cast byte* + T:getInstanceSize * oldLen,T:getInstanceSize
-   }
-}
-}
 #these functions will be made inaccessible by compiler
 #string methods
 fn uint getLength string* this{
@@ -151,7 +116,10 @@ fn bool equals string* this string str{
 }
 fn string concat string* this string str{
   var resultLen getLength this; + getLength str ref
-  return string:alloc drf
+  return new resultLen
+}
+fn string new uint len{
+  return malloc len; cast string
 }
 #char methods
 fn bool isDigit char* this{
