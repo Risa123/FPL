@@ -1,6 +1,7 @@
 package risa.fpl.info;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import risa.fpl.env.AEnv;
@@ -63,7 +64,7 @@ public class TypeInfo{
   public String toString(){
 	  return name;
   }
-  public void addField(String name, IField value){
+  public void addField(String name,IField value){
 	  fields.put(name,value);
   }
   //returns null if field cannot be accessed from Env from
@@ -129,7 +130,7 @@ public class TypeInfo{
           requiredTypes.add(p.getType());
       }
   }
-  public boolean notIn(ArrayList<TypeInfo> types){
+  public boolean notIn(Collection<TypeInfo> types){
         for(var t:types){
             if(t == this){
                 return false;
@@ -222,17 +223,13 @@ public class TypeInfo{
       if(this == TypeInfo.CHAR && o instanceof NumberInfo n && !n.isFloatingPoint()){
           return true;
       }
-      if(o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this)){
+      if(o instanceof InterfaceInfo i && ((TypeInfo)o).parents.contains(this)){
           return true;
       }
       return identical((TypeInfo)o);
   }
-  public boolean identical(TypeInfo type){
-      var nameResult = cname.equals(type.cname);
-      if(type instanceof InstanceInfo i && this instanceof InstanceInfo thisI){
-          return nameResult && thisI.getModule().getNameSpace().equals(i.getModule().getNameSpace());
-      }
-      return nameResult;
+  protected boolean identical(TypeInfo type){
+      return name.equals(type.name);
   }
   public String getConversionMethodCName(TypeInfo type){
       return conversionMethodCNames.get(type);

@@ -36,7 +36,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
        this.self = self;
        this.type = type;
        this.implName = implName;
-        if(type == FunctionType.NATIVE) {
+        if(type == FunctionType.NATIVE){
             appendToDeclaration("extern ");
         }
         if(accessModifier == AccessModifier.PRIVATE && type != FunctionType.NATIVE){
@@ -53,10 +53,10 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
             appendToDeclaration(self.getCname());
             appendToDeclaration("* this");
         }
-        for(var arg:args) {
-            if(first) {
+        for(var arg:args){
+            if(first){
                 first = false;
-            }else {
+            }else{
                 appendToDeclaration(',');
             }
             appendToDeclaration(arg.getCname());
@@ -210,7 +210,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
     }
     public Function makeMethod(TypeInfo ofType){
         var args = new TypeInfo[this.args.length - 1];
-        if (args.length > 0) {
+        if (args.length > 0){
             System.arraycopy(this.args,1,args,0,args.length);
         }
         return new Function(getName(),returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);

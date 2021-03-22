@@ -61,10 +61,18 @@ public final class ModuleEnv extends ANameSpacedEnv{
         for(var type:templateInstances){
             if(type.notIn(types)){
                 types.add(type);
+                for(var t:type.getRequiredTypes()){
+                    if(t.notIn(types)){
+                        if(t.notIn(this.types.values())){
+                            types.add(t);
+                        }else{
+                            declared.add(t);
+                        }
+                    }
+                }
             }
         }
 	    while(!types.isEmpty()){
-	        System.out.println(types);
 	        var it = types.iterator();
 	        while(it.hasNext()){
                 var t = it.next();
