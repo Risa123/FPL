@@ -23,7 +23,7 @@ public abstract class AEnv{
   public IFunction getFunction(Atom atom)throws CompilerException{
 	 switch(atom.getType()){
 	 case ID:
-		  if(atom.getValue().endsWith("*")) {
+		  if(atom.getValue().endsWith("*")){
 			   return new Var(getType(atom));
 		   }
 		 var func = functions.get(atom.getValue());
@@ -66,7 +66,7 @@ public abstract class AEnv{
 	  functions.put(name,value);
   }
   public TypeInfo getType(Atom atom)throws CompilerException{
-	  if(atom.getType() != TokenType.ID) {
+	  if(atom.getType() != TokenType.ID){
 		  throw new CompilerException(atom,"type identifier expected");
 	  }
 	  if(atom.getValue().endsWith("*")){

@@ -2,6 +2,6 @@ package risa.fpl.env;
 
 import risa.fpl.info.ClassInfo;
 
-public interface IClassOwnedEnv {
+public interface IClassOwnedEnv{
     ClassInfo getClassType();
 }

@@ -12,7 +12,7 @@ public final class CStructEnv extends SubEnv{
         superEnv.addType(id,type);
     }
     @Override
-    public void addFunction(String name, IFunction func){
+    public void addFunction(String name,IFunction func){
         if(func instanceof IField field){
             type.addField(name,field);
         }else{

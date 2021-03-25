@@ -1,5 +1,5 @@
 package risa.fpl.env;
 
-public enum Modifier {
+public enum Modifier{
  NATIVE,CONST,ABSTRACT,VIRTUAL,OVERRIDE
 }

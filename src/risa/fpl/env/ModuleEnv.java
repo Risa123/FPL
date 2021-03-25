@@ -3,6 +3,7 @@ package risa.fpl.env;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
@@ -22,7 +23,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final String nameSpace;
 	private boolean getRequestFromOutSide,initCalled;
 	private final StringBuilder variableDeclarations = new StringBuilder();
-	private final ArrayList<TypeInfo> templateInstances = new ArrayList<>();
+	private final HashMap<TypeInfo,Boolean> templateRequiredTypes = new HashMap<>();
 	private boolean mainDeclared;
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
@@ -47,10 +48,10 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	        if(mod.importedModules.contains(this)){
 	            throw new CompilerException(0,0,"recursive dependency of module " + moduleBlock.getName() + " in module " + mod.moduleBlock.getName());
             }
-	        for(var type:mod.templateInstances){
-	            if(type.notIn(templateInstances)){
-	                templateInstances.add(type);
-	                writer.write(type.getDeclaration());
+	        for(var type:mod.templateRequiredTypes.keySet()){
+	            if(type.notIn(templateRequiredTypes.keySet())){
+	                templateRequiredTypes.put(type,true);
+	                types.add(type);
                 }
             }
 	        for(var type:mod.types.values()){
@@ -135,7 +136,12 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     @Override
     public void addTemplateInstance(InstanceInfo type){
-        templateInstances.add(type);
+        templateRequiredTypes.put(type,false);
+        for(var t:type.getRequiredTypes()){
+           if(!t.isPrimitive() && t.notIn(templateRequiredTypes.keySet())){
+               templateRequiredTypes.put(t,false);
+           }
+        }
     }
     public void requestFromOutSide(){
 	    getRequestFromOutSide = true;

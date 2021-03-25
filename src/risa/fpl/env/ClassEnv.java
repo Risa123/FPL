@@ -61,7 +61,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		    super.addFunction(name,value);
         }
 	}
-	public void appendToImplicitConstructor(String code) {
+	public void appendToImplicitConstructor(String code){
 		implicitConstructor.append(code);
 	}
 	public String getImplicitConstructorCode(){
@@ -120,7 +120,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public void addTemplateInstance(InstanceInfo type){
         ((ANameSpacedEnv)superEnv).addTemplateInstance(type);
     }
-
     public void appendDeclarations(){
         instanceType.appendToDeclaration(getFunctionDeclarations());
     }

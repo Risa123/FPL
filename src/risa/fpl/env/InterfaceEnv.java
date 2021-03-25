@@ -7,15 +7,15 @@ import risa.fpl.function.statement.Var;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.parser.Atom;
 
-public final class InterfaceEnv extends SubEnv {
+public final class InterfaceEnv extends SubEnv{
     private final InterfaceInfo type;
-    public InterfaceEnv(AEnv superEnv,String id) {
+    public InterfaceEnv(AEnv superEnv,String id){
         super(superEnv);
         addModifier(Modifier.ABSTRACT);
         type = new InterfaceInfo(id);
     }
     @Override
-    public IFunction getFunction(Atom atom) throws CompilerException {
+    public IFunction getFunction(Atom atom)throws CompilerException{
         var f = super.getFunction(atom);
         if(f instanceof Var){
             throw new CompilerException(atom,"variables cannot be declared in interface");
@@ -23,7 +23,7 @@ public final class InterfaceEnv extends SubEnv {
         return f;
     }
     @Override
-    public void addFunction(String name, IFunction value) {
+    public void addFunction(String name,IFunction value){
         type.addField(name,(IField)value);
     }
     public InterfaceInfo getType(){
