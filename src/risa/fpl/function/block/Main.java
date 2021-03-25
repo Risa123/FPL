@@ -21,9 +21,13 @@ import java.util.ArrayList;
 public final class Main implements IFunction{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        if(!(env instanceof ModuleEnv modEnv)){
+        if(!(env instanceof ModuleEnv modEnv && modEnv.isMain())){
             throw new CompilerException(line,charNum,"this can only be used in main module");
         }
+        if(modEnv.isMainDeclared()){
+            throw new CompilerException(line,charNum,"declaration of multiple main blocks is not allowed");
+        }
+        modEnv.declareMain();
         var fnEnv = new FnEnv(env,NumberInfo.INT);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("argv",new Variable(new PointerInfo(TypeInfo.STRING),"argv","argv"));

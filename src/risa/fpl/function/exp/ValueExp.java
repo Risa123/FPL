@@ -12,10 +12,10 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
-public class ValueExp extends AField {
+public class ValueExp extends AField{
     protected final TypeInfo type;
     protected final String code;
-    public ValueExp(TypeInfo type,String code,AccessModifier accessModifier) {
+    public ValueExp(TypeInfo type,String code,AccessModifier accessModifier){
         super(accessModifier);
     	this.type = type;
     	this.code = code;
@@ -27,7 +27,7 @@ public class ValueExp extends AField {
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
 		if(it.hasNext()) {
 			if(it.peek() instanceof Atom atom) {
-				if(atom.getType() == TokenType.ARG_SEPARATOR) {
+				if(atom.getType() == TokenType.ARG_SEPARATOR){
 					it.next();
 				}else if(atom.getType() != TokenType.END_ARGS){
 					it.next();
@@ -41,13 +41,13 @@ public class ValueExp extends AField {
 	}
 	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
 		var field = type.getField(atom.getValue(),env);
-		if(field == null) {
+		if(field == null){
 			throw new CompilerException(atom,type + " has no field  called " + atom);
 		}
 		var selector = "";
 		var prefix = "";
-		if(field instanceof Variable) {
-		   if(type instanceof PointerInfo) {
+		if(field instanceof Variable){
+		   if(type instanceof PointerInfo){
 			   selector = "->";
 		   }else {
 			   selector = ".";

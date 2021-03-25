@@ -14,7 +14,6 @@ errors in template now show type named after template argument instead of object
 ArrayList added to std.lang
 contextSave and contextRestore support ia64
 better code generation
-check for validity of special characters added
 $sp changed to $\s
 alloc static method add to all classes
 pointers can be cast to string
@@ -41,3 +40,7 @@ fix "there is no return in this block and this function doesn't return void" cor
 fix prohibited to cast to interface
 fix implicit conversion to function argument type
 fix check for valid ascii string added
+fix check for validity of special characters added
+fix main block check if module is main
+fix check if main module has main block
+fix disallow declaration of multiple main blocks

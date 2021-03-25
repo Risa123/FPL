@@ -23,6 +23,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private boolean getRequestFromOutSide,initCalled;
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	private final ArrayList<TypeInfo> templateInstances = new ArrayList<>();
+	private boolean mainDeclared;
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -49,26 +50,13 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	        for(var type:mod.templateInstances){
 	            if(type.notIn(templateInstances)){
 	                templateInstances.add(type);
+	                writer.write(type.getDeclaration());
                 }
             }
 	        for(var type:mod.types.values()){
 	            if(type.notIn(types)){
 	                types.add(type);
 	                addRequiredTypes(type,types);
-                }
-            }
-        }
-        for(var type:templateInstances){
-            if(type.notIn(types)){
-                types.add(type);
-                for(var t:type.getRequiredTypes()){
-                    if(t.notIn(types)){
-                        if(t.notIn(this.types.values())){
-                            types.add(t);
-                        }else{
-                            declared.add(t);
-                        }
-                    }
                 }
             }
         }
@@ -202,5 +190,11 @@ public final class ModuleEnv extends ANameSpacedEnv{
            }
         }
 	    return b.toString();
+    }
+    public void declareMain(){
+	    mainDeclared = true;
+    }
+    public boolean isMainDeclared(){
+	    return mainDeclared;
     }
 }

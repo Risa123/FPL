@@ -11,7 +11,7 @@ import risa.fpl.CompilerException;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public final class GetObjectInfo extends AField implements  ICalledOnPointer{
+public final class GetObjectInfo extends AField implements ICalledOnPointer{
     private final TypeInfo returnType;
     private final String field;
     private final InstanceInfo self;
@@ -40,7 +40,7 @@ public final class GetObjectInfo extends AField implements  ICalledOnPointer{
         return  compileChainedCall(returnType,writer,env,it,prev.getCode());
     }
     @Override
-    public void calledOnPointer() {
+    public void calledOnPointer(){
         calledOnPointer = true;
     }
 }

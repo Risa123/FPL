@@ -223,7 +223,7 @@ public class TypeInfo{
       if(this == TypeInfo.CHAR && o instanceof NumberInfo n && !n.isFloatingPoint()){
           return true;
       }
-      if(o instanceof InterfaceInfo i && ((TypeInfo)o).parents.contains(this)){
+      if(o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this)){
           return true;
       }
       return identical((TypeInfo)o);
