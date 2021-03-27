@@ -125,7 +125,6 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                 }
             }
         }
-        writer.write(cEnv.getDataDefinition());
         var constructor = type.getConstructor();
         if(constructor == null){
             constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this));
@@ -137,27 +136,28 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         type.appendToDeclaration("extern " + cEnv.getDataDefinition());
         cEnv.appendDeclarations();
         var cID = IFunction.toCId(id.getValue());
+        var internalCode = new BuilderWriter(writer);
         if(!modEnv.hasModifier(Modifier.ABSTRACT)){
-            writer.write(cID + "* " + allocName + "(");
+            internalCode.write(cID + "* " + allocName + "(");
             var args = constructor.getArguments();
             var compiledArgs = constructorArguments(args);
-            writer.write(compiledArgs);
-            writer.write("){\nvoid* malloc(unsigned long long);\n");
-            writer.write(type.getCname());
-            writer.write("* p=malloc(sizeof(");
-            writer.write(type.getCname());
-            writer.write("));\n");
-            writer.write(constructorCall(constructor,"p"));
-            writer.write("return p;\n}\n");
+            internalCode.write(compiledArgs);
+            internalCode.write("){\nvoid* malloc(unsigned long long);\n");
+            internalCode.write(type.getCname());
+            internalCode.write("* p=malloc(sizeof(");
+            internalCode.write(type.getCname());
+            internalCode.write("));\n");
+            internalCode.write(constructorCall(constructor,"p"));
+            internalCode.write("return p;\n}\n");
             var allocMethod = Function.newStatic("alloc",new PointerInfo(type),args,cEnv);
             var classType = cEnv.getClassType();
             classType.addField("alloc",allocMethod);
-            writer.write(allocMethod.getDeclaration());
+            internalCode.write(allocMethod.getDeclaration());
             type.appendToDeclaration(allocMethod.getDeclaration());
             var newName = "static" + cEnv.getNameSpace() + "_new";
-            writer.write(type.getCname() + " " + newName + "(" + compiledArgs + "){\n" + type.getCname() + " inst;\n");
-            writer.write(constructorCall(constructor,"&inst"));
-            writer.write("return inst;\n}\n");
+            internalCode.write(type.getCname() + " " + newName + "(" + compiledArgs + "){\n" + type.getCname() + " inst;\n");
+            internalCode.write(constructorCall(constructor,"&inst"));
+            internalCode.write("return inst;\n}\n");
             var newMethod = Function.newStatic("new",type,args,cEnv);
             classType.addField("new",newMethod);
             type.appendToDeclaration(newMethod.getDeclaration());
@@ -166,27 +166,27 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
             modEnv.addFunction(id.getValue(),constructor);
         }
         for(var i:interfaces){
-            writer.write("static ");
-            writer.write(i.getImplName());
-            writer.write(' ');
-            writer.write(cID);
-            writer.write(i.getCname());
-            writer.write("_impl;\n");
-            writer.write(i.getCname());
-            writer.write(' ');
+            internalCode.write("static ");
+            internalCode.write(i.getImplName());
+            internalCode.write(' ');
+            internalCode.write(cID);
+            internalCode.write(i.getCname());
+            internalCode.write("_impl;\n");
+            internalCode.write(i.getCname());
+            internalCode.write(' ');
             var callBuilder = new StringBuilder(INTERNAL_METHOD_PREFIX);
             callBuilder.append(cEnv.getNameSpace());
             callBuilder.append("_as");
             callBuilder.append(i.getCname());
             var asCName = callBuilder.toString();
-            writer.write(asCName);
-            writer.write('(');
-            writer.write(type.getCname());
-            writer.write("* this){\n");
-            writer.write(i.getCname());
-            writer.write(" tmp;\ntmp.instance=this;\ntmp.impl=&");
-            writer.write(cEnv.getImplOf(i));
-            writer.write(";\nreturn tmp;\n}\n");
+            internalCode.write(asCName);
+            internalCode.write('(');
+            internalCode.write(type.getCname());
+            internalCode.write("* this){\n");
+            internalCode.write(i.getCname());
+            internalCode.write(" tmp;\ntmp.instance=this;\ntmp.impl=&");
+            internalCode.write(cEnv.getImplOf(i));
+            internalCode.write(";\nreturn tmp;\n}\n");
             type.appendToDeclaration(i.getCname() + " " + callBuilder + "(" + type.getCname() + "*);\n");
             type.addConversionMethodCName(i,callBuilder.toString());
             var parent = type.getPrimaryParent();
@@ -200,6 +200,10 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                     cEnv.appendToInitializer("=&"  + impl.getCname()  + ";\n");
                 }
             }
+        }
+        cEnv.appendFunctionCode(internalCode.getCode());
+        if(templateStatus != TemplateStatus.GENERATING){
+            writer.write(cEnv.getDataDefinition());
         }
         if(templateStatus != TemplateStatus.TEMPLATE){
             modEnv.appendFunctionDeclarations(cEnv.getFunctionDeclarations());

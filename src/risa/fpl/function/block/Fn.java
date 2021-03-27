@@ -49,7 +49,7 @@ public class Fn extends AFunctionBlock{
         }
         var fnEnv = new FnEnv(env,returnType);
         var headWriter = new BuilderWriter(writer);
-        if(env.getAccessModifier() == AccessModifier.PRIVATE){
+        if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
             headWriter.write("static ");
         }
         headWriter.write(returnType.getCname());

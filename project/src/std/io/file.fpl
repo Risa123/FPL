@@ -20,5 +20,5 @@ class FileWriter FileHandler Writable{
 class FileReader FileHandler  Readable{
   this string name:name,"r"
   override fn void read byte* p memory size = fileRead handle,p,size
-  override fn bool ready = fileEOF handle
+  override fn bool ready = fileEOF handle; !
 }

@@ -50,7 +50,13 @@ public final class TemplateTypeInfo extends InstanceInfo{
                }
                mod.importModules(writer);
                new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
+               mod.declareTypes(writer);
+               for(var type:args){
+                   writer.write(type.getDeclaration());
+               }
+               writer.write(cEnv.getInstanceType().getDeclaration());
                writer.write(mod.getVariableDeclarations());
+               writer.write(cEnv.getDataDefinition());
                writer.write(cEnv.getFunctionCode());
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(cEnv.getInstanceType());

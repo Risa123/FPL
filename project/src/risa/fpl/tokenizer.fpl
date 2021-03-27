@@ -19,10 +19,16 @@ class Tokenizer{
     int line 1;tokenNum 1
     Readable readable
     ArrayList;Token; tokens
+    fn Token token int line int tokenNum string value{
+       return Token:new line,tokenNum,value
+    }
  }
  this Readable readable{
     this readable = readable
  }
+ fn Token next{
+    return token 1,1,"x"
+ }
  fn void close = readable close
- fn bool hasNext = readable ready
+ fn bool hasNext = readable ready; || tokens isEmpty;!
 }

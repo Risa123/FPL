@@ -24,7 +24,7 @@ public final class Main implements IFunction{
         if(!(env instanceof ModuleEnv modEnv && modEnv.isMain())){
             throw new CompilerException(line,charNum,"this can only be used in main module");
         }
-        if(modEnv.isMainDeclared()){
+        if(modEnv.multipleMainDeclared()){
             throw new CompilerException(line,charNum,"declaration of multiple main blocks is not allowed");
         }
         modEnv.declareMain();

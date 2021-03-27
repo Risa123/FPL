@@ -49,13 +49,7 @@ public final class ClassVariable extends Function{
         }else{
 		    throw new CompilerException(id,"variable identifier or : expected");
         }
-		if(env instanceof ModuleEnv mod){
-		    mod.appendToInitializer(b.getCode() + ";\n");
-        }else if(env instanceof ClassEnv e){
-            e.appendToImplicitConstructor(b.getCode() + ";\n");
-        }else{
-		    writer.write(b.getCode());
-        }
+        writer.write(b.getCode());
 		return TypeInfo.VOID;
 	}
 	private TypeInfo compileVariable(BufferedWriter writer,Atom id,AEnv env,ExpIterator it)throws IOException,CompilerException{
@@ -75,16 +69,24 @@ public final class ClassVariable extends Function{
         writer.write(cID);
         writer.write(";\n");
         setPrevCode(cID);
+        var b = new BuilderWriter(writer);
         if(type instanceof TemplateTypeInfo){
             varType.getConstructor().setPrevCode(cID);
-            ((ClassVariable)varType.getConstructor()).superCompile(writer,env,it,id.getLine(),id.getCharNum());
+            ((ClassVariable)varType.getConstructor()).superCompile(b,env,it,id.getLine(),id.getCharNum());
         }else{
-            super.compile(writer,env,it,id.getLine(),id.getCharNum());
+            super.compile(b,env,it,id.getLine(),id.getCharNum());
         }
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);
         }
         env.addFunction(id.getValue(),new Variable(varType,IFunction.toCId(id.getValue()),id.getValue()));
+        if(env instanceof ClassEnv e){
+            e.appendToImplicitConstructor(b.getCode() + ";\n");
+        }else if(env instanceof ModuleEnv e){
+            e.appendToInitializer(b.getCode() + ";\n");
+        }else{
+            writer.write(b.getCode());
+        }
         return null;
     }
 	public void compileAsParentConstructor(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{

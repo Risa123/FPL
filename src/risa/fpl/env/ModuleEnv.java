@@ -8,6 +8,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.block.ATwoPassBlock;
 import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
@@ -22,7 +23,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final String nameSpace;
 	private boolean getRequestFromOutSide,initCalled;
 	private final StringBuilder variableDeclarations = new StringBuilder();
-	private boolean mainDeclared;
+	private int mainDeclared;
 	private final ArrayList<TypeInfo>typesForDeclarations = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
@@ -163,20 +164,14 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
 	    return files;
     }
-    public String getTypeDeclarations(){
-	    var b = new StringBuilder();
-	    for(var type:types.values()){
-	       if(!(type instanceof  Function)){
-               b.append(type.getDeclaration());
-           }
-        }
-	    return b.toString();
-    }
     public void declareMain(){
-	    mainDeclared = true;
+	    mainDeclared++;
     }
     public boolean isMainDeclared(){
-	    return mainDeclared;
+	    return mainDeclared > 0;
+    }
+    public boolean multipleMainDeclared(){
+	    return mainDeclared == ATwoPassBlock.MAX_PASSES;
     }
     private void declareTypes(BufferedWriter writer,ArrayList<TypeInfo>types)throws IOException{
         var declared = new ArrayList<TypeInfo>();

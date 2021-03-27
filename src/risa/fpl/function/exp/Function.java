@@ -144,11 +144,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
             if(field == null){
                 throw new CompilerException(id,returnType + " has no field called " + id);
             }
-            if(field instanceof Cast){
-                field.setPrevCode(b.getCode());
-            }else{
-                writer.write(b.getCode());
-            }
+            field.setPrevCode(b.getCode());
             return field.compile(writer,env,it,id.getLine(),id.getCharNum());
         }
         writer.write(b.getCode());
