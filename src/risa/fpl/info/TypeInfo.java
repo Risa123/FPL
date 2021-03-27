@@ -28,6 +28,7 @@ public class TypeInfo{
 	  CHAR.addField("==",new BinaryOperator(BOOL,CHAR,"=="));
 	  CHAR.addField("!=",new BinaryOperator(BOOL,CHAR,"!="));
 	  STRING.addField("get",new GetElement(CHAR));
+	  STRING.addField("set",new SetElement(CHAR));
 	  STRING.addField("cast",new Cast(STRING));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
 	  BOOL.addField("&&",new BinaryOperator(BOOL,BOOL,"&&"));

@@ -230,15 +230,15 @@ public final class Tokenizer{
 		  return token;
 	  }
 	  private int read()throws IOException{
-		  if(readNext) {
+		  if(readNext){
 			 c = reader.read();
 			 if(c == '\n') {
 				 line++;
 				 charNum = 1;
-			 }else {
+			 }else{
 				 charNum++;
 			 }
-		  }else {
+		  }else{
 			  readNext = true;
 		  }
 		  return c;

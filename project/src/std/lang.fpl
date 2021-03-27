@@ -115,8 +115,19 @@ fn bool equals string* this string str{
    return true
 }
 fn string concat string* this string str{
-  var resultLen getLength this; + getLength str ref
-  return new resultLen
+  var thisLen getLength this
+  var strLen getLength str ref
+  var resultLen thisLen + strLen
+  var ret new resultLen
+  var i 0
+  while i < thisLen{
+     ret set i,this drf get i
+  }
+  var strI 0
+  while strI < strLen{
+    ret set i,str get strI
+  }
+  return ret
 }
 fn string new uint len{
   return malloc len; cast string

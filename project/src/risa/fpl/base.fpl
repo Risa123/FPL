@@ -1,0 +1,11 @@
+
+fn string createMessage string message int line int tokenNum{
+  var first message concat "x"
+  return "x"
+}
+class CompilerException Exception{
+ this int line int tokenNum string message:message
+}
+interface IFunction{
+ fn void compile
+}

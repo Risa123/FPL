@@ -73,6 +73,7 @@ public final class ModuleBlock extends ATwoPassBlock{
                    makeMethod("toLower",TypeInfo.CHAR);
                    makeMethod("toUpper",TypeInfo.CHAR);
                    makeMethod("new",ClassInfo.STRING);
+                   makeMethod("concat",TypeInfo.STRING);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));

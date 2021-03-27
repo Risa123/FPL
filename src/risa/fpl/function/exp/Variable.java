@@ -20,7 +20,7 @@ public final class Variable extends ValueExp{
 	private final boolean constant;
 	private final TypeInfo instanceType;
 	public Variable(TypeInfo type,String code,boolean onlyDeclared,String id,boolean constant,TypeInfo instanceType,AccessModifier mod){
-		super(type, code,mod);
+		super(type,code,mod);
 		this.onlyDeclared = onlyDeclared;
 		this.id = id;
 		this.constant = constant;
@@ -88,7 +88,7 @@ public final class Variable extends ValueExp{
 	}
 	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException,CompilerException{
             switch(operator){
-                case "+=", "-=", "/=", "*=" ->{
+                case "+=","-=","/=","*=" ->{
                     writePrev(writer);
                     process(operator,writer,it,env);
                     return TypeInfo.VOID;
@@ -136,6 +136,6 @@ public final class Variable extends ValueExp{
 	    return type;
     }
     public String getExternDeclaration(){
-	    return "extern " + type.getCname() +  " " + code + ";\n";
+	    return "extern " + type.getCname() + " " + code + ";\n";
     }
 }

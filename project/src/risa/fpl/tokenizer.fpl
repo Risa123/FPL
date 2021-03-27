@@ -1,4 +1,4 @@
-use std.io.base std.collection
+use std.io.base std.collection risa.fpl.base
 
 class Token{
   private{
@@ -16,19 +16,41 @@ class Token{
 }
 class Tokenizer{
  private{
-    int line 1;tokenNum 1
-    Readable readable
-    ArrayList;Token; tokens
+    int line 1;tokenNum 1;i 0
+    DataReader* reader
+    const ArrayList;Token; tokens
     fn Token token int line int tokenNum string value{
        return Token:new line,tokenNum,value
     }
  }
  this Readable readable{
-    this readable = readable
+    this reader = DataReader:alloc readable
  }
  fn Token next{
-    return token 1,1,"x"
+    var token peek
+    i ++
+    return token
  }
- fn void close = readable close
- fn bool hasNext = readable ready; || tokens isEmpty;!
+ fn Token peek{
+   if tokens isEmpty{
+      if reader ready{
+       var c reader readChar
+       if c == $( {
+         while reader ready; && reader readChar; == $) {}
+       }if c == $#{
+         while reader ready; && reader readChar; == $\n{}
+       }if c == $${
+         if reader ready; !{
+           CompilerException ex line,tokenNum,"char expected"
+         }
+       }
+      }{
+       CompilerException ex line,tokenNum,"no tokens available"
+       ex throw
+      }
+   }
+   return tokens get i
+ }
+ fn void close = reader close
+ fn bool hasNext = reader ready; || tokens isEmpty;!
 }

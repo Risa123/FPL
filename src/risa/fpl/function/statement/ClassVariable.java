@@ -7,6 +7,7 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
+import risa.fpl.env.Modifier;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
@@ -68,10 +69,14 @@ public final class ClassVariable extends Function{
         var cID = IFunction.toCId(id.getValue());
         writer.write(cID);
         writer.write(";\n");
-        setPrevCode(cID);
+        if(env instanceof ClassEnv){
+            setPrevCode("this->" + cID);
+        }else{
+            setPrevCode(cID);
+        }
         var b = new BuilderWriter(writer);
         if(type instanceof TemplateTypeInfo){
-            varType.getConstructor().setPrevCode(cID);
+            varType.getConstructor().setPrevCode(getPrevCode());
             ((ClassVariable)varType.getConstructor()).superCompile(b,env,it,id.getLine(),id.getCharNum());
         }else{
             super.compile(b,env,it,id.getLine(),id.getCharNum());
@@ -79,7 +84,13 @@ public final class ClassVariable extends Function{
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);
         }
-        env.addFunction(id.getValue(),new Variable(varType,IFunction.toCId(id.getValue()),id.getValue()));
+        var vID = id.getValue();
+        var varCid = IFunction.toCId(vID);
+        TypeInfo instanceType = null;
+        if(env instanceof ClassEnv e){
+            instanceType = e.getInstanceType();
+        }
+        env.addFunction(id.getValue(),new Variable(varType,varCid,false,vID,env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
         if(env instanceof ClassEnv e){
             e.appendToImplicitConstructor(b.getCode() + ";\n");
         }else if(env instanceof ModuleEnv e){

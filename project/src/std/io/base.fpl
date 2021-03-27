@@ -12,3 +12,24 @@ interface Readable Closeable{
 class IOException Exception{
   this string message:message
 }
+class DataReader Readable{
+ private Readable readable
+ this Readable readable{
+   this readable = readable
+ }
+ override fn void read byte* p memory size{
+   readable read p,size
+ }
+
+ override fn bool ready{
+   return readable ready
+ }
+ override fn void close{
+   readable close
+ }
+ fn char readChar{
+   [] char 1 buf
+   readable read buf,1
+   return buf get 0
+ }
+}

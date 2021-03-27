@@ -5,12 +5,6 @@ use{
   std.collection
   std.backend
 }
-class CompilerException Exception{
- this string message:message
-}
-interface IFunction{
- fn void compile
-}
 main{
  FileReader reader "project/src/risa/fpl/fpl.fpl"
  Tokenizer tokenizer reader
