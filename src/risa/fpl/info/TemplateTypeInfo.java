@@ -37,9 +37,6 @@ public final class TemplateTypeInfo extends InstanceInfo{
                var name = new StringBuilder(getName());
                for(var arg:args){
                    name.append(arg.getName());
-                   if(!(mod.hasTypeInCurrentEnv(arg.getName()) && mod.getType(new Atom(0,0,arg.getName(),TokenType.ID)).identical(arg))){
-                       writer.write(arg.getDeclaration());
-                   }
                }
                var cEnv = new ClassEnv(mod,name.toString(),TemplateStatus.GENERATING);
                if(args.size() != templateArgs.size()){
@@ -52,9 +49,8 @@ public final class TemplateTypeInfo extends InstanceInfo{
                    cEnv.addFunction(typeName,new ClassVariable(type,type.getClassInfo(),new TypeInfo[0],""));
                }
                mod.importModules(writer);
-               writer.write(mod.getTypeDeclarations());
-               writer.write(mod.getVariableDeclarations());
                new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
+               writer.write(mod.getVariableDeclarations());
                writer.write(cEnv.getFunctionCode());
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(cEnv.getInstanceType());

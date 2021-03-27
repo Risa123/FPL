@@ -6,6 +6,7 @@ import java.io.IOException;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.ClassEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
@@ -50,6 +51,8 @@ public final class ClassVariable extends Function{
         }
 		if(env instanceof ModuleEnv mod){
 		    mod.appendToInitializer(b.getCode() + ";\n");
+        }else if(env instanceof ClassEnv e){
+            e.appendToImplicitConstructor(b.getCode() + ";\n");
         }else{
 		    writer.write(b.getCode());
         }

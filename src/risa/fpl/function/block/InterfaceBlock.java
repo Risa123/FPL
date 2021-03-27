@@ -76,7 +76,6 @@ public final class InterfaceBlock implements IFunction{
         b.write("* impl;\n}");
         b.write(cID);
         b.write(";\n");
-        writer.write(b.getCode());
         type.appendToDeclaration(b.getCode());
         type.buildDeclaration();
         env.addType(idV,type);

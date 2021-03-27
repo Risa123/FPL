@@ -16,7 +16,7 @@ public final class ExpIterator{
 	  lastCharNum = firstCharNum;
   }
   public AExp next()throws CompilerException{
-	  if(peeked != null) {
+	  if(peeked != null){
 		  var r = peeked;
 		  peeked = null;
 		  return r;
@@ -34,7 +34,7 @@ public final class ExpIterator{
 	  if(!(exp instanceof Atom)){
 		 throw new CompilerException(exp,"atom expected");
 	  }
-	  return(Atom) exp;
+	  return(Atom)exp;
   }
   public Atom nextID()throws CompilerException{
 	  var atom = nextAtom();
@@ -48,13 +48,13 @@ public final class ExpIterator{
   }
   public List nextList()throws CompilerException{
 	  var list = next();
-	  if(!(list instanceof List)) {
+	  if(!(list instanceof List)){
 		  throw new CompilerException(list,"list expected");
 	  }
 	  return (List)list;
   }
   public AExp peek()throws CompilerException{
-	  if(peeked == null) {
+	  if(peeked == null){
 		  peeked = next();
 	  }
 	  return peeked;

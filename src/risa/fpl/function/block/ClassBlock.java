@@ -125,7 +125,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                 }
             }
         }
-        writer.write(b.getCode() + cEnv.getDataDefinition());
+        writer.write(cEnv.getDataDefinition());
         var constructor = type.getConstructor();
         if(constructor == null){
             constructor = new ClassVariable(type,cEnv.getClassType(),new TypeInfo[]{},cEnv.getNameSpace(this));

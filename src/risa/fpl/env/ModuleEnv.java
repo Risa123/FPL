@@ -3,7 +3,6 @@ package risa.fpl.env;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
@@ -23,8 +22,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final String nameSpace;
 	private boolean getRequestFromOutSide,initCalled;
 	private final StringBuilder variableDeclarations = new StringBuilder();
-	private final HashMap<TypeInfo,Boolean> templateRequiredTypes = new HashMap<>();
 	private boolean mainDeclared;
+	private final ArrayList<TypeInfo>typesForDeclarations = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -43,16 +42,9 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
 	public void importModules(BufferedWriter writer)throws CompilerException,IOException{
 	    var types = new ArrayList<TypeInfo>();
-	    var declared = new ArrayList<TypeInfo>();
 	    for(var mod:importedModules){
 	        if(mod.importedModules.contains(this)){
 	            throw new CompilerException(0,0,"recursive dependency of module " + moduleBlock.getName() + " in module " + mod.moduleBlock.getName());
-            }
-	        for(var type:mod.templateRequiredTypes.keySet()){
-	            if(type.notIn(templateRequiredTypes.keySet())){
-	                templateRequiredTypes.put(type,true);
-	                types.add(type);
-                }
             }
 	        for(var type:mod.types.values()){
 	            if(type.notIn(types)){
@@ -61,24 +53,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
             }
         }
-	    while(!types.isEmpty()){
-	        var it = types.iterator();
-	        while(it.hasNext()){
-                var t = it.next();
-                var hasAll = true;
-                for(var rt:t.getRequiredTypes()){
-                    if(rt.notIn(declared)){
-                        hasAll = false;
-                        break;
-                    }
-                }
-                if(hasAll){
-                    declared.add(t);
-                    writer.write(t.getDeclaration());
-                    it.remove();
-                }
-            }
-        }
+	    declareTypes(writer,types);
 		for(var mod:importedModules){
             for(var func:mod.functions.values()){
                 if(func instanceof Function f && f.getAccessModifier() != AccessModifier.PRIVATE){
@@ -136,10 +111,10 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     @Override
     public void addTemplateInstance(InstanceInfo type){
-        templateRequiredTypes.put(type,false);
+        typesForDeclarations.add(type);
         for(var t:type.getRequiredTypes()){
-           if(!t.isPrimitive() && t.notIn(templateRequiredTypes.keySet())){
-               templateRequiredTypes.put(t,false);
+           if(!t.isPrimitive() && t.notIn(typesForDeclarations)){
+               typesForDeclarations.add(t);
            }
         }
     }
@@ -202,5 +177,44 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public boolean isMainDeclared(){
 	    return mainDeclared;
+    }
+    private void declareTypes(BufferedWriter writer,ArrayList<TypeInfo>types)throws IOException{
+        var declared = new ArrayList<TypeInfo>();
+        while(!types.isEmpty()){
+            var it = types.iterator();
+            while(it.hasNext()){
+                var t = it.next();
+                var hasAll = true;
+                for(var rt:t.getRequiredTypes()){
+                    if(rt.notIn(declared) && !rt.notIn(types)){
+                        hasAll = false;
+                        break;
+                    }
+                }
+                if(hasAll){
+                    declared.add(t);
+                    writer.write(t.getDeclaration());
+                    it.remove();
+                }
+            }
+        }
+    }
+    public void declareTypes(BufferedWriter writer)throws IOException{
+	    declareTypes(writer,typesForDeclarations);
+    }
+    @Override
+    public void addType(String name,TypeInfo type,boolean declaration){
+	    super.addType(name,type,declaration);
+	    if(!type.isPrimitive()){
+            addTypesForDeclaration(type);
+        }
+    }
+    private void addTypesForDeclaration(TypeInfo type){
+	   if(!type.notIn(types.values()) && type.notIn(typesForDeclarations)){
+           typesForDeclarations.add(type);
+           for(var t:type.getRequiredTypes()){
+               addTypesForDeclaration(t);
+           }
+       }
     }
 }

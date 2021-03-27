@@ -52,6 +52,7 @@ public final class ModuleBlock extends ATwoPassBlock{
                    throw new CompilerException(1,1,"declaration of main expected");
                }
                env.importModules(writer);
+               env.declareTypes(writer);
                writer.write(b.getCode());
                writer.write(env.getVariableDeclarations());
                writer.write(env.getFunctionDeclarations());
