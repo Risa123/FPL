@@ -12,13 +12,18 @@ class Exception{
        currentThread exceptionHandler drf this
        return
      }
+     native fn void* malloc memory size
      currentThread exception = malloc getObjectSize; cast Exception*
+     if currentThread exception == nil{
+        puts "unable to allocate exception"
+        exit 1
+     }
      memoryCopy this cast byte*,currentThread exception cast byte*,getObjectSize
      contextRestore currentThread currentEHentry context
    }
    internal fn void copyAndFree Exception* to{
      memoryCopy this cast byte*,to cast byte*,getObjectSize
-     free this cast void*
+     this free
    }
 }
 fpointer void ExceptionHandlerType Exception* ex
@@ -39,7 +44,7 @@ class Thread{
     }
     fn void removeEHentry{
       var prev currentEHentry prev
-      free currentEHentry cast void*
+      currentEHentry free
       currentEHentry = prev
     }
  }
@@ -47,7 +52,7 @@ class Thread{
  fn void freeEHentries{
    while currentEHentry != nil{
      var prev currentEHentry prev
-     free currentEHentry cast void*
+     currentEHentry free
      currentEHentry = prev
    }
  }

@@ -6,7 +6,7 @@ use{
   std.backend
 }
 main{
- FileReader reader "project/src/risa/fpl/fpl.fpl"
+ FileReader reader "test.fpl"
  Tokenizer tokenizer reader
  while tokenizer hasNext{
     tokenizer next

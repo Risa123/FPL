@@ -40,7 +40,7 @@ public final class Tokenizer{
 			  if(firstChar == '\\' && hasNext()){
 			      read();
                   switch (c){
-                      case 't','n','f','b','r','\\','\'','\"','0'->{
+                      case 't','n','f','b','r','\\','0'->{
                           builder.appendCodePoint('\\');
                           builder.appendCodePoint(c);
                       }
@@ -48,6 +48,9 @@ public final class Tokenizer{
                       default->throw new CompilerException(line,charNum,"no special character " +  Character.toString(c));
                   }
 			  }else{
+			      if(c == '\''){
+			          builder.append('\\');
+                  }
 			      builder.appendCodePoint(firstChar);
               }
 			  builder.append("'");

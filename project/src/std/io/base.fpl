@@ -20,7 +20,6 @@ class DataReader Readable{
  override fn void read byte* p memory size{
    readable read p,size
  }
-
  override fn bool ready{
    return readable ready
  }
@@ -30,6 +29,6 @@ class DataReader Readable{
  fn char readChar{
    [] char 1 buf
    readable read buf,1
-   return buf get 0
+   return buf drf
  }
 }

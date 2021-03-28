@@ -33,7 +33,7 @@ public final class PointerInfo extends TypeInfo{
         addField(">=",new BinaryOperator(TypeInfo.BOOL,this,">="));
         addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
         addField("cast", new Cast(this));
-        addField("free",new Function("free",TypeInfo.VOID,"free",new TypeInfo[0],FunctionType.NORMAL,this,AccessModifier.PUBLIC,""));
+        addField("free",new Function("free",TypeInfo.VOID,"free",new TypeInfo[0],FunctionType.NORMAL,this,AccessModifier.PUBLIC,"free"));
 	}
 	public PointerInfo(TypeInfo type){
 	    this(type,false);

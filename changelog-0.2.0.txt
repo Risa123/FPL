@@ -51,3 +51,5 @@ fix function chained call C error
 fix FileHandler ready method
 fix inline function C error
 fix declaring fields of class instances C error
+fix when program is unable to allocate memory for exception it is terminated
+fix $' C error

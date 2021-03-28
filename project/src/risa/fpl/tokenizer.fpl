@@ -43,6 +43,22 @@ class Tokenizer{
          if reader ready; !{
            CompilerException ex line,tokenNum,"char expected"
          }
+         ArrayList;char; b
+         var firstChar reader readChar
+         if firstChar == $\\; && reader ready{
+          var c reader readChar
+          if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $";|| c == $0{
+             b add $\\
+             b add c
+          }if c == $s{
+            b add $\s
+          }{
+           Compiler ex line,charNum,"no special character called " concat
+          }
+         }{
+          b add firstChar
+         }
+         b add $'
        }
       }{
        CompilerException ex line,tokenNum,"no tokens available"
