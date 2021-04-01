@@ -36,7 +36,7 @@ class Tokenizer{
       if reader ready{
        var c reader readChar
        if c == $( {
-         while reader ready; && reader readChar; == $) {}
+         while reader ready; && reader readChar; == $){}
        }if c == $#{
          while reader ready; && reader readChar; == $\n{}
        }if c == $${
@@ -44,6 +44,7 @@ class Tokenizer{
            CompilerException ex line,tokenNum,"char expected"
          }
          ArrayList;char; b
+         b add $'
          var firstChar reader readChar
          if firstChar == $\\; && reader ready{
           var c reader readChar
@@ -53,7 +54,7 @@ class Tokenizer{
           }if c == $s{
             b add $\s
           }{
-           Compiler ex line,charNum,"no special character called " concat
+           CompilerException ex line,tokenNum,"no special character called " concat c toString
           }
          }{
           b add firstChar

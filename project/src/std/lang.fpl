@@ -187,10 +187,33 @@ fn char toUpper char* this{
  }
  return this drf
 }
+fn string charToString char* this{
+  var str new 2
+  str set 0,this drf
+  str set 1,$\0
+  return str
+}
 #bool methods
-fn string toString bool* this{
+fn string boolToString bool* this{
    if this drf{
      return "true"
    }
    return "false"
+}
+fn string numberToString long* this{
+ [] char 20 buf
+ int i 0
+ var v this drf
+ while i < 20{
+  buf set i,v % 10 + $0 cast int
+  v /= 10
+  i ++
+ }
+ var ret string new 21
+ int j 0
+ while j < 13{
+   ret set 0,buf get j
+   j ++
+ }
+ return ret
 }

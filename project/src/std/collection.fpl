@@ -35,4 +35,5 @@ class ArrayList;T{
  }
  fn bool isEmpty = len == 0
  fn memory getSize = len
+ fn T* getArray = array
 }

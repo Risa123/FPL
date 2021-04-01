@@ -7,7 +7,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import risa.fpl.env.ModuleEnv;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.block.ATwoPassBlock;
+import risa.fpl.function.exp.Function;
+import risa.fpl.function.exp.FunctionType;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -60,7 +63,7 @@ public final class ModuleBlock extends ATwoPassBlock{
                if(name.equals("std.lang")){
                    makeMethod("getLength",TypeInfo.STRING);
                    makeMethod("equals",TypeInfo.STRING);
-                   makeMethod("toString",TypeInfo.BOOL);
+                   makeMethod("toString","boolToString",TypeInfo.BOOL);
                    makeMethod("isDigit",TypeInfo.CHAR);
                    makeMethod("isControl",TypeInfo.CHAR);
                    makeMethod("isWhitespace",TypeInfo.CHAR);
@@ -72,6 +75,7 @@ public final class ModuleBlock extends ATwoPassBlock{
                    makeMethod("isPunct",TypeInfo.CHAR);
                    makeMethod("toLower",TypeInfo.CHAR);
                    makeMethod("toUpper",TypeInfo.CHAR);
+                   makeMethod("toString","charToString",TypeInfo.CHAR);
                    makeMethod("new",ClassInfo.STRING);
                    makeMethod("concat",TypeInfo.STRING);
                }
@@ -100,12 +104,15 @@ public final class ModuleBlock extends ATwoPassBlock{
    public boolean isMain(){
        return fpl.getMainModule().equals(name);
    }
-   private void makeMethod(String name,TypeInfo ofType){
-       var func = env.getAndRemove(name);
-       if(func == null){
+   private void makeMethod(String name,String oldName,TypeInfo ofType) {
+       var func = env.getAndRemove(oldName);
+       if (func == null) {
            return;
        }
-       ofType.addField(name,func.makeMethod(ofType));
+       ofType.addField(name, func.makeMethod(ofType,name));
+   }
+   private void makeMethod(String name,TypeInfo ofType){
+       makeMethod(name,name,ofType);
    }
    private void makeMethod(String name,ClassInfo ofClass){
        ofClass.addField(name,env.getAndRemove(name));

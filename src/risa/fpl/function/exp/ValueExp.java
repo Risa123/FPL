@@ -42,7 +42,7 @@ public class ValueExp extends AField{
 	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
 		var field = type.getField(atom.getValue(),env);
 		if(field == null){
-			throw new CompilerException(atom,type + " has no field  called " + atom);
+			throw new CompilerException(atom,type + " has no field called " + atom);
 		}
 		var selector = "";
 		var prefix = "";

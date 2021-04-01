@@ -1,6 +1,6 @@
 
 private fn string createMessage string message int line int tokenNum{
-  var first message concat "x"
+  var first message concat line toString
   return "x"
 }
 class CompilerException Exception{

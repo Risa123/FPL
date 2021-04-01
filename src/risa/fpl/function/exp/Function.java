@@ -204,12 +204,12 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
         }
         return false;
     }
-    public Function makeMethod(TypeInfo ofType){
+    public Function makeMethod(TypeInfo ofType,String newName){
         var args = new TypeInfo[this.args.length - 1];
         if (args.length > 0){
             System.arraycopy(this.args,1,args,0,args.length);
         }
-        return new Function(getName(),returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
+        return new Function(newName,returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
     }
     public Function changeAccessModifier(AccessModifier accessModifier){
         return new Function(getName(),returnType,getCname(),args,type,self,accessModifier,implName);
