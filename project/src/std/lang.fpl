@@ -209,11 +209,12 @@ fn string numberToString long* this{
   v /= 10
   i ++
  }
- var ret string new 21
+ var ret new 21
  int j 0
- while j < 13{
-   ret set 0,buf get j
+ while j < 20{
+   ret set j,buf get j
    j ++
  }
+ ret set j,$\0
  return ret
 }

@@ -11,10 +11,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
-import risa.fpl.info.InstanceInfo;
-import risa.fpl.info.InterfaceInfo;
-import risa.fpl.info.PointerInfo;
-import risa.fpl.info.TypeInfo;
+import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
@@ -210,6 +207,13 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
             System.arraycopy(this.args,1,args,0,args.length);
         }
         return new Function(newName,returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
+    }
+    public Function makeMethod(ClassInfo classInfo){
+        var args = new TypeInfo[this.args.length - 1];
+        if (args.length > 0){
+            System.arraycopy(this.args,1,args,0,args.length);
+        }
+        return new Function(getName(),returnType,getCname(),args,type,null,accessModifier,implName);
     }
     public Function changeAccessModifier(AccessModifier accessModifier){
         return new Function(getName(),returnType,getCname(),args,type,self,accessModifier,implName);

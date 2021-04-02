@@ -1,4 +1,9 @@
-use std.io.base std.collection risa.fpl.base
+use{
+ std.io.base
+ std.collection
+ risa.fpl.base
+ std.backend
+}
 
 class Token{
   private{
@@ -32,10 +37,13 @@ class Tokenizer{
     return token
  }
  fn Token peek{
+   if tokens getSize; == i{
+     tokens clear
+   }
    if tokens isEmpty{
       if reader ready{
        var c reader readChar
-       if c == $( {
+       if c == $({
          while reader ready; && reader readChar; == $){}
        }if c == $#{
          while reader ready; && reader readChar; == $\n{}
@@ -60,6 +68,7 @@ class Tokenizer{
           b add firstChar
          }
          b add $'
+         tokens add token line,tokenNum,b getArray; cast string
        }
       }{
        CompilerException ex line,tokenNum,"no tokens available"
@@ -69,5 +78,5 @@ class Tokenizer{
    return tokens get i
  }
  fn void close = reader close
- fn bool hasNext = reader ready; || tokens isEmpty;!
+ fn bool hasNext = reader ready; || tokens isEmpty; ! || tokens getSize; == i
 }

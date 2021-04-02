@@ -7,11 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import risa.fpl.env.ModuleEnv;
-import risa.fpl.function.AccessModifier;
 import risa.fpl.function.block.ATwoPassBlock;
-import risa.fpl.function.exp.Function;
-import risa.fpl.function.exp.FunctionType;
 import risa.fpl.info.ClassInfo;
+import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
@@ -78,6 +76,7 @@ public final class ModuleBlock extends ATwoPassBlock{
                    makeMethod("toString","charToString",TypeInfo.CHAR);
                    makeMethod("new",ClassInfo.STRING);
                    makeMethod("concat",TypeInfo.STRING);
+                   makeMethod("toString","numberToString",NumberInfo.INT);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
@@ -109,13 +108,13 @@ public final class ModuleBlock extends ATwoPassBlock{
        if (func == null) {
            return;
        }
-       ofType.addField(name, func.makeMethod(ofType,name));
+       ofType.addField(name,func.makeMethod(ofType,name));
    }
    private void makeMethod(String name,TypeInfo ofType){
        makeMethod(name,name,ofType);
    }
    private void makeMethod(String name,ClassInfo ofClass){
-       ofClass.addField(name,env.getAndRemove(name));
+       ofClass.addField(name,env.getAndRemove(name).makeMethod(ofClass));
    }
    public ModuleEnv getEnv(){
        return env;

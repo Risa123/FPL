@@ -5,8 +5,7 @@ class ArrayList;T{
   memory len
  }
  this{
-   array = nil
-   len = 0
+   clear
  }
  fn T get memory index{
    if index >= len{
@@ -32,6 +31,13 @@ class ArrayList;T{
     array = realloc array cast void*,len * T:getInstanceSize; cast T*
     memoryCopy value ref cast byte*,array cast byte* + T:getInstanceSize * oldLen,T:getInstanceSize
    }
+ }
+ fn void clear{
+  len = 0
+  if array != nil{
+    array free
+    array = nil
+  }
  }
  fn bool isEmpty = len == 0
  fn memory getSize = len
