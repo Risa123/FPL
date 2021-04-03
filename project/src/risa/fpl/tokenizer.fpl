@@ -75,8 +75,9 @@ class Tokenizer{
        ex throw
       }
    }
+   puts tokens getSize; toString
    return tokens get i
  }
  fn void close = reader close
- fn bool hasNext = reader ready; || tokens isEmpty; ! || tokens getSize; == i
+ fn bool hasNext = reader ready; || tokens getSize; == i
 }

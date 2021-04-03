@@ -5,7 +5,8 @@ class ArrayList;T{
   memory len
  }
  this{
-   clear
+   len = 0
+   array = nil
  }
  fn T get memory index{
    if index >= len{

@@ -77,6 +77,12 @@ public final class ModuleBlock extends ATwoPassBlock{
                    makeMethod("new",ClassInfo.STRING);
                    makeMethod("concat",TypeInfo.STRING);
                    makeMethod("toString","numberToString",NumberInfo.INT);
+                   makeMethod("toString","numberToString",NumberInfo.SINT);
+                   makeMethod("toString","numberToString",NumberInfo.UINT);
+                   makeMethod("toString","numberToString",NumberInfo.LONG);
+                   makeMethod("toString","numberToString",NumberInfo.SLONG);
+                   makeMethod("toString","numberToString",NumberInfo.ULONG);
+                   makeMethod("toString","numberToString",NumberInfo.MEMORY);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
@@ -114,7 +120,7 @@ public final class ModuleBlock extends ATwoPassBlock{
        makeMethod(name,name,ofType);
    }
    private void makeMethod(String name,ClassInfo ofClass){
-       ofClass.addField(name,env.getAndRemove(name).makeMethod(ofClass));
+       ofClass.addField(name,env.getAndRemove(name).makeMethod());
    }
    public ModuleEnv getEnv(){
        return env;

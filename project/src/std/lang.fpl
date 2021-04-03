@@ -204,17 +204,20 @@ fn string numberToString long* this{
  [] char 20 buf
  int i 0
  var v this drf
- while i < 20{
+ while v > 0;|| i == 0{
   buf set i,v % 10 + $0 cast int
   v /= 10
   i ++
  }
+ buf set i,$\0
  var ret new 21
  int j 0
  while j < 20{
    ret set j,buf get j
+   if buf get j; == $\0{
+     break
+   }
    j ++
  }
- ret set j,$\0
  return ret
 }
