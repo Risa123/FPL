@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.ATwoPassBlock;
+import risa.fpl.function.exp.Function;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
@@ -61,7 +62,7 @@ public final class ModuleBlock extends ATwoPassBlock{
                if(name.equals("std.lang")){
                    makeMethod("getLength",TypeInfo.STRING);
                    makeMethod("equals",TypeInfo.STRING);
-                   makeMethod("toString","boolToString",TypeInfo.BOOL);
+                   makeMethod("toString","boolToString",TypeInfo.BOOL,true);
                    makeMethod("isDigit",TypeInfo.CHAR);
                    makeMethod("isControl",TypeInfo.CHAR);
                    makeMethod("isWhitespace",TypeInfo.CHAR);
@@ -73,16 +74,16 @@ public final class ModuleBlock extends ATwoPassBlock{
                    makeMethod("isPunct",TypeInfo.CHAR);
                    makeMethod("toLower",TypeInfo.CHAR);
                    makeMethod("toUpper",TypeInfo.CHAR);
-                   makeMethod("toString","charToString",TypeInfo.CHAR);
+                   makeMethod("toString","charToString",TypeInfo.CHAR,true);
                    makeMethod("new",ClassInfo.STRING);
                    makeMethod("concat",TypeInfo.STRING);
-                   makeMethod("toString","numberToString",NumberInfo.INT);
-                   makeMethod("toString","numberToString",NumberInfo.SINT);
-                   makeMethod("toString","numberToString",NumberInfo.UINT);
-                   makeMethod("toString","numberToString",NumberInfo.LONG);
-                   makeMethod("toString","numberToString",NumberInfo.SLONG);
-                   makeMethod("toString","numberToString",NumberInfo.ULONG);
-                   makeMethod("toString","numberToString",NumberInfo.MEMORY);
+                   makeMethod("toString","numberToString",NumberInfo.INT,false);
+                   makeMethod("toString","numberToString",NumberInfo.SINT,false);
+                   makeMethod("toString","numberToString",NumberInfo.UINT,false);
+                   makeMethod("toString","numberToString",NumberInfo.LONG,false);
+                   makeMethod("toString","numberToString",NumberInfo.SLONG,false);
+                   makeMethod("toString","numberToString",NumberInfo.ULONG,false);
+                   makeMethod("toString","numberToString",NumberInfo.MEMORY,true);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
@@ -109,15 +110,20 @@ public final class ModuleBlock extends ATwoPassBlock{
    public boolean isMain(){
        return fpl.getMainModule().equals(name);
    }
-   private void makeMethod(String name,String oldName,TypeInfo ofType) {
-       var func = env.getAndRemove(oldName);
-       if (func == null) {
-           return;
+   private void makeMethod(String name,String oldName,TypeInfo ofType,boolean remove)throws CompilerException{
+      Function func;
+      if(remove){
+          func = env.getAndRemove(oldName);
+      }else{
+          func = (Function)env.getFunction(new Atom(0,0,oldName,TokenType.ID));
+      }
+      if (func == null){
+          return;
        }
        ofType.addField(name,func.makeMethod(ofType,name));
    }
-   private void makeMethod(String name,TypeInfo ofType){
-       makeMethod(name,name,ofType);
+   private void makeMethod(String name,TypeInfo ofType)throws CompilerException{
+       makeMethod(name,name,ofType,true);
    }
    private void makeMethod(String name,ClassInfo ofClass){
        ofClass.addField(name,env.getAndRemove(name).makeMethod());
