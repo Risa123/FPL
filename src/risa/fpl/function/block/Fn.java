@@ -11,6 +11,7 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
+import risa.fpl.function.exp.IField;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
@@ -188,7 +189,16 @@ public class Fn extends AFunctionBlock{
             f.setDeclaration(macroDeclaration.toString());
         }
         if(self != null){
-            var parentField = self.getField(id.getValue(),env);
+            IField parentField = null;
+            var parents = self.getParents();
+            if(!parents.isEmpty()){
+                for(var parent:parents){
+                    parentField = parent.getField(id.getValue(),env);
+                    if(parentField != null){
+                        break;
+                    }
+                }
+            }
             if(env.hasModifier(Modifier.OVERRIDE)){
                 if(!(parentField instanceof Function parentMethod)){
                     throw new CompilerException(line,charNum,"there is no method " + id + " to override");

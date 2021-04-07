@@ -47,7 +47,9 @@ public final class Tokenizer{
                       case 's'->builder.append(' ');
                       default->throw new CompilerException(line,charNum,"no special character " +  Character.toString(c));
                   }
-			  }else{
+			  }else if(Character.isWhitespace(firstChar)){
+			      throw new CompilerException(line,charNum,"$ cannot be followed by whitespace");
+              }else{
 			      if(c == '\''){
 			          builder.append('\\');
                   }

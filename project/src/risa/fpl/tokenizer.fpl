@@ -26,6 +26,52 @@ class Tokenizer{
     fn Token token int line int tokenNum string value{
        return Token:new line,tokenNum,value
     }
+    fn void prepare{
+      if tokens getSize; == i{
+           tokens clear
+      }
+      if tokens isEmpty{
+       if reader ready{
+         var c reader readChar
+         if c == $({
+            while reader ready; && reader readChar; == $){}
+          }if c == $#{
+               while reader ready; && reader readChar; == $\n{}
+          }if c == $${
+           if reader ready; !{
+              CompilerException ex line,tokenNum,"char expected"
+               ex throw
+            }
+            ArrayList;char; b
+            b add $'
+            var firstChar reader readChar
+            if firstChar == $\\{
+              if reader ready; !{
+               CompilerException exI line,tokenNum,"character expected"
+                exI throw
+               }
+               var c reader readChar
+               if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $";|| c == $0{
+                  b add $\\
+                  b add c
+               }if c == $s{
+                 b add $\s
+               }{
+                CompilerException ex line,tokenNum,"no special character called " concat c toString
+                ex throw
+               }
+              }if firstChar isWhitespace{
+                CompilerException ex1 line,tokenNum,"$ cannot be followed by whitespace"
+                ex1 throw
+               }{
+                b add firstChar
+               }
+               b add $'
+               tokens add token line,tokenNum,b getArray; cast string
+             }
+            }
+         }
+    }
  }
  this Readable readable{
     this reader = DataReader:alloc readable
@@ -36,46 +82,16 @@ class Tokenizer{
     return token
  }
  fn Token peek{
-   if tokens getSize; == i{
-     tokens clear
-   }
+   prepare
    if tokens isEmpty{
-      if reader ready{
-       var c reader readChar
-       if c == $({
-         while reader ready; && reader readChar; == $){}
-       }if c == $#{
-         while reader ready; && reader readChar; == $\n{}
-       }if c == $${
-         if reader ready; !{
-           CompilerException ex line,tokenNum,"char expected"
-         }
-         ArrayList;char; b
-         b add $'
-         var firstChar reader readChar
-         if firstChar == $\\; && reader ready{
-          var c reader readChar
-          if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $";|| c == $0{
-             b add $\\
-             b add c
-          }if c == $s{
-            b add $\s
-          }{
-           CompilerException ex line,tokenNum,"no special character called " concat c toString
-          }
-         }{
-          b add firstChar
-         }
-         b add $'
-         tokens add token line,tokenNum,b getArray; cast string
-       }
-      }{
-       CompilerException ex line,tokenNum,"no tokens available"
-       ex throw
-      }
+     CompilerException ex line,tokenNum,"no tokens available"
+     ex throw
    }
    return tokens get i
  }
  fn void close = reader close
- fn bool hasNext = reader ready; || tokens isEmpty; !
+ fn bool hasNext{
+  prepare
+  return tokens isEmpty; !
+ }
 }

@@ -200,7 +200,7 @@ fn string boolToString bool* this{
    }
    return "false"
 }
-fn string numberToString long* this{
+fn string integerToString long* this{
  [] char 20 buf
  int i 0
  var v this drf

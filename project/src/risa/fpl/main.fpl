@@ -9,7 +9,8 @@ main{
  FileReader reader "test.fpl"
  Tokenizer tokenizer reader
  while tokenizer hasNext{
-    tokenizer next
+    var token tokenizer next
+    puts token getValue
  }
  tokenizer close
 }

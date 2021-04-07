@@ -44,7 +44,7 @@ public final class ModuleBlock extends ATwoPassBlock{
        if(!compiled){
            compiled = true;
            try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
-               env = new ModuleEnv(fpl.getEnv(), this);
+               env = new ModuleEnv(fpl.getEnv(),this);
                if(!(name.equals("std.lang") || name.equals("std.backend"))){
                    env.addModuleToImport(new Atom(0,0,"std.lang",TokenType.ID));
                }
@@ -77,13 +77,13 @@ public final class ModuleBlock extends ATwoPassBlock{
                    makeMethod("toString","charToString",TypeInfo.CHAR,true);
                    makeMethod("new",ClassInfo.STRING);
                    makeMethod("concat",TypeInfo.STRING);
-                   makeMethod("toString","numberToString",NumberInfo.INT,false);
-                   makeMethod("toString","numberToString",NumberInfo.SINT,false);
-                   makeMethod("toString","numberToString",NumberInfo.UINT,false);
-                   makeMethod("toString","numberToString",NumberInfo.LONG,false);
-                   makeMethod("toString","numberToString",NumberInfo.SLONG,false);
-                   makeMethod("toString","numberToString",NumberInfo.ULONG,false);
-                   makeMethod("toString","numberToString",NumberInfo.MEMORY,true);
+                   makeMethod("toString","integerToString",NumberInfo.INT,false);
+                   makeMethod("toString","integerToString",NumberInfo.SINT,false);
+                   makeMethod("toString","integerToString",NumberInfo.UINT,false);
+                   makeMethod("toString","integerToString",NumberInfo.LONG,false);
+                   makeMethod("toString","integerToString",NumberInfo.SLONG,false);
+                   makeMethod("toString","integerToString",NumberInfo.ULONG,false);
+                   makeMethod("toString","integerToString",NumberInfo.MEMORY,true);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
