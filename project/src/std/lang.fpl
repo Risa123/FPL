@@ -119,7 +119,7 @@ fn bool equals string* this string str{
    }
    return true
 }
-fn string concat string* this string str{
+fn string + string* this string str{
   var thisLen getLength this
   var strLen getLength str ref
   var resultLen thisLen + strLen
@@ -127,15 +127,22 @@ fn string concat string* this string str{
   var i 0
   while i < thisLen{
      ret set i,this drf get i
+     i ++
   }
   var strI 0
   while strI < strLen{
     ret set i,str get strI
+    strI ++
+    i ++
   }
+  ret set i,$\0
   return ret
 }
 fn string new uint len{
   return malloc len; cast string
+}
+fn void stringFree string* this{
+  free this drf cast void*
 }
 #char methods
 fn bool isDigit char* this{
