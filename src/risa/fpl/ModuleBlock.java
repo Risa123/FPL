@@ -61,8 +61,8 @@ public final class ModuleBlock extends ATwoPassBlock{
                writer.write(env.getFunctionCode());
                if(name.equals("std.lang")){
                    makeMethod("getLength",TypeInfo.STRING);
-                   makeMethod("equals",TypeInfo.STRING);
-                   makeMethod("toString","boolToString",TypeInfo.BOOL,true);
+                   makeMethod("==",TypeInfo.STRING);
+                   makeMethod("toString","boolToString",TypeInfo.BOOL);
                    makeMethod("isDigit",TypeInfo.CHAR);
                    makeMethod("isControl",TypeInfo.CHAR);
                    makeMethod("isWhitespace",TypeInfo.CHAR);
@@ -74,16 +74,17 @@ public final class ModuleBlock extends ATwoPassBlock{
                    makeMethod("isPunct",TypeInfo.CHAR);
                    makeMethod("toLower",TypeInfo.CHAR);
                    makeMethod("toUpper",TypeInfo.CHAR);
-                   makeMethod("toString","charToString",TypeInfo.CHAR,true);
+                   makeMethod("toString","charToString",TypeInfo.CHAR);
                    makeMethod("new",ClassInfo.STRING);
-                   makeMethod("concat",TypeInfo.STRING);
+                   makeMethod("+",TypeInfo.STRING);
+                   makeMethod("free","stringFree",TypeInfo.STRING);
                    makeMethod("toString","integerToString",NumberInfo.INT,false);
                    makeMethod("toString","integerToString",NumberInfo.SINT,false);
                    makeMethod("toString","integerToString",NumberInfo.UINT,false);
                    makeMethod("toString","integerToString",NumberInfo.LONG,false);
                    makeMethod("toString","integerToString",NumberInfo.SLONG,false);
                    makeMethod("toString","integerToString",NumberInfo.ULONG,false);
-                   makeMethod("toString","integerToString",NumberInfo.MEMORY,true);
+                   makeMethod("toString","integerToString",NumberInfo.MEMORY);
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
@@ -127,6 +128,9 @@ public final class ModuleBlock extends ATwoPassBlock{
    }
    private void makeMethod(String name,ClassInfo ofClass){
        ofClass.addField(name,env.getAndRemove(name).makeMethod());
+   }
+   private void makeMethod(String name,String oldName,TypeInfo ofType)throws CompilerException{
+       makeMethod(name,oldName,ofType,true);
    }
    public ModuleEnv getEnv(){
        return env;

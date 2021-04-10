@@ -39,7 +39,6 @@ public class TypeInfo{
       BOOL.addField("!=",new BinaryOperator(BOOL,BOOL,"!="));
 	  NIL.addField("==",new BinaryOperator(BOOL,NIL,"=="));
       NIL.addField("!=",new BinaryOperator(BOOL,NIL,"!="));
-      STRING.addField("free",new Function("free",TypeInfo.VOID,"free",new TypeInfo[0], FunctionType.NORMAL,STRING, AccessModifier.PUBLIC,"free"));
       BOOL.addSize();
       CHAR.addSize();
       STRING.addSize();

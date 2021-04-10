@@ -104,7 +104,7 @@ public class Fn extends AFunctionBlock{
             var block = it.next();
             if(block instanceof Atom a){
                 oneLine = true;
-                if(!(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE))){
+                if(!(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)) && env.getAccessModifier() != AccessModifier.PRIVATE){
                     macroDeclaration.append("#define ");
                     macroDeclaration.append(cID);
                     macroDeclaration.append('(');
