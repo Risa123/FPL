@@ -58,4 +58,3 @@ fix $' C error
 fix override required check
 fix $ cannot be followed by whitespace
 fix private inline function C error
-fix calling method on string wrong compilation

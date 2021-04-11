@@ -71,7 +71,8 @@ class Tokenizer{
                token line,tokenNum,"\n"
                break
              }{
-              CompilerException ex line,tokenNum,"unexpected character " + c toString
+              var msg "unexpected character "
+              CompilerException ex line,tokenNum,msg + c toString
               ex throw
              }
             }
