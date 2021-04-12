@@ -3,7 +3,7 @@ private fn string createMessage string message int line int tokenNum{
   var zero line toString
   var first zero + ":"
   var second first + tokenNum toString
-  first free
+  first free #error here
   var third second + " "
   second free
   var ret third + message

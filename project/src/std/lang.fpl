@@ -123,8 +123,7 @@ fn bool == string* this string str{
 fn string + string* this string str{
   var thisLen getLength this
   var strLen getLength str ref
-  var resultLen thisLen + strLen
-  var ret new resultLen
+  var ret new thisLen + strLen + 1
   var i 0
   while i < thisLen{
      ret set i,this drf get i
