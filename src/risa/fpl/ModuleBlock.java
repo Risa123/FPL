@@ -77,7 +77,6 @@ public final class ModuleBlock extends ATwoPassBlock{
                    makeMethod("toString","charToString",TypeInfo.CHAR);
                    makeMethod("new",ClassInfo.STRING);
                    makeMethod("+",TypeInfo.STRING);
-                   makeMethod("free","stringFree",TypeInfo.STRING);
                    makeMethod("toString","integerToString",NumberInfo.INT,false);
                    makeMethod("toString","integerToString",NumberInfo.SINT,false);
                    makeMethod("toString","integerToString",NumberInfo.UINT,false);

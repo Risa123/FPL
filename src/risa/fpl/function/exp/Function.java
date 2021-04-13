@@ -99,7 +99,9 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
 		      calledOnPointer = false;
 		      b.write("(" + self.getCname() + "*)");
             }else if(!(self instanceof InterfaceInfo) && prev_code != null /*to prevent &this when calling method on implicit this*/){
-                b.write('&');
+               if(!self.isPrimitive()){
+                   b.write('&');
+               }
             }
 		    writePrev(b);
 		    if(self instanceof InterfaceInfo){
@@ -206,7 +208,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
         if (args.length > 0){
             System.arraycopy(this.args,1,args,0,args.length);
         }
-        return new Function(newName,returnType,getCname(),args,type,new PointerInfo(ofType),accessModifier,implName);
+        return new Function(newName,returnType,getCname(),args,type,ofType,accessModifier,implName);
     }
     public Function makeMethod(){
         var args = new TypeInfo[this.args.length - 1];

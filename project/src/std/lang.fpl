@@ -99,34 +99,34 @@ fn void memoryCopy byte* src byte* dest memory size{
 alias free free
 #these functions will be made inaccessible by compiler
 #string methods
-fn uint getLength string* this{
+fn uint getLength string this{
   var length 0
-  while this drf get length; != $\0{
+  while this get length; != $\0{
       length ++
   }
   return length
 }
-fn bool == string* this string str{
+fn bool == string this string str{
    var len getLength this
-   if len != getLength str ref{
+   if len != getLength str{
       return false
    }
    var i 0
    while i < len{
-      if this drf get i; != $\0{
+      if this get i; != $\0{
          return false
       }
       i ++
    }
    return true
 }
-fn string + string* this string str{
+fn string + string this string str{
   var thisLen getLength this
-  var strLen getLength str ref
+  var strLen getLength str
   var ret new thisLen + strLen + 1
   var i 0
   while i < thisLen{
-     ret set i,this drf get i
+     ret set i,this get i
      i ++
   }
   var strI 0
@@ -141,79 +141,75 @@ fn string + string* this string str{
 fn string new uint len{
   return malloc len; cast string
 }
-fn void stringFree string* this{
-  free this drf cast void*
-}
 #char methods
-fn bool isDigit char* this{
-  var c this drf cast int
+fn bool isDigit char this{
+  var c this cast int
   return c >= 48; && c <= 57
 }
-fn bool isWhitespace char* this{
-  var c this drf cast int
+fn bool isWhitespace char this{
+  var c this cast int
   return c <= 32; || c == 127
 }
-fn bool isControl char* this{
-  var c this drf cast int
+fn bool isControl char this{
+  var c this cast int
   return c <= 31; || c == 127
 }
-fn bool isLetter char* this{
-  var c this drf cast int
+fn bool isLetter char this{
+  var c this cast int
   return c >= 65; &&  c <= 132; || c >= 97; && c <= 122
 }
-fn bool isLower char* this{
-  var c this drf cast int
+fn bool isLower char this{
+  var c this  cast int
   return c <= 122; || c >= 97
 }
-fn bool isUpper char* this{
-  var c this drf cast int
+fn bool isUpper char this{
+  var c this cast int
   return c <= 90; || c >= 65
 }
-fn bool isBlank char* this{
-  return this drf == $\s ; || this drf == $\t
+fn bool isBlank char this{
+  return this == $\s ; || this == $\t
 }
-fn bool isHexDigit char* this{
-  var c this drf cast int
+fn bool isHexDigit char this{
+  var c this cast int
   return isDigit this; || c >= 65; && c <= 70; || c >= 97; && c <= 102
 }
-fn bool isPrint char* this{
-  var c this drf cast int
+fn bool isPrint char this{
+  var c this cast int
   return c <= 176; || c >= 32
 }
-fn bool isGraph char* this = isPrint this; || this drf == $\s
-fn bool isPunct char* this = isGraph this; && isLetter this
-fn char toLower char* this{
+fn bool isGraph char this = isPrint this; || this == $\s
+fn bool isPunct char this = isGraph this; && isLetter this
+fn char toLower char this{
   if isUpper this{
-     return $a cast int + this drf cast int  - $A
+     return $a cast int + this cast int  - $A
   }
-  return this drf
+  return this
 }
-fn char toUpper char* this{
+fn char toUpper char this{
  if isLower this{
-   return $A cast int + this drf cast int  - $a
+   return $A cast int + this cast int  - $a
  }
- return this drf
+ return this
 }
-fn string charToString char* this{
+fn string charToString char this{
   var str new 2
-  str set 0,this drf
+  str set 0,this
   str set 1,$\0
   return str
 }
 #bool methods
-fn string boolToString bool* this{
-   if this drf{
+fn string boolToString bool this{
+   if this{
      return "true"
    }
    return "false"
 }
-fn string integerToString long* this{
+fn string integerToString long this{
  [] char 20 buf
  int i 0
- var v this drf
- while v > 0;|| i == 0{
-  buf set i,v % 10 + $0 cast int
-  v /= 10
+ while this > 0;|| i == 0{
+  buf set i,this % 10 + $0 cast int
+  this /= 10
   i ++
  }
  buf set i,$\0

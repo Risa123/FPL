@@ -23,6 +23,7 @@ added method set to string
 added method free to pointers and string
 added method toString to integer numbers
 renamed string method equals to ==
+added enum
 fix variable redeclaration check added
 fix argument count check added
 fix templates
@@ -58,3 +59,5 @@ fix $' C error
 fix override required check
 fix $ cannot be followed by whitespace
 fix private inline function C error
+fix method call on literal C error
+fix call static method on primitive type error

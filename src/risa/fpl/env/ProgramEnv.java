@@ -8,6 +8,7 @@ import risa.fpl.function.block.Fn;
 import risa.fpl.function.block.InterfaceBlock;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.statement.*;
+import risa.fpl.function.statement.Enum;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 
@@ -34,6 +35,7 @@ public final class ProgramEnv extends AEnv{
       addFunction("var",new Var(null));
       addFunction("[]",new Array());
       addFunction("alias",new Alias());
+      addFunction("enum",new Enum());
       addType("void",TypeInfo.VOID,false);
 	  addType("byte",NumberInfo.BYTE);
 	  addType("sbyte",NumberInfo.SBYTE);

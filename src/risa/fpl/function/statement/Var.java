@@ -26,7 +26,15 @@ public final class Var implements IFunction{
         if(type != null && it.hasNext()){
            if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
                it.next();
-               return type.getClassInfo();
+               var c = type.getClassInfo();
+               if(it.peek() instanceof Atom a1 && a1.getType() == TokenType.ID){
+                   var field = c.getField(a1.getValue(),env);
+                   if(field == null){
+                       throw new CompilerException(a1.getLine(),a1.getCharNum(),c + " has no field called " + a1);
+                   }
+                   field.compile(writer,env,it,a1.getLine(),a1.getCharNum());
+               }
+               return c;
            }
         }
 		if(env.hasModifier(Modifier.NATIVE) && env instanceof ClassEnv){

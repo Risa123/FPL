@@ -4,12 +4,14 @@ use{
  risa.fpl.base
  std.backend
 }
+enum TokenType NEW_LINE ID CHAR_LIT
 class Token{
   private{
    int line;tokenNum
-    string value
+   string value
+   TokenType type
   }
-  this int line int tokenNum string value{
+  this int line int tokenNum string value TokenType type{
     this line = line
     this tokenNum = tokenNum
     this value = value
@@ -23,7 +25,7 @@ class Tokenizer{
     int line 1;tokenNum 1;i 0
     DataReader* reader
     const ArrayList;Token; tokens
-    fn void token int line int tokenNum string value = tokens add Token:new line,tokenNum,value
+    fn void token int line int tokenNum string value TokenType type = tokens add Token:new line,tokenNum,value,type
     fn void prepare{
       if tokens getSize; == i{
            tokens clear
@@ -66,14 +68,12 @@ class Tokenizer{
                }
                b add $'
                b add $\0
-               token line,tokenNum,b getArray; cast string
+               token line,tokenNum,b getArray; cast string,TokenType:CHAR_LIT
              }if c == $\n{
-               token line,tokenNum,"\n"
+               token line,tokenNum,"\n",TokenType:NEW_LINE
                break
-             }{
-              var msg "unexpected character "
-              CompilerException ex line,tokenNum,msg + c toString
-              ex throw
+             }if c isWhitespace;!{
+
              }
             }
          }
