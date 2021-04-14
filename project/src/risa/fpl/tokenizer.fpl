@@ -19,38 +19,50 @@ class Token{
   fn int getLine = line
   fn int getTokenNum = tokenNum
   fn string getValue = value
+  fn TokenType getType = type
 }
 class Tokenizer{
  private{
     int line 1;tokenNum 1;i 0
+    char c
+    bool readNext
     DataReader* reader
     const ArrayList;Token; tokens
     fn void token int line int tokenNum string value TokenType type = tokens add Token:new line,tokenNum,value,type
+    fn char read{
+      if readNext{
+        c = reader readChar
+      }{
+       readNext = true
+      }
+      return c
+    }
+    fn bool ready = reader ready; || readNext !
     fn void prepare{
       if tokens getSize; == i{
            tokens clear
       }
       if tokens isEmpty{
-       while reader ready{
-         var c reader readChar
+       while ready{
+         read
          if c == $({
-            while reader ready; && reader readChar; == $){}
+            while ready; && read; == $){}
           }if c == $#{
-               while reader ready; && reader readChar; == $\n{}
+               while ready; && read; == $\n{}
           }if c == $${
-           if reader ready; !{
+           if ready; !{
               CompilerException ex line,tokenNum,"char expected"
                ex throw
             }
             ArrayList;char; b
             b add $'
-            var firstChar reader readChar
+            var firstChar read
             if firstChar == $\\{
-              if reader ready; !{
+              if ready; !{
                CompilerException exI line,tokenNum,"character expected"
                 exI throw
                }
-               var c reader readChar
+               var c read
                if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $";|| c == $0{
                   b add $\\
                   b add c
@@ -73,7 +85,9 @@ class Tokenizer{
                token line,tokenNum,"\n",TokenType:NEW_LINE
                break
              }if c isWhitespace;!{
-
+               ArrayList;char; b
+               
+               token line,tokenNum,b getArray; cast string,TokenType:ID
              }
             }
          }

@@ -61,3 +61,4 @@ fix $ cannot be followed by whitespace
 fix private inline function C error
 fix method call on literal C error
 fix call static method on primitive type error
+fix call on field C error

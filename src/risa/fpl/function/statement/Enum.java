@@ -15,16 +15,24 @@ import java.io.IOException;
 public final class Enum implements IFunction{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        var id = it.nextID().getValue();
+        var a = it.nextID();
+        var id = a.getValue();
+        if(env.hasFunctionInCurrentEnv(id)){
+            throw new CompilerException(a,"there is already function called " + id);
+        }
         var type = new TypeInfo(id,"unsigned int");
-        type.setClassInfo(new ClassInfo(id));
+        var c = new ClassInfo(id);
+        type.setClassInfo(c);
         var i = 0;
         while(it.hasNext()){
             var t = it.nextAtom();
             if(t.getType() == TokenType.NEW_LINE){
                 break;
             }else if(t.getType() == TokenType.ID){
-                type.getClassInfo().addField(t.getValue(),new ValueExp(type,Integer.toString(i)));
+                if(c.getField(t.getValue(),env) != null){
+                    throw new CompilerException(t,"value "  + t + " is already declared");
+                }
+                c.addField(t.getValue(),new ValueExp(type,Integer.toString(i)));
                 i++;
             }else{
                 throw new CompilerException(t,"identifier expected");

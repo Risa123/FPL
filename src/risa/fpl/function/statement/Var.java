@@ -28,11 +28,12 @@ public final class Var implements IFunction{
                it.next();
                var c = type.getClassInfo();
                if(it.peek() instanceof Atom a1 && a1.getType() == TokenType.ID){
+                   it.next();
                    var field = c.getField(a1.getValue(),env);
                    if(field == null){
                        throw new CompilerException(a1.getLine(),a1.getCharNum(),c + " has no field called " + a1);
                    }
-                   field.compile(writer,env,it,a1.getLine(),a1.getCharNum());
+                   return field.compile(writer,env,it,a1.getLine(),a1.getCharNum());
                }
                return c;
            }
