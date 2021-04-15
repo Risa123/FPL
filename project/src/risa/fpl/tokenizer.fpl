@@ -28,7 +28,15 @@ class Tokenizer{
     bool readNext
     DataReader* reader
     const ArrayList;Token; tokens
-    fn void token int line int tokenNum string value TokenType type = tokens add Token:new line,tokenNum,value,type
+    fn void token int line int tokenNum string value TokenType type{
+     tokens add Token:new line,tokenNum,value,type
+     if type == TokenType:NEW_LINE{
+       this line ++
+       this tokenNum = 1
+     }{
+       this tokenNum ++
+     }
+    }
     fn char read{
       if readNext{
         c = reader readChar
@@ -62,7 +70,6 @@ class Tokenizer{
                CompilerException exI line,tokenNum,"character expected"
                 exI throw
                }
-               var c read
                if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $";|| c == $0{
                   b add $\\
                   b add c

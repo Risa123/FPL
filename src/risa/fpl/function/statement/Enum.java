@@ -3,6 +3,7 @@ package risa.fpl.function.statement;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.BinaryOperator;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.TypeInfo;
@@ -21,6 +22,8 @@ public final class Enum implements IFunction{
             throw new CompilerException(a,"there is already function called " + id);
         }
         var type = new TypeInfo(id,"unsigned int");
+        type.addField("==",new BinaryOperator(TypeInfo.BOOL,type,"=="));
+        type.addField("!=",new BinaryOperator(TypeInfo.BOOL,type,"!="));
         var c = new ClassInfo(id);
         type.setClassInfo(c);
         var i = 0;

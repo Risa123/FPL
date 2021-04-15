@@ -36,7 +36,7 @@ fix changed error code for wrong arguments to 2 and 3 for compilation error
 fix getObjetSize C error
 fix variable method C errors
 fix template added to typedef
-fix lone getInstanceSize call on line
+fix lone getInstanceSize call on line C error
 fix ref variable method chained call
 fix private non-native functions not being static in C
 fix C undefined reference template instancing in same file error
@@ -61,4 +61,3 @@ fix $ cannot be followed by whitespace
 fix private inline function C error
 fix method call on literal C error
 fix call static method on primitive type error
-fix call on field C error
