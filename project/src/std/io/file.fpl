@@ -7,7 +7,7 @@ abstract class FileHandler Closeable{
    this string name string mode{
       handle = fileOpen name,mode
       if handle == nil{
-        IOException ex "unable to open file"
+        IOException ex "unable to open file " + name
         ex throw
       }
    }

@@ -11,7 +11,9 @@ private fn string createMessage string message int line int tokenNum{
   return ret
 }
 class CompilerException Exception{
- this int line int tokenNum string message:createMessage message,line,tokenNum
+ this int line int tokenNum string message:createMessage message,line,tokenNum{
+   allocateMessage
+ }
 }
 interface IFunction{
  fn void compile

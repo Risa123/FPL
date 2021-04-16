@@ -2,10 +2,14 @@
 use std.backend
 
 class Exception{
-   private string message
+   private{
+     string message
+     bool allocatedMessage
+   }
    this string message{
      this message = message
    }
+   fn void allocateMessage = allocatedMessage = true
    virtual fn string getMessage = message
    fn void throw{
      if currentThread currentEHentry == nil{
@@ -24,6 +28,11 @@ class Exception{
    internal fn void copyAndFree Exception* to{
      memoryCopy this cast byte*,to cast byte*,getObjectSize
      this free
+   }
+   virtual fn void destroy{
+     if allocatedMessage{
+       message free
+     }
    }
 }
 fpointer void ExceptionHandlerType Exception* ex
@@ -71,6 +80,7 @@ Thread* currentThread
 fn void defaultExceptionHandler Exception* ex{
   puts "exception happened:"
   puts ex getMessage
+  ex destroy
   exit 1
 }
 fn void* realloc void* p memory newSize{

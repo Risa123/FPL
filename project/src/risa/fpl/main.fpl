@@ -10,7 +10,7 @@ main{
  Tokenizer tokenizer reader
  while tokenizer hasNext{
     var token tokenizer next
-    puts token getValue #bug is here
+    puts token getValue
  }
  tokenizer close
 }

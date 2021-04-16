@@ -93,12 +93,22 @@ class Tokenizer{
                break
              }if c isWhitespace;!{
                ArrayList;char; b
-               
+               b add c
+               while ready{
+                 read
+                 if isSeparator{
+                  readNext = false
+                  break
+                 }
+                 b add c
+               }
+               b add $\0
                token line,tokenNum,b getArray; cast string,TokenType:ID
              }
             }
          }
     }
+    fn bool isSeparator = c isWhitespace
  }
  this Readable readable{
     reader = DataReader:alloc readable
@@ -116,7 +126,10 @@ class Tokenizer{
    }
    return tokens get i
  }
- fn void close = reader close
+ fn void close{
+   reader close
+   tokens destroy
+ }
  fn bool hasNext{
   prepare
   return tokens isEmpty; !
