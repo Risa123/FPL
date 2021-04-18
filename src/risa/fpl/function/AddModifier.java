@@ -6,27 +6,28 @@ import java.io.IOException;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.Modifier;
+import risa.fpl.function.block.ATwoPassBlock;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
-public class AddModifier implements IFunction{
+public class AddModifier extends ATwoPassBlock implements IFunction{
    protected final Object mod;
    private boolean appendSemicolon;
    public AddModifier(Object mod){
 	   this.mod = mod;
    }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int charNm)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         addMod(env);
 	    try{
 	    	var exp = it.next();
-	 	    if(exp instanceof List) {
-	 	    	exp.compile(writer, env,it);
+	 	    if(exp instanceof List list){
+	 	        compile(writer,env,list);
 	 	    }else{
 	 	    	var f = env.getFunction((Atom)exp);
-	 	        f.compile(writer, env, it, exp.getLine(), exp.getCharNum());
+	 	        f.compile(writer,env,it,exp.getLine(),exp.getCharNum());
 	 	        appendSemicolon = f.appendSemicolon();
 	 	    }
 	    }catch(CompilerException ex){
