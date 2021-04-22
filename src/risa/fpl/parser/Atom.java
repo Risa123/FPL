@@ -12,7 +12,7 @@ public final class Atom extends AExp{
 	private final String value;
 	private final TokenType type;
 	public Atom(int line,int charNum,String value,TokenType type){
-		super(line, charNum);
+		super(line,charNum);
 		this.value = value;
 		this.type = type;
 	}

@@ -16,7 +16,7 @@ public final class GetObjectInfo extends AField implements ICalledOnPointer{
     private final String field;
     private final InstanceInfo self;
     private boolean calledOnPointer;
-    public GetObjectInfo(TypeInfo returnType, String field, InstanceInfo self){
+    public GetObjectInfo(TypeInfo returnType,String field,InstanceInfo self){
         this.returnType = returnType;
         this.field = field;
         this.self = self;

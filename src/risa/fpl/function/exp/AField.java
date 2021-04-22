@@ -12,7 +12,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 public abstract class AField implements IField{
-    private String prev_code;
+    private String prevCode;
     private final AccessModifier accessModifier;
     public AField(AccessModifier accessModifier){
         this.accessModifier = accessModifier;
@@ -22,18 +22,18 @@ public abstract class AField implements IField{
     }
     @Override
     public void setPrevCode(String code){
-        prev_code = code;
+        prevCode = code;
     }
     @Override
     public void writePrev(BufferedWriter writer)throws IOException{
-        if(prev_code != null){
-            writer.write(prev_code);
-            prev_code = null;
+        if(prevCode != null){
+            writer.write(prevCode);
+            prevCode = null;
         }
     }
     @Override
     public String getPrevCode(){
-        return prev_code;
+        return prevCode;
     }
     @Override
     public boolean appendSemicolon(){

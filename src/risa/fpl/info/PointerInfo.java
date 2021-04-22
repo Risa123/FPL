@@ -40,7 +40,7 @@ public final class PointerInfo extends TypeInfo{
     }
 	@Override
 	public boolean equals(Object o){
-		if(o instanceof PointerInfo p) {
+		if(o instanceof PointerInfo p){
 			return type.equals(p.type);
 		}else return o == TypeInfo.NIL;
     }
@@ -85,7 +85,7 @@ public final class PointerInfo extends TypeInfo{
         return this.type.getConversionMethodCName(type);
     }
     @Override
-    public String ensureCast(TypeInfo to, String expCode){
+    public String ensureCast(TypeInfo to,String expCode){
         return type.ensureCast(to,expCode,true);
     }
     public TypeInfo getType(){

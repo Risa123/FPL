@@ -109,7 +109,7 @@ class Tokenizer{
             }
          }
     }
-    fn bool isSeparator = c isWhitespace
+    fn bool isSeparator = c isWhitespace; || c == ${
  }
  this Readable readable{
     reader = DataReader:alloc readable

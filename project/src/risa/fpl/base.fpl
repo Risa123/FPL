@@ -2,7 +2,9 @@ use std.backend
 private fn string createMessage string message int line int tokenNum{
   var zero line toString
   var first zero + ":"
-  var second first + tokenNum toString
+  var tokenNumStr tokenNum toString
+  var second first + tokenNumStr
+  tokenNumStr free
   first free
   var third second + " "
   second free

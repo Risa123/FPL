@@ -30,7 +30,7 @@ public final class ConditionalBlock extends ABlock{
 				expLine = exp.getLine();
 				expCharNum = exp.getCharNum();
 			}
-			if(exp instanceof List) {
+			if(exp instanceof List){
 				break;
 			}else{
 				it.next();

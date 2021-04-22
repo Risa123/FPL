@@ -1,5 +1,5 @@
 package risa.fpl.function.exp;
 
-public interface  ICalledOnPointer{
+public interface ICalledOnPointer{
     void calledOnPointer();
 }
