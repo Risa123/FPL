@@ -13,7 +13,7 @@ import risa.fpl.tokenizer.TokenType;
 public final class List extends AExp{
 	private final ArrayList<AExp>exps;
 	private final boolean statement;
-	public List(int line, int charNum,ArrayList<AExp>exps,boolean statement){
+	public List(int line,int charNum,ArrayList<AExp>exps,boolean statement){
 		super(line,charNum);
 		this.exps = exps;
 		this.statement = statement;

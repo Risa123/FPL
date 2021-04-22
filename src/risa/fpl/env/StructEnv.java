@@ -4,9 +4,9 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.IField;
 import risa.fpl.info.TypeInfo;
 
-public final class CStructEnv extends SubEnv{
+public final class StructEnv extends SubEnv{
     private final TypeInfo type;
-    public CStructEnv(AEnv superEnv,String id){
+    public StructEnv(AEnv superEnv, String id){
         super(superEnv);
         type = new TypeInfo(id,id);
         superEnv.addType(id,type);

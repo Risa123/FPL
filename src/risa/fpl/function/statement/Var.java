@@ -110,7 +110,7 @@ public final class Var implements IFunction{
                 if(env.hasModifier(Modifier.NATIVE)){
                     decl = "extern ";
                 }
-                if((env instanceof  ClassEnv || env instanceof CStructEnv) && varType instanceof PointerInfo p && !p.getType().isPrimitive()){
+                if((env instanceof  ClassEnv || env instanceof StructEnv) && varType instanceof PointerInfo p && !p.getType().isPrimitive()){
                    decl += "struct ";
                 }
                 if(varType instanceof PointerInfo p && p.isFunctionPointer()){

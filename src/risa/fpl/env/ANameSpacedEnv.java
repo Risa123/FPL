@@ -22,7 +22,7 @@ public abstract class ANameSpacedEnv extends SubEnv{
             initializerCall = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + name;
             b.append(initializerCall);
             initializerCall += "();\n";
-            b.append("(){\n").append(initializer.toString());
+            b.append("(){\n").append(initializer);
             b.append("}\n");
             return b.toString();
         }

@@ -49,6 +49,7 @@ class Tokenizer{
     fn void prepare{
       if tokens getSize; == i{
            tokens clear
+           i = 0
       }
       if tokens isEmpty{
        while ready{

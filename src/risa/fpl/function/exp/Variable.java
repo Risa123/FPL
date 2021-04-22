@@ -81,9 +81,6 @@ public final class Variable extends ValueExp{
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=")){
 		    throw new CompilerException(line,charNum,"variable " + id + " not defined");
         }
-		if(id.equals("c") && line == 92){
-		    System.out.println(instanceType + " " + getPrevCode() + " " + type);
-        }
 		if(instanceType != null && getPrevCode() == null){
 		    setPrevCode("((" + instanceType.getCname() + "*)this)->");
         }

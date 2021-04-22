@@ -24,6 +24,10 @@ added method free to pointers and string
 added method toString to integer numbers
 renamed string method equals to ==
 added enum
+changes in build format
+gcc officially required
+cstruct renamed to struct
+struct now can have normal identifiers
 fix variable redeclaration check added
 fix argument count check added
 fix templates

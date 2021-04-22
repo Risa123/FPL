@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import risa.fpl.env.ProgramEnv;
 
 public final class FPL{
-	private final String cc,output,outputDirectory,mainModule;
+	private final String gcc,output,outputDirectory,mainModule,ccArgs;
 	private final PrintStream errStream;
 	private final ProgramEnv env = new ProgramEnv(this);
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();
@@ -18,14 +18,19 @@ public final class FPL{
     public FPL(String project,PrintStream errStream)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
-        if(!build.containsKey("mainModule") || !build.containsKey("cc") || !build.containsKey("outputFile")){
+        if(buildFileInvalid(build,Arrays.asList("gcc","mainModule","outputFile"),Arrays.asList("ccArgs","flags"))){
             var ex = new CompilerException(0,0,"invalid build file");
             ex.setSourceFile("build.properties");
             throw ex;
         }
-    	this.cc = build.getProperty("cc");
+    	this.gcc = build.getProperty("gcc");
     	this.output = build.getProperty("outputFile");
     	this.errStream = errStream;
+    	if(build.containsKey("ccArgs")){
+    	    ccArgs = build.getProperty("ccArgs");
+        }else{
+    	    ccArgs = "";
+        }
     	outputDirectory = project + "/output";
         mainModule = build.getProperty("mainModule");
         Collections.addAll(flags,build.getProperty("flags","").split(","));
@@ -40,6 +45,21 @@ public final class FPL{
             case "amd64" -> flags.add("x64");
             case "ia64" -> flags.add("ia64");
         }
+    }
+    private boolean buildFileInvalid(Properties buildFile,List<String>requiredKeys,List<String>optionalKeys){
+        var allowedKeys = new ArrayList<>(requiredKeys);
+        allowedKeys.addAll(optionalKeys);
+        for(var key:requiredKeys){
+            if(!buildFile.containsKey(key)){
+                return true;
+            }
+        }
+        for(var key:allowedKeys){
+            if(!allowedKeys.contains(key)){
+                return true;
+            }
+        }
+        return false;
     }
     public void compile()throws IOException,CompilerException{
     	var path = Paths.get(outputDirectory);
@@ -64,7 +84,7 @@ public final class FPL{
     	        files.append(file);
             }
         }
-    	var err = Runtime.getRuntime().exec(cc + " -o " + output + files).getErrorStream();
+    	var err = Runtime.getRuntime().exec(gcc + "\\bin\\gcc -w -o " + ccArgs + " " + output + files).getErrorStream();
         errStream.print(new String(err.readAllBytes()));
     }
     public ModuleBlock getModule(String name)throws IOException,CompilerException{

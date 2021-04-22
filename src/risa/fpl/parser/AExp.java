@@ -19,5 +19,5 @@ public abstract class AExp{
  public final int getCharNum(){
      return charNum;
  }
- public abstract TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it) throws IOException,CompilerException;
+ public abstract TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it)throws IOException,CompilerException;
 }
