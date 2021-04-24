@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.ANameSpacedEnv;
 import risa.fpl.env.Modifier;
 import risa.fpl.function.block.ATwoPassBlock;
 import risa.fpl.info.TypeInfo;
@@ -24,7 +25,11 @@ public class AddModifier extends ATwoPassBlock implements IFunction{
 	    try{
 	    	var exp = it.next();
 	 	    if(exp instanceof List list){
-	 	        compile(writer,env,list);
+	 	      if(env instanceof ANameSpacedEnv){
+                  compile(writer,env,list);
+              }else{
+	 	          exp.compile(writer,env,it);
+              }
 	 	    }else{
 	 	    	var f = env.getFunction((Atom)exp);
 	 	        f.compile(writer,env,it,exp.getLine(),exp.getCharNum());

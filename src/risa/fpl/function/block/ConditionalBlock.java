@@ -53,7 +53,7 @@ public final class ConditionalBlock extends ABlock{
 				}
 				if(elseExp instanceof Atom){
 					writer.write("else ");
-				}else {
+				}else{
 					writer.write("else{\n");
 				}
 				elseExp.compile(writer,new FnSubEnv(env),it);

@@ -20,7 +20,7 @@ import risa.fpl.tokenizer.TokenType;
 public class Function extends TypeInfo implements IField,ICalledOnPointer{
 	private final TypeInfo[]args;
 	private final TypeInfo self,returnType;
-	private String prev_code;
+	private String prevCode;
 	private final AccessModifier accessModifier;
 	private final FunctionType type;
 	private boolean calledOnPointer;
@@ -98,7 +98,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
 		    if(calledOnPointer){
 		      calledOnPointer = false;
 		      b.write("(" + self.getCname() + "*)");
-            }else if(!(self instanceof InterfaceInfo) && prev_code != null /*to prevent &this when calling method on implicit this*/){
+            }else if(!(self instanceof InterfaceInfo) && prevCode != null /*to prevent &this when calling method on implicit this*/){
                if(!self.isPrimitive()){
                    b.write('&');
                }
@@ -151,22 +151,22 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
 	}
     @Override
     public void setPrevCode(String code){
-        prev_code = code;
+        prevCode = code;
     }
     @Override
     public void writePrev(BufferedWriter writer)throws IOException{
-        if(prev_code == null){
+        if(prevCode == null){
            if(self != null){
                writer.write("this");
            }
         }else{
-            writer.write(prev_code);
-            prev_code = null;
+            writer.write(prevCode);
+            prevCode = null;
         }
     }
     @Override
     public String getPrevCode(){
-        return prev_code;
+        return prevCode;
     }
     public static Function newStatic(String name,TypeInfo returnType,TypeInfo[]args,ClassEnv env){
         var cname = "static" + env.getNameSpace()  + IFunction.toCId(name);

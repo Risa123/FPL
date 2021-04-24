@@ -31,7 +31,7 @@ public final class Main implements IFunction{
         var fnEnv = new FnEnv(env,NumberInfo.INT);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("argv",new Variable(new PointerInfo(TypeInfo.STRING),"argv","argv"));
-        fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread", TokenType.ID)),"mainThread","mainThread"));
+        fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",TokenType.ID)),"mainThread","mainThread"));
         writer.write(modEnv.getInitializer("_init"));
         var b = new BuilderWriter(writer);
         b.write("int main(int argc,char** argv){\n");
@@ -43,7 +43,7 @@ public final class Main implements IFunction{
                 var e = iterator.next();
                 if(e.allDependenciesInitCalled()){
                     e.initCalled();
-                    b.write(e.getInitializerCall()); //call
+                    b.write(e.getInitializerCall());//call
                     iterator.remove();
                 }
             }
