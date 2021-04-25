@@ -29,7 +29,7 @@ class ArrayList;T{
       array = malloc value getObjectSize;cast T*
       array drf= value
    }{
-    array = realloc array cast void*,len * T:getInstanceSize; cast T*
+    array = realloc array cast void*,len * T:getInstanceSize;cast T*
     memoryCopy value ref cast byte*,array cast byte* + T:getInstanceSize * oldLen,T:getInstanceSize
    }
  }

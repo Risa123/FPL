@@ -25,7 +25,7 @@ public class ValueExp extends AField{
     }
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-		if(it.hasNext()) {
+		if(it.hasNext()){
 			if(it.peek() instanceof Atom atom){
 				if(atom.getType() == TokenType.ARG_SEPARATOR){
 					it.next();

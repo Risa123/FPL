@@ -75,7 +75,6 @@ public final class Variable extends ValueExp{
 		}
 		return super.onField(atom,writer,env,it,line,charNum);
 	}
-
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=")){

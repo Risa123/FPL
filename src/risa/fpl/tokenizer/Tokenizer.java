@@ -7,7 +7,7 @@ import risa.fpl.CompilerException;
 
 public final class Tokenizer{
 	  private final Reader reader;
-	  private int line = 1,charNum = 1,c;
+	  private int line = 1,tokenNum,c;
 	  private boolean readNext = true,forceEnd;
 	  private static final int  UBYTE_MAX = 255,USHORT_MAX = 65_535;
 	  private static final long UINT_MAX = 4_294_967_295L,ULONG_MAX = Long.parseUnsignedLong("18446744073709551615");
@@ -33,22 +33,22 @@ public final class Tokenizer{
 			  readNext = c != '\n';
 		  }else if(c == '$'){
 			  if(!hasNext()){
-				  throw new CompilerException(line,charNum,"char expected");
+				  throw new CompilerException(line, tokenNum,"char expected");
 			  }
 			  var builder = new StringBuilder("'");
 			  var firstChar = read();
 			  if(firstChar == '\\' && hasNext()){
 			      read();
-                  switch (c){
+                  switch(c){
                       case 't','n','f','b','r','\\','0'->{
                           builder.appendCodePoint('\\');
                           builder.appendCodePoint(c);
                       }
                       case 's'->builder.append(' ');
-                      default->throw new CompilerException(line,charNum,"no special character " +  Character.toString(c));
+                      default->throw new CompilerException(line, tokenNum,"no special character " +  Character.toString(c));
                   }
 			  }else if(Character.isWhitespace(firstChar)){
-			      throw new CompilerException(line,charNum,"$ cannot be followed by whitespace");
+			      throw new CompilerException(line, tokenNum,"$ cannot be followed by whitespace");
               }else{
 			      if(c == '\''){
 			          builder.append('\\');
@@ -56,7 +56,7 @@ public final class Tokenizer{
 			      builder.appendCodePoint(firstChar);
               }
 			  builder.append("'");
-			  return new Token(line,charNum,builder.toString(),TokenType.CHAR);
+			  return new Token(line, tokenNum,builder.toString(),TokenType.CHAR);
 		  }else if(c == '+' || c == '-' || Character.isDigit(c)){
 			  var signed = false;
 			  var hex = false;
@@ -72,7 +72,7 @@ public final class Tokenizer{
                       }else{
                           readNext = false;
                       }
-                      return new Token(line,charNum,b.toString(),TokenType.ID);
+                      return new Token(line, tokenNum,b.toString(),TokenType.ID);
                   }
 				  signed = true;
 			  }else if(c == '0'){
@@ -101,18 +101,18 @@ public final class Tokenizer{
 						  b.appendCodePoint(c);
 					  }else if(c == '.'){
 						  if(floatingPoint){
-							  throw new CompilerException(line,charNum,"this number already has floating point");
+							  throw new CompilerException(line, tokenNum,"this number already has floating point");
 						  }
 						  floatingPoint = true;
 						  type = TokenType.DOUBLE;
 						  if(signed){
-							  throw new CompilerException(line,charNum,"floating point number cannot be signed");
+							  throw new CompilerException(line, tokenNum,"floating point number cannot be signed");
 						  }
 						  b.append('.');
 					  }else if(c == 'F'){
 						  type = TokenType.FLOAT;
 						  if(!floatingPoint){
-							  throw new CompilerException(line,charNum,"float number expected");
+							  throw new CompilerException(line, tokenNum,"float number expected");
 						  }
 						  break;
 					  }else if(c == 'L'){
@@ -128,7 +128,7 @@ public final class Tokenizer{
 						  type = signed?TokenType.SBYTE:TokenType.UBYTE;
 						  break;
 					  }else {
-						  throw new CompilerException(line,charNum,"unexpected character " + Character.toString(c) + ",code:" + c);
+						  throw new CompilerException(line, tokenNum,"unexpected character " + Character.toString(c) + ",code:" + c);
 					  }
 				  }
 			  }
@@ -144,13 +144,13 @@ public final class Tokenizer{
 					 try {
 						 Float.parseFloat(value);
 					 }catch(NumberFormatException e){
-						 throw new CompilerException(line,charNum,"float number expected");
+						 throw new CompilerException(line, tokenNum,"float number expected");
 					 }
 				  }else if(type == TokenType.DOUBLE){
 					  try{
 						  Double.parseDouble(value);
 					  }catch(NumberFormatException e){
-						  throw new CompilerException(line,charNum,"double number expected");
+						  throw new CompilerException(line, tokenNum,"double number expected");
 					  }
 				  }
 			  }else {
@@ -162,65 +162,65 @@ public final class Tokenizer{
 					  	 n = Long.parseLong(value);
 					  }
 					  if(type == TokenType.SBYTE && (n < Byte.MIN_VALUE || n > Byte.MAX_VALUE)){
-						  throw new CompilerException(line,charNum,"sbyte numbere expected");
+						  throw new CompilerException(line, tokenNum,"sbyte numbere expected");
 					  }else if(type == TokenType.SSHORT && (n < Short.MIN_VALUE || n > Short.MAX_VALUE)){
-						  throw new CompilerException(line,charNum,"sshort number expected");
+						  throw new CompilerException(line, tokenNum,"sshort number expected");
 					  }else if(type == TokenType.SINT && (n < Integer.MIN_VALUE || n > Integer.MAX_VALUE)){
-						  throw new CompilerException(line,charNum,"sint number expected");
+						  throw new CompilerException(line, tokenNum,"sint number expected");
 					  }else if(type == TokenType.SLONG && (n < Long.MIN_VALUE || n > Long.MAX_VALUE)) {
-						  throw new CompilerException(line,charNum,"slong number expected");
+						  throw new CompilerException(line, tokenNum,"slong number expected");
 					  }else if(type == TokenType.UBYTE &&  n > UBYTE_MAX){
-						  throw new CompilerException(line,charNum,"ubyte number expected");
+						  throw new CompilerException(line, tokenNum,"ubyte number expected");
 					  }else if(type == TokenType.USHORT && n > USHORT_MAX){
-						  throw new CompilerException(line,charNum,"ushort number expected");
+						  throw new CompilerException(line, tokenNum,"ushort number expected");
 					  }else if(type == TokenType.UINT && n > UINT_MAX){
-						  throw new CompilerException(line,charNum,"uint number expected");
+						  throw new CompilerException(line, tokenNum,"uint number expected");
 					  }else if(type == TokenType.ULONG && n > ULONG_MAX){
-						  throw new CompilerException(line,charNum,"ulong number expected");
+						  throw new CompilerException(line, tokenNum,"ulong number expected");
 					  }
 				  }
 			  }
 			  if(hex){
 			  	 value = "0x" + value;
 			  }
-			  return new Token(line,charNum,value,type);
+			  return new Token(line,tokenNum,value,type);
 		  } else if( c == '{'){
-			  return new Token(line,charNum,"{",TokenType.BEGIN_BLOCK);
+			  return new Token(line,tokenNum,"{",TokenType.BEGIN_BLOCK);
 		  }else if(c == '}'){
-			  return new Token(line,charNum,"}",TokenType.END_BLOCK);
+			  return new Token(line,tokenNum,"}",TokenType.END_BLOCK);
 		  }else if(c == '\n'){
-			 return new Token(line,charNum,"",TokenType.NEW_LINE) ;
+			 return new Token(line,tokenNum,"",TokenType.NEW_LINE) ;
 		  }else if(c == ','){
-			  return new Token(line,charNum,",",TokenType.ARG_SEPARATOR);
+			  return new Token(line,tokenNum,",",TokenType.ARG_SEPARATOR);
 		  }else if(c == ';'){
-			  return new Token(line,charNum,";",TokenType.END_ARGS);
+			  return new Token(line,tokenNum,";",TokenType.END_ARGS);
 		  }else  if(c == '"'){
 			  var b = new StringBuilder();
 			  b.append('"');
-			  do {
+			  do{
 				  read();
 				  b.appendCodePoint(c);
 			  }while(c != '"');
 			  var id = b.toString();
 			  for(int i = 0; i < id.length();++i){
 			      if(id.charAt(i) > 127){
-			          throw new CompilerException(line,charNum,"this is not valid ascii string");
+			          throw new CompilerException(line, tokenNum,"this is not valid ascii string");
                   }
               }
-			  return new Token(line,charNum,id,TokenType.STRING);
+			  return new Token(line, tokenNum,id,TokenType.STRING);
 		  }else if(c == ':'){
-		      return new Token(line,charNum,":",TokenType.CLASS_SELECTOR);
+		      return new Token(line, tokenNum,":",TokenType.CLASS_SELECTOR);
           } else  if(notSeparator(c)){
 			  var b = new StringBuilder();
 			  readNext = false;
 			  if(!Character.isValidCodePoint(c)){
 			      forceEnd = true;
-			      return new Token(line,charNum,"",TokenType.NEW_LINE);
+			      return new Token(line, tokenNum,"",TokenType.NEW_LINE);
               }
 			  while(hasNext() && notSeparator(read())){
 				  b.appendCodePoint(c);
 			  }
-			  return new Token(line,charNum,b.toString(),TokenType.ID);
+			  return new Token(line, tokenNum,b.toString(),TokenType.ID);
 		  }
 		  return null;
 	  }
@@ -232,16 +232,15 @@ public final class Tokenizer{
           }
 		  Token token;
 		  while((token = nextPrivate())  == null || token.type() != TokenType.NEW_LINE && (token.value().isEmpty() || token.value().isBlank()));
+		  tokenNum++;
 		  return token;
 	  }
 	  private int read()throws IOException{
 		  if(readNext){
 			 c = reader.read();
-			 if(c == '\n') {
+			 if(c == '\n'){
 				 line++;
-				 charNum = 1;
-			 }else{
-				 charNum++;
+				 tokenNum = 0;
 			 }
 		  }else{
 			  readNext = true;

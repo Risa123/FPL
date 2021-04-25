@@ -48,7 +48,7 @@ public abstract class AField implements IField{
            it.next();
            var field = returnType.getField(id.getValue(),env);
            if(field == null){
-               throw new CompilerException(id,returnType + " has not field called " + id);
+               throw new CompilerException(id,returnType + " has no field called " + id);
            }
            field.setPrevCode(prevCode);
            return field.compile(writer,env,it,id.getLine(),id.getCharNum());

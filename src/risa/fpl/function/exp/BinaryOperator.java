@@ -25,6 +25,10 @@ public final class BinaryOperator extends AField{
 	    if(!operandType.equals(opType)){
 	    	throw new CompilerException(exp,operandType + " operand expected instead of " + opType);
 	    }
-		return returnType;
+	    var prevCode = getPrevCode();
+	    if(prevCode == null){
+	        prevCode = "";
+        }
+		return compileChainedCall(returnType,writer,env,it,prevCode);
 	}
 }

@@ -31,7 +31,7 @@ public final class Parser implements AutoCloseable{
  private List parseStatement(Token first)throws IOException,CompilerException{
 	 var list = new ArrayList<AExp>();
 	 if(first.type() != TokenType.NEW_LINE) {
-		 list.add(new Atom(first.line(),first.charNum(),first.value(),first.type()));
+		 list.add(new Atom(first.line(),first.tokenNum(),first.value(),first.type()));
 	 }
 	 while(hasNext()){
 		 var token = tokenizer.peek();
@@ -45,10 +45,10 @@ public final class Parser implements AutoCloseable{
 			 list.add(parseBlock(token));
 		 }else{
              tokenizer.next();
-			 list.add(new Atom(token.line(),token.charNum(),token.value(),token.type()));
+			 list.add(new Atom(token.line(),token.tokenNum(),token.value(),token.type()));
 		 }
 	 }
-	 return new List(first.line(),first.charNum(),list,true);
+	 return new List(first.line(),first.tokenNum(),list,true);
  }
  private List parseBlock(Token begin)throws IOException,CompilerException{
 	 var list = new ArrayList<AExp>();
@@ -62,6 +62,6 @@ public final class Parser implements AutoCloseable{
 			 list.add(parseStatement(token));
 		 }
 	 }
-	 return new List(begin.line(),begin.charNum(),list,false);
+	 return new List(begin.line(),begin.tokenNum(),list,false);
  }
 }
