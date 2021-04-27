@@ -25,16 +25,14 @@ public class ValueExp extends AField{
     }
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-		if(it.hasNext()){
-			if(it.peek() instanceof Atom atom){
-				if(atom.getType() == TokenType.ARG_SEPARATOR){
-					it.next();
-				}else if(atom.getType() != TokenType.END_ARGS){
-					it.next();
-					return onField(atom,writer,env,it,line,charNum);
-				}
-			}
-		}
+        if(it.hasNext() && it.peek() instanceof Atom atom){
+            if(atom.getType() == TokenType.ARG_SEPARATOR){
+                it.next();
+            }else if(atom.getType() != TokenType.END_ARGS){
+                it.next();
+                return onField(atom,writer,env,it,line,charNum);
+            }
+        }
         writePrev(writer);
 		writer.write(code);
 		return type;
@@ -49,7 +47,7 @@ public class ValueExp extends AField{
 		if(field instanceof Variable){
 		   if(type instanceof PointerInfo){
 			   selector = "->";
-		   }else {
+		   }else{
 			   selector = ".";
 		   }
 		}else if(field instanceof ICalledOnPointer f && type instanceof PointerInfo){
