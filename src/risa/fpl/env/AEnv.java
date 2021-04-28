@@ -23,9 +23,9 @@ public abstract class AEnv{
   public IFunction getFunction(Atom atom)throws CompilerException{
 	 switch(atom.getType()){
 	 case ID:
-		  if(atom.getValue().endsWith("*")){
-			   return new Var(getType(atom));
-		   }
+		 if(atom.getValue().endsWith("*")){
+			 return new Var(getType(atom));
+		 }
 		 var func = functions.get(atom.getValue());
 		 if(func == null){
 			 throw new CompilerException(atom,"function " + atom + " not found" );

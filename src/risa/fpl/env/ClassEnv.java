@@ -7,6 +7,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.AddModifier;
 import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.block.Constructor;
+import risa.fpl.function.block.Destructor;
 import risa.fpl.function.exp.Cast;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
@@ -17,7 +18,7 @@ import risa.fpl.parser.Atom;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implicitConstructor = new StringBuilder();
-	private final String nameSpace,dataType,dataName;
+	private final String nameSpace,dataType,dataName, destructorCall;
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
@@ -26,6 +27,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
 	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
 	private static final AddModifier OVERRIDE = new AddModifier(Modifier.OVERRIDE);
+	private static final Destructor DESTRUCTOR = new Destructor();
 	public ClassEnv(ModuleEnv superEnv,String id,TemplateStatus templateStatus){
 		super(superEnv);
 		super.addFunction("this",new Constructor());
@@ -33,6 +35,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("virtual",VIRTUAL);
 		super.addFunction("override",OVERRIDE);
 		super.addFunction("internal",INTERNAL);
+		super.addFunction("-this",DESTRUCTOR);
 		var cname = IFunction.toCId(id);
 		nameSpace = superEnv.getNameSpace(null) + cname;
 		classType = new ClassInfo(id);
@@ -52,6 +55,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             superEnv.addType(id,instanceType);
         }
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
+		destructorCall = IFunction.INTERNAL_METHOD_PREFIX + "_" + nameSpace + "_destructor();\n";
 	}
 	@Override
 	public void addFunction(String name,IFunction value){
@@ -167,5 +171,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
             appendToInitializer(getDataName() + "." + method.getImplName() +"=" + method.getCname() + ";\n");
         }
+    }
+    public String getDestructorCall(){
+	    return destructorCall;
     }
 }

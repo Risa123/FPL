@@ -68,3 +68,4 @@ fix method call on literal C error
 fix call static method on primitive type error
 fix two pass compilation added to modifier blocks
 fix typo in "has not field called (field)"
+fix partially binary operator chain call

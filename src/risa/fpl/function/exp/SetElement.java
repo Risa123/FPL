@@ -8,6 +8,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.tokenizer.TokenType;
 
 public final class SetElement extends AField{
 	private final TypeInfo valueType;
@@ -29,7 +30,11 @@ public final class SetElement extends AField{
 	    var code = tmpWriter.getCode();
 	    writer.write(code);
 		writer.write("]=");
-		var valueType = it.next().compile(writer,env,it);
+		var valueAtom = it.nextAtom();
+		if(valueAtom.getType() == TokenType.ARG_SEPARATOR){
+			valueAtom = it.nextAtom();
+		}
+		var valueType = valueAtom.compile(writer,env,it);
 	    if(!this.valueType.equals(valueType)){
 	    	throw new CompilerException(line,beginChar,this.valueType + " return type expected instead of " + valueType);
 		}

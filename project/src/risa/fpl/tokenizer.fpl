@@ -4,7 +4,7 @@ use{
  risa.fpl.base
  std.backend
 }
-enum TokenType NEW_LINE ID CHAR_LIT
+enum TokenType NEW_LINE ID CHAR_LIT END_BLOCK BEGIN_BLOCK
 class Token{
   private{
    int line;tokenNum
@@ -92,6 +92,10 @@ class Tokenizer{
              }if c == $\n{
                token line,tokenNum,"\n",TokenType:NEW_LINE
                break
+             }if c == ${{
+               token line,tokenNum,"{",TokenType:BEGIN_BLOCK
+             }if c == $}{
+               token line,tokenNum,"}",TokenType:END_BLOCK
              }if c isWhitespace;!{
                ArrayList;char; b
                b add c
@@ -109,7 +113,12 @@ class Tokenizer{
             }
          }
     }
-    fn bool isSeparator = c isWhitespace; || c == ${
+    fn bool isSeparator{
+      if c isWhitespace{
+         return true
+      }
+      return c == ${; || c == $}; || c == $;
+    }
  }
  this Readable readable{
     reader = DataReader:alloc readable
