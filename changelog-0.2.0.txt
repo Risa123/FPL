@@ -29,6 +29,7 @@ gcc officially required
 cstruct renamed to struct
 struct now can have normal identifiers
 character numbers are replaced by token numbers
++ and - can be used as unary operator
 fix variable redeclaration check added
 fix argument count check added
 fix templates

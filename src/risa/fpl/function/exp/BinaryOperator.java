@@ -6,7 +6,9 @@ import java.io.IOException;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
+import risa.fpl.tokenizer.TokenType;
 
 public final class BinaryOperator extends AField{
    private final TypeInfo returnType,operandType;
@@ -20,11 +22,15 @@ public final class BinaryOperator extends AField{
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
 	    writePrev(writer);
 	    writer.write(operator);
-	    var exp = it.next();
-	    var opType = exp.compile(writer,env,it);
-	    if(!operandType.equals(opType)){
-	    	throw new CompilerException(exp,operandType + " operand expected instead of " + opType);
-	    }
+	    if(it.hasNext() && it.peek() instanceof Atom a && a.getType() != TokenType.END_ARGS && a.getType() != TokenType.ARG_SEPARATOR){
+			var exp = it.next();
+			var opType = exp.compile(writer,env,it);
+			if(!operandType.equals(opType)){
+				throw new CompilerException(exp,operandType + " operand expected instead of " + opType);
+			}
+		}else if(!(operator.equals("+") || operator.equals("-"))){
+	    	throw new CompilerException(line,charNum,"atom expected");
+		}
 	    var prevCode = getPrevCode();
 	    if(prevCode == null){
 	        prevCode = "";
