@@ -35,9 +35,9 @@ public final class PointerInfo extends TypeInfo{
         addField("cast", new Cast(this));
         var cName = "free";
         if(type instanceof InstanceInfo i){
-          cName = i.getDestructorName();
+          cName = i.getInstanceFree();
         }
-        addField("free",new Function("free",TypeInfo.VOID,cName,new TypeInfo[0],FunctionType.NORMAL,this,AccessModifier.PUBLIC,cName));
+        addField("free",new Function("free",TypeInfo.VOID,cName,new TypeInfo[0],FunctionType.NORMAL,type,AccessModifier.PUBLIC,cName));
 	}
 	public PointerInfo(TypeInfo type){
 	    this(type,false);

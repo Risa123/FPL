@@ -67,8 +67,15 @@ public final class Tokenizer{
 				  if(Character.isDigit(c)){
 					 b.appendCodePoint(c);
 				  }else{
-                      if(notSeparator(c)) {
+                      if(notSeparator(c)){
                           b.appendCodePoint(c);
+						  if(!Character.isValidCodePoint(c)){
+							  forceEnd = true;
+							  return new Token(line,tokenNum,"",TokenType.NEW_LINE);
+						  }
+						  while(hasNext() && notSeparator(read())){
+							  b.appendCodePoint(c);
+						  }
                       }else{
                           readNext = false;
                       }
@@ -127,7 +134,7 @@ public final class Tokenizer{
 						  hasTypeChar = true;
 						  type = signed?TokenType.SBYTE:TokenType.UBYTE;
 						  break;
-					  }else {
+					  }else{
 						  throw new CompilerException(line,tokenNum,"unexpected character " + Character.toString(c) + ",code:" + c);
 					  }
 				  }

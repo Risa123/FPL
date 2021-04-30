@@ -138,7 +138,6 @@ class Tokenizer{
  }
  fn void close{
    reader close
-   tokens destroy
  }
  fn bool hasNext{
   prepare

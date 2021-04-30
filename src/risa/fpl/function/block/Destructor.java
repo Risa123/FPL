@@ -17,12 +17,16 @@ public final class Destructor extends ABlock{
         if(!(env instanceof ClassEnv cEnv)){
             throw new CompilerException(line,charNum,"can only be declared in class block");
         }
+        if(cEnv.isDestructorDeclared()){
+            throw new CompilerException(line,charNum,"destructor already declared");
+        }
+        cEnv.destructorDeclared();
         var b = new BuilderWriter(writer);
         b.write("void ");
         var type = cEnv.getInstanceType();
         b.write(type.getDestructorName() + "(" + type.getCname() + "* this){\n");
         it.nextList().compile(b,new FnEnv(env,TypeInfo.VOID),it);
-        b.write("\nfree(this);\n}\n");
+        b.write("}\n");
         cEnv.appendFunctionCode(b.getCode());
         return TypeInfo.VOID;
     }

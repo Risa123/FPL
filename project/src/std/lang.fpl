@@ -29,7 +29,7 @@ class Exception{
      memoryCopy this cast byte*,to cast byte*,getObjectSize
      this free
    }
-   xthis{
+   -this{
      if allocatedMessage{
        message free
      }
@@ -75,6 +75,23 @@ class Thread{
  fn void setExceptionHandler ExceptionHandlerType exceptionHandler{
    this exceptionHandler = exceptionHandler
  }
+}
+class String{
+  private{
+    char* p
+    uint len
+    bool allocated
+  }
+  this char* p uint len bool allocated{
+    this len = len
+    this p = p
+    this allocated = allocated
+  }
+  -this{
+    if allocated{
+       p free
+    }
+  }
 }
 Thread* currentThread
 fn void defaultExceptionHandler Exception* ex{

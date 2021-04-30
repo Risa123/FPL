@@ -35,7 +35,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("virtual",VIRTUAL);
 		super.addFunction("override",OVERRIDE);
 		super.addFunction("internal",INTERNAL);
-		super.addFunction("xthis",DESTRUCTOR);
+		super.addFunction("-this",DESTRUCTOR);
 		var cname = IFunction.toCId(id);
 		nameSpace = superEnv.getNameSpace(null) + cname;
 		classType = new ClassInfo(id);
