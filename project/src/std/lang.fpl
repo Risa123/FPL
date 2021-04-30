@@ -29,7 +29,7 @@ class Exception{
      memoryCopy this cast byte*,to cast byte*,getObjectSize
      this free
    }
-   virtual fn void destroy{
+   xthis{
      if allocatedMessage{
        message free
      }
@@ -80,7 +80,7 @@ Thread* currentThread
 fn void defaultExceptionHandler Exception* ex{
   puts "exception happened:"
   puts ex getMessage
-  ex destroy
+  ex free
   exit 1
 }
 fn void* realloc void* p memory newSize{
@@ -219,7 +219,7 @@ fn string integerToString long this{
  [] char 20 buf
  int i 0
  while this > 0;|| i == 0{
-  buf set i,this % 10 + $0 cast int
+  buf set i,this % 10 + $0
   this /= 10
   i ++
  }

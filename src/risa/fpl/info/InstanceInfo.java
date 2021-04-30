@@ -9,9 +9,11 @@ public class InstanceInfo extends TypeInfo{
     private String attributesCode,implCode;
     private final ModuleEnv module;
     private boolean complete;
+    private final String destructorName;
     public InstanceInfo(String name,ModuleEnv module){
         super(name,IFunction.toCId(name));
         this.module = module;
+        destructorName = IFunction.INTERNAL_METHOD_PREFIX + module.getNameSpace() + getCname() + "_destructor";
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
     }
     public String getClassDataType(){
@@ -52,5 +54,8 @@ public class InstanceInfo extends TypeInfo{
             return module.getNameSpace().equals(i.module.getNameSpace());
         }
         return nameResult;
+    }
+    public final String getDestructorName(){
+        return destructorName;
     }
 }

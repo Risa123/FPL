@@ -18,11 +18,11 @@ import risa.fpl.parser.Atom;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implicitConstructor = new StringBuilder();
-	private final String nameSpace,dataType,dataName, destructorCall;
+	private final String nameSpace,dataType,dataName;
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
-	private boolean parentConstructorCalled;
+	private boolean parentConstructorCalled,destructorDeclared;
 	private static final SetAccessModifier PROTECTED = new SetAccessModifier(AccessModifier.PROTECTED);
 	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
 	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
@@ -35,7 +35,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("virtual",VIRTUAL);
 		super.addFunction("override",OVERRIDE);
 		super.addFunction("internal",INTERNAL);
-		super.addFunction("-this",DESTRUCTOR);
+		super.addFunction("xthis",DESTRUCTOR);
 		var cname = IFunction.toCId(id);
 		nameSpace = superEnv.getNameSpace(null) + cname;
 		classType = new ClassInfo(id);
@@ -55,7 +55,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             superEnv.addType(id,instanceType);
         }
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
-		destructorCall = IFunction.INTERNAL_METHOD_PREFIX + "_" + nameSpace + "_destructor();\n";
+
 	}
 	@Override
 	public void addFunction(String name,IFunction value){
@@ -172,7 +172,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             appendToInitializer(getDataName() + "." + method.getImplName() +"=" + method.getCname() + ";\n");
         }
     }
-    public String getDestructorCall(){
-	    return destructorCall;
+    public void destructorDeclared(){
+	    destructorDeclared = true;
+    }
+    public boolean isDestructorDeclared(){
+	    return destructorDeclared;
     }
 }

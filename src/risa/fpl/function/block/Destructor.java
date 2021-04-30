@@ -4,6 +4,7 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
+import risa.fpl.env.FnEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -18,10 +19,10 @@ public final class Destructor extends ABlock{
         }
         var b = new BuilderWriter(writer);
         b.write("void ");
-        b.write(cEnv.getDestructorCall());
-        b.write("{\n");
-        it.nextList().compile(b,env,it);
-        b.write("}\n");
+        var type = cEnv.getInstanceType();
+        b.write(type.getDestructorName() + "(" + type.getCname() + "* this){\n");
+        it.nextList().compile(b,new FnEnv(env,TypeInfo.VOID),it);
+        b.write("\nfree(this);\n}\n");
         cEnv.appendFunctionCode(b.getCode());
         return TypeInfo.VOID;
     }

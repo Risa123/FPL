@@ -26,7 +26,7 @@ public abstract class ATwoPassBlock{
             var it = infos.iterator();
             while(it.hasNext()){
                 var info = it.next();
-                try {
+                try{
                     info.exp.compile(info.writer,env,null);
                     it.remove();
                     writer.write(info.writer.getCode());
