@@ -32,7 +32,7 @@ public abstract class AFunctionBlock extends ABlock{
             }
             if(first){
                 first = false;
-            }else {
+            }else{
                 writer.write(',');
             }
             var argTypeAtom = it.nextID();
@@ -41,6 +41,10 @@ public abstract class AFunctionBlock extends ABlock{
             if(argName.getType() == TokenType.END_ARGS){
                 argType = IFunction.generateTypeFor(argType,argTypeAtom,it,env,false);
                 argName = it.nextID();
+                if(argName.getValue().equals("*")){
+                    argType = new PointerInfo(argType);
+                    argName = it.nextID();
+                }
             }else if(argName.getType() != TokenType.ID){
                 throw new CompilerException(argName,"identifier or ; expected");
             }

@@ -72,3 +72,5 @@ fix two pass compilation added to modifier blocks
 fix typo in "has not field called (field)"
 fix partially binary operator chain call
 fix identifiers beginning with + or - parsed as +/-(following character)
+fix condition blocks don´t have their own context
+fix pointer to template type in argument

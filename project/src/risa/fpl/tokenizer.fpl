@@ -46,6 +46,9 @@ class Tokenizer{
       return c
     }
     fn bool ready = reader ready; || readNext !
+    fn void idToken int line int tokenNum ArrayList;char;* b TokenType type{
+      token line,tokenNum,memoryCopy b getArray,nil,b getSize;,type
+    }
     fn void prepare{
       if tokens getSize; == i{
            tokens clear
@@ -61,7 +64,7 @@ class Tokenizer{
           }if c == $${
            if ready; !{
               CompilerException ex line,tokenNum,"char expected"
-               ex throw
+              ex throw
             }
             ArrayList;char; b
             b add $'
