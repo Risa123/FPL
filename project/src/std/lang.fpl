@@ -92,6 +92,12 @@ class String{
        p free
     }
   }
+  fn void set uint index char c{
+    p set index,c
+  }
+  fn char get uint index{
+    return p get index
+  }
 }
 Thread* currentThread
 fn void defaultExceptionHandler Exception* ex{

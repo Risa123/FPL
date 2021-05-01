@@ -137,4 +137,7 @@ public final class Variable extends ValueExp{
     public String getExternDeclaration(){
 	    return "extern " + type.getCname() + " " + code + ";\n";
     }
+    public String getCname(){
+		return code;
+	}
 }

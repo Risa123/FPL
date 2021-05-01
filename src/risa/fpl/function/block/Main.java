@@ -5,6 +5,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.env.ModuleEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.NumberInfo;
@@ -52,6 +53,7 @@ public final class Main implements IFunction{
         b.write("I_std_lang_Thread_init(&mainThread,\"Main\");\n");
         b.write("_std_lang_currentThread = &mainThread;\n");
         it.nextList().compile(b,fnEnv,it);
+        fnEnv.compileDestructorCalls(b);
         if(fnEnv.notReturnUsed()){
             b.write("return 0;\n}\n");
         }

@@ -25,7 +25,7 @@ public final class UnaryOperator extends AField{
 			writePrev(prev);
 		}
 		prev.write(operator);
-		if(!postfix) {
+		if(!postfix){
 			writePrev(prev);
 		}
 		return compileChainedCall(returnType,writer,env,it,prev.getCode());

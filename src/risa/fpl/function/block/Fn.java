@@ -151,6 +151,9 @@ public class Fn extends AFunctionBlock{
 			    macroDeclaration.append(")\n");
             }
 			b.write(code.getCode());
+            if(returnType == TypeInfo.VOID){
+                fnEnv.compileDestructorCalls(b);
+            }
 			if(oneLine && macroDeclaration.isEmpty()){
 			    b.write(";\n");
             }else if(oneLine){

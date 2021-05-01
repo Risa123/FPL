@@ -3,10 +3,7 @@ package risa.fpl.env;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
 
-import java.util.ArrayList;
-
 public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
-    private final ArrayList<InstanceInfo>instanceVariables = new ArrayList<>();
     public FnSubEnv(AEnv superEnv){
         super(superEnv);
     }
@@ -23,8 +20,5 @@ public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
         }else{
             ((FnSubEnv)superEnv).addTemplateInstance(type);
         }
-    }
-    public void addInstanceVariable(InstanceInfo instanceVariable){
-        instanceVariables.add(instanceVariable);
     }
 }

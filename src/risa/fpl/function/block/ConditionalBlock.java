@@ -38,12 +38,14 @@ public final class ConditionalBlock extends ABlock{
 			}
 		}
 		var ret = new List(expLine,expCharNum,list,false).compile(writer,new FnSubEnv(env),it);
-		if( ret != TypeInfo.BOOL){
+		if(ret != TypeInfo.BOOL){
 			throw new CompilerException(expLine,expCharNum,"expression expected to return bool instead of " + ret);
 		}
 		writer.write("){\n");
+		var ifEnv = new FnSubEnv(env);
 		var block = it.nextList();
-		block.compile(writer,env,it);
+		block.compile(writer,ifEnv,it);
+		ifEnv.compileDestructorCalls(writer);
 		writer.write("}\n");
 		if(code.equals("if")){
 			if(it.hasNext()){
@@ -56,7 +58,9 @@ public final class ConditionalBlock extends ABlock{
 				}else{
 					writer.write("else{\n");
 				}
-				elseExp.compile(writer,new FnSubEnv(env),it);
+				var subEnv = new FnSubEnv(env);
+				elseExp.compile(writer,subEnv,it);
+				subEnv.compileDestructorCalls(writer);
 				if(elseExp instanceof List){
 					writer.write("}\n");
 				}

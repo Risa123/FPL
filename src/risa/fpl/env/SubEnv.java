@@ -3,11 +3,18 @@ package risa.fpl.env;
 import risa.fpl.CompilerException;
 import risa.fpl.FPL;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.Variable;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class SubEnv extends AEnv{
   protected final AEnv superEnv;
+  private final ArrayList<Variable>instanceVariables = new ArrayList<>();
   public SubEnv(AEnv superEnv){
 	  this.superEnv = superEnv;
   }
@@ -34,5 +41,18 @@ public class SubEnv extends AEnv{
  }
  public ModuleEnv getModule(){
       return ((SubEnv)superEnv).getModule();
+ }
+ public void addInstanceVariable(Variable instanceVariable){
+      instanceVariables.add(instanceVariable);
+ }
+ public void compileDestructorCalls(BufferedWriter writer)throws IOException{
+      var b = new StringBuilder();
+      for(var v:instanceVariables){
+          b.append(((InstanceInfo)v.getType()).getDestructorName());
+          b.append("(&");
+          b.append(v.getCname());
+          b.append(");\n");
+      }
+      writer.write(b.toString());
  }
 }

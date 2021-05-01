@@ -5,15 +5,13 @@ import java.io.IOException;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
-import risa.fpl.env.ClassEnv;
-import risa.fpl.env.Modifier;
-import risa.fpl.env.ModuleEnv;
+import risa.fpl.env.*;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -21,8 +19,9 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
 public final class ClassVariable extends Function{
-   private final TypeInfo type,classType;
-   public ClassVariable(TypeInfo type,TypeInfo classType,TypeInfo[]args,String nameSpace){
+   private final TypeInfo classType;
+   private final InstanceInfo type;
+   public ClassVariable(InstanceInfo type,TypeInfo classType,TypeInfo[]args,String nameSpace){
        super("constructor",TypeInfo.VOID,makeCName(nameSpace),args,FunctionType.NORMAL,type,AccessModifier.PUBLIC,makeCName(nameSpace));
 	   this.type = type;
 	   this.classType = classType;
@@ -90,7 +89,8 @@ public final class ClassVariable extends Function{
         if(env instanceof ClassEnv e){
             instanceType = e.getInstanceType();
         }
-        env.addFunction(id.getValue(),new Variable(varType,varCid,false,vID,env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
+        var v = new Variable(varType,varCid,false,vID,env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
+        env.addFunction(id.getValue(),v);
         if(env instanceof ClassEnv e){
             e.appendToImplicitConstructor(b.getCode() + ";\n");
         }else if(env instanceof ModuleEnv e){
@@ -98,6 +98,7 @@ public final class ClassVariable extends Function{
         }else{
             writer.write(b.getCode());
         }
+        ((SubEnv)env).addInstanceVariable(v);
         return null;
     }
 	public void compileAsParentConstructor(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
