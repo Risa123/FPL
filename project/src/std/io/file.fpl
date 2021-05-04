@@ -3,7 +3,7 @@ use{
  std.backend
 }
 abstract class FileHandler Closeable{
-   protected void* handle
+   protected const void* handle
    this string name string mode{
       handle = fileOpen name,mode
       if handle == nil{

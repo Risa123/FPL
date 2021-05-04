@@ -17,8 +17,7 @@ fn double sin double x{
    var a  2 * i
    var b 2 * i + 1
    fact *= a * b
-   double s -1
-   pow *= s * x * x
+   pow *=  x * x * -1
    acc = pow / fact
    cur += acc
    i ++

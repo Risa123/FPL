@@ -3,7 +3,7 @@ use std.backend
 
 class Exception{
    private{
-     string message
+     const string message
      bool allocatedMessage
    }
    this string message{

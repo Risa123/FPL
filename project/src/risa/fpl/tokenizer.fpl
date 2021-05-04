@@ -6,8 +6,8 @@ use{
 }
 enum TokenType NEW_LINE ID CHAR_LIT END_BLOCK BEGIN_BLOCK
 class Token{
-  private{
-   const int line;tokenNum
+  private const{
+   int line;tokenNum
    string value
    TokenType type
   }

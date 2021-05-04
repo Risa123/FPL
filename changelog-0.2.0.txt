@@ -77,3 +77,4 @@ fix condition blocks don´t have their own context
 fix pointer to template type in argument
 fix static method
 fix unable to use operators on constants
+fix fields can be constant and defined in constructor

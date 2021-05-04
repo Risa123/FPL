@@ -144,7 +144,8 @@ public final class Var implements IFunction{
                 if(it.hasNext()){
                     writer.write(";\n");
                 }
-                env.addFunction(id.getValue(),new Variable(varType,cID,onlyDeclared,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
+                var constant = env.hasModifier(Modifier.CONST) && !(env instanceof  ClassEnv);
+                env.addFunction(id.getValue(),new Variable(varType,cID,onlyDeclared,id.getValue(),constant,instanceType,env.getAccessModifier()));
             }else if(id.getType() != TokenType.END_ARGS){
                 throw new CompilerException(id,"unexpected atom");
             }
