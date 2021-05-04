@@ -87,6 +87,7 @@ public final class ModuleBlock extends ATwoPassBlock{
                }
                if(!isMain()){
                    writer.write(env.getInitializer("_init"));
+                   writer.write(env.getDestructor());
                }
            }catch(CompilerException ex){
                ex.setSourceFile(sourceFile);
@@ -126,7 +127,7 @@ public final class ModuleBlock extends ATwoPassBlock{
        makeMethod(name,name,ofType,true);
    }
    private void makeMethod(String name,ClassInfo ofClass){
-       ofClass.addField(name,env.getAndRemove(name).makeMethod());
+       ofClass.addField(name,env.getAndRemove(name));
    }
    private void makeMethod(String name,String oldName,TypeInfo ofType)throws CompilerException{
        makeMethod(name,oldName,ofType,true);

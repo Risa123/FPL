@@ -7,7 +7,7 @@ use{
 enum TokenType NEW_LINE ID CHAR_LIT END_BLOCK BEGIN_BLOCK
 class Token{
   private{
-   int line;tokenNum
+   const int line;tokenNum
    string value
    TokenType type
   }
@@ -47,7 +47,9 @@ class Tokenizer{
     }
     fn bool ready = reader ready; || readNext !
     fn void idToken int line int tokenNum ArrayList;char;* b TokenType type{
-      token line,tokenNum,memoryCopy b getArray,nil,b getSize;,type
+      var id string:new b getSize;cast uint
+      memoryCopy b getArray;cast byte*,id cast byte*,b getSize
+      token tokenNum,line,id,type
     }
     fn void prepare{
       if tokens getSize; == i{
@@ -71,9 +73,9 @@ class Tokenizer{
             var firstChar read
             if firstChar == $\\{
               if ready; !{
-               CompilerException exI line,tokenNum,"character expected"
-                exI throw
-               }
+               CompilerException ex line,tokenNum,"character expected"
+               ex throw
+              }
                if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $";|| c == $0{
                   b add $\\
                   b add c
@@ -84,14 +86,14 @@ class Tokenizer{
                 ex throw
                }
               }if firstChar isWhitespace{
-                CompilerException ex1 line,tokenNum,"$ cannot be followed by whitespace"
-                ex1 throw
+                CompilerException ex line,tokenNum,"$ cannot be followed by whitespace"
+                ex throw
                }{
                 b add firstChar
                }
                b add $'
                b add $\0
-               token line,tokenNum,b getArray; cast string,TokenType:CHAR_LIT
+               idToken line,tokenNum,b ref,TokenType:CHAR_LIT
              }if c == $\n{
                token line,tokenNum,"\n",TokenType:NEW_LINE
                break
@@ -111,7 +113,7 @@ class Tokenizer{
                  b add c
                }
                b add $\0
-               token line,tokenNum,b getArray; cast string,TokenType:ID
+               idToken line,tokenNum,b ref,TokenType:ID
              }
             }
          }

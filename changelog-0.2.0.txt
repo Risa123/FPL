@@ -31,6 +31,7 @@ struct now can have normal identifiers
 character numbers are replaced by token numbers
 + and - can be used as unary operator
 destructors added
+goniometric functions added
 fix variable redeclaration check added
 fix argument count check added
 fix templates
@@ -74,3 +75,5 @@ fix partially binary operator chain call
 fix identifiers beginning with + or - parsed as +/-(following character)
 fix condition blocks don´t have their own context
 fix pointer to template type in argument
+fix static method
+fix unable to use operators on constants

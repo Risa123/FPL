@@ -20,16 +20,19 @@ public final class BinaryOperator extends AField{
     }
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-	    writePrev(writer);
-	    writer.write(operator);
 	    if(it.hasNext() && it.peek() instanceof Atom a && a.getType() != TokenType.END_ARGS && a.getType() != TokenType.ARG_SEPARATOR){
 			var exp = it.next();
+			writePrev(writer);
+			writer.write(operator);
 			var opType = exp.compile(writer,env,it);
 			if(!operandType.equals(opType)){
 				throw new CompilerException(exp,operandType + " operand expected instead of " + opType);
 			}
 		}else if(!(operator.equals("+") || operator.equals("-"))){
 	    	throw new CompilerException(line,charNum,"atom expected");
+		}else{
+	    	writer.write(operator);
+	    	writePrev(writer);
 		}
 	    var prevCode = getPrevCode();
 	    if(prevCode == null){

@@ -21,7 +21,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
-	private boolean getRequestFromOutSide,initCalled;
+	private String destructorCall;
+	private boolean getRequestFromOutSide,initCalled,destructorCalled;
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	private int mainDeclared;
 	private final ArrayList<TypeInfo>typesForDeclarations = new ArrayList<>();
@@ -211,5 +212,32 @@ public final class ModuleEnv extends ANameSpacedEnv{
                addTypesForDeclaration(t);
            }
        }
+    }
+    public String getDestructor(){
+        if(destructor.isEmpty()){
+            destructorCall = "";
+        }else{
+            var b = new StringBuilder("void ");
+            destructorCall = IFunction.INTERNAL_METHOD_PREFIX + "" + getNameSpace() + "_destructor";
+            b.append(destructorCall);
+            destructorCall += "();\n";
+            b.append("(){\n").append(destructor).append("}\n");
+            return b.toString();
+        }
+        return "";
+    }
+    public final String getDestructorCall(){
+        return destructorCall;
+    }
+    public void destructorCalled(){
+	    destructorCalled = true;
+    }
+    public boolean allDependenciesDestructorCalled(){
+        for(var m:importedModules){
+            if(!m.initCalled){
+                return false;
+            }
+        }
+        return true;
     }
 }

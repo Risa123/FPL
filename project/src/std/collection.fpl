@@ -47,3 +47,8 @@ class ArrayList;T{
    array free
  }
 }
+class Entry;K V{
+  private{
+
+  }
+}

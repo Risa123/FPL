@@ -8,10 +8,7 @@ import risa.fpl.function.AddModifier;
 import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.block.Constructor;
 import risa.fpl.function.block.Destructor;
-import risa.fpl.function.exp.Cast;
-import risa.fpl.function.exp.Function;
-import risa.fpl.function.exp.FunctionType;
-import risa.fpl.function.exp.IField;
+import risa.fpl.function.exp.*;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
@@ -61,6 +58,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	public void addFunction(String name,IFunction value){
 		if(value instanceof IField field){
 			instanceType.addField(name,field);
+			if(value instanceof Variable v && v.getType() instanceof InstanceInfo i){
+			    appendToDestructor(i.getDestructorName());
+			    appendToDestructor("();\n");
+            }
         }else{
 		    super.addFunction(name,value);
         }

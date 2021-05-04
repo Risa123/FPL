@@ -172,7 +172,7 @@ fn string + string this string str{
   return ret
 }
 fn string new uint len{
-  return malloc len; cast string
+  return malloc len;cast string
 }
 #char methods
 fn bool isDigit char this{

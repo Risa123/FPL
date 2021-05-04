@@ -1,16 +1,14 @@
 use{
-  risa.fpl.tokenizer
   std.io.file
   std.io.base
   std.collection
   std.backend
 }
-main{
- FileReader reader "test.fpl"
- Tokenizer tokenizer reader
- while tokenizer hasNext{
-    var token tokenizer next
-    puts token getValue
+class FPL{
+ this{
+
  }
- tokenizer close
+}
+main{
+ FPL fpl
 }

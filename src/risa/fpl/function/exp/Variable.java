@@ -65,7 +65,7 @@ public final class Variable extends ValueExp{
                return t;
            }
         }else if(type instanceof NumberInfo){
-			if(constant) {
+			if(constant && value.startsWith("=")){
 				throw new CompilerException(line,charNum,"constant cannot be redefined");
 			}
 			TypeInfo t;

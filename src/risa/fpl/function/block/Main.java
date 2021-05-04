@@ -44,7 +44,7 @@ public final class Main implements IFunction{
                 var e = iterator.next();
                 if(e.allDependenciesInitCalled()){
                     e.initCalled();
-                    b.write(e.getInitializerCall());//call
+                    b.write(e.getInitializerCall());
                     iterator.remove();
                 }
             }
@@ -54,6 +54,22 @@ public final class Main implements IFunction{
         b.write("_std_lang_currentThread = &mainThread;\n");
         it.nextList().compile(b,fnEnv,it);
         fnEnv.compileDestructorCalls(b);
+        var modules1 = new ArrayList<ModuleEnv>();
+        addDependencies(modEnv,modules1);
+        while(!modules1.isEmpty()){
+            var iterator = modules1.iterator();
+            while(iterator.hasNext()){
+                var e = iterator.next();
+                if(e.allDependenciesDestructorCalled()){
+                    if(!e.isMain()){
+                        e.destructorCalled();
+                        b.write(e.getDestructorCall());
+                    }
+                    iterator.remove();
+                }
+            }
+        }
+        b.write(modEnv.getDestructor());
         if(fnEnv.notReturnUsed()){
             b.write("return 0;\n}\n");
         }
