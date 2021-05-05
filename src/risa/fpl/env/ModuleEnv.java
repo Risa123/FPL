@@ -234,7 +234,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public boolean allDependenciesDestructorCalled(){
         for(var m:importedModules){
-            if(!m.initCalled){
+            if(!m.destructorCalled){
                 return false;
             }
         }

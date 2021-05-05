@@ -32,6 +32,7 @@ character numbers are replaced by token numbers
 + and - can be used as unary operator
 destructors added
 goniometric functions added
+if_flag renamed to ifFlag
 fix variable redeclaration check added
 fix argument count check added
 fix templates

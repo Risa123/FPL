@@ -48,10 +48,13 @@ public class SubEnv extends AEnv{
  public void compileDestructorCalls(BufferedWriter writer)throws IOException{
       var b = new StringBuilder();
       for(var v:instanceVariables){
-          b.append(((InstanceInfo)v.getType()).getDestructorName());
-          b.append("(&");
-          b.append(v.getCname());
-          b.append(");\n");
+          var name = ((InstanceInfo)v.getType()).getDestructorName();
+          if(name != null){ //null happens when there is no destructor
+              b.append(name);
+              b.append("(&");
+              b.append(v.getCname());
+              b.append(");\n");
+          }
       }
       writer.write(b.toString());
  }

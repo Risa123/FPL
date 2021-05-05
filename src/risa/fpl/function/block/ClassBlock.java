@@ -207,12 +207,11 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         }
         if(templateStatus != TemplateStatus.TEMPLATE){
             modEnv.appendFunctionDeclarations(cEnv.getFunctionDeclarations());
-            if(!cEnv.isDestructorDeclared()){
-                cEnv.appendFunctionCode("void " + type.getDestructorName() + "(" + type.getCname() + "* this){\n");
-                cEnv.appendFunctionCode("}\n");
+            modEnv.appendFunctionCode(cEnv.getDestructor());
+            if(type.getDestructorName() != null){
+                cEnv.appendFunctionCode("void " + type.getInstanceFree() + "(" + type.getCname() + "* this){\n");
+                cEnv.appendFunctionCode(type.getDestructorName() + "(this);\nfree(this);\n}\n");
             }
-            cEnv.appendFunctionCode("void " + type.getInstanceFree() + "(" + type.getCname() + "* this){\n");
-            cEnv.appendFunctionCode(type.getDestructorName() + "(this);\nfree(this);\n}\n");
             modEnv.appendFunctionCode(cEnv.getFunctionCode());
             type.buildDeclaration();
             modEnv.appendFunctionCode(cEnv.getInitializer("_cinit"));

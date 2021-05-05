@@ -10,14 +10,14 @@ class ArrayList;T{
  }
  fn T get memory index{
    if index >= len{
-     Exception ex "index out of bounds"
+     Exception ex "index out of bounds:" + index toString
      ex throw
    }
    return array get index
  }
  fn void set memory index T value{
    if index >= len{
-      Exception ex "index out of bounds"
+      Exception ex "index out of bounds:" + index toString
       ex throw
    }
    array set index,value
@@ -49,6 +49,18 @@ class ArrayList;T{
 }
 class Entry;K V{
   private{
-
+   K key
+   V value
   }
+  this K key V value{
+    this key = key
+    this value = value
+  }
+  fn K getKey = key
+  fn V getValue = value
+  fn void setKey K key = this key = key
+  fn void setValue V value = this value = value
+}
+class Map{
+
 }

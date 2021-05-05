@@ -6,16 +6,14 @@ import risa.fpl.function.exp.GetObjectInfo;
 import risa.fpl.function.exp.ValueExp;
 
 public class InstanceInfo extends TypeInfo{
-    private String attributesCode,implCode;
+    private String attributesCode,implCode,destructorName,instanceFree;
     private final ModuleEnv module;
     private boolean complete;
-    private final String destructorName,instanceFree;
     public InstanceInfo(String name,ModuleEnv module){
         super(name,IFunction.toCId(name));
         this.module = module;
-        destructorName = IFunction.INTERNAL_METHOD_PREFIX + module.getNameSpace() + getCname() + "_destructor";
-        instanceFree = IFunction.INTERNAL_METHOD_PREFIX + module.getNameSpace() + getCname() + "_free";
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
+        instanceFree = "free";
     }
     public String getClassDataType(){
         return getCname() + "_data_type*";
@@ -61,5 +59,9 @@ public class InstanceInfo extends TypeInfo{
     }
     public final String getInstanceFree(){
         return instanceFree;
+    }
+    public void setDestructorName(String prefix){
+        destructorName = prefix + "_destructor";
+        instanceFree = prefix + "_free";
     }
 }

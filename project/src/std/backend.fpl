@@ -31,7 +31,7 @@ fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1,
 alias fileEOF feof
 alias fileFlush fflush
 fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
-if_flag x64{
+ifFlag x64{
  typedef Context [] 32 memory
  fn bool contextSave Context context = _setjmp context,__builtin_frame_address 0
  fn void contextRestore Context context = longjmp context,1
@@ -41,7 +41,7 @@ if_flag x64{
   fn void* __builtin_frame_address uint level
  }
 }
-if_flag x86{
+ifFlag x86{
  typedef Context [] 16 memory
  private native{
    fn bool _setjmp3 Context context void* frame
@@ -50,7 +50,7 @@ if_flag x86{
  fn void contextRestore Context context = longjmp context,1
  fn bool contextSave Context context = _setjmp3 context,nil
 }
-if_flag ia64{
+ifFlag ia64{
  typedef Context [] 32 memory
  private native{
    fn  bool __mingw_setmp Context context

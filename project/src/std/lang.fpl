@@ -93,11 +93,35 @@ class String{
     }
   }
   fn void set uint index char c{
+    if index >= len{
+     Exception ex  + "index out of bounds:",integerToString index
+     ex throw
+    }
     p set index,c
   }
   fn char get uint index{
+    if index >= len{
+      Exception ex  + "index out of bounds:",integerToString index
+      ex throw
+    }
     return p get index
   }
+  #halt happens in this class after this point
+  fn bool == String str{
+    if len != str len{
+      return false
+    }
+    var i 0
+    while i < len{
+      if p get i; != str p get i{
+        return false
+      }
+      i ++
+    }
+    return true
+  }
+  fn uint getLength = len
+  fn String toString = this drf
 }
 Thread* currentThread
 fn void defaultExceptionHandler Exception* ex{

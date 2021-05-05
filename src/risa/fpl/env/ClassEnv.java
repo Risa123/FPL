@@ -179,4 +179,19 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public boolean isDestructorDeclared(){
 	    return destructorDeclared;
     }
+    public String getDestructor(){
+	    if(!destructor.isEmpty()){
+            var b = new StringBuilder("void ");
+            var prefix = IFunction.INTERNAL_METHOD_PREFIX + nameSpace;
+            instanceType.setDestructorName(prefix);
+            b.append(prefix);
+            b.append("_destructor(");
+            b.append(instanceType.getCname());
+            b.append("* this){\n");
+            b.append(destructor);
+            b.append("}\n");
+            return b.toString();
+        }
+	    return "";
+    }
 }

@@ -39,7 +39,7 @@ class Tokenizer{
     }
     fn char read{
       if readNext{
-        c = reader readChar
+       c = reader readChar
       }{
        readNext = true
       }
