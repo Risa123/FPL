@@ -79,3 +79,5 @@ fix pointer to template type in argument
 fix static method
 fix unable to use operators on constants
 fix fields can be constant and defined in constructor
+fix one line function not checking return type compatibility
+fix one line function with block not allowed

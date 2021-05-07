@@ -33,7 +33,7 @@ alias fileFlush fflush
 fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
 ifFlag x64{
  typedef Context [] 32 memory
- fn bool contextSave Context context = _setjmp context,__builtin_frame_address 0
+ fn int contextSave Context context = _setjmp context,__builtin_frame_address 0
  fn void contextRestore Context context = longjmp context,1
  private native{
   fn int _setjmp Context context void* frame

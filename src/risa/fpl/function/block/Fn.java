@@ -128,8 +128,7 @@ public class Fn extends AFunctionBlock{
                 if(!a.getValue().equals("=")){
                     throw new CompilerException(a,"= expected");
                 }
-                block = it.next();
-                fnEnv.getReturnType();
+                block = it.nextAtom();
             }
             b.write(macroDeclaration.toString());
 			if(macroDeclaration.isEmpty()){
@@ -140,7 +139,10 @@ public class Fn extends AFunctionBlock{
 			    b.write("return ");
             }
 			var code = new BuilderWriter(writer);
-			block.compile(code,fnEnv,it);
+			var fReturnType = block.compile(code,fnEnv,it);
+			if(oneLine && fnEnv.getReturnType() != TypeInfo.VOID && !fReturnType.equals(fnEnv.getReturnType())){
+			    throw new CompilerException(block,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
+            }
 			if(!macroDeclaration.isEmpty() && oneLine){
 			    macroDeclaration.append('(');
 			    var c = code.getCode();
