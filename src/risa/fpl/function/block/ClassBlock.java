@@ -233,11 +233,9 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
     }
     private String constructorCall(Function constructor,String self){
 	    var b = new StringBuilder(constructor.getCname());
-        b.append("(");
-        b.append(self);
+        b.append("(").append(self);
         for(int i = 0; i < constructor.getArguments().length;++i){
-            b.append(",a");
-            b.append(i);
+            b.append(",a").append(i);
         }
         b.append(");\n");
         return b.toString();

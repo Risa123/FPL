@@ -75,13 +75,13 @@ public class Fn extends AFunctionBlock{
                    attrs.add(attr.getValue());
                    switch(attr.getValue()){
                        case "noReturn" ->{
-                           if (attrs.contains("returnsTwice")) {
+                           if (attrs.contains("returnsTwice")){
                                throw new CompilerException(attr,"noReturn is mutually exclusive with returnsTwice");
                            }
                            attrCode.append("__noreturn__");
                        }
                        case "returnsTwice" ->{
-                           if (attrs.contains("noReturn")) {
+                           if (attrs.contains("noReturn")){
                                throw new CompilerException(attr, "returnsTwice is mutually exclusive with noReturn");
                            }
                            attrCode.append("__returns_twice__");
@@ -149,8 +149,7 @@ public class Fn extends AFunctionBlock{
 			    if(c.endsWith(";\n")){
 			      c =  c.substring(0,c.length() - 2);
                 }
-			    macroDeclaration.append(c);
-			    macroDeclaration.append(")\n");
+			    macroDeclaration.append(c).append(")\n");
             }
 			b.write(code.getCode());
             if(returnType == TypeInfo.VOID){

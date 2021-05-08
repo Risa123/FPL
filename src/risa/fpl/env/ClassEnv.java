@@ -25,9 +25,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
 	private static final AddModifier OVERRIDE = new AddModifier(Modifier.OVERRIDE);
 	private static final Destructor DESTRUCTOR = new Destructor();
+	private static final Constructor CONSTRUCTOR = new Constructor();
 	public ClassEnv(ModuleEnv superEnv,String id,TemplateStatus templateStatus){
 		super(superEnv);
-		super.addFunction("this",new Constructor());
+		super.addFunction("this",CONSTRUCTOR);
 		super.addFunction("protected",PROTECTED);
 		super.addFunction("virtual",VIRTUAL);
 		super.addFunction("override",OVERRIDE);
@@ -45,14 +46,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		instanceType.addField("cast",new Cast(instanceType));
 		dataType = cname + "_data_type";
 		dataName = cname + "_data";
-        /*
-         *checking if not generating from template to prevent generated type form displacing the template
-         */
+        //checking if not generating from template to prevent generated type form displacing the template
 		if(templateStatus != TemplateStatus.GENERATING){
             superEnv.addType(id,instanceType);
         }
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
-
 	}
 	@Override
 	public void addFunction(String name,IFunction value){
@@ -143,13 +141,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    var b = new StringBuilder("typedef struct ");
 	    instanceType.setImplCode(implBuilder.toString());
         var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
-	    b.append(dataType);
-	    b.append("{\nunsigned long size;\n");
+	    b.append(dataType).append("{\nunsigned long size;\n");
 	    if(primaryParent != null){
 	        b.append(primaryParent.getImplCode());
         }
-	    b.append(implBuilder).append('}');
-	    b.append(dataType).append(";\n");
+	    b.append(implBuilder).append('}').append(dataType).append(";\n");
 	    return b.toString();
     }
     public String getImplOf(InterfaceInfo i){
@@ -185,11 +181,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             var prefix = IFunction.INTERNAL_METHOD_PREFIX + nameSpace;
             instanceType.setDestructorName(prefix);
             b.append(prefix);
-            b.append("_destructor(");
-            b.append(instanceType.getCname());
-            b.append("* this){\n");
-            b.append(destructor);
-            b.append("}\n");
+            b.append("_destructor(").append(instanceType.getCname());
+            b.append("* this){\n").append(destructor).append("}\n");
             return b.toString();
         }
 	    return "";
