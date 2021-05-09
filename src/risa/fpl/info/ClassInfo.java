@@ -1,5 +1,6 @@
 package risa.fpl.info;
 
+import risa.fpl.function.exp.Alloc;
 import risa.fpl.function.exp.ValueExp;
 
 public final class ClassInfo extends TypeInfo{
@@ -63,8 +64,8 @@ public final class ClassInfo extends TypeInfo{
     }
     private void addMethods(TypeInfo instance){
         addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + instance.getCname() + ")"));
-        var p = new PointerInfo(instance);
-        addField("alloc",new ValueExp(p,"((" + p.getCname() + ")malloc(sizeof(" + instance.getCname() + ")))" ));
+        addField("alloc",new Alloc(instance,false));
+        addField("alloc[]",new Alloc(instance,true));
     }
     public ClassInfo(String name){
         super(name + " class","",false);

@@ -33,6 +33,9 @@ character numbers are replaced by token numbers
 destructors added
 goniometric functions added
 if_flag renamed to ifFlag
+added chained call to type:alloc
+added type:alloc[]
+string type replaced by instances of class String or char* in backend
 fix variable redeclaration check added
 fix argument count check added
 fix templates
@@ -81,3 +84,5 @@ fix unable to use operators on constants
 fix fields can be constant and defined in constructor
 fix one line function not checking return type compatibility
 fix one line function with block not allowed
+fix using type inside of its class declaration causing program to halt
+fix unable to declare type in its class declaration

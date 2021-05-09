@@ -126,9 +126,9 @@ public class TypeInfo{
       declaration = declarationBuilder.toString();
   }
   protected void addRequiredType(TypeInfo type){
-      if(!type.isPrimitive() && type.notIn(requiredTypes)){
+      if(type != this && !type.isPrimitive() && type.notIn(requiredTypes)){
          requiredTypes.add(type);
-      }else if(type instanceof PointerInfo p && !p.getType().isPrimitive() && p.isArray()){
+      }else if(type instanceof PointerInfo p && p.getType() != this && !p.getType().isPrimitive() && p.isArray()){
           requiredTypes.add(p.getType());
       }
   }

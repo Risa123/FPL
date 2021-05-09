@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class ATwoPassBlock{
-    public static final int MAX_PASSES = 3;
+    public static final int MAX_PASSES = 3;//three passes necessary in some cases
     protected final void compile(BufferedWriter writer,AEnv env,List list)throws CompilerException,IOException{
         var infos = new ArrayList<ExpInfo>(list.getExps().size());
         for(var exp:list.getExps()){
@@ -22,7 +22,7 @@ public abstract class ATwoPassBlock{
             info.writer = new BuilderWriter(writer);
             infos.add(info);
         }
-        for(int i = 0; i < MAX_PASSES && !infos.isEmpty();++i){ //three passes necessary in some cases
+        for(int i = 0; i < MAX_PASSES && !infos.isEmpty();++i){
             var it = infos.iterator();
             while(it.hasNext()){
                 var info = it.next();
@@ -49,9 +49,8 @@ public abstract class ATwoPassBlock{
             }
             b.append(':');
             for(var info:infos){
-                b.append('\n');
                 info.lastEx.setSourceFile("");
-                b.append(info.lastEx.getMessage());
+                b.append('\n').append(info.lastEx.getMessage());
             }
             var first = infos.get(0).exp;
             throw new CompilerException(first.getLine(),first.getCharNum(),b.toString());
