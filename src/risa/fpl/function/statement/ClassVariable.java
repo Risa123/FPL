@@ -59,7 +59,7 @@ public final class ClassVariable extends Function{
             if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
                 return varType;
             }
-            id = it.nextID(); //identifier follows after template arguments
+            id = it.nextID();//identifier follows after template arguments
         }else{
           varType = type;
         }

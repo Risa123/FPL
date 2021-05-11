@@ -77,7 +77,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    if(!isAbstract()){
 	        additionalCode += "this->object_data=&" + dataName + ";\n";
 	     }
-		return additionalCode + implicitConstructor.toString();
+		return additionalCode + implicitConstructor;
 	}
 	public String getImplicitConstructor(){
         return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init(" + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
@@ -186,5 +186,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             return b.toString();
         }
 	    return "";
+    }
+    public AEnv getSuperEnv(){
+	    return superEnv;
     }
 }
