@@ -29,8 +29,8 @@ public final class Alloc extends AField{
             writer.write('*');
             var count = it.next();
             var returnType = count.compile(writer,env,it);
-            if(returnType.equals(NumberInfo.MEMORY)){
-                throw new CompilerException(count,"expression expected to return memory instead of " + returnType);
+            if(returnType.notIntegerNumber()){
+                throw new CompilerException(count,"integer number expected instead of " + returnType);
             }
         }
         writer.write("))");
