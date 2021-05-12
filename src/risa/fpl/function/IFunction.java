@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
-import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;

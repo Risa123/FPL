@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public final class Enum implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
         var a = it.nextID();
         var id = a.getValue();
         if(env.hasFunctionInCurrentEnv(id)){

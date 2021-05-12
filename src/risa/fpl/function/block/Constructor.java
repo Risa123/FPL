@@ -49,7 +49,6 @@ public final class Constructor extends AFunctionBlock{
         }
         b.write("}\n");
         cEnv.addMethod(constructor,b.getCode());
-        env.addFunction(type.getName(),constructor);
         cEnv.getSuperEnv().addFunction(type.getName(),constructor);
         return TypeInfo.VOID;
     }

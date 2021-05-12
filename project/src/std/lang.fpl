@@ -1,16 +1,89 @@
 (#this module is imported automatically)
 use std.backend
 
+class String{
+  private const{
+    char* p
+    uint len
+    bool allocated
+  }
+  this char* p uint len bool allocated{
+    this len = len
+    this p = p
+    this allocated = allocated
+  }
+  -this{
+    if allocated{
+       p free
+    }
+  }
+  fn void set uint index char c{
+    if index >= len{
+     Exception ex  "index out of bounds:" + integerToString index
+     ex throw
+    }
+    p set index,c
+  }
+  fn char get uint index{
+    if index >= len{
+      Exception ex  "index out of bounds:" + integerToString index
+      ex throw
+    }
+    return p get index
+  }
+  fn bool == String str{
+    if len != str len{
+      return false
+    }
+    var i 0
+    while i < len{
+      if p get i; != str p get i{
+        return false
+      }
+      i ++
+    }
+    return true
+  }
+  fn String + String str{
+    String ret char:alloc[] len + 1,str len,true
+    var i 0
+    while i < len{
+       ret set i,get i
+       i ++
+    }
+    var strI 0
+    while strI < str len{
+      ret set i,str get strI
+      strI ++
+      i ++
+    }
+    ret set i,$\0
+    return ret
+  }
+  fn char* toCString{
+    var ret char:alloc[] len + 1
+    var i 0
+    while i < len{
+      ret set i,p get i
+      i ++
+    }
+    ret set i,$\0
+    return ret
+  }
+  fn uint getLength = len
+  fn String toString = this drf
+}
+fn void print String str{
+   var cstr str toCString
+   puts cstr
+   cstr free
+}
 class Exception{
-   private{
-     const string message
-     bool allocatedMessage
-   }
-   this string message{
+   private String message
+   this String message{
      this message = message
    }
-   fn void allocateMessage = allocatedMessage = true
-   virtual fn string getMessage = message
+   virtual fn String getMessage = message
    fn void throw{
      if currentThread currentEHentry == nil{
        currentThread exceptionHandler drf this
@@ -19,7 +92,7 @@ class Exception{
      native fn void* malloc memory size
      currentThread exception = malloc getObjectSize; cast Exception*
      if currentThread exception == nil{
-        puts "unable to allocate exception"
+        print "unable to allocate exception"
         exit 1
      }
      memoryCopy this cast byte*,currentThread exception cast byte*,getObjectSize
@@ -28,11 +101,6 @@ class Exception{
    internal fn void copyAndFree Exception* to{
      memoryCopy this cast byte*,to cast byte*,getObjectSize
      this free
-   }
-   -this{
-     if allocatedMessage{
-       message free
-     }
    }
 }
 fpointer void ExceptionHandlerType Exception* ex
@@ -76,43 +144,10 @@ class Thread{
    this exceptionHandler = exceptionHandler
  }
 }
-class String{
-  private{
-    char* p
-    uint len
-    bool allocated
-  }
-  this char* p uint len bool allocated{
-    this len = len
-    this p = p
-    this allocated = allocated
-  }
-  -this{
-    if allocated{
-       p free
-    }
-  }
-  fn void set uint index char c{
-    if index >= len{
-     Exception ex  + "index out of bounds:",integerToString index
-     ex throw
-    }
-    p set index,c
-  }
-  fn char get uint index{
-    if index >= len{
-      Exception ex  + "index out of bounds:",integerToString index
-      ex throw
-    }
-    return p get index
-  }
-  fn uint getLength = len
-  fn String toString = this drf #String return type causes halt
-}
 Thread* currentThread
 fn void defaultExceptionHandler Exception* ex{
-  puts "exception happened:"
-  puts ex getMessage
+  print "exception happened:"
+  print ex getMessage
   ex free
   exit 1
 }
@@ -141,49 +176,6 @@ fn void memoryCopy byte* src byte* dest memory size{
 }
 alias free free
 #these functions will be made inaccessible by compiler
-#string methods
-fn uint getLength string this{
-  var length 0
-  while this get length; != $\0{
-      length ++
-  }
-  return length
-}
-fn bool == string this string str{
-   var len getLength this
-   if len != getLength str{
-      return false
-   }
-   var i 0
-   while i < len{
-      if this get i; != $\0{
-         return false
-      }
-      i ++
-   }
-   return true
-}
-fn string + string this string str{
-  var thisLen getLength this
-  var strLen getLength str
-  var ret new thisLen + strLen + 1
-  var i 0
-  while i < thisLen{
-     ret set i,this get i
-     i ++
-  }
-  var strI 0
-  while strI < strLen{
-    ret set i,str get strI
-    strI ++
-    i ++
-  }
-  ret set i,$\0
-  return ret
-}
-fn string new uint len{
-  return malloc len;cast string
-}
 #char methods
 fn bool isDigit char this{
   var c this cast int
@@ -234,21 +226,21 @@ fn char toUpper char this{
  }
  return this
 }
-fn string charToString char this{
-  var str new 2
+fn String charToString char this{
+  var b char:alloc[] 1
+  String str b,1,true
   str set 0,this
-  str set 1,$\0
   return str
 }
 #bool methods
-fn string boolToString bool this{
+fn String boolToString bool this{
    if this{
      return "true"
    }
    return "false"
 }
 #integer methods
-fn string integerToString long this{
+fn String integerToString long this{
  [] char 20 buf
  int i 0
  while this > 0;|| i == 0{
@@ -256,15 +248,6 @@ fn string integerToString long this{
   this /= 10
   i ++
  }
- buf set i,$\0
- var ret new 21
- int j 0
- while j < 20{
-   ret set j,buf get j
-   if buf get j; == $\0{
-     break
-   }
-   j ++
- }
+ String ret buf,20,true
  return ret
 }

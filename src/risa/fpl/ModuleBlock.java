@@ -135,4 +135,7 @@ public final class ModuleBlock extends ATwoPassBlock{
    public ModuleEnv getEnv(){
        return env;
    }
+   public void setString(TypeInfo string){
+       fpl.setString(string);
+   }
 }

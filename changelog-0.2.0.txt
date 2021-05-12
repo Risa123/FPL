@@ -37,6 +37,7 @@ added chained call to type:alloc
 added type:alloc[]
 string type replaced by instances of class String or char* in backend
 changed "unexpected atom" error message to "expected ;"
+recursive dependency message now shows position
 fix variable redeclaration check added
 fix argument count check added
 fix templates

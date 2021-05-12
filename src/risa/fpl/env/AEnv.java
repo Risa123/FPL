@@ -54,7 +54,7 @@ public abstract class AEnv{
 	 case CHAR:
 		 return new ValueExp(NumberInfo.CHAR,atom.getValue());
 	 case STRING:
-		 return new ValueExp(TypeInfo.STRING,atom.getValue());
+		 return new ValueExp(getFPL().getString(),"_std_lang_String_new(" + atom.getValue() + ")");
 	   default:
 		   throw new CompilerException(atom.getLine(),atom.getCharNum(),"identifier or literal expected instead of " + atom.getType());
 	 }

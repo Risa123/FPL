@@ -42,12 +42,9 @@ public final class ModuleEnv extends ANameSpacedEnv{
            }
         }
     }
-	public void importModules(BufferedWriter writer)throws CompilerException,IOException{
+	public void importModules(BufferedWriter writer)throws IOException{
 	    var types = new ArrayList<TypeInfo>();
 	    for(var mod:importedModules){
-	        if(mod.importedModules.contains(this)){
-	            throw new CompilerException(0,0,"recursive dependency of module " + moduleBlock.getName() + " in module " + mod.moduleBlock.getName());
-            }
 	        for(var type:mod.types.values()){
 	            if(type.notIn(types)){
 	                types.add(type);
@@ -143,6 +140,9 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    variableDeclarations.append(code);
     }
     public void addModuleToImport(Atom module)throws CompilerException,IOException{
+	    if(module.getValue().equals(moduleBlock.getName())){
+	        throw new CompilerException(module,"recursive dependency");
+        }
 	    importedModules.add(moduleBlock.getModule(module));
     }
     public boolean allDependenciesInitCalled(){
@@ -204,6 +204,9 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    if(!type.isPrimitive()){
             addTypesForDeclaration(type);
         }
+	    if(nameSpace.equals("_std_lang") && name.equals("String")){
+	        moduleBlock.setString(type);
+        }
     }
     private void addTypesForDeclaration(TypeInfo type){
 	   if(!type.notIn(types.values()) && type.notIn(typesForDeclarations)){
@@ -218,7 +221,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             destructorCall = "";
         }else{
             var b = new StringBuilder("void ");
-            destructorCall = IFunction.INTERNAL_METHOD_PREFIX + "" + getNameSpace() + "_destructor";
+            destructorCall = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + "_destructor";
             b.append(destructorCall);
             destructorCall += "();\n";
             b.append("(){\n").append(destructor).append("}\n");

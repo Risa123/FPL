@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public final class Alias implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int charNum)throws CompilerException{
         var id = it.nextID();
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);

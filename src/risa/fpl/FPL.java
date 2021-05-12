@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import risa.fpl.env.ProgramEnv;
+import risa.fpl.info.TypeInfo;
 
 public final class FPL{
 	private final String gcc,output,outputDirectory,mainModule,ccArgs;
@@ -15,6 +16,7 @@ public final class FPL{
 	private final ProgramEnv env = new ProgramEnv(this);
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();
 	private final ArrayList<String>flags = new ArrayList<>();
+	private TypeInfo string;
     public FPL(String project,PrintStream errStream)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
@@ -122,5 +124,11 @@ public final class FPL{
 	}
     public boolean hasFlag(String name){
         return flags.contains(name);
+    }
+    public TypeInfo getString(){
+        return string;
+    }
+    void setString(TypeInfo string){
+        this.string = string;
     }
 }

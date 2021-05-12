@@ -5,7 +5,6 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.env.ModuleEnv;
-import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.NumberInfo;

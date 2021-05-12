@@ -1,5 +1,5 @@
 native{
- fn int puts string str
+ fn int puts char* str
  fn void* malloc memory size
  fn void free void* p
  fn void exit int exitCode:noReturn
@@ -7,8 +7,8 @@ native{
  private{
     fn memory fwrite void* p memory size memory nmen void* file
     fn bool feof void* file
-    fn int system string cmd
-    fn void* fopen string name string mode
+    fn int system char* cmd
+    fn void* fopen char* name string mode
     fn memory fread void* p memory size memory msize void* file
     fn void fclose void* file
     fn int fflush void* file
