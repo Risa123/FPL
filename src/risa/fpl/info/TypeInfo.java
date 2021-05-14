@@ -39,7 +39,9 @@ public class TypeInfo{
       BOOL.addField("!=",new BinaryOperator(BOOL,BOOL,"!="));
 	  NIL.addField("==",new BinaryOperator(BOOL,NIL,"=="));
       NIL.addField("!=",new BinaryOperator(BOOL,NIL,"!="));
-      STRING.addField("free",new Function("free",VOID,"free",new TypeInfo[0],FunctionType.NORMAL,STRING,AccessModifier.PUBLIC,"free"));
+      var f = new Function("free",VOID,FunctionType.NORMAL,STRING,AccessModifier.PUBLIC);
+      f.addVariant(new TypeInfo[]{},"free","free");
+      STRING.addField("free",f);
       BOOL.addSize();
       CHAR.addSize();
       STRING.addSize();
@@ -114,10 +116,9 @@ public class TypeInfo{
         if(field instanceof Variable v){
             addRequiredType(v.getType());
         }else if(field instanceof Function f){
-            addRequiredType(f.getReturnType());
-           for(var arg:f.getArguments()){
-               addRequiredType(arg);
-           }
+            for(var t:f.getRequiredTypes()){
+                addRequiredType(t);
+            }
         }
       }
       for(var parent:parents){
@@ -142,9 +143,6 @@ public class TypeInfo{
     }
   public final void appendToDeclaration(String code){
       declarationBuilder.append(code);
-  }
-  public final void appendToDeclaration(char c){
-      declarationBuilder.append(c);
   }
   public final Function getConstructor(){
       return constructor;
@@ -246,10 +244,8 @@ public class TypeInfo{
   public TypeInfo getPrimaryParent(){
       return primaryParent;
   }
-  public void setDeclaration(String declaration){
-      this.declaration = declaration;
-  }
-  private void addSize(){
+
+    private void addSize(){
       addField("getObjectSize",new UnaryOperator(NumberInfo.MEMORY,"sizeof ",false));
   }
 }

@@ -11,7 +11,6 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 
 public final class Enum implements IFunction{
     @Override

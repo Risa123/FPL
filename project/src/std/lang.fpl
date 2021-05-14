@@ -12,6 +12,9 @@ class String{
     this p = p
     this allocated = allocated
   }
+  this{
+
+  }
   -this{
     if allocated{
        p free

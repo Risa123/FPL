@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -17,52 +18,25 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
-public class Function extends TypeInfo implements IField,ICalledOnPointer{
-	private final TypeInfo[]args;
+public class Function implements IField,ICalledOnPointer{
 	private final TypeInfo self,returnType;
 	private String prevCode;
+	private final StringBuilder declaration = new StringBuilder();
 	private final AccessModifier accessModifier;
 	private final FunctionType type;
 	private boolean calledOnPointer;
-	private final String implName;
-    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,FunctionType type,TypeInfo self,AccessModifier accessModifier,String implName,String attrCode){
-       super(name,cname,true);
+	private final String name,attrCode;
+	private final HashMap<TypeInfo[],FunctionVariant> variants = new HashMap<>();
+    public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
        this.returnType = returnType;
-       this.args = args;
        this.accessModifier = accessModifier;
        this.self = self;
        this.type = type;
-       this.implName = implName;
-        if(type == FunctionType.NATIVE){
-            appendToDeclaration("extern ");
-        }
-        if(accessModifier == AccessModifier.PRIVATE && type != FunctionType.NATIVE){
-            appendToDeclaration("static ");
-        }
-        appendToDeclaration(returnType.getCname());
-        appendToDeclaration(' ');
-        appendToDeclaration(attrCode);
-        appendToDeclaration(' ');
-        appendToDeclaration(cname);
-        appendToDeclaration('(');
-        var first = self == null;
-        if(self != null){
-            appendToDeclaration(self.getCname());
-            appendToDeclaration("* this");
-        }
-        for(var arg:args){
-            if(first){
-                first = false;
-            }else{
-                appendToDeclaration(',');
-            }
-            appendToDeclaration(arg.getCname());
-        }
-        appendToDeclaration(");\n");
-        buildDeclaration();
+       this.name = name;
+       this.attrCode = attrCode;
     }
-    public Function(String name,TypeInfo returnType,String cname,TypeInfo[] args,FunctionType type,TypeInfo self,AccessModifier accessModifier,String implName){
-        this(name,returnType,cname,args,type,self,accessModifier,implName,"");
+    public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier){
+        this(name,returnType,type,self,accessModifier,null);
     }
     @Override
     public AccessModifier getAccessModifier(){
@@ -91,8 +65,6 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
                 b.write("object_data)->");
             }
         }
-		b.write(implName);
-		b.write('(');
 		var first = self == null;
 		if(self != null){
 		    if(calledOnPointer){
@@ -109,6 +81,7 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
             }
         }
 		var argList = new ArrayList<TypeInfo>();
+		var code = new ArrayList<String>();
 		while(it.hasNext()){
 		   if(it.peek() instanceof List){
 		       break;
@@ -117,24 +90,27 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
 		   if(exp.getType() == TokenType.END_ARGS){
 			   break;
 		   }else if(exp.getType() != TokenType.ARG_SEPARATOR){
-			   if(first){
-				   first = false;
-			   }else{
-				   b.write(',');
-			   }
 			   var buffer = new BuilderWriter(b);
 			   var type = exp.compile(buffer,env,it);
                argList.add(type);
-               if(argList.size() > args.length){
-                   throw new CompilerException(line,charNum,"incorrect arguments expected" + Arrays.toString(args) + " instead of " + argList);
-               }
-			   b.write(type.ensureCast(args[argList.size() - 1],buffer.getCode()));
+               code.add(buffer.getCode());
 		   }
 		}
 		var array = new TypeInfo[argList.size()];
 		argList.toArray(array);
-		if(!Arrays.equals(args,array)){
-		    throw new CompilerException(line,charNum,"incorrect arguments expected" + Arrays.toString(args) + " instead of " + Arrays.toString(array));
+		if(!variants.containsKey(array)){
+		    throw new CompilerException(line,charNum,"function has no variant with arguments " + Arrays.toString(array));
+        }
+		var variant = variants.get(array);
+        b.write(variant.implName());
+        b.write('(');
+        for(int i = 0;i < array.length;++i){
+            if(first){
+                first = false;
+            }else{
+                b.write(',');
+            }
+            b.write(array[i].ensureCast(variant.args()[i],code.get(i)));
         }
 		b.write(')');
         if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == TokenType.ID){
@@ -168,15 +144,12 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
     public String getPrevCode(){
         return prevCode;
     }
-    public static Function newStatic(String name,TypeInfo returnType,TypeInfo[]args,ClassEnv env){
+    public static Function newStatic(String name,TypeInfo returnType,ClassEnv env){
         var cname = "static" + env.getNameSpace()  + IFunction.toCId(name);
-        return new Function("new",returnType,cname,args,FunctionType.NORMAL,null,AccessModifier.PUBLIC,cname);
+        return new Function("new",returnType,FunctionType.NORMAL,null,AccessModifier.PUBLIC);
     }
     public final TypeInfo getReturnType(){
         return returnType;
-    }
-    public final TypeInfo[]getArguments(){
-        return args;
     }
     public FunctionType getType(){
         return type;
@@ -190,27 +163,86 @@ public class Function extends TypeInfo implements IField,ICalledOnPointer{
     public TypeInfo getSelf(){
         return self;
     }
-    public boolean equalSignature(Function f){
-        return returnType.equals(f.returnType) && Arrays.equals(args,f.args);
-    }
-    public String getImplName(){
-        return implName;
+    public boolean hasSignature(Function f){
+        if(returnType.equals(f.returnType)){
+            for(var args:variants.keySet()){
+                if(f.variants.containsKey(args)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     @Override
     public boolean equals(Object o){
         if(o instanceof Function f){
-            return equalSignature(f);
+            return hasSignature(f);
         }
         return false;
     }
-    public Function makeMethod(TypeInfo ofType,String newName){
-        var args = new TypeInfo[this.args.length - 1];
-        if (args.length > 0){
-            System.arraycopy(this.args,1,args,0,args.length);
+    public Function makeMethod(TypeInfo ofType,String newName,TypeInfo[]variantArgs){
+        var args = new TypeInfo[variantArgs.length - 1];
+        if(args.length > 0){
+            System.arraycopy(variantArgs,1,args,0,args.length);
         }
-        return new Function(newName,returnType,getCname(),args,type,ofType,accessModifier,implName);
+        var f = new Function(newName,returnType,type,ofType,accessModifier);
+        var variant = variants.get(variantArgs);
+        f.addVariant(args,variant.cname(),variant.implName());
+        return f;
     }
     public Function changeAccessModifier(AccessModifier accessModifier){
-        return new Function(getName(),returnType,getCname(),args,type,self,accessModifier,implName);
+        return new Function(getName(),returnType,type,self,accessModifier);
+    }
+    public void addVariant(TypeInfo[]args,String cname,String implName){
+        variants.put(args,new FunctionVariant(args,cname,implName));
+        if(type == FunctionType.NATIVE){
+            declaration.append("extern ");
+        }
+        if(accessModifier == AccessModifier.PRIVATE && type != FunctionType.NATIVE){
+            declaration.append("static ");
+        }
+        declaration.append(returnType.getCname());
+        declaration.append(' ');
+        if(attrCode != null){
+            declaration.append(attrCode);
+            declaration.append(' ');
+        }
+        declaration.append(cname);
+        declaration.append('(');
+        var first = self == null;
+        if(self != null){
+            declaration.append(self.getCname());
+            declaration.append("* this");
+        }
+        for(var arg:args){
+            if(first){
+                first = false;
+            }else{
+                declaration.append(',');
+            }
+            declaration.append(arg.getCname());
+        }
+        declaration.append(");\n");
+    }
+    public String getName(){
+        return name;
+    }
+    public String getDeclaration(){
+        return declaration.toString();
+    }
+    public FunctionVariant getVariant(TypeInfo[]args){
+        return variants.get(args);
+    }
+    public void addVariant(TypeInfo[] args,String cname,StringBuilder macroCode){
+        variants.put(args,new FunctionVariant(args,cname,cname));
+        declaration.append(macroCode);
+    }
+    public ArrayList<TypeInfo>getRequiredTypes(){
+        var list = new ArrayList<TypeInfo>();
+        list.add(returnType);
+        for(var args:variants.keySet()){
+            list.addAll(Arrays.stream(args).toList());
+        }
+        return list;
     }
 }

@@ -8,7 +8,6 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 
 public final class Alias implements IFunction{
     @Override
@@ -19,7 +18,7 @@ public final class Alias implements IFunction{
         }
         var f = env.getFunction(it.nextID());
         if(f instanceof Function){
-            f = ((Function) f).changeAccessModifier(env.getAccessModifier());
+            f = ((Function)f).changeAccessModifier(env.getAccessModifier());
         }
         env.addFunction(id.getValue(),f);
         return TypeInfo.VOID;
