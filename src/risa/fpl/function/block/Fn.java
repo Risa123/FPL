@@ -9,10 +9,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.exp.Function;
-import risa.fpl.function.exp.FunctionType;
-import risa.fpl.function.exp.IField;
-import risa.fpl.function.exp.ValueExp;
+import risa.fpl.function.exp.*;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -75,13 +72,13 @@ public class Fn extends AFunctionBlock{
                    attrs.add(attr.getValue());
                    switch(attr.getValue()){
                        case "noReturn" ->{
-                           if (attrs.contains("returnsTwice")){
+                           if(attrs.contains("returnsTwice")){
                                throw new CompilerException(attr,"noReturn is mutually exclusive with returnsTwice");
                            }
                            attrCode.append("__noreturn__");
                        }
                        case "returnsTwice" ->{
-                           if (attrs.contains("noReturn")){
+                           if(attrs.contains("noReturn")){
                                throw new CompilerException(attr, "returnsTwice is mutually exclusive with noReturn");
                            }
                            attrCode.append("__returns_twice__");
@@ -188,9 +185,12 @@ public class Fn extends AFunctionBlock{
         }else{
             type = FunctionType.NORMAL;
         }
-        var f = new Function(id.getValue(),returnType,cID,args.values().toArray(new TypeInfo[0]), type,self,env.getAccessModifier(),implName,attrCode.toString());
-        if(!macroDeclaration.isEmpty()){
-            f.setDeclaration(macroDeclaration.toString());
+        var f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
+        var argsArray = args.values().toArray(new TypeInfo[0]);
+        if(macroDeclaration.isEmpty()){
+            f.addVariant(argsArray,cID,implName);
+        }else{
+            f.addVariant(argsArray,cID,macroDeclaration);
         }
         if(self != null){
             IField parentField = null;
@@ -207,7 +207,7 @@ public class Fn extends AFunctionBlock{
                 if(!(parentField instanceof Function parentMethod)){
                     throw new CompilerException(line,charNum,"there is no method " + id + " to override");
                 }
-                if(!parentMethod.equalSignature(f)){
+                if(!parentMethod.hasSignature(f)){
                     throw new CompilerException(line,charNum,"this method doesn't have signature of one it overrides");
                 }
             }else if(parentField != null){
@@ -215,17 +215,19 @@ public class Fn extends AFunctionBlock{
             }
             if(env.hasModifier(Modifier.OVERRIDE) || env.hasModifier(Modifier.VIRTUAL)){
                 String methodImplName;
+                var array = args.values().toArray(new TypeInfo[0]);
+                var variant = f.getVariant(array);
                 if(env.hasModifier(Modifier.VIRTUAL)){
-                    methodImplName = f.getImplName();
+                    methodImplName = variant.implName();
                 }else{
-                    methodImplName = ((Function)parentField).getImplName();
+                    methodImplName = ((Function)parentField).getVariant(array).implName();
                 }
                 var cEnv = (ClassEnv)env; //override can only appear in ClassEnv
                 cEnv.appendToInitializer(cEnv.getDataName() + "." + methodImplName + "=&");
-                cEnv.appendToInitializer(f.getCname() + ";\n");
+                cEnv.appendToInitializer(variant.cname() + ";\n");
             }
         }
-        var p = new PointerInfo(f);
+        var p = new PointerInfo(new FunctionInfo(id.getValue(),f));
         if(env instanceof ClassEnv cEnv){
             cEnv.addMethod(f,b.getCode());
         }else if(env instanceof InterfaceEnv){
@@ -238,7 +240,7 @@ public class Fn extends AFunctionBlock{
         }else{
             writer.write(b.getCode());
         }
-        env.addFunction("&" + id,new ValueExp(new PointerInfo(f),"&" + cID));
+        env.addFunction("&" + id,new ValueExp(p,"&" + cID));
         env.addFunction(id.getValue(),f);
         env.addType(id.getValue(),p,false);
 		return TypeInfo.VOID;
