@@ -227,9 +227,9 @@ public class Fn extends AFunctionBlock{
                 cEnv.appendToInitializer(variant.cname() + ";\n");
             }
         }
-        var p = new PointerInfo(new FunctionInfo(id.getValue(),f));
+        var p = new PointerInfo(new FunctionInfo(f));
         if(env instanceof ClassEnv cEnv){
-            cEnv.addMethod(f,b.getCode());
+            cEnv.addMethod(f,argsArray,b.getCode());
         }else if(env instanceof InterfaceEnv){
             writer.write(p.getFunctionPointerDeclaration(cID) + ";\n");
         }else if(env instanceof ModuleEnv e){
@@ -240,7 +240,7 @@ public class Fn extends AFunctionBlock{
         }else{
             writer.write(b.getCode());
         }
-        env.addFunction("&" + id,new ValueExp(p,"&" + cID));
+        env.addFunction("&" + id,new FunctionReference(p));
         env.addFunction(id.getValue(),f);
         env.addType(id.getValue(),p,false);
 		return TypeInfo.VOID;

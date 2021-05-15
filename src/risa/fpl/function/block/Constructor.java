@@ -26,7 +26,8 @@ public final class Constructor extends AFunctionBlock{
         b.write("_init");
         var fEnv = new FnEnv(env,TypeInfo.VOID);
         var args =  parseArguments(b,it,fEnv,type).values().toArray(new TypeInfo[0]);
-        var constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType(),args,cEnv.getNameSpace(this));
+        var constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType());
+        constructor.addVariant(args,cEnv.getNameSpace(this));
         type.setConstructor(constructor);
         b.write("{\n");
         var hasParentConstructor = false;
@@ -48,7 +49,7 @@ public final class Constructor extends AFunctionBlock{
             throw new CompilerException(line,charNum,"block expected as last argument");
         }
         b.write("}\n");
-        cEnv.addMethod(constructor,b.getCode());
+        cEnv.addMethod(constructor,args,b.getCode());
         cEnv.getSuperEnv().addFunction(type.getName(),constructor);
         return TypeInfo.VOID;
     }

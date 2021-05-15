@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
 import risa.fpl.BuilderWriter;
@@ -37,6 +38,9 @@ public class Function implements IField,ICalledOnPointer{
     }
     public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier){
         this(name,returnType,type,self,accessModifier,null);
+    }
+    public Function(String name,TypeInfo returnType,AccessModifier accessModifier){
+        this(name,returnType,FunctionType.NORMAL,null,accessModifier);
     }
     @Override
     public AccessModifier getAccessModifier(){
@@ -144,10 +148,6 @@ public class Function implements IField,ICalledOnPointer{
     public String getPrevCode(){
         return prevCode;
     }
-    public static Function newStatic(String name,TypeInfo returnType,ClassEnv env){
-        var cname = "static" + env.getNameSpace()  + IFunction.toCId(name);
-        return new Function("new",returnType,FunctionType.NORMAL,null,AccessModifier.PUBLIC);
-    }
     public final TypeInfo getReturnType(){
         return returnType;
     }
@@ -180,13 +180,13 @@ public class Function implements IField,ICalledOnPointer{
         }
         return false;
     }
-    public Function makeMethod(TypeInfo ofType,String newName,TypeInfo[]variantArgs){
-        var args = new TypeInfo[variantArgs.length - 1];
+    public Function makeMethod(TypeInfo ofType,String newName){
+        var variant = getPointerVariant();
+        var args = new TypeInfo[variant.args().length - 1];
         if(args.length > 0){
-            System.arraycopy(variantArgs,1,args,0,args.length);
+            System.arraycopy(variant.args(),1,args,0,args.length);
         }
         var f = new Function(newName,returnType,type,ofType,accessModifier);
-        var variant = variants.get(variantArgs);
         f.addVariant(args,variant.cname(),variant.implName());
         return f;
     }
@@ -194,7 +194,6 @@ public class Function implements IField,ICalledOnPointer{
         return new Function(getName(),returnType,type,self,accessModifier);
     }
     public void addVariant(TypeInfo[]args,String cname,String implName){
-        variants.put(args,new FunctionVariant(args,cname,implName));
         if(type == FunctionType.NATIVE){
             declaration.append("extern ");
         }
@@ -208,6 +207,7 @@ public class Function implements IField,ICalledOnPointer{
             declaration.append(' ');
         }
         declaration.append(cname);
+        declaration.append(variants.size());
         declaration.append('(');
         var first = self == null;
         if(self != null){
@@ -223,6 +223,7 @@ public class Function implements IField,ICalledOnPointer{
             declaration.append(arg.getCname());
         }
         declaration.append(");\n");
+        variants.put(args,new FunctionVariant(args,cname,implName));
     }
     public String getName(){
         return name;
@@ -244,5 +245,18 @@ public class Function implements IField,ICalledOnPointer{
             list.addAll(Arrays.stream(args).toList());
         }
         return list;
+    }
+    public boolean notFunctionPointer(){
+        return variants.size() != 1;
+    }
+    public FunctionVariant getPointerVariant(){
+        return variants.values().iterator().next();
+    }
+    public Collection<FunctionVariant>getVariants(){
+        return variants.values();
+    }
+    public void addStaticVariant(TypeInfo[]args,String cname,ClassEnv env){
+        cname = "static" + env.getNameSpace() + cname;
+        addVariant(args,cname,cname);
     }
 }

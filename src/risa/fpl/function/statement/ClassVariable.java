@@ -21,13 +21,10 @@ import risa.fpl.tokenizer.TokenType;
 public final class ClassVariable extends Function{
    private final TypeInfo classType;
    private final InstanceInfo type;
-   public ClassVariable(InstanceInfo type,TypeInfo classType,TypeInfo[]args,String nameSpace){
-       super("constructor",TypeInfo.VOID,makeCName(nameSpace),args,FunctionType.NORMAL,type,AccessModifier.PUBLIC,makeCName(nameSpace));
+   public ClassVariable(InstanceInfo type,TypeInfo classType){
+       super("constructor",TypeInfo.VOID,FunctionType.NORMAL,type,AccessModifier.PUBLIC);
 	   this.type = type;
 	   this.classType = classType;
-       if(type instanceof TemplateTypeInfo){
-           setDeclaration("");
-       }
    }
    private static String makeCName(String nameSpace){
       return INTERNAL_METHOD_PREFIX + nameSpace + "_init";
@@ -118,5 +115,8 @@ public final class ClassVariable extends Function{
             return field.compile(writer,env,it,atom.getLine(),atom.getCharNum());
         }
         return classType;
+    }
+    public void addVariant(TypeInfo[]args,String nameSpace){
+       addVariant(args,makeCName(nameSpace),makeCName(nameSpace));
     }
 }

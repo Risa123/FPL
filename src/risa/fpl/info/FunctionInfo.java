@@ -2,10 +2,13 @@ package risa.fpl.info;
 
 import risa.fpl.function.exp.Function;
 
-public final class FunctionInfo extends TypeInfo{
+public class FunctionInfo extends TypeInfo{
     private final Function function;
-    public FunctionInfo(String name,Function function){
-        super(name,"",true);
+    public FunctionInfo(Function function){
+        super(function.getName(),function.getPointerVariant().cname(),true);
         this.function = function;
+    }
+    public Function getFunction(){
+        return function;
     }
 }

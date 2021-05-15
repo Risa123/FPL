@@ -39,6 +39,7 @@ string type replaced by instances of class String or char* in backend
 changed "unexpected atom" error message to "expected ;"
 recursive dependency message now shows position
 added function variants with different arguments
+function pointers can now point only to functions with one variant
 fix variable redeclaration check added
 fix argument count check added
 fix templates

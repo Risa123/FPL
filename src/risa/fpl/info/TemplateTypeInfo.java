@@ -47,7 +47,9 @@ public final class TemplateTypeInfo extends InstanceInfo{
                    var type = args.get(i);
                    cEnv.addType(typeName,type);
                    if(type instanceof InstanceInfo instance){
-                       cEnv.addFunction(typeName,new ClassVariable(instance,type.getClassInfo(),new TypeInfo[0],""));
+                       var constructor  = new ClassVariable(instance,type.getClassInfo());
+                       constructor.addVariant(args.toArray(new TypeInfo[0]), cEnv.getNameSpace());
+                       cEnv.addFunction(typeName,constructor);
                    }
                }
                mod.importModules(writer);

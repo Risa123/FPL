@@ -40,7 +40,7 @@ public class TypeInfo{
 	  NIL.addField("==",new BinaryOperator(BOOL,NIL,"=="));
       NIL.addField("!=",new BinaryOperator(BOOL,NIL,"!="));
       var f = new Function("free",VOID,FunctionType.NORMAL,STRING,AccessModifier.PUBLIC);
-      f.addVariant(new TypeInfo[]{},"free","free");
+      f.addVariant(new TypeInfo[0],"free","free");
       STRING.addField("free",f);
       BOOL.addSize();
       CHAR.addSize();
@@ -244,8 +244,7 @@ public class TypeInfo{
   public TypeInfo getPrimaryParent(){
       return primaryParent;
   }
-
-    private void addSize(){
+  private void addSize(){
       addField("getObjectSize",new UnaryOperator(NumberInfo.MEMORY,"sizeof ",false));
   }
 }

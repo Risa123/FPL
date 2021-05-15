@@ -7,6 +7,7 @@ import risa.fpl.env.InterfaceEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.FunctionType;
+import risa.fpl.info.FunctionInfo;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
@@ -60,8 +61,11 @@ public final class InterfaceBlock implements IFunction{
         b.write("{\n");
         for(var parent:type.getParents()){
             for(var method:parent.getMethodsOfType(FunctionType.ABSTRACT)){
-                b.write(new PointerInfo(method).getFunctionPointerDeclaration(method.getCname()));
-                b.write(";\n");
+                var p = new PointerInfo(new FunctionInfo(method));
+                for(var v:method.getVariants()){
+                    b.write(p.getFunctionPointerDeclaration(v.cname()));
+                    b.write(";\n");
+                }
             }
         }
         block.compile(b,iEnv,it);

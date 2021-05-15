@@ -20,8 +20,8 @@ public final class PointerInfo extends TypeInfo{
             addField("%", new BinaryOperator(this,NumberInfo.MEMORY, "%"));
             addField("get",new GetElement(type));
             addField("set",new SetElement(type));
-            if(type instanceof Function f){
-               addField("drf",new FunctionDereference(f));
+            if(type instanceof FunctionInfo f){
+               addField("drf",new FunctionDereference(f.getFunction()));
             }else{
               addField("drf",new Dereference(type));
             }
@@ -37,7 +37,9 @@ public final class PointerInfo extends TypeInfo{
         if(type instanceof InstanceInfo i){
           cName = i.getInstanceFree();
         }
-        addField("free",new Function("free",TypeInfo.VOID,cName,new TypeInfo[0],FunctionType.NORMAL,type,AccessModifier.PUBLIC,cName));
+        var f = new Function("free",TypeInfo.VOID,FunctionType.NORMAL,type,AccessModifier.PUBLIC);
+        f.addVariant(new TypeInfo[0],cName,cName);
+        addField("free",f);
 	}
 	public PointerInfo(TypeInfo type){
 	    this(type,false);
@@ -49,10 +51,10 @@ public final class PointerInfo extends TypeInfo{
 		}else return o == TypeInfo.NIL;
     }
     public boolean isFunctionPointer(){
-	    return type instanceof Function;
+	    return type instanceof FunctionInfo;
     }
     public String getFunctionPointerDeclaration(String cID){
-	    var f = (Function)type;
+	    var f = ((FunctionInfo)type).getFunction();
         var b = new StringBuilder(f.getReturnType().getCname());
         b.append("(*").append(cID).append(")(");
         var self = f.getSelf();
@@ -65,7 +67,8 @@ public final class PointerInfo extends TypeInfo{
             }
             b.append("* this");
         }
-        for(var arg:f.getArguments()){
+        var variant = f.getPointerVariant();
+        for(var arg:variant.args()){
             if(firstArg){
                 firstArg = false;
             }else{
@@ -97,7 +100,7 @@ public final class PointerInfo extends TypeInfo{
     }
     @Override
     public String getCname(){
-	    if(type instanceof Function){
+	    if(type instanceof FunctionInfo){
 	        return getFunctionPointerDeclaration(IFunction.toCId(getName()));
         }
         return super.getCname();

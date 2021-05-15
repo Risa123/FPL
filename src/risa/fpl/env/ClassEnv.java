@@ -71,8 +71,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    var additionalCode = "";
         var primaryParent = instanceType.getPrimaryParent();
         //check for implicit constructor
-        if(primaryParent != null && primaryParent.getConstructor().getArguments().length == 0){
-            additionalCode += primaryParent.getConstructor().getCname() + "((" + primaryParent.getCname() + "*)this);\n";
+        if(primaryParent != null && primaryParent.getConstructor().getVariant(new TypeInfo[0]) != null){
+            additionalCode += primaryParent.getConstructor().getVariant(new TypeInfo[0]).cname() + "((" + primaryParent.getCname() + "*)this);\n";
         }
 	    if(!isAbstract()){
 	        additionalCode += "this->object_data=&" + dataName + ";\n";
@@ -82,7 +82,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	public String getImplicitConstructor(){
         return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init(" + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
     }
-    public void addMethod(Function method,String code){
+    public void addMethod(Function method,TypeInfo[] args,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
               appendFunctionCode("static ");
          }
@@ -97,7 +97,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
          	 if(parent != null && parent.getField(method.getName(),this) instanceof  Function){
          	 	return;
 			 }
-             implBuilder.append(new PointerInfo(method).getFunctionPointerDeclaration(method.getImplName()));
+         	 var v = method.getVariant(args);
+             implBuilder.append(new PointerInfo(new FunctionInfo(method)).getFunctionPointerDeclaration(v.implName()));
              implBuilder.append(";\n");
          }
     }
@@ -166,7 +167,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public void setPrimaryParent(InstanceInfo parent){
         instanceType.setPrimaryParent(parent);
         for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
-            appendToInitializer(getDataName() + "." + method.getImplName() +"=" + method.getCname() + ";\n");
+           for(var v:method.getVariants()){
+               appendToInitializer(getDataName() + "." + v.implName() +"=" + v.cname() + ";\n");
+           }
         }
     }
     public void destructorDeclared(){
