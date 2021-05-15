@@ -12,7 +12,6 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.function.AccessModifier;
-import risa.fpl.function.IFunction;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -27,7 +26,7 @@ public class Function implements IField,ICalledOnPointer{
 	private final FunctionType type;
 	private boolean calledOnPointer;
 	private final String name,attrCode;
-	private final HashMap<TypeInfo[],FunctionVariant> variants = new HashMap<>();
+	private final ArrayList<FunctionVariant> variants = new ArrayList<>();
     public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
        this.returnType = returnType;
        this.accessModifier = accessModifier;
@@ -102,10 +101,10 @@ public class Function implements IField,ICalledOnPointer{
 		}
 		var array = new TypeInfo[argList.size()];
 		argList.toArray(array);
-		if(!variants.containsKey(array)){
+		if(!hasVariant(array)){
 		    throw new CompilerException(line,charNum,"function has no variant with arguments " + Arrays.toString(array));
         }
-		var variant = variants.get(array);
+		var variant = getVariant(array);
         b.write(variant.implName());
         b.write('(');
         for(int i = 0;i < array.length;++i){
@@ -165,8 +164,8 @@ public class Function implements IField,ICalledOnPointer{
     }
     public boolean hasSignature(Function f){
         if(returnType.equals(f.returnType)){
-            for(var args:variants.keySet()){
-                if(f.variants.containsKey(args)){
+            for(var v:variants){
+                if(f.hasVariant(v.args())){
                     return true;
                 }
             }
@@ -223,7 +222,7 @@ public class Function implements IField,ICalledOnPointer{
             declaration.append(arg.getCname());
         }
         declaration.append(");\n");
-        variants.put(args,new FunctionVariant(args,cname,implName));
+        variants.add(new FunctionVariant(args,cname,implName));
     }
     public String getName(){
         return name;
@@ -232,17 +231,22 @@ public class Function implements IField,ICalledOnPointer{
         return declaration.toString();
     }
     public FunctionVariant getVariant(TypeInfo[]args){
-        return variants.get(args);
+        for(var v:variants){
+            if(Arrays.equals(v.args(),args)){
+                return v;
+            }
+        }
+        return null;
     }
     public void addVariant(TypeInfo[] args,String cname,StringBuilder macroCode){
-        variants.put(args,new FunctionVariant(args,cname,cname));
+        variants.add(new FunctionVariant(args,cname,cname));
         declaration.append(macroCode);
     }
     public ArrayList<TypeInfo>getRequiredTypes(){
         var list = new ArrayList<TypeInfo>();
         list.add(returnType);
-        for(var args:variants.keySet()){
-            list.addAll(Arrays.stream(args).toList());
+        for(var v:variants){
+            list.addAll(Arrays.stream(v.args()).toList());
         }
         return list;
     }
@@ -250,13 +254,21 @@ public class Function implements IField,ICalledOnPointer{
         return variants.size() != 1;
     }
     public FunctionVariant getPointerVariant(){
-        return variants.values().iterator().next();
+        return variants.get(0);
     }
-    public Collection<FunctionVariant>getVariants(){
-        return variants.values();
+    public ArrayList<FunctionVariant>getVariants(){
+        return variants;
     }
     public void addStaticVariant(TypeInfo[]args,String cname,ClassEnv env){
         cname = "static" + env.getNameSpace() + cname;
         addVariant(args,cname,cname);
+    }
+    public boolean hasVariant(TypeInfo[]args){
+        for(var v:variants){
+           if(Arrays.equals(v.args(),args)){
+               return true;
+           }
+        }
+        return false;
     }
 }

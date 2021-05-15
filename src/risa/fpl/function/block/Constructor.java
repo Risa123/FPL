@@ -13,6 +13,7 @@ import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 public final class Constructor extends AFunctionBlock{
     @Override
@@ -25,10 +26,19 @@ public final class Constructor extends AFunctionBlock{
         b.write(cEnv.getNameSpace(this));
         b.write("_init");
         var fEnv = new FnEnv(env,TypeInfo.VOID);
-        var args =  parseArguments(b,it,fEnv,type).values().toArray(new TypeInfo[0]);
-        var constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType());
-        constructor.addVariant(args,cEnv.getNameSpace(this));
-        type.setConstructor(constructor);
+        var args = parseArguments(b,it,fEnv,type).values().toArray(new TypeInfo[0]);
+        ClassVariable constructor;
+        if(cEnv.getSuperEnv().hasFunctionInCurrentEnv(type.getName()) && cEnv.getSuperEnv().getFunction(type.getName()) instanceof ClassVariable cv){
+           constructor = cv;
+        }else{
+            constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType());
+            type.setConstructor(constructor);
+            cEnv.getSuperEnv().addFunction(type.getName(),constructor);
+        }
+        if(constructor.hasVariant(args)){
+            throw new CompilerException(line,charNum,"this class already has constructor with arguments " + Arrays.toString(args));
+        }
+        constructor.addVariant(args,cEnv.getNameSpace());
         b.write("{\n");
         var hasParentConstructor = false;
         if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
@@ -50,7 +60,6 @@ public final class Constructor extends AFunctionBlock{
         }
         b.write("}\n");
         cEnv.addMethod(constructor,args,b.getCode());
-        cEnv.getSuperEnv().addFunction(type.getName(),constructor);
         return TypeInfo.VOID;
     }
 }

@@ -11,4 +11,11 @@ public class FunctionInfo extends TypeInfo{
     public Function getFunction(){
         return function;
     }
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof FunctionInfo f){
+            return function.hasSignature(f.getFunction());
+        }
+        return false;
+    }
 }

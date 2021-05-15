@@ -90,3 +90,4 @@ fix one line function not checking return type compatibility
 fix one line function with block not allowed
 fix using type inside of its class declaration causing program to halt
 fix unable to declare type in its class declaration
+fix check for function duplicity

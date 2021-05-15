@@ -130,7 +130,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                 }
             }
         }
-        var constructor= (ClassVariable)type.getConstructor();
+        var constructor = (ClassVariable)type.getConstructor();
         if(constructor == null){
             constructor = new ClassVariable(type,cEnv.getClassType());
             constructor.addVariant(new TypeInfo[0],cEnv.getNameSpace());

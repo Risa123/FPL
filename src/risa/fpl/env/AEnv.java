@@ -105,5 +105,8 @@ public abstract class AEnv{
   public final AccessModifier getAccessModifier(){
       return accessModifier;
   }
+  public IFunction getFunction(String name)throws CompilerException{
+  	return getFunction(new Atom(0,0,name,TokenType.ID));
+  }
   public abstract FPL getFPL();
 }

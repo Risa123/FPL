@@ -116,7 +116,7 @@ public final class ModuleBlock extends ATwoPassBlock{
       if(remove){
           func = env.getAndRemove(oldName);
       }else{
-          func = (Function)env.getFunction(new Atom(0,0,oldName,TokenType.ID));
+          func = (Function)env.getFunction(oldName);
       }
       if (func == null){
           return;

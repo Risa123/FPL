@@ -3,6 +3,7 @@ package risa.fpl.function.block;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -185,13 +186,27 @@ public class Fn extends AFunctionBlock{
         }else{
             type = FunctionType.NORMAL;
         }
-        var f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
+        Function f;
+        if(env.hasFunctionInCurrentEnv(id.getValue())){
+           if(env.getFunction(id.getValue()) instanceof Function ft){
+               f = ft;
+           }else{
+               throw new CompilerException(line,charNum,"there is already a function called " + id);
+           }
+        }else{
+            f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
+        }
         var argsArray = args.values().toArray(new TypeInfo[0]);
+        if(f.hasVariant(argsArray)){
+            throw new CompilerException(line,charNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
+        }
         if(macroDeclaration.isEmpty()){
             f.addVariant(argsArray,cID,implName);
         }else{
             f.addVariant(argsArray,cID,macroDeclaration);
         }
+        var array = args.values().toArray(new TypeInfo[0]);
+        var variant = f.getVariant(array);
         if(self != null){
             IField parentField = null;
             var parents = self.getParents();
@@ -215,8 +230,6 @@ public class Fn extends AFunctionBlock{
             }
             if(env.hasModifier(Modifier.OVERRIDE) || env.hasModifier(Modifier.VIRTUAL)){
                 String methodImplName;
-                var array = args.values().toArray(new TypeInfo[0]);
-                var variant = f.getVariant(array);
                 if(env.hasModifier(Modifier.VIRTUAL)){
                     methodImplName = variant.implName();
                 }else{
