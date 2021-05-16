@@ -1,21 +1,15 @@
 use std.backend
-private fn string createMessage string message int line int tokenNum{
+private fn String createMessage String message int line int tokenNum{
   var zero line toString
   var first zero + ":"
   var tokenNumStr tokenNum toString
   var second first + tokenNumStr
-  tokenNumStr free
-  first free
   var third second + " "
-  second free
   var ret third + message
-  third free
   return ret
 }
 class CompilerException Exception{
- this int line int tokenNum string message:createMessage message,line,tokenNum{
-   allocateMessage
- }
+ this int line int tokenNum String message:createMessage message,line,tokenNum
 }
 interface IFunction{
  fn void compile

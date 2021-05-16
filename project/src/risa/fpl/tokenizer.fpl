@@ -8,17 +8,17 @@ enum TokenType NEW_LINE ID CHAR_LIT END_BLOCK BEGIN_BLOCK
 class Token{
   private const{
    int line;tokenNum
-   string value
+   String value
    TokenType type
   }
-  this int line int tokenNum string value TokenType type{
+  this int line int tokenNum String value TokenType type{
     this line = line
     this tokenNum = tokenNum
-    this value = value
+    this value assign value
   }
   fn int getLine = line
   fn int getTokenNum = tokenNum
-  fn string getValue = value
+  fn String getValue = value
   fn TokenType getType = type
 }
 class Tokenizer{
@@ -28,7 +28,7 @@ class Tokenizer{
     bool readNext
     DataReader* reader
     const ArrayList;Token; tokens
-    fn void token int line int tokenNum string value TokenType type{
+    fn void token int line int tokenNum String value TokenType type{
      tokens add Token:new line,tokenNum,value,type
      if type == TokenType:NEW_LINE{
        this line ++
@@ -47,8 +47,9 @@ class Tokenizer{
     }
     fn bool ready = reader ready; || readNext !
     fn void idToken int line int tokenNum ArrayList;char;* b TokenType type{
-      var id string:new b getSize;cast uint
-      memoryCopy b getArray;cast byte*,id cast byte*,b getSize
+      var p char:alloc[] b getSize
+      memoryCopy b getArray;cast byte*,p cast byte*,b getSize
+      String id p,b getSize;cast uint,true
       token tokenNum,line,id,type
     }
     fn void prepare{

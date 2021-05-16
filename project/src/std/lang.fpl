@@ -2,7 +2,7 @@
 use std.backend
 
 class String{
-  private const{
+  private{
     char* p
     uint len
     bool allocated
@@ -48,20 +48,20 @@ class String{
     return true
   }
   fn String + String str{
-    String ret char:alloc[] len + 1,str len,true
+    var ret char:alloc[] len + 1
     var i 0
     while i < len{
-       ret set i,get i
+       ret set i,p get i
        i ++
     }
     var strI 0
     while strI < str len{
-      ret set i,str get strI
+      ret set i,str p get strI
       strI ++
       i ++
     }
-    ret set i,$\0
-    return ret
+    String x ret,len,true
+    return x
   }
   fn char* toCString{
     var ret char:alloc[] len + 1
@@ -72,6 +72,11 @@ class String{
     }
     ret set i,$\0
     return ret
+  }
+  fn void assign String str{
+    len = str len
+    p = str p
+    allocated = str allocated
   }
   fn uint getLength = len
   fn String toString = this drf

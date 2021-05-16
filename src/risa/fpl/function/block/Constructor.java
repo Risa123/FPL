@@ -13,7 +13,6 @@ import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Arrays;
 
 public final class Constructor extends AFunctionBlock{
     @Override
@@ -36,7 +35,7 @@ public final class Constructor extends AFunctionBlock{
             cEnv.getSuperEnv().addFunction(type.getName(),constructor);
         }
         if(constructor.hasVariant(args)){
-            throw new CompilerException(line,charNum,"this class already has constructor with arguments " + Arrays.toString(args));
+          //  throw new CompilerException(line,charNum,"this class already has constructor with arguments " + Arrays.toString(args));
         }
         constructor.addVariant(args,cEnv.getNameSpace());
         b.write("{\n");
@@ -60,6 +59,7 @@ public final class Constructor extends AFunctionBlock{
         }
         b.write("}\n");
         cEnv.addMethod(constructor,args,b.getCode());
+        cEnv.compileNewAndAlloc(b,args,constructor);
         return TypeInfo.VOID;
     }
 }

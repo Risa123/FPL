@@ -4,8 +4,8 @@ use{
 }
 abstract class FileHandler Closeable{
    protected const void* handle
-   this string name string mode{
-      handle = fileOpen name,mode
+   this String name String mode{
+      handle = fileOpen name toCString;,mode toCString
       if handle == nil{
         IOException ex "unable to open file " + name
         ex throw
@@ -14,11 +14,11 @@ abstract class FileHandler Closeable{
    override fn void close = fileClose handle
 }
 class FileWriter FileHandler Writable{
-  this string name:name,"w"
+  this String name:name,"w"
   override fn void write byte* p memory size = fileWrite handle,p,size
 }
 class FileReader FileHandler Readable{
-  this string name:name,"r"
+  this String name:name,"r"
   override fn void read byte* p memory size = fileRead handle,p,size
   override fn bool ready = fileEOF handle; !
 }

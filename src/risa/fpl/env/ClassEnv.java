@@ -1,6 +1,7 @@
 package risa.fpl.env;
 
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
@@ -9,6 +10,7 @@ import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.block.Constructor;
 import risa.fpl.function.block.Destructor;
 import risa.fpl.function.exp.*;
+import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
@@ -192,5 +194,66 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public AEnv getSuperEnv(){
 	    return superEnv;
+    }
+    public void compileNewAndAlloc(BuilderWriter writer,TypeInfo[]args,ClassVariable constructor){
+        var allocName = "static" + getNameSpace() + "_alloc";
+        writer.write(instanceType.getCname() + "* " + allocName + "(");
+        var compiledArgs = constructorArguments(args);
+        writer.write(compiledArgs);
+        writer.write("){\nvoid* malloc(unsigned long long);\n");
+        writer.write(instanceType.getCname());
+        writer.write("* p=malloc(sizeof(");
+        writer.write(instanceType.getCname());
+        writer.write("));\n");
+        writer.write(constructorCall(constructor,"p"));
+        writer.write("return p;\n}\n");
+        Function allocMethod;
+        if(instanceType.getFieldFromThisType("alloc") instanceof Function tmp){
+            allocMethod = tmp;
+        }else{
+            allocMethod = new Function("alloc",new PointerInfo(instanceType),AccessModifier.PUBLIC);
+            classType.addField("alloc",allocMethod);
+        }
+        allocMethod.addStaticVariant(args,allocName,this);
+        writer.write(allocMethod.getDeclaration());
+        instanceType.appendToDeclaration(allocMethod.getDeclaration());
+        var newName = "static" + getNameSpace() + "_new";
+        writer.write(instanceType.getCname() + " " + newName + "(" + compiledArgs + "){\n" + instanceType.getCname() + " inst;\n");
+        writer.write(constructorCall(constructor,"&inst"));
+        writer.write("return inst;\n}\n");
+        Function newMethod;
+        if(instanceType.getFieldFromThisType("new") instanceof Function tmp){
+            newMethod = tmp;
+        }else{
+            newMethod = new Function("new",instanceType,AccessModifier.PUBLIC);
+            classType.addField("new",newMethod);
+        }
+        newMethod.addStaticVariant(args,newName,this);
+        instanceType.appendToDeclaration(newMethod.getDeclaration());
+    }
+    private String constructorArguments(TypeInfo[]args){
+        var first = true;
+        var b = new StringBuilder();
+        for(int i = 0; i < args.length;++i){
+            if(first){
+                first = false;
+            }else{
+                b.append(',');
+            }
+            b.append(args[i].getCname()).append(" a").append(i);
+        }
+        return b.toString();
+    }
+    private String constructorCall(Function constructor,String self){
+        var b = new StringBuilder();
+        for(var v:constructor.getVariants()){
+            b.append(v.cname());
+            b.append("(").append(self);
+            for(int i = 0; i < v.args().length;++i){
+                b.append(",a").append(i);
+            }
+            b.append(");\n");
+        }
+        return b.toString();
     }
 }

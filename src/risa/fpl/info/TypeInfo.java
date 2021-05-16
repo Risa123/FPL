@@ -247,4 +247,7 @@ public class TypeInfo{
   private void addSize(){
       addField("getObjectSize",new UnaryOperator(NumberInfo.MEMORY,"sizeof ",false));
   }
+  public IField getFieldFromThisType(String name){
+      return fields.get(name);
+  }
 }

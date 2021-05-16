@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
-import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
@@ -136,42 +135,13 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
             constructor.addVariant(new TypeInfo[0],cEnv.getNameSpace());
             cEnv.addMethod(constructor,new TypeInfo[0],cEnv.getImplicitConstructor());
             type.setConstructor(constructor);
+            cEnv.compileNewAndAlloc(b,new TypeInfo[0],constructor);
         }
-        var allocName = "static" + cEnv.getNameSpace() + "_alloc";
         type.appendToDeclaration(b.getCode());
         type.appendToDeclaration("extern " + cEnv.getDataDefinition());
         cEnv.appendDeclarations();
         var cID = IFunction.toCId(id.getValue());
         var internalCode = new BuilderWriter(writer);
-        if(!modEnv.hasModifier(Modifier.ABSTRACT)){
-           for(var v:constructor.getVariants()){
-               internalCode.write(cID + "* " + allocName + "(");
-               var args = v.args();
-               var compiledArgs = constructorArguments(args);
-               internalCode.write(compiledArgs);
-               internalCode.write("){\nvoid* malloc(unsigned long long);\n");
-               internalCode.write(type.getCname());
-               internalCode.write("* p=malloc(sizeof(");
-               internalCode.write(type.getCname());
-               internalCode.write("));\n");
-               internalCode.write(constructorCall(constructor,"p"));
-               internalCode.write("return p;\n}\n");
-               var allocMethod = new Function("alloc",new PointerInfo(type),AccessModifier.PUBLIC);
-               allocMethod.addStaticVariant(new TypeInfo[0],allocName,cEnv);
-               var classType = cEnv.getClassType();
-               classType.addField("alloc",allocMethod);
-               internalCode.write(allocMethod.getDeclaration());
-               type.appendToDeclaration(allocMethod.getDeclaration());
-               var newName = "static" + cEnv.getNameSpace() + "_new";
-               internalCode.write(type.getCname() + " " + newName + "(" + compiledArgs + "){\n" + type.getCname() + " inst;\n");
-               internalCode.write(constructorCall(constructor,"&inst"));
-               internalCode.write("return inst;\n}\n");
-               var newMethod = new Function("new",type,AccessModifier.PUBLIC);
-               newMethod.addStaticVariant(new TypeInfo[0],newName,cEnv);
-               classType.addField("new",newMethod);
-               type.appendToDeclaration(newMethod.getDeclaration());
-           }
-        }
         if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){
             modEnv.addFunction(id.getValue(),constructor);
         }
@@ -233,30 +203,5 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
             modEnv.appendFunctionCode(cEnv.getInitializer("_cinit"));
             modEnv.appendToInitializer(cEnv.getInitializerCall());
         }
-    }
-	private String constructorArguments(TypeInfo[]args){
-        var first = true;
-        var b = new StringBuilder();
-        for(int i = 0; i < args.length;++i){
-            if(first){
-                first = false;
-            }else{
-                b.append(',');
-            }
-            b.append(args[i].getCname()).append(" a").append(i);
-        }
-        return b.toString();
-    }
-    private String constructorCall(Function constructor,String self){
-	    var b = new StringBuilder();
-        for(var v:constructor.getVariants()){
-            b.append(v.cname());
-            b.append("(").append(self);
-            for(int i = 0; i < v.args().length;++i){
-                b.append(",a").append(i);
-            }
-            b.append(");\n");
-        }
-        return b.toString();
     }
 }

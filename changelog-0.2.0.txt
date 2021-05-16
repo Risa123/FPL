@@ -89,5 +89,6 @@ fix fields can be constant and defined in constructor
 fix one line function not checking return type compatibility
 fix one line function with block not allowed
 fix using type inside of its class declaration causing program to halt
-fix unable to declare type in its class declaration
+fix unable to declare type in its class block
 fix check for function duplicity
+fix new and alloc methods can be used inside its class block

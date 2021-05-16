@@ -260,7 +260,6 @@ public class Function implements IField,ICalledOnPointer{
         return variants;
     }
     public void addStaticVariant(TypeInfo[]args,String cname,ClassEnv env){
-        cname = "static" + env.getNameSpace() + cname;
         addVariant(args,cname,cname);
     }
     public boolean hasVariant(TypeInfo[]args){

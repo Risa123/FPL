@@ -4,8 +4,8 @@ fn void exit int exitCode{
  currentThread freeEHentries
  exit exitCode
 }
-fn int execute string cmd{
-  var exitCode execute cmd
+fn int execute String cmd{
+  var exitCode execute cmd toCString
   if exitCode == -1{
     IOException ex "invalid command"
     ex throw

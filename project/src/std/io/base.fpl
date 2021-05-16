@@ -10,7 +10,7 @@ interface Readable Closeable{
   fn bool ready
 }
 class IOException Exception{
-  this string message:message
+  this String message:message
 }
 class DataReader Readable{
  private Readable readable
