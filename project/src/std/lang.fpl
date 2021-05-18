@@ -21,17 +21,9 @@ class String{
     }
   }
   fn void set uint index char c{
-    if index >= len{
-     Exception ex  "index out of bounds:" + integerToString index
-     ex throw
-    }
     p set index,c
   }
   fn char get uint index{
-    if index >= len{
-      Exception ex  "index out of bounds:" + integerToString index
-      ex throw
-    }
     return p get index
   }
   fn bool == String str{
@@ -116,6 +108,12 @@ private class EHentry{
   EHentry* prev
   Context context
 }
+fn void checkStringIndex uint len uint index{
+    if index >= len{
+       Exception ex  "index out of bounds:" + integerToString index
+       ex throw
+    }
+ }
 class Thread{
  private string name
  internal{

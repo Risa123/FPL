@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -24,9 +22,9 @@ public class Function implements IField,ICalledOnPointer{
 	private final StringBuilder declaration = new StringBuilder();
 	private final AccessModifier accessModifier;
 	private final FunctionType type;
-	private boolean calledOnPointer;
+	private boolean calledOnPointer,calledOnValueExp;
 	private final String name,attrCode;
-	private final ArrayList<FunctionVariant> variants = new ArrayList<>();
+	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
     public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
        this.returnType = returnType;
        this.accessModifier = accessModifier;
@@ -48,6 +46,30 @@ public class Function implements IField,ICalledOnPointer{
     @Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var b = new BuilderWriter(writer);
+		var argList = new ArrayList<TypeInfo>();
+		var code = new ArrayList<String>();
+		while(it.hasNext()){
+		   if(it.peek() instanceof List){
+		       break;
+           }
+		   var exp = it.nextAtom();
+		   if(exp.getType() == TokenType.END_ARGS){
+			   break;
+		   }else if(exp.getType() != TokenType.ARG_SEPARATOR){
+			   var buffer = new BuilderWriter(b);
+			   var type = exp.compile(buffer,env,it);
+               argList.add(type);
+               code.add(buffer.getCode());
+		   }
+		}
+		var array = new TypeInfo[argList.size()];
+		argList.toArray(array);
+		if(!hasVariant(array)){
+		    throw new CompilerException(line,charNum,"function has no variant with arguments " + Arrays.toString(array));
+        }
+		var variant = getVariant(array);
+        b.write(variant.implName());
+        b.write('(');
         if(isVirtual()){
             if(self instanceof InstanceInfo i){
                 b.write("((" + i.getClassDataType() + ")");
@@ -75,38 +97,18 @@ public class Function implements IField,ICalledOnPointer{
 		      b.write("(" + self.getCname() + "*)");
             }else if(!(self instanceof InterfaceInfo) && prevCode != null /*to prevent &this when calling method on implicit this*/){
                if(!self.isPrimitive()){
-                   b.write('&');
+                   if(calledOnValueExp){
+                      calledOnValueExp = false;
+                   }else{
+                       b.write('&');
+                   }
                }
             }
-		    writePrev(b);
-		    if(self instanceof InterfaceInfo){
-		        b.write(".instance");
+            writePrev(b);
+            if(self instanceof InterfaceInfo){
+                b.write(".instance");
             }
         }
-		var argList = new ArrayList<TypeInfo>();
-		var code = new ArrayList<String>();
-		while(it.hasNext()){
-		   if(it.peek() instanceof List){
-		       break;
-           }
-		   var exp = it.nextAtom();
-		   if(exp.getType() == TokenType.END_ARGS){
-			   break;
-		   }else if(exp.getType() != TokenType.ARG_SEPARATOR){
-			   var buffer = new BuilderWriter(b);
-			   var type = exp.compile(buffer,env,it);
-               argList.add(type);
-               code.add(buffer.getCode());
-		   }
-		}
-		var array = new TypeInfo[argList.size()];
-		argList.toArray(array);
-		if(!hasVariant(array)){
-		    throw new CompilerException(line,charNum,"function has no variant with arguments " + Arrays.toString(array));
-        }
-		var variant = getVariant(array);
-        b.write(variant.implName());
-        b.write('(');
         for(int i = 0;i < array.length;++i){
             if(first){
                 first = false;
@@ -186,11 +188,13 @@ public class Function implements IField,ICalledOnPointer{
             System.arraycopy(variant.args(),1,args,0,args.length);
         }
         var f = new Function(newName,returnType,type,ofType,accessModifier);
-        f.addVariant(args,variant.cname(),variant.implName());
+        f.variants.add(new FunctionVariant(args,variant.cname(),variant.implName()));
         return f;
     }
     public Function changeAccessModifier(AccessModifier accessModifier){
-        return new Function(getName(),returnType,type,self,accessModifier);
+        var f = new Function(getName(),returnType,type,self,accessModifier);
+        f.variants.addAll(variants);
+        return f;
     }
     public void addVariant(TypeInfo[]args,String cname,String implName){
         if(type == FunctionType.NATIVE){
@@ -205,8 +209,11 @@ public class Function implements IField,ICalledOnPointer{
             declaration.append(attrCode);
             declaration.append(' ');
         }
+        if(type != FunctionType.NATIVE){
+            cname = cname + variants.size();
+            implName = implName + variants.size();
+        }
         declaration.append(cname);
-        declaration.append(variants.size());
         declaration.append('(');
         var first = self == null;
         if(self != null){
@@ -239,6 +246,7 @@ public class Function implements IField,ICalledOnPointer{
         return null;
     }
     public void addVariant(TypeInfo[] args,String cname,StringBuilder macroCode){
+        cname = cname + variants.size();
         variants.add(new FunctionVariant(args,cname,cname));
         declaration.append(macroCode);
     }
@@ -259,7 +267,7 @@ public class Function implements IField,ICalledOnPointer{
     public ArrayList<FunctionVariant>getVariants(){
         return variants;
     }
-    public void addStaticVariant(TypeInfo[]args,String cname,ClassEnv env){
+    public void addStaticVariant(TypeInfo[]args,String cname){
         addVariant(args,cname,cname);
     }
     public boolean hasVariant(TypeInfo[]args){
@@ -269,5 +277,8 @@ public class Function implements IField,ICalledOnPointer{
            }
         }
         return false;
+    }
+    public void calledOnValueExp(){
+        calledOnValueExp = true;
     }
 }

@@ -197,41 +197,16 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public void compileNewAndAlloc(BuilderWriter writer,TypeInfo[]args,ClassVariable constructor){
         var allocName = "static" + getNameSpace() + "_alloc";
-        writer.write(instanceType.getCname() + "* " + allocName + "(");
-        var compiledArgs = constructorArguments(args);
-        writer.write(compiledArgs);
-        writer.write("){\nvoid* malloc(unsigned long long);\n");
-        writer.write(instanceType.getCname());
-        writer.write("* p=malloc(sizeof(");
-        writer.write(instanceType.getCname());
-        writer.write("));\n");
-        writer.write(constructorCall(constructor,"p"));
-        writer.write("return p;\n}\n");
         Function allocMethod;
+        writer.write(instanceType.getCname() + "* " + allocName + "(");
         if(instanceType.getFieldFromThisType("alloc") instanceof Function tmp){
             allocMethod = tmp;
         }else{
             allocMethod = new Function("alloc",new PointerInfo(instanceType),AccessModifier.PUBLIC);
             classType.addField("alloc",allocMethod);
+            writer.write('0');
         }
-        allocMethod.addStaticVariant(args,allocName,this);
-        writer.write(allocMethod.getDeclaration());
-        instanceType.appendToDeclaration(allocMethod.getDeclaration());
-        var newName = "static" + getNameSpace() + "_new";
-        writer.write(instanceType.getCname() + " " + newName + "(" + compiledArgs + "){\n" + instanceType.getCname() + " inst;\n");
-        writer.write(constructorCall(constructor,"&inst"));
-        writer.write("return inst;\n}\n");
-        Function newMethod;
-        if(instanceType.getFieldFromThisType("new") instanceof Function tmp){
-            newMethod = tmp;
-        }else{
-            newMethod = new Function("new",instanceType,AccessModifier.PUBLIC);
-            classType.addField("new",newMethod);
-        }
-        newMethod.addStaticVariant(args,newName,this);
-        instanceType.appendToDeclaration(newMethod.getDeclaration());
-    }
-    private String constructorArguments(TypeInfo[]args){
+        allocMethod.addStaticVariant(args,allocName);
         var first = true;
         var b = new StringBuilder();
         for(int i = 0; i < args.length;++i){
@@ -242,18 +217,35 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             }
             b.append(args[i].getCname()).append(" a").append(i);
         }
-        return b.toString();
-    }
-    private String constructorCall(Function constructor,String self){
-        var b = new StringBuilder();
-        for(var v:constructor.getVariants()){
-            b.append(v.cname());
-            b.append("(").append(self);
-            for(int i = 0; i < v.args().length;++i){
-                b.append(",a").append(i);
-            }
-            b.append(");\n");
+        var compiledArgs = b.toString();
+        writer.write(compiledArgs);
+        writer.write("){\n");
+        writer.write(instanceType.getCname());
+        writer.write("* p=malloc(sizeof(");
+        writer.write(instanceType.getCname());
+        writer.write("));\n");
+        writer.write(constructorCall(constructor,"p",args));
+        writer.write("return p;\n}\n");
+        var newName = "static" + getNameSpace() + "_new";
+        Function newMethod;
+        if(instanceType.getFieldFromThisType("new") instanceof Function tmp){
+            newMethod = tmp;
+        }else{
+            newMethod = new Function("new",instanceType,AccessModifier.PUBLIC);
+            classType.addField("new",newMethod);
         }
-        return b.toString();
+        writer.write(instanceType.getCname() + " " + newName + "(" + compiledArgs + "){\n" + instanceType.getCname() + " inst;\n");
+        newMethod.addStaticVariant(args,newName);
+        writer.write(constructorCall(constructor,"&inst",args));
+        writer.write("return inst;\n}\n");
+    }
+    private String constructorCall(Function constructor,String self,TypeInfo[]args){
+        var b = new StringBuilder();
+        var v = constructor.getVariant(args);
+        b.append(v.cname()).append("(").append(self);
+        for(int i = 0; i < v.args().length;++i){
+            b.append(",a").append(i);
+        }
+        return  b.append(");\n").toString();
     }
 }

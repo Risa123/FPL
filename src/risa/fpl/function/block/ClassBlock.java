@@ -146,14 +146,8 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
             modEnv.addFunction(id.getValue(),constructor);
         }
         for(var i:interfaces){
-            internalCode.write("static ");
-            internalCode.write(i.getImplName());
-            internalCode.write(' ');
-            internalCode.write(cID);
-            internalCode.write(i.getCname());
-            internalCode.write("_impl;\n");
-            internalCode.write(i.getCname());
-            internalCode.write(' ');
+            internalCode.write("static " + i.getImplName() + " " + cID + i.getCname() + "_impl;\n");
+            internalCode.write(i.getCname() + ' ');
             var callBuilder = new StringBuilder(INTERNAL_METHOD_PREFIX);
             callBuilder.append(cEnv.getNameSpace());
             callBuilder.append("_as");
@@ -187,6 +181,10 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                 }
             }
         }
+        internalCode.write("static " + type.getCname() + " container" + type.getCname() + ";\n");
+        internalCode.write(type.getCname() + "* " + INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_toPointer(");
+        internalCode.write(type.getCname() + " this){\ncontainer" + type.getCname() + " = this;\n");
+        internalCode.write("return &container" + type.getCname() + ";\n}\n");
         cEnv.appendFunctionCode(internalCode.getCode());
         if(templateStatus != TemplateStatus.GENERATING){
             writer.write(cEnv.getDataDefinition());

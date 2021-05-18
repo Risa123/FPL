@@ -50,8 +50,13 @@ public class ValueExp extends AField{
             f.calledOnPointer();
         }
 		if(getPrevCode() != null){
-		    prefix = getPrevCode() + prefix;
+		    prefix = getPrevCode();
         }
+		var code = this.code;
+		if(!(this instanceof Variable) && field instanceof Function f){
+			code = type.getCname() + "_toPointer(" + code + ")";
+			f.calledOnValueExp();
+		}
 		field.setPrevCode(prefix + code + selector);
 		return field.compile(writer,env,it,line,charNum);
 	}

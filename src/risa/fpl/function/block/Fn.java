@@ -54,6 +54,13 @@ public class Fn extends AFunctionBlock{
         headWriter.write(returnType.getCname());
         headWriter.write(' ');
         headWriter.write(cID);
+        if(!env.hasModifier(Modifier.NATIVE)){
+           if(env.hasFunctionInCurrentEnv(id.getValue()) && env.getFunction(id) instanceof  Function f){
+               headWriter.write(Integer.toString(f.getVariants().size()));
+           }else{
+               headWriter.write('0');
+           }
+        }
 		var args = parseArguments(headWriter,it,fnEnv,self);
 		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
@@ -244,7 +251,7 @@ public class Fn extends AFunctionBlock{
         if(env instanceof ClassEnv cEnv){
             cEnv.addMethod(f,argsArray,b.getCode());
         }else if(env instanceof InterfaceEnv){
-            writer.write(p.getFunctionPointerDeclaration(cID) + ";\n");
+            writer.write(p.getFunctionPointerDeclaration(variant.cname()) + ";\n");
         }else if(env instanceof ModuleEnv e){
             if(f.getType() != FunctionType.NATIVE){
                 e.appendFunctionCode(b.getCode());

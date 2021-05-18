@@ -92,3 +92,4 @@ fix using type inside of its class declaration causing program to halt
 fix unable to declare type in its class block
 fix check for function duplicity
 fix new and alloc methods can be used inside its class block
+fix chained method call on  returned non-pointer class instances C error
