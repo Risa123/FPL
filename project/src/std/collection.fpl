@@ -3,23 +3,23 @@ class ArrayList;T{
  private{
   T* array
   memory len
+  fn void checkIndex memory index{
+    if index >= len{
+      Exception ex "index out of bounds:" + index toString
+      ex throw
+    }
+  }
  }
  this{
    len = 0
    array = nil
  }
  fn T get memory index{
-   if index >= len{
-     Exception ex "index out of bounds:" + index toString
-     ex throw
-   }
+   checkIndex index
    return array get index
  }
  fn void set memory index T value{
-   if index >= len{
-      Exception ex "index out of bounds:" + index toString
-      ex throw
-   }
+   checkIndex index
    array set index,value
  }
  fn void add T value{

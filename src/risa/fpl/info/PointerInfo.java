@@ -37,7 +37,7 @@ public final class PointerInfo extends TypeInfo{
         if(type instanceof InstanceInfo i){
           cName = i.getInstanceFree();
         }
-        var f = new Function("free",TypeInfo.VOID,FunctionType.NORMAL,type,AccessModifier.PUBLIC);
+        var f = new Function("free",TypeInfo.VOID,FunctionType.NATIVE,type,AccessModifier.PUBLIC);
         f.addVariant(new TypeInfo[0],cName,cName);
         addField("free",f);
 	}
@@ -76,8 +76,7 @@ public final class PointerInfo extends TypeInfo{
             }
             b.append(arg.getCname());
         }
-        b.append(")");
-        return b.toString();
+        return b.append(")").toString();
     }
     @Override
     public IField getField(String name,AEnv from){

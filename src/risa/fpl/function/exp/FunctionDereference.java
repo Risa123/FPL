@@ -8,7 +8,7 @@ import risa.fpl.parser.ExpIterator;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public  final class FunctionDereference extends AField{
+public final class FunctionDereference extends AField{
     private final Function func;
     public FunctionDereference(Function func){
         this.func = func;

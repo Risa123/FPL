@@ -32,4 +32,4 @@ private fn double abs double x{
 }
 fn double cos double x = sin x + PI / 2
 fn double tan double x = sin x; / cos x
-fn double cotan double x = cos x; / sin x
+fn double cotan double x = 1.0 / sin x

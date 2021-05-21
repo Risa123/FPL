@@ -2,7 +2,7 @@
   <artifact type="jar" name="FPL:jar">
     <output-path>$PROJECT_DIR$/bin/artifacts/FPL_jar</output-path>
     <root id="archive" name="FPL.jar">
-      <element id="module-output" name="FPL" />
+      <element id="module-output" name="FPL"/>
     </root>
   </artifact>
 </component>

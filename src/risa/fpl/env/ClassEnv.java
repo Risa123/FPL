@@ -15,6 +15,7 @@ import risa.fpl.function.statement.Var;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 
+
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implicitConstructor = new StringBuilder();
 	private final String nameSpace,dataType,dataName;
@@ -37,7 +38,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("internal",INTERNAL);
 		super.addFunction("-this",DESTRUCTOR);
 		var cname = IFunction.toCId(id);
-		nameSpace = superEnv.getNameSpace(null) + cname;
+		nameSpace = superEnv.getNameSpace() + cname;
 		classType = new ClassInfo(id);
 		if(templateStatus == TemplateStatus.TEMPLATE){
             instanceType = new TemplateTypeInfo(id,superEnv);
@@ -48,7 +49,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		instanceType.addField("cast",new Cast(instanceType));
 		dataType = cname + "_data_type";
 		dataName = cname + "_data";
-        //checking if not generating from template to prevent generated type form displacing the template
+        //checking if not generating from template to prevent generated type from displacing the template
 		if(templateStatus != TemplateStatus.GENERATING){
             superEnv.addType(id,instanceType);
         }
@@ -60,7 +61,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 			instanceType.addField(name,field);
 			if(value instanceof Variable v && v.getType() instanceof InstanceInfo i){
 			    appendToDestructor(i.getDestructorName());
-			    appendToDestructor("();\n");
+			    appendToDestructor("(&this->");
+			    appendToDestructor(v.getCname());
+			    appendToDestructor(");\n");
             }
         }else{
 		    super.addFunction(name,value);
@@ -198,15 +201,14 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public void compileNewAndAlloc(BuilderWriter writer,TypeInfo[]args,ClassVariable constructor){
         var allocName = "static" + getNameSpace() + "_alloc";
         Function allocMethod;
-        writer.write(instanceType.getCname() + "* " + allocName + "(");
-        if(instanceType.getFieldFromThisType("alloc") instanceof Function tmp){
+        if(classType.getFieldFromThisType("alloc") instanceof Function tmp){
             allocMethod = tmp;
         }else{
             allocMethod = new Function("alloc",new PointerInfo(instanceType),AccessModifier.PUBLIC);
             classType.addField("alloc",allocMethod);
-            writer.write('0');
         }
         allocMethod.addStaticVariant(args,allocName);
+        writer.write(instanceType.getCname() + "* " + allocMethod.getVariant(args).cname() + "(");
         var first = true;
         var b = new StringBuilder();
         for(int i = 0; i < args.length;++i){
@@ -226,16 +228,17 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         writer.write("));\n");
         writer.write(constructorCall(constructor,"p",args));
         writer.write("return p;\n}\n");
-        var newName = "static" + getNameSpace() + "_new";
+        var newName = "static" + nameSpace + "_new";
         Function newMethod;
-        if(instanceType.getFieldFromThisType("new") instanceof Function tmp){
+        if(classType.getFieldFromThisType("new") instanceof Function tmp){
             newMethod = tmp;
         }else{
             newMethod = new Function("new",instanceType,AccessModifier.PUBLIC);
             classType.addField("new",newMethod);
         }
-        writer.write(instanceType.getCname() + " " + newName + "(" + compiledArgs + "){\n" + instanceType.getCname() + " inst;\n");
         newMethod.addStaticVariant(args,newName);
+        writer.write(instanceType.getCname() + " " + newMethod.getVariant(args).cname() + "(" + compiledArgs + "){\n");
+        writer.write(instanceType.getCname() + " inst;\n");
         writer.write(constructorCall(constructor,"&inst",args));
         writer.write("return inst;\n}\n");
     }
