@@ -18,11 +18,11 @@ import java.io.IOException;
 public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-        writer.write("_std_lang_Thread_addEHentry(_std_lang_currentThread);\n");
+        writer.write("_std_lang_Thread_addEHentry0(_std_lang_currentThread);\n");
         var backend = env.getFPL().getModule("std.backend").getEnv();
         var f =(Function)backend.getFunction(new Atom(0,0,"contextSave",TokenType.ID));
         writer.write(f.getDeclaration());
-        writer.write("if(!_std_backend_contextSave(_std_lang_currentThread->_currentEHentry->_context)){\n");
+        writer.write("if(!_std_backend_contextSave0(_std_lang_currentThread->_currentEHentry->_context)){\n");
         it.nextList().compile(writer,new FnSubEnv(env),it);
         writer.write("}\n");
         var hasFin = false;
@@ -60,7 +60,7 @@ public final class TryCatchFinally extends ABlock{
                     }
                     writer.write("{\n");
                     writer.write(exInfo.getCname());
-                    writer.write(" ex;\n_std_lang_Exception_copyAndFree(_std_lang_currentThread->_exception,&ex);\n");
+                    writer.write(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,&ex);\n");
                     var blockEnv = new FnSubEnv(env);
                     blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
                     block.compile(writer,blockEnv,it);

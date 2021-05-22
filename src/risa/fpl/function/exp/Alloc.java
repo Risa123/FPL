@@ -21,7 +21,7 @@ public final class Alloc extends AField{
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         writer.write("((");
         writer.write(p.getCname());
-        writer.write(")_std_lang_malloc(sizeof(");
+        writer.write(")_std_lang_malloc0(sizeof(");
         writer.write(type.getCname());
         writer.write(')');
         if(array){

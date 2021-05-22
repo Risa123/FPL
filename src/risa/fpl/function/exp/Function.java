@@ -24,7 +24,7 @@ public class Function implements IField,ICalledOnPointer{
 	private boolean calledOnPointer,calledOnValueExp,functionPointer;
 	private final String name,attrCode;
 	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
-    public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
+    public Function(String name, TypeInfo returnType, FunctionType type, TypeInfo self, AccessModifier accessModifier, String attrCode){
        this.returnType = returnType;
        this.accessModifier = accessModifier;
        this.self = self;
@@ -32,10 +32,10 @@ public class Function implements IField,ICalledOnPointer{
        this.name = name;
        this.attrCode = attrCode;
     }
-    public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier){
+    public Function(String name, TypeInfo returnType, FunctionType type, TypeInfo self, AccessModifier accessModifier){
         this(name,returnType,type,self,accessModifier,null);
     }
-    public Function(String name,TypeInfo returnType,AccessModifier accessModifier){
+    public Function(String name, TypeInfo returnType, AccessModifier accessModifier){
         this(name,returnType,FunctionType.NORMAL,null,accessModifier);
     }
     @Override
@@ -66,8 +66,6 @@ public class Function implements IField,ICalledOnPointer{
 		    throw new CompilerException(line,charNum,"function has no variant with arguments " + Arrays.toString(array));
         }
 		var variant = getVariant(array);
-        b.write(variant.implName());
-        b.write('(');
         if(isVirtual()){
             if(self instanceof InstanceInfo i){
                 b.write("((" + i.getClassDataType() + ")");
@@ -88,6 +86,11 @@ public class Function implements IField,ICalledOnPointer{
                 b.write("object_data)->");
             }
         }
+        if(!functionPointer){
+            b.write(variant.implName());
+            functionPointer = false;
+        }
+        b.write('(');
 		var first = self == null;
 		if(self != null){
 		    if(calledOnPointer){
@@ -179,7 +182,7 @@ public class Function implements IField,ICalledOnPointer{
         }
         return false;
     }
-    public final Function makeMethod(TypeInfo ofType,String newName){
+    public final Function makeMethod(TypeInfo ofType, String newName){
         var variant = getPointerVariant();
         var args = new TypeInfo[variant.args().length - 1];
         if(args.length > 0){
@@ -275,7 +278,7 @@ public class Function implements IField,ICalledOnPointer{
     public final void calledOnValueExp(){
         calledOnValueExp = true;
     }
-    public final void functionPointer(){
+    public final void prepareForDereference(){
         functionPointer = true;
     }
 }

@@ -16,6 +16,7 @@ public final class FunctionDereference extends AField{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         writePrev(writer);
+        func.prepareForDereference();
         return func.compile(writer,env,it,line,charNum);
     }
 }

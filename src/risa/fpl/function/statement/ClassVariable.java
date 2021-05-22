@@ -21,7 +21,7 @@ import risa.fpl.tokenizer.TokenType;
 public final class ClassVariable extends Function{
    private final TypeInfo classType;
    private final InstanceInfo type;
-   public ClassVariable(InstanceInfo type,TypeInfo classType){
+   public ClassVariable(InstanceInfo type, TypeInfo classType){
        super("constructor",TypeInfo.VOID,FunctionType.NORMAL,type,AccessModifier.PUBLIC);
 	   this.type = type;
 	   this.classType = classType;
@@ -50,7 +50,7 @@ public final class ClassVariable extends Function{
 		return TypeInfo.VOID;
 	}
 	private TypeInfo compileVariable(BufferedWriter writer,Atom id,AEnv env,ExpIterator it)throws IOException,CompilerException{
-        TypeInfo varType;
+        InstanceInfo varType;
         if(type instanceof TemplateTypeInfo tType){
             varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env,true),env,it.getLastLine(),it.getLastCharNum());
             if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){

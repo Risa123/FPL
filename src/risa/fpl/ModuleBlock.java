@@ -114,7 +114,7 @@ public final class ModuleBlock extends ATwoPassBlock{
    private void makeMethod(String name,String oldName,TypeInfo ofType,boolean remove)throws CompilerException{
       Function func;
       if(remove){
-          func = env.getAndRemove(oldName);
+          func = env.getAndMakeInaccessible(oldName);
       }else{
           func = (Function)env.getFunction(oldName);
       }
@@ -127,7 +127,7 @@ public final class ModuleBlock extends ATwoPassBlock{
        makeMethod(name,name,ofType,true);
    }
    private void makeMethod(String name,ClassInfo ofClass){
-       ofClass.addField(name,env.getAndRemove(name));
+       ofClass.addField(name,env.getAndMakeInaccessible(name));
    }
    private void makeMethod(String name,String oldName,TypeInfo ofType)throws CompilerException{
        makeMethod(name,oldName,ofType,true);

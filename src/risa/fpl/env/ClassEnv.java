@@ -74,7 +74,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	}
 	public String getImplicitConstructorCode(){
 	    var additionalCode = "";
-        var primaryParent = instanceType.getPrimaryParent();
+        var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
         //check for implicit constructor
         if(primaryParent != null && primaryParent.getConstructor().hasVariant(new TypeInfo[0])){
             additionalCode += primaryParent.getConstructor().getVariant(new TypeInfo[0]).cname() + "((" + primaryParent.getCname() + "*)this);\n";
@@ -85,9 +85,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		return additionalCode + implicitConstructor;
 	}
 	public String getImplicitConstructor(){
-        return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init(" + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
+        return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init0(" + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
     }
-    public void addMethod(Function method,TypeInfo[] args,String code){
+    public void addMethod(Function method, TypeInfo[] args, String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
               appendFunctionCode("static ");
          }
@@ -99,7 +99,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
          }
          if(method.isVirtual()){
          	 var parent = instanceType.getPrimaryParent();
-         	 if(parent != null && parent.getField(method.getName(),this) instanceof  Function){
+         	 if(parent != null && parent.getField(method.getName(),this) instanceof Function){
          	 	return;
 			 }
          	 var v = method.getVariant(args);
@@ -198,7 +198,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public AEnv getSuperEnv(){
 	    return superEnv;
     }
-    public void compileNewAndAlloc(BuilderWriter writer,TypeInfo[]args,ClassVariable constructor){
+    public void compileNewAndAlloc(BuilderWriter writer, TypeInfo[]args, ClassVariable constructor){
         var allocName = "static" + getNameSpace() + "_alloc";
         Function allocMethod;
         if(classType.getFieldFromThisType("alloc") instanceof Function tmp){
@@ -241,8 +241,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         writer.write(instanceType.getCname() + " inst;\n");
         writer.write(constructorCall(constructor,"&inst",args));
         writer.write("return inst;\n}\n");
+        appendFunctionDeclaration(newMethod);
+        appendFunctionDeclaration(allocMethod);
     }
-    private String constructorCall(Function constructor,String self,TypeInfo[]args){
+    private String constructorCall(Function constructor, String self, TypeInfo[]args){
         var b = new StringBuilder();
         var v = constructor.getVariant(args);
         b.append(v.cname()).append("(").append(self);

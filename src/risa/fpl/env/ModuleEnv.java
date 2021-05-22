@@ -12,6 +12,7 @@ import risa.fpl.function.block.ATwoPassBlock;
 import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
@@ -26,6 +27,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	private int mainDeclared;
 	private final ArrayList<TypeInfo>typesForDeclarations = new ArrayList<>();
+	private final ArrayList<Function> inaccessibleFunctions = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -55,7 +57,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    declareTypes(writer,types);
 		for(var mod:importedModules){
             for(var func:mod.functions.values()){
-                if(func instanceof Function f && f.getAccessModifier() != AccessModifier.PRIVATE){
+                if(func instanceof Function f  && !(func instanceof ClassVariable)  && f.getAccessModifier() != AccessModifier.PRIVATE){
                     writer.write(f.getDeclaration());
                 }else if(func instanceof Variable v){
                     writer.write(v.getExternDeclaration());
@@ -83,10 +85,10 @@ public final class ModuleEnv extends ANameSpacedEnv{
 		if(hasFunctionInCurrentEnv(name.getValue())){
 		    var f = super.getFunction(name);
 		    if(f instanceof Function func){
-		        if(func.getAccessModifier() == AccessModifier.PUBLIC){
+		        if(func.getAccessModifier() == AccessModifier.PUBLIC && (!inaccessibleFunctions.contains(f) || !getRequestFromOutSide)){
 		            getRequestFromOutSide = false;
 		            return f;
-                }else if(!getRequestFromOutSide){
+                }else if(!getRequestFromOutSide && !inaccessibleFunctions.contains(f)){
 		            return f;
                 }
             }else{
@@ -130,8 +132,10 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public ModuleEnv getModule(){
 	    return this;
     }
-    public Function getAndRemove(String name){
-		return (Function)functions.remove(name);
+    public Function getAndMakeInaccessible(String name){
+	    var f = (Function)functions.get(name);
+	    inaccessibleFunctions.add(f);
+		return f;
 	}
 	public String getVariableDeclarations(){
 	    return variableDeclarations.toString();

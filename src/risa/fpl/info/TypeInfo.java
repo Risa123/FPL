@@ -51,7 +51,6 @@ public class TypeInfo{
   private final boolean primitive;
   private final StringBuilder declarationBuilder =  new StringBuilder();
   private final HashMap<String, IField>fields = new HashMap<>();
-  private Function constructor;
   private ClassInfo classInfo;
   private final ArrayList<TypeInfo>parents = new ArrayList<>(),requiredTypes = new ArrayList<>();
   private final HashMap<TypeInfo,String> conversionMethodCNames = new HashMap<>();
@@ -143,12 +142,6 @@ public class TypeInfo{
     }
   public final void appendToDeclaration(String code){
       declarationBuilder.append(code);
-  }
-  public final Function getConstructor(){
-      return constructor;
-  }
-  public final void setConstructor(Function constructor){
-      this.constructor = constructor;
   }
   public final boolean isPrimitive(){
       return primitive;

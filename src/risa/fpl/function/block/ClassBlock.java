@@ -109,8 +109,8 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         cEnv.getInstanceType().setAttributesCode(attributes.getCode());
         b.write(attributes.getCode());
         //parent type doesn't have implicit constructor
-        if(parentType != null && !cEnv.isParentConstructorCalled()){
-            for(var v:parentType.getConstructor().getVariants()){
+        if(parentType instanceof InstanceInfo i && parentType != null && !cEnv.isParentConstructorCalled()){
+            for(var v:i.getConstructor().getVariants()){
                if(v.args().length > 0){
                    throw new CompilerException(id.getLine(),id.getCharNum(),"constructor is required to call parent constructor");
                }

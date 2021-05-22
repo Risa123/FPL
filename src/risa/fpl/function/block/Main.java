@@ -49,7 +49,7 @@ public final class Main implements IFunction{
             }
         }
         b.write("_Thread mainThread;\n");
-        b.write("I_std_lang_Thread_init(&mainThread,\"Main\");\n");
+        b.write("I_std_lang_Thread_init0(&mainThread,\"Main\");\n");
         b.write("_std_lang_currentThread = &mainThread;\n");
         it.nextList().compile(b,fnEnv,it);
         fnEnv.compileDestructorCalls(b);

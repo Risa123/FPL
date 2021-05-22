@@ -6,6 +6,8 @@ import java.io.IOException;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.function.IFunction;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -53,8 +55,8 @@ public class ValueExp extends AField{
 		    prefix = getPrevCode();
         }
 		var code = this.code;
-		if(!(this instanceof Variable) && field instanceof Function f){
-			code = type.getCname() + "_toPointer(" + code + ")";
+		if(!(this instanceof Variable) && field instanceof Function f && type instanceof InstanceInfo i){
+			code = IFunction.INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + i.getCname() + "_toPointer(" + code + ")";
 			f.calledOnValueExp();
 		}
 		field.setPrevCode(prefix + code + selector);

@@ -102,6 +102,32 @@ public class Fn extends AFunctionBlock{
         }
         var oneLine = false;
         var macroDeclaration = new StringBuilder();
+        Function f;
+        FunctionType type;
+        var implName = cID;
+        if(env.hasModifier(Modifier.ABSTRACT)){
+            type = FunctionType.ABSTRACT;
+            appendSemicolon = false;
+            if(env instanceof ClassEnv e && !e.isAbstract()){
+                throw new CompilerException(line,charNum,"abstract method can only be declared in abstract class");
+            }
+        }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
+            type = FunctionType.VIRTUAL;
+            implName = IFunction.toCId(id.getValue());
+        }else if(env.hasModifier(Modifier.NATIVE)){
+            type = FunctionType.NATIVE;
+        }else{
+            type = FunctionType.NORMAL;
+        }
+        if(env.hasFunctionInCurrentEnv(id.getValue())){
+            if(env.getFunction(id.getValue()) instanceof Function ft){
+                f = ft;
+            }else{
+                throw new CompilerException(line,charNum,"there is already a function called " + id);
+            }
+        }else{
+            f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
+        }
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
 		        throw new CompilerException(line,charNum,"abstract methods can only be declared");
@@ -112,6 +138,7 @@ public class Fn extends AFunctionBlock{
                 if(!(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)) && env.getAccessModifier() != AccessModifier.PRIVATE){
                     macroDeclaration.append("#define ");
                     macroDeclaration.append(cID);
+                    macroDeclaration.append(f.getVariants().size());
                     macroDeclaration.append('(');
                     if(self != null){
                         macroDeclaration.append("this");
@@ -177,32 +204,6 @@ public class Fn extends AFunctionBlock{
             }
 			appendSemicolon = true;
 		}
-        FunctionType type;
-		var implName = cID;
-        if(env.hasModifier(Modifier.ABSTRACT)){
-            type = FunctionType.ABSTRACT;
-            appendSemicolon = false;
-            if(env instanceof ClassEnv e && !e.isAbstract()){
-                throw new CompilerException(line,charNum,"abstract method can only be declared in abstract class");
-            }
-        }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
-            type = FunctionType.VIRTUAL;
-            implName = IFunction.toCId(id.getValue());
-        }else if(env.hasModifier(Modifier.NATIVE)){
-            type = FunctionType.NATIVE;
-        }else{
-            type = FunctionType.NORMAL;
-        }
-        Function f;
-        if(env.hasFunctionInCurrentEnv(id.getValue())){
-           if(env.getFunction(id.getValue()) instanceof Function ft){
-               f = ft;
-           }else{
-               throw new CompilerException(line,charNum,"there is already a function called " + id);
-           }
-        }else{
-            f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
-        }
         var argsArray = args.values().toArray(new TypeInfo[0]);
         if(f.hasVariant(argsArray)){
             throw new CompilerException(line,charNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
