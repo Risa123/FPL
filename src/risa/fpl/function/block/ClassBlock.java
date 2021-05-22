@@ -129,19 +129,19 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
                 }
             }
         }
+        var internalCode = new BuilderWriter(writer);
         var constructor = (ClassVariable)type.getConstructor();
         if(constructor == null){
             constructor = new ClassVariable(type,cEnv.getClassType());
             constructor.addVariant(new TypeInfo[0],cEnv.getNameSpace());
             cEnv.addMethod(constructor,new TypeInfo[0],cEnv.getImplicitConstructor());
             type.setConstructor(constructor);
-            cEnv.compileNewAndAlloc(b,new TypeInfo[0],constructor);
+            cEnv.compileNewAndAlloc(internalCode,new TypeInfo[0],constructor);
         }
         type.appendToDeclaration(b.getCode());
         type.appendToDeclaration("extern " + cEnv.getDataDefinition());
         cEnv.appendDeclarations();
         var cID = IFunction.toCId(id.getValue());
-        var internalCode = new BuilderWriter(writer);
         if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){
             modEnv.addFunction(id.getValue(),constructor);
         }

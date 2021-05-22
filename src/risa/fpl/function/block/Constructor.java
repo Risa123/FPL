@@ -21,10 +21,8 @@ public final class Constructor extends AFunctionBlock{
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var cEnv = (ClassEnv)env;
         var type = cEnv.getInstanceType();
-        ClassVariable constructor;
-        if(cEnv.getSuperEnv().hasFunctionInCurrentEnv(type.getName()) && cEnv.getSuperEnv().getFunction(type.getName()) instanceof ClassVariable cv){
-           constructor = cv;
-        }else{
+        var constructor = type.getConstructor();
+        if(constructor == null){
             constructor = new ClassVariable(cEnv.getInstanceType(),cEnv.getClassType());
             type.setConstructor(constructor);
             cEnv.getSuperEnv().addFunction(type.getName(),constructor);

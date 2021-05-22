@@ -113,7 +113,7 @@ fn void checkStringIndex uint len uint index{
     }
  }
 class Thread{
- private string name
+ private String name
  internal{
    Exception* exception
    EHentry* currentEHentry
@@ -137,13 +137,13 @@ class Thread{
      currentEHentry = prev
    }
  }
- this string name{
+ this String name{
    this name = name
    currentEHentry = nil
    setExceptionHandler &defaultExceptionHandler
  }
- fn void setName string name = this name = name
- fn string getName = name
+ fn void setName String name = this name = name
+ fn String getName = name
  fn void setExceptionHandler ExceptionHandlerType exceptionHandler{
    this exceptionHandler = exceptionHandler
  }
