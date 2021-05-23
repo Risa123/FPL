@@ -28,6 +28,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private int mainDeclared;
 	private final ArrayList<TypeInfo>typesForDeclarations = new ArrayList<>();
 	private final ArrayList<Function> inaccessibleFunctions = new ArrayList<>();
+	private final ArrayList<Integer> classConstructorLines = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -246,5 +247,17 @@ public final class ModuleEnv extends ANameSpacedEnv{
             }
         }
         return true;
+    }
+
+    /**
+     * Add line where constructor is declared on list.
+     * Prevents constructors form being compiled multiple times
+     * @param line
+     */
+    public void addClassConstructorLine(int line){
+	    classConstructorLines.add(line);
+    }
+    public boolean notClassConstructorOnLine(int line){
+        return !classConstructorLines.contains(line);
     }
 }

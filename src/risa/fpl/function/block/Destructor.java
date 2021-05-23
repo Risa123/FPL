@@ -27,6 +27,7 @@ public final class Destructor extends ABlock{
         var type = cEnv.getInstanceType();
         type.setDestructorName(IFunction.INTERNAL_METHOD_PREFIX + cEnv.getNameSpace());
         b.write(type.getDestructorName() + "(" + type.getCname() + "* this){\n");
+        b.write(cEnv.getImplicitDestructorCode());
         it.nextList().compile(b,new FnEnv(env,TypeInfo.VOID),it);
         b.write("}\n");
         cEnv.appendFunctionCode(b.getCode());

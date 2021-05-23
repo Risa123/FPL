@@ -195,6 +195,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
 	    return "";
     }
+    public String getImplicitDestructorCode(){
+	    return destructor.toString();
+    }
     public AEnv getSuperEnv(){
 	    return superEnv;
     }

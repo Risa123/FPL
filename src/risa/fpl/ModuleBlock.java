@@ -17,7 +17,7 @@ import risa.fpl.parser.List;
 import risa.fpl.parser.Parser;
 import risa.fpl.tokenizer.TokenType;
 
-public final class ModuleBlock extends AThreePassBlock {
+public final class ModuleBlock extends AThreePassBlock{
    private final String cPath,name,sourceFile;
    private boolean compiled;
    private final List exps;

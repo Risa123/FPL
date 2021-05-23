@@ -5,6 +5,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.FnEnv;
+import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
@@ -21,6 +22,10 @@ public final class Constructor extends AFunctionBlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var cEnv = (ClassEnv)env;
+        var modEnv = (ModuleEnv)cEnv.getSuperEnv();
+        if(modEnv.notClassConstructorOnLine(line)){
+            modEnv.addClassConstructorLine(line);
+        }
         var type = cEnv.getInstanceType();
         var constructor = type.getConstructor();
         if(constructor == null){
@@ -34,14 +39,20 @@ public final class Constructor extends AFunctionBlock{
         b.write(INTERNAL_METHOD_PREFIX);
         b.write(cEnv.getNameSpace(this));
         b.write("_init");
-        b.write(Integer.toString(constructor.getVariants().size()));
-        var args = parseArguments(b,it,fEnv,type).values().toArray(new TypeInfo[0]);
+        var variantNum = constructor.getVariants().size();
+        var argsWriter = new BuilderWriter(writer);
+        var args = parseArguments(argsWriter,it,fEnv,type).values().toArray(new TypeInfo[0]);
         if(constructor.hasVariant(args)){
-            throw new CompilerException(line,charNum,"this class already has constructor with arguments " + Arrays.toString(args));
+          if(modEnv.notClassConstructorOnLine(line)){
+              throw new CompilerException(line,charNum,"this class already has constructor with arguments " + Arrays.toString(args));
+          }
+          variantNum--;
         }
+        b.write(Integer.toString(variantNum));
         if(!(type instanceof TemplateTypeInfo)){
             constructor.addVariant(args,cEnv.getNameSpace());
         }
+        b.write(argsWriter.getCode());
         b.write("{\n");
         var hasParentConstructor = false;
         if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){

@@ -50,8 +50,7 @@ class String{
       strI ++
       i ++
     }
-    String x ret,len,true
-    return x
+    return String:new ret,len,true
   }
   fn char* toCString{
     var ret char:alloc[] len + 1
