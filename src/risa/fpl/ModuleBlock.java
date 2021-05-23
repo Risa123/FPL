@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import risa.fpl.env.ModuleEnv;
-import risa.fpl.function.block.ATwoPassBlock;
+import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.exp.Function;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.NumberInfo;
@@ -17,7 +17,7 @@ import risa.fpl.parser.List;
 import risa.fpl.parser.Parser;
 import risa.fpl.tokenizer.TokenType;
 
-public final class ModuleBlock extends ATwoPassBlock{
+public final class ModuleBlock extends AThreePassBlock {
    private final String cPath,name,sourceFile;
    private boolean compiled;
    private final List exps;

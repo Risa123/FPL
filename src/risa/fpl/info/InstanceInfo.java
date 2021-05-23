@@ -2,7 +2,6 @@ package risa.fpl.info;
 
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.GetObjectInfo;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.statement.ClassVariable;

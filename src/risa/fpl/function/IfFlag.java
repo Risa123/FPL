@@ -2,7 +2,7 @@ package risa.fpl.function;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
-import risa.fpl.function.block.IIfFlagBlock;
+import risa.fpl.function.block.IfFlagBlock;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
@@ -17,7 +17,7 @@ public final class IfFlag implements IFunction{
         var exp = it.next();
         if(env.getFPL().hasFlag(flag)){
            if(exp instanceof List list){
-               new IIfFlagBlock(list).compile(writer,env,it,line,charNum);
+               new IfFlagBlock(list).compile(writer,env,it,line,charNum);
            }else{
                exp.compile(writer,env,it);
            }

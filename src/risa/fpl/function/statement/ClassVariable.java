@@ -11,6 +11,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
@@ -19,9 +20,9 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
 public final class ClassVariable extends Function{
-   private final TypeInfo classType;
+   private final ClassInfo classType;
    private final InstanceInfo type;
-   public ClassVariable(InstanceInfo type, TypeInfo classType){
+   public ClassVariable(InstanceInfo type,ClassInfo classType){
        super("constructor",TypeInfo.VOID,FunctionType.NORMAL,type,AccessModifier.PUBLIC);
 	   this.type = type;
 	   this.classType = classType;
@@ -73,7 +74,7 @@ public final class ClassVariable extends Function{
         var b = new BuilderWriter(writer);
         if(type instanceof TemplateTypeInfo){
             varType.getConstructor().setPrevCode(getPrevCode());
-            ((ClassVariable)varType.getConstructor()).superCompile(b,env,it,id.getLine(),id.getCharNum());
+            varType.getConstructor().superCompile(b,env,it,id.getLine(),id.getCharNum());
         }else{
             super.compile(b,env,it,id.getLine(),id.getCharNum());
         }

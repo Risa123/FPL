@@ -12,7 +12,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public abstract class ATwoPassBlock{
+public abstract class AThreePassBlock{
     public static final int MAX_PASSES = 3;//three passes necessary in some cases
     protected final void compile(BufferedWriter writer,AEnv env,List list)throws CompilerException,IOException{
         var infos = new ArrayList<ExpInfo>(list.getExps().size());

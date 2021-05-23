@@ -15,6 +15,7 @@ import risa.fpl.tokenizer.TokenType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 public final class Constructor extends AFunctionBlock{
     @Override
@@ -36,7 +37,7 @@ public final class Constructor extends AFunctionBlock{
         b.write(Integer.toString(constructor.getVariants().size()));
         var args = parseArguments(b,it,fEnv,type).values().toArray(new TypeInfo[0]);
         if(constructor.hasVariant(args)){
-            // throw new CompilerException(line,charNum,"this class already has constructor with arguments " + Arrays.toString(args));
+            throw new CompilerException(line,charNum,"this class already has constructor with arguments " + Arrays.toString(args));
         }
         if(!(type instanceof TemplateTypeInfo)){
             constructor.addVariant(args,cEnv.getNameSpace());

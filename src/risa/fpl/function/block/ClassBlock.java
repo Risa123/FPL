@@ -18,7 +18,7 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
-public final class ClassBlock extends ATwoPassBlock implements IFunction{
+public final class ClassBlock extends AThreePassBlock implements IFunction{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum) throws IOException,CompilerException{
 		if(!(env instanceof ModuleEnv modEnv)){
@@ -109,7 +109,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
         cEnv.getInstanceType().setAttributesCode(attributes.getCode());
         b.write(attributes.getCode());
         //parent type doesn't have implicit constructor
-        if(parentType instanceof InstanceInfo i && parentType != null && !cEnv.isParentConstructorCalled()){
+        if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
             for(var v:i.getConstructor().getVariants()){
                if(v.args().length > 0){
                    throw new CompilerException(id.getLine(),id.getCharNum(),"constructor is required to call parent constructor");
@@ -130,7 +130,7 @@ public final class ClassBlock extends ATwoPassBlock implements IFunction{
             }
         }
         var internalCode = new BuilderWriter(writer);
-        var constructor = (ClassVariable)type.getConstructor();
+        var constructor = type.getConstructor();
         if(constructor == null){
             constructor = new ClassVariable(type,cEnv.getClassType());
             constructor.addVariant(new TypeInfo[0],cEnv.getNameSpace());

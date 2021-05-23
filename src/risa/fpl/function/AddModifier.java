@@ -7,13 +7,13 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.ANameSpacedEnv;
 import risa.fpl.env.Modifier;
-import risa.fpl.function.block.ATwoPassBlock;
+import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
-public class AddModifier extends ATwoPassBlock implements IFunction{
+public class AddModifier extends AThreePassBlock implements IFunction{
    protected final Object mod;
    private boolean appendSemicolon;
    public AddModifier(Object mod){

@@ -10,9 +10,9 @@ import risa.fpl.parser.List;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public class IIfFlagBlock extends ATwoPassBlock implements IFunction{
+public class IfFlagBlock extends AThreePassBlock implements IFunction{
     private final List list;
-    public IIfFlagBlock(List list){
+    public IfFlagBlock(List list){
         this.list = list;
     }
     @Override
