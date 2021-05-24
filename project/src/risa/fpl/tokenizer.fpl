@@ -81,8 +81,7 @@ class Tokenizer{
                }if c == $s{
                  b add $\s
                }{
-                CompilerException ex line,tokenNum,"no special character called " + c toString
-                ex throw
+                CompilerException:new line,tokenNum,"no special character called " + c toString;;;throw
                }
               }if firstChar isWhitespace{
                 CompilerException:new line,tokenNum,"$ cannot be followed by whitespace";throw
@@ -134,8 +133,7 @@ class Tokenizer{
  fn Token peek{
    prepare
    if tokens isEmpty{
-     CompilerException ex line,tokenNum,"no tokens available"
-     ex throw
+     CompilerException:new line,tokenNum,"no tokens available";throw
    }
    return tokens get i
  }

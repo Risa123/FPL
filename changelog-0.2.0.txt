@@ -96,3 +96,5 @@ fix new and alloc methods can be used inside its class block
 fix chained method call on  returned non-pointer class instances C error
 fix field  C error
 fix method called on returned value C error
+fix binary operator type check ex: 1 / 1.6  is now valid
+fix template generated in same file it is declared C error

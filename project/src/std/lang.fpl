@@ -19,9 +19,13 @@ class String{
     }
   }
   fn void set uint index char c{
+    native fn void _std_lang_checkStringIndex0 uint len uint index
+    _std_lang_checkStringIndex0 len,index
     p set index,c
   }
   fn char get uint index{
+    native fn void _std_lang_checkStringIndex0 uint len uint index
+    _std_lang_checkStringIndex0 len,index
     return p get index
   }
   fn bool == String str{
@@ -75,6 +79,12 @@ fn void print String str{
    puts cstr
    cstr free
 }
+fn void checkStringIndex uint len uint index{
+    if index >= len{
+       Exception ex  "index out of bounds:" + integerToString index
+       ex throw
+    }
+ }
 class Exception{
    private String message
    this String message{
@@ -105,12 +115,6 @@ private class EHentry{
   EHentry* prev
   Context context
 }
-fn void checkStringIndex uint len uint index{
-    if index >= len{
-       Exception ex  "index out of bounds:" + integerToString index
-       ex throw
-    }
- }
 class Thread{
  private String name
  internal{

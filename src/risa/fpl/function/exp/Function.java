@@ -25,7 +25,7 @@ public class Function implements IField,ICalledOnPointer{
 	private boolean calledOnPointer,notCalledOnVar,functionPointer;
 	private final String name,attrCode;
 	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
-    public Function(String name, TypeInfo returnType, FunctionType type, TypeInfo self, AccessModifier accessModifier, String attrCode){
+    public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
        this.returnType = returnType;
        this.accessModifier = accessModifier;
        this.self = self;
@@ -33,10 +33,10 @@ public class Function implements IField,ICalledOnPointer{
        this.name = name;
        this.attrCode = attrCode;
     }
-    public Function(String name, TypeInfo returnType, FunctionType type, TypeInfo self, AccessModifier accessModifier){
+    public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier){
         this(name,returnType,type,self,accessModifier,null);
     }
-    public Function(String name, TypeInfo returnType, AccessModifier accessModifier){
+    public Function(String name,TypeInfo returnType,AccessModifier accessModifier){
         this(name,returnType,FunctionType.NORMAL,null,accessModifier);
     }
     @Override
