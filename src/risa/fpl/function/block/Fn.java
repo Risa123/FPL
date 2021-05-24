@@ -122,6 +122,12 @@ public class Fn extends AFunctionBlock{
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             if(env.getFunction(id.getValue()) instanceof Function ft){
                 f = ft;
+                if(f.getType() != type){
+                    throw new CompilerException(line,charNum,"all variants require same function type");
+                }
+                if(f.getAccessModifier() != env.getAccessModifier()){
+                    throw new CompilerException(line,charNum,"all variants require same access modifier");
+                }
             }else{
                 throw new CompilerException(line,charNum,"there is already a function called " + id);
             }

@@ -56,7 +56,7 @@ class String{
     var ret char:alloc[] len + 1
     var i 0
     while i < len{
-      ret set i,this p get i
+      ret set i,p get i
       i ++
     }
     ret set i,$\0

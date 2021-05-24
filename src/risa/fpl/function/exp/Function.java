@@ -9,6 +9,7 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.function.IFunction;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -21,7 +22,7 @@ public class Function implements IField,ICalledOnPointer{
 	private final StringBuilder declaration = new StringBuilder();
 	private final AccessModifier accessModifier;
 	private final FunctionType type;
-	private boolean calledOnPointer,calledOnValueExp,functionPointer;
+	private boolean calledOnPointer,notCalledOnVar,functionPointer;
 	private final String name,attrCode;
 	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
     public Function(String name, TypeInfo returnType, FunctionType type, TypeInfo self, AccessModifier accessModifier, String attrCode){
@@ -98,8 +99,8 @@ public class Function implements IField,ICalledOnPointer{
 		      b.write("(" + self.getCname() + "*)");
             }else if(!(self instanceof InterfaceInfo) && prevCode != null /*to prevent &this when calling method on implicit this*/){
                if(!self.isPrimitive()){
-                   if(calledOnValueExp){
-                      calledOnValueExp = false;
+                   if(notCalledOnVar){
+                      notCalledOnVar = false;
                    }else{
                        b.write('&');
                    }
@@ -126,6 +127,14 @@ public class Function implements IField,ICalledOnPointer{
                 throw new CompilerException(id,returnType + " has no field called " + id);
             }
             field.setPrevCode(b.getCode());
+            if(field instanceof Function f && returnType instanceof InstanceInfo i){
+               f.notCalledOnVar();
+               var c = IFunction.INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + i.getCname() + "_toPointer(" + f.getPrevCode();
+               f.setPrevCode(c);
+               var ret = field.compile(writer,env,it,id.getLine(),id.getCharNum());
+               writer.write(')');
+               return ret;
+            }
             return field.compile(writer,env,it,id.getLine(),id.getCharNum());
         }
         writer.write(b.getCode());
@@ -275,8 +284,8 @@ public class Function implements IField,ICalledOnPointer{
         }
         return false;
     }
-    public final void calledOnValueExp(){
-        calledOnValueExp = true;
+    public final void notCalledOnVar(){
+        notCalledOnVar = true;
     }
     public final void prepareForDereference(){
         functionPointer = true;

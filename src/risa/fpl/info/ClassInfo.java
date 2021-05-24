@@ -26,7 +26,6 @@ public final class ClassInfo extends TypeInfo{
     static{
         TypeInfo.CHAR.setClassInfo(CHAR);
         TypeInfo.BOOL.setClassInfo(BOOL);
-        TypeInfo.STRING.setClassInfo(STRING);
         TypeInfo.OBJECT.setClassInfo(OBJECT);
         NumberInfo.UBYTE.setClassInfo(UBYTE);
         NumberInfo.SBYTE.setClassInfo(SBYTE);
@@ -45,7 +44,6 @@ public final class ClassInfo extends TypeInfo{
         NumberInfo.MEMORY.setClassInfo(MEMORY);
         CHAR.addMethods(NumberInfo.CHAR);
         BOOL.addMethods(TypeInfo.BOOL);
-        STRING.addMethods(TypeInfo.STRING);
         UBYTE.addMethods(NumberInfo.UBYTE);
         SBYTE.addMethods(NumberInfo.SBYTE);
         BYTE.addMethods(NumberInfo.BYTE);

@@ -50,7 +50,6 @@ public final class ProgramEnv extends AEnv{
 	  addType("ulong",NumberInfo.ULONG);
 	  addType("slong",NumberInfo.SLONG);
 	  addType("bool",TypeInfo.BOOL);
-	  addType("string",TypeInfo.STRING);
 	  addType("float",NumberInfo.FLOAT);
 	  addType("double",NumberInfo.DOUBLE);
 	  addType("char",TypeInfo.CHAR);

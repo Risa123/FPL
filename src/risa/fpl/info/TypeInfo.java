@@ -20,16 +20,12 @@ public class TypeInfo{
       }
   };
   public static final TypeInfo BOOL = new TypeInfo("bool","char",true);
-  public static final TypeInfo STRING = new TypeInfo("string","char*",true);
   public static final TypeInfo CHAR = new TypeInfo("char","char",true);
   public static final TypeInfo NIL = new TypeInfo("nil","");
   static{
 	  CHAR.addField("cast",new Cast(CHAR));
 	  CHAR.addField("==",new BinaryOperator(BOOL,CHAR,"=="));
 	  CHAR.addField("!=",new BinaryOperator(BOOL,CHAR,"!="));
-	  STRING.addField("get",new GetElement(CHAR));
-	  STRING.addField("set",new SetElement(CHAR));
-	  STRING.addField("cast",new Cast(STRING));
 	  BOOL.addField("!",new UnaryOperator(BOOL,"!",false));
 	  BOOL.addField("&&",new BinaryOperator(BOOL,BOOL,"&&"));
       BOOL.addField("&",new BinaryOperator(BOOL,BOOL,"&"));
@@ -39,12 +35,8 @@ public class TypeInfo{
       BOOL.addField("!=",new BinaryOperator(BOOL,BOOL,"!="));
 	  NIL.addField("==",new BinaryOperator(BOOL,NIL,"=="));
       NIL.addField("!=",new BinaryOperator(BOOL,NIL,"!="));
-      var f = new Function("free",VOID,FunctionType.NORMAL,STRING,AccessModifier.PUBLIC);
-      f.addVariant(new TypeInfo[0],"free","free");
-      STRING.addField("free",f);
       BOOL.addSize();
       CHAR.addSize();
-      STRING.addSize();
   }
   private final String name,cname;
   private String declaration = "";

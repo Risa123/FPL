@@ -7,8 +7,7 @@ fn void exit int exitCode{
 fn int execute String cmd{
   var exitCode execute cmd toCString
   if exitCode == -1{
-    IOException ex "invalid command"
-    ex throw
+    IOException:new "invalid command";throw
   }
   return exitCode
 }

@@ -66,16 +66,14 @@ class Tokenizer{
                while ready; && read; == $\n{}
           }if c == $${
            if ready; !{
-              CompilerException ex line,tokenNum,"char expected"
-              ex throw
+              CompilerException:new line,tokenNum,"char expected";throw
             }
             ArrayList;char; b
             b add $'
             var firstChar read
             if firstChar == $\\{
               if ready; !{
-               CompilerException ex line,tokenNum,"character expected"
-               ex throw
+               CompilerException:new line,tokenNum,"character expected";throw
               }
                if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $";|| c == $0{
                   b add $\\
@@ -87,8 +85,7 @@ class Tokenizer{
                 ex throw
                }
               }if firstChar isWhitespace{
-                CompilerException ex line,tokenNum,"$ cannot be followed by whitespace"
-                ex throw
+                CompilerException:new line,tokenNum,"$ cannot be followed by whitespace";throw
                }{
                 b add firstChar
                }

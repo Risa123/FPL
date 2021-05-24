@@ -248,7 +248,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
         return true;
     }
-
     /**
      * Add line where constructor is declared on list.
      * Prevents constructors form being compiled multiple times

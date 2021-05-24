@@ -33,9 +33,7 @@ public final class Cast extends AField{
         }else if(!type.isPrimitive() && self instanceof InterfaceInfo && type.getParents().contains(self)){
           C_cast(prev,type.getCname());
           prev.write(".instance");
-        }else if((type instanceof PointerInfo && self == TypeInfo.STRING) || (self instanceof PointerInfo && type == TypeInfo.STRING)){
-	       C_cast(prev,type.getCname());
-		}else if(type instanceof InterfaceInfo){
+        }else if(type instanceof InterfaceInfo){
 	        throw new CompilerException(line,charNum,"cannot cast to interface");
         }else{
 	        var npTarget = self;

@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.exp.Function;
-import risa.fpl.info.ClassInfo;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -60,8 +59,6 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write(env.getFunctionDeclarations());
                writer.write(env.getFunctionCode());
                if(name.equals("std.lang")){
-                   makeMethod("getLength",TypeInfo.STRING);
-                   makeMethod("==",TypeInfo.STRING);
                    makeMethod("toString","boolToString",TypeInfo.BOOL);
                    makeMethod("isDigit",TypeInfo.CHAR);
                    makeMethod("isControl",TypeInfo.CHAR);
@@ -75,8 +72,6 @@ public final class ModuleBlock extends AThreePassBlock{
                    makeMethod("toLower",TypeInfo.CHAR);
                    makeMethod("toUpper",TypeInfo.CHAR);
                    makeMethod("toString","charToString",TypeInfo.CHAR);
-                   makeMethod("new",ClassInfo.STRING);
-                   makeMethod("+",TypeInfo.STRING);
                    makeMethod("toString","integerToString",NumberInfo.INT,false);
                    makeMethod("toString","integerToString",NumberInfo.SINT,false);
                    makeMethod("toString","integerToString",NumberInfo.UINT,false);
@@ -125,9 +120,6 @@ public final class ModuleBlock extends AThreePassBlock{
    }
    private void makeMethod(String name,TypeInfo ofType)throws CompilerException{
        makeMethod(name,name,ofType,true);
-   }
-   private void makeMethod(String name,ClassInfo ofClass){
-       ofClass.addField(name,env.getAndMakeInaccessible(name));
    }
    private void makeMethod(String name,String oldName,TypeInfo ofType)throws CompilerException{
        makeMethod(name,oldName,ofType,true);

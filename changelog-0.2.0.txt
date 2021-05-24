@@ -36,6 +36,7 @@ if_flag renamed to ifFlag
 added chained call to type:alloc
 added type:alloc[]
 string type replaced by instances of class String or char* in backend
+string type removed
 changed "unexpected atom" error message to "expected ;"
 recursive dependency message now shows position
 added function variants with different arguments
@@ -93,3 +94,5 @@ fix unable to declare type in its class block
 fix check for function duplicity
 fix new and alloc methods can be used inside its class block
 fix chained method call on  returned non-pointer class instances C error
+fix field  C error
+fix method called on returned value C error
