@@ -15,7 +15,7 @@ public abstract class ANameSpacedEnv extends SubEnv{
     public final void appendToInitializer(String code){
         initializer.append(code);
     }
-    public final String getInitializer(String name){
+    public String getInitializer(String name){
         if(initializer.isEmpty()){
             initializerCall = "";
         }else{
@@ -50,6 +50,9 @@ public abstract class ANameSpacedEnv extends SubEnv{
     }
     public void appendToDestructor(String code){
         destructor.append(code);
+    }
+    public final String getInitializerCode(){
+        return initializer.toString();
     }
     public abstract void addTemplateInstance(InstanceInfo type);
 }

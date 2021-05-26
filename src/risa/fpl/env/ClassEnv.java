@@ -87,7 +87,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	public String getImplicitConstructor(){
         return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init0(" + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
     }
-    public void addMethod(Function method, TypeInfo[] args, String code){
+    public void addMethod(Function method,TypeInfo[] args,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
               appendFunctionCode("static ");
          }

@@ -179,7 +179,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public boolean multipleMainDeclared(){
 	    return mainDeclared == AThreePassBlock.MAX_PASSES;
     }
-    private void declareTypes(BufferedWriter writer,ArrayList<TypeInfo>types)throws IOException{
+    public void declareTypes(BufferedWriter writer,ArrayList<TypeInfo> types)throws IOException{
         var declared = new ArrayList<TypeInfo>();
         while(!types.isEmpty()){
             var it = types.iterator();
@@ -258,5 +258,12 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public boolean notClassConstructorOnLine(int line){
         return !classConstructorLines.contains(line);
+    }
+    @Override
+    public String getInitializer(String name){
+        if(isMain()){
+            return "";
+        }
+        return super.getInitializer(name);
     }
 }

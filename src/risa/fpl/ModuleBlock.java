@@ -113,7 +113,7 @@ public final class ModuleBlock extends AThreePassBlock{
       }else{
           func = (Function)env.getFunction(oldName);
       }
-      if (func == null){
+      if(func == null){
           return;
        }
        ofType.addField(name,func.makeMethod(ofType,name));

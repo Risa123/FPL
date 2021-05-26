@@ -54,21 +54,23 @@ public final class TemplateTypeInfo extends InstanceInfo{
                }
                mod.importModules(writer);
                new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
+               mod.declareTypes(writer,new ArrayList<>(cEnv.getInstanceType().getRequiredTypes()));
                mod.declareTypes(writer);
-               for(var type:args){
-                   writer.write(type.getDeclaration());
-               }
                writer.write(cEnv.getInstanceType().getDeclaration());
                writer.write(mod.getVariableDeclarations());
                writer.write(cEnv.getDataDefinition());
                writer.write(cEnv.getFunctionCode());
-               if(env instanceof ANameSpacedEnv e){
-                   e.addTemplateInstance(cEnv.getInstanceType());
-               }else{
-                   ((FnSubEnv)env).addTemplateInstance(cEnv.getInstanceType());
+               var type = cEnv.getInstanceType();
+               if(type.getDestructorName() != null){
+                   writer.write(cEnv.getDestructor()); //somehow is not done in ClassBlock
                }
-               generatedTypes.put(args,cEnv.getInstanceType());
-               return cEnv.getInstanceType();
+               if(env instanceof ANameSpacedEnv e){
+                   e.addTemplateInstance(type);
+               }else{
+                   ((FnSubEnv)env).addTemplateInstance(type);
+               }
+               generatedTypes.put(args,type);
+               return type;
            }
        }
        return generatedTypes.get(args);

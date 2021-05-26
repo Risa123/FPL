@@ -30,7 +30,7 @@ public final class Main implements IFunction{
         modEnv.declareMain();
         var fnEnv = new FnEnv(env,NumberInfo.INT);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
-        fnEnv.addFunction("argv",new Variable(new PointerInfo(modEnv.getFPL().getString()),"argv","argv"));
+        fnEnv.addFunction("args",new Variable(new PointerInfo(modEnv.getFPL().getString()),"_args","args"));
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",TokenType.ID)),"mainThread","mainThread"));
         writer.write(modEnv.getInitializer("_init"));
         var b = new BuilderWriter(writer);
@@ -43,7 +43,11 @@ public final class Main implements IFunction{
                 var e = iterator.next();
                 if(e.allDependenciesInitCalled()){
                     e.initCalled();
-                    b.write(e.getInitializerCall());
+                    if(modEnv == e){
+                        b.write(e.getInitializerCode());
+                    }else{
+                        b.write(e.getInitializerCall());
+                    }
                     iterator.remove();
                 }
             }
@@ -51,6 +55,10 @@ public final class Main implements IFunction{
         b.write("_Thread mainThread;\n");
         b.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
         b.write("_std_lang_currentThread = &mainThread;\n");
+        b.write("_String* _args = malloc(argc * sizeof(_String));\n");
+        b.write("for(int i = 0;i < argc;++i){\n");
+        b.write("I_std_lang_String_init0(_args + i,argv[i],strlen(argv[i]),0);\n");
+        b.write("}\n");
         it.nextList().compile(b,fnEnv,it);
         fnEnv.compileDestructorCalls(b);
         var modules1 = new ArrayList<ModuleEnv>();
@@ -70,7 +78,7 @@ public final class Main implements IFunction{
         }
         b.write(modEnv.getDestructor());
         if(fnEnv.notReturnUsed()){
-            b.write("return 0;\n}\n");
+            b.write("free(_args);\nreturn 0;\n}");
         }
         modEnv.appendFunctionCode(b.getCode());
         return TypeInfo.VOID;
