@@ -113,12 +113,14 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     @Override
     public void addTemplateInstance(InstanceInfo type){
-        typesForDeclarations.add(type);
-        for(var t:type.getRequiredTypes()){
-           if(!t.isPrimitive() && t.notIn(typesForDeclarations)){
-               typesForDeclarations.add(t);
-           }
-        }
+      if(!type.isPrimitive() && type.notIn(typesForDeclarations)){
+          typesForDeclarations.add(type);
+          for(var t:type.getRequiredTypes()){
+              if(!t.isPrimitive() && t.notIn(typesForDeclarations)){
+                  typesForDeclarations.add(t);
+              }
+          }
+      }
     }
     public void requestFromOutSide(){
 	    getRequestFromOutSide = true;

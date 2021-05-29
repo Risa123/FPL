@@ -198,7 +198,7 @@ public class Fn extends AFunctionBlock{
             }else if(oneLine){
 			    b.write('\n');
             }
-			if(fnEnv.notReturnUsed() && returnType != TypeInfo.VOID){
+			if(fnEnv.isReturnNotUsed() && returnType != TypeInfo.VOID){
 				throw new CompilerException(block,"there is no return in this function and this function doesn't return void");
 			}
 			if(macroDeclaration.isEmpty()){

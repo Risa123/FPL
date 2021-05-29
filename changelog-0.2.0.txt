@@ -100,3 +100,4 @@ fix method called on returned value C error
 fix binary operator type check ex: 1 / 1.6  is now valid
 fix template generated in same file it is declared C error
 fix template unknown type C errors
+fix main return in sub-block C error

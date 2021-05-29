@@ -77,7 +77,7 @@ public final class Main implements IFunction{
             }
         }
         b.write(modEnv.getDestructor());
-        if(fnEnv.notReturnUsed()){
+        if(fnEnv.isReturnNotUsed()){
             b.write("free(_args);\nreturn 0;\n}");
         }
         modEnv.appendFunctionCode(b.getCode());

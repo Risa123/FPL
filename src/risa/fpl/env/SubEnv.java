@@ -32,9 +32,6 @@ public class SubEnv extends AEnv{
       }
       return super.getType(atom);
   }
-  public TypeInfo getReturnType(){
-      return ((SubEnv)superEnv).getReturnType();
- }
  @Override
  public FPL getFPL(){
       return superEnv.getFPL();
