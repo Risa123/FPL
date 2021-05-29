@@ -52,22 +52,24 @@ public final class TemplateTypeInfo extends InstanceInfo{
                        cEnv.addFunction(typeName,constructor);
                    }
                }
-               mod.importModules(writer);
+               mod.importModules();
                new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
-               mod.declareTypes(writer,new ArrayList<>(cEnv.getInstanceType().getRequiredTypes()));
-               mod.declareTypes(writer);
-               writer.write(cEnv.getInstanceType().getDeclaration());
-               writer.write(mod.getVariableDeclarations());
-               writer.write(cEnv.getDataDefinition());
-               writer.write(cEnv.getFunctionCode());
                var type = cEnv.getInstanceType();
-               if(type.getDestructorName() != null){
-                   writer.write(cEnv.getDestructor()); //somehow is not done in ClassBlock
+               for(var t:type.getRequiredTypes()){
+                   mod.addTypesForDeclaration(t);
                }
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(type);
                }else{
                    ((FnSubEnv)env).addTemplateInstance(type);
+               }
+               mod.declareTypes(writer);
+               writer.write(cEnv.getInstanceType().getDeclaration());
+               writer.write(mod.getVariableDeclarations());
+               writer.write(cEnv.getDataDefinition());
+               writer.write(cEnv.getFunctionCode());
+               if(type.getDestructorName() != null){
+                   writer.write(cEnv.getDestructor());//somehow is not done in ClassBlock
                }
                generatedTypes.put(args,type);
                return type;

@@ -52,7 +52,7 @@ public final class ModuleBlock extends AThreePassBlock{
                if(!env.isMainDeclared() && isMain()){
                    throw new CompilerException(1,1,"declaration of main expected");
                }
-               env.importModules(writer);
+               env.importModules();
                env.declareTypes(writer);
                writer.write(b.getCode());
                writer.write(env.getVariableDeclarations());

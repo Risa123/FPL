@@ -27,8 +27,9 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	private int mainDeclared;
 	private final ArrayList<TypeInfo>typesForDeclarations = new ArrayList<>();
-	private final ArrayList<Function> inaccessibleFunctions = new ArrayList<>();
-	private final ArrayList<Integer> classConstructorLines = new ArrayList<>();
+	private final ArrayList<Function>inaccessibleFunctions = new ArrayList<>();
+	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
+	private final StringBuilder importDeclarations = new StringBuilder();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -45,23 +46,21 @@ public final class ModuleEnv extends ANameSpacedEnv{
            }
         }
     }
-	public void importModules(BufferedWriter writer)throws IOException{
-	    var types = new ArrayList<TypeInfo>();
+	public void importModules(){
 	    for(var mod:importedModules){
 	        for(var type:mod.types.values()){
-	            if(type.notIn(types)){
-	                types.add(type);
-	                addRequiredTypes(type,types);
+	            if(type.notIn(typesForDeclarations) && !type.isPrimitive()){
+	                typesForDeclarations.add(type);
+	                addRequiredTypes(type,typesForDeclarations);
                 }
             }
         }
-	    declareTypes(writer,types);
 		for(var mod:importedModules){
             for(var func:mod.functions.values()){
                 if(func instanceof Function f  && !(func instanceof ClassVariable)  && f.getAccessModifier() != AccessModifier.PRIVATE){
-                    writer.write(f.getDeclaration());
+                    importDeclarations.append(f.getDeclaration());
                 }else if(func instanceof Variable v){
-                    writer.write(v.getExternDeclaration());
+                    importDeclarations.append(v.getExternDeclaration());
                 }
             }
         }
@@ -181,15 +180,16 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public boolean multipleMainDeclared(){
 	    return mainDeclared == AThreePassBlock.MAX_PASSES;
     }
-    public void declareTypes(BufferedWriter writer,ArrayList<TypeInfo> types)throws IOException{
+    public void declareTypes(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
-        while(!types.isEmpty()){
-            var it = types.iterator();
+        System.out.println(typesForDeclarations);
+        while(!typesForDeclarations.isEmpty()){
+            var it = typesForDeclarations.iterator();
             while(it.hasNext()){
                 var t = it.next();
                 var hasAll = true;
                 for(var rt:t.getRequiredTypes()){
-                    if(rt.notIn(declared) && !rt.notIn(types)){
+                    if(rt.notIn(declared) && !rt.notIn(typesForDeclarations)){
                         hasAll = false;
                         break;
                     }
@@ -201,9 +201,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
             }
         }
-    }
-    public void declareTypes(BufferedWriter writer)throws IOException{
-	    declareTypes(writer,typesForDeclarations);
+        writer.write(importDeclarations.toString());
     }
     @Override
     public void addType(String name,TypeInfo type,boolean declaration){
@@ -215,8 +213,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	        moduleBlock.setString(type);
         }
     }
-    private void addTypesForDeclaration(TypeInfo type){
-	   if(!type.notIn(types.values()) && type.notIn(typesForDeclarations)){
+    public void addTypesForDeclaration(TypeInfo type){
+	   if(type.notIn(typesForDeclarations)){
            typesForDeclarations.add(type);
            for(var t:type.getRequiredTypes()){
                addTypesForDeclaration(t);
