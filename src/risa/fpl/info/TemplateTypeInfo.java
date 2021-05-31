@@ -1,6 +1,7 @@
 package risa.fpl.info;
 
 import risa.fpl.CompilerException;
+import risa.fpl.ModuleBlock;
 import risa.fpl.env.*;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.function.statement.ClassVariable;
@@ -26,14 +27,17 @@ public final class TemplateTypeInfo extends InstanceInfo{
     }
     public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
        if(!generatedTypes.containsKey(args)){
-           var mod = getModule();
            var cName = new StringBuilder(getCname());
            for(var arg:args){
                cName.append(arg.getCname());
            }
-           var file = mod.getNameSpace() + cName + ".c";
+           var superMod = getModule();
+           var file = superMod.getNameSpace() + cName + ".c";
            instanceFiles.add(file);
-           try(var writer = Files.newBufferedWriter(Paths.get(mod.getFPL().getOutputDirectory() + "/" + file))){
+           var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
+           var writer = Files.newBufferedWriter(path);
+           var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL()),cName.toString());
+           try(writer){
                var name = new StringBuilder(getName());
                for(var arg:args){
                    name.append(arg.getName());
@@ -64,14 +68,14 @@ public final class TemplateTypeInfo extends InstanceInfo{
                    ((FnSubEnv)env).addTemplateInstance(type);
                }
                mod.declareTypes(writer);
-               writer.write(cEnv.getInstanceType().getDeclaration());
+               writer.write(type.getDeclaration());
                writer.write(mod.getVariableDeclarations());
                writer.write(cEnv.getDataDefinition());
-               writer.write(cEnv.getFunctionCode());
-               if(type.getDestructorName() != null){
-                   writer.write(cEnv.getDestructor());//somehow is not done in ClassBlock
-               }
+               writer.write(mod.getFunctionCode());
                generatedTypes.put(args,type);
+               if(mod.getInitializerCall() != null){
+                   getModule().appendToInitializer(mod.getInitializerCall());
+               }
                return type;
            }
        }

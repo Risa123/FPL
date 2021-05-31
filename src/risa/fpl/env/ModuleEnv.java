@@ -30,10 +30,14 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<Function>inaccessibleFunctions = new ArrayList<>();
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
-	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock){
+	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
-		nameSpace = IFunction.toCId(moduleBlock.getName().replace('.','_'));
+		if(generatedTemplateCName == null){//template generation
+            nameSpace = IFunction.toCId(moduleBlock.getName().replace('.','_'));
+        }else{
+            nameSpace = ((ModuleEnv)superEnv).nameSpace + generatedTemplateCName;
+        }
 		if(moduleBlock.isMain()){
 		    addFunction("main",new Main());
         }
@@ -47,6 +51,13 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
     }
 	public void importModules(){
+	    if(superEnv instanceof ModuleEnv mod){
+	        for(var m:mod.importedModules){
+	            if(!importedModules.contains(m)){
+	                importedModules.add(m);
+                }
+            }
+        }
 	    for(var mod:importedModules){
 	        for(var type:mod.types.values()){
 	            if(type.notIn(typesForDeclarations) && !type.isPrimitive()){
@@ -182,7 +193,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public void declareTypes(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
-        System.out.println(typesForDeclarations);
         while(!typesForDeclarations.isEmpty()){
             var it = typesForDeclarations.iterator();
             while(it.hasNext()){
@@ -200,6 +210,9 @@ public final class ModuleEnv extends ANameSpacedEnv{
                     it.remove();
                 }
             }
+        }
+        if(superEnv instanceof ModuleEnv mod){
+            importDeclarations.append(mod.importDeclarations);
         }
         writer.write(importDeclarations.toString());
     }
@@ -259,11 +272,10 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public boolean notClassConstructorOnLine(int line){
         return !classConstructorLines.contains(line);
     }
-    @Override
-    public String getInitializer(String name){
+    public String getInitializer(){
         if(isMain()){
             return "";
         }
-        return super.getInitializer(name);
+        return getInitializer("init");
     }
 }

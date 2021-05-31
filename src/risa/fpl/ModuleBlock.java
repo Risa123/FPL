@@ -43,7 +43,7 @@ public final class ModuleBlock extends AThreePassBlock{
        if(!compiled){
            compiled = true;
            try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
-               env = new ModuleEnv(fpl.getEnv(),this);
+               env = new ModuleEnv(fpl.getEnv(),this,null);
                if(!(name.equals("std.lang") || name.equals("std.backend"))){
                    env.addModuleToImport(new Atom(0,0,"std.lang",TokenType.ID));
                }
@@ -81,7 +81,7 @@ public final class ModuleBlock extends AThreePassBlock{
                    makeMethod("toString","integerToString",NumberInfo.MEMORY);
                }
                if(!isMain()){
-                   writer.write(env.getInitializer("_init"));
+                   writer.write(env.getInitializer());
                    writer.write(env.getDestructor());
                }
            }catch(CompilerException ex){

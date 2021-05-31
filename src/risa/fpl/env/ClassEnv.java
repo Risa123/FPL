@@ -38,7 +38,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("internal",INTERNAL);
 		super.addFunction("-this",DESTRUCTOR);
 		var cname = IFunction.toCId(id);
-		nameSpace = superEnv.getNameSpace() + cname;
+		if(templateStatus == TemplateStatus.GENERATING){
+		    nameSpace = superEnv.getNameSpace();
+        }else{
+            nameSpace = superEnv.getNameSpace() + cname;
+        }
 		classType = new ClassInfo(id);
 		if(templateStatus == TemplateStatus.TEMPLATE){
             instanceType = new TemplateTypeInfo(id,superEnv);
@@ -255,5 +259,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             b.append(",a").append(i);
         }
         return  b.append(");\n").toString();
+    }
+    public String getInitializer(){
+	    return getInitializer("cinit");
     }
 }

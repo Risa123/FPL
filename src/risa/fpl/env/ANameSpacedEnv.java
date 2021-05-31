@@ -15,12 +15,12 @@ public abstract class ANameSpacedEnv extends SubEnv{
     public final void appendToInitializer(String code){
         initializer.append(code);
     }
-    public String getInitializer(String name){
+    protected final String getInitializer(String name){
         if(initializer.isEmpty()){
             initializerCall = "";
         }else{
             var b = new StringBuilder("void ");
-            initializerCall = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + name;
+            initializerCall = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + "_" + name;
             b.append(initializerCall);
             initializerCall += "();\n";
             b.append("(){\n").append(initializer).append("}\n");
