@@ -56,7 +56,27 @@ public interface IFunction{
      var args = new LinkedHashMap<String,TypeInfo>();
      var lastLine = it.getLastLine();
      var lastChar = it.getLastCharNum();
-     for(var arg:getTemplateArguments(it,false)){
+      var list = new ArrayList<Atom>();
+      while(it.hasNext()){
+          var exp = it.peek();
+          if(exp instanceof Atom typeID){
+              if(typeID.getType() == TokenType.ID){
+                  if(list.contains(typeID)){
+                      throw new CompilerException(typeID,"duplicate template argument");
+                  }
+                  list.add(typeID);
+                  it.next();
+              }else if(typeID.getType() == TokenType.END_ARGS){
+                  it.next();
+                  break;
+              }else{
+                  throw new CompilerException(exp,"template argument or ; expected instead of " + typeID);
+              }
+          }else{
+              break;
+          }
+      }
+     for(var arg:list){
          var argType = new TypeInfo(arg.getValue(),"");
          argType.setPrimaryParent(TypeInfo.OBJECT);
          var cls = new ClassInfo(arg.getValue());
@@ -70,17 +90,27 @@ public interface IFunction{
      }
      return args;
   }
-  static ArrayList<Atom>getTemplateArguments(ExpIterator it,boolean classVariable)throws CompilerException{
-      var list = new ArrayList<Atom>();
+
+  static ArrayList<Object>parseTemplateGeneration(ExpIterator it,AEnv env)throws CompilerException{
+      return parseTemplateGeneration(it,env,false);
+  }
+  static ArrayList<Object>parseTemplateGeneration(ExpIterator it,AEnv env,boolean classVariable)throws CompilerException{
+      var args = new ArrayList<>();
       while(it.hasNext()){
           var exp = it.peek();
           if(exp instanceof Atom typeID){
               if(typeID.getType() == TokenType.ID){
-                  if(list.contains(typeID)){
-                      throw new CompilerException(typeID,"duplicate template argument");
-                  }
-                  list.add(typeID);
                   it.next();
+                  Object arg = env.getType(typeID);
+                  if(arg instanceof TemplateTypeInfo t){
+                     if(it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
+                         it.next();
+                         arg = new TemplateArgument(t,parseTemplateGeneration(it,env,classVariable));
+                     }else{
+                         throw new CompilerException(typeID,"template arguments expected");
+                     }
+                  }
+                  args.add(arg);
               }else if(typeID.getType() == TokenType.END_ARGS){
                   it.next();
                   break;
@@ -96,18 +126,7 @@ public interface IFunction{
               break;
           }
       }
-      return list;
-  }
-  static ArrayList<TypeInfo>parseTemplateGeneration(ExpIterator it,AEnv env)throws CompilerException{
-      return parseTemplateGeneration(it,env,false);
-  }
-  static ArrayList<TypeInfo>parseTemplateGeneration(ExpIterator it,AEnv env,boolean classVariable)throws CompilerException{
-      var args = getTemplateArguments(it,classVariable);
-      var types = new ArrayList<TypeInfo>();
-      for(var arg:args){
-          types.add(env.getType(arg));
-      }
-      return types;
+      return args;
   }
   static InstanceInfo generateTypeFor(TypeInfo template,Atom typeAtom,ExpIterator it,AEnv env,boolean classVariable)throws CompilerException,IOException{
       if(template instanceof TemplateTypeInfo tType){

@@ -16,20 +16,17 @@ contextSave and contextRestore support ia64
 better code generation
 $sp changed to $\s
 alloc static method add to all classes
-pointers can be cast to string
 function memoryCopy added to std.lang
 module std.collection added
-added method set to string
-added method free to pointers and string
+added method free to pointers
 added method toString to integer numbers
-renamed string method equals to ==
 added enum
 changes in build format
 gcc officially required
 cstruct renamed to struct
 struct now can have normal identifiers
 character numbers are replaced by token numbers
-+ and - can be used as unary operator
++/- can be used as unary operator
 destructors added
 goniometric functions added
 if_flag renamed to ifFlag

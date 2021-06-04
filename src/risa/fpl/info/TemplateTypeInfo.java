@@ -3,6 +3,7 @@ package risa.fpl.info;
 import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
 import risa.fpl.env.*;
+import risa.fpl.function.TemplateArgument;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.parser.Atom;
@@ -25,10 +26,17 @@ public final class TemplateTypeInfo extends InstanceInfo{
     public TemplateTypeInfo(String name,ModuleEnv module){
         super(name,module);
     }
-    public InstanceInfo generateTypeFor(ArrayList<TypeInfo>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
-       if(!generatedTypes.containsKey(args)){
+    public InstanceInfo generateTypeFor(ArrayList<Object>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
+       var argsInfo = new ArrayList<TypeInfo>();
+       for(var arg:args){
+           if(arg instanceof TemplateArgument t){
+            arg = t.type().generateTypeFor(t.args(),env,line,charNum);
+           }
+           argsInfo.add((TypeInfo)arg);
+       }
+       if(!generatedTypes.containsKey(argsInfo)){
            var cName = new StringBuilder(getCname());
-           for(var arg:args){
+           for(var arg:argsInfo){
                cName.append(arg.getCname());
            }
            var superMod = getModule();
@@ -39,20 +47,20 @@ public final class TemplateTypeInfo extends InstanceInfo{
            var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL()),cName.toString());
            try(writer){
                var name = new StringBuilder(getName());
-               for(var arg:args){
+               for(var arg:argsInfo){
                    name.append(arg.getName());
                }
                var cEnv = new ClassEnv(mod,name.toString(),TemplateStatus.GENERATING);
-               if(args.size() != templateArgs.size()){
-                   throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + args.size());
+               if(argsInfo.size() != templateArgs.size()){
+                   throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + argsInfo.size());
                }
                for(int i = 0;i < templateArgs.size();++i){
                    var typeName = (String)templateArgs.keySet().toArray()[i];
-                   var type = args.get(i);
+                   var type = argsInfo.get(i);
                    cEnv.addType(typeName,type);
                    if(type instanceof InstanceInfo instance){
                        var constructor = new ClassVariable(instance,type.getClassInfo());
-                       constructor.addVariant(args.toArray(new TypeInfo[0]),cEnv.getNameSpace());
+                       constructor.addVariant(argsInfo.toArray(new TypeInfo[0]),cEnv.getNameSpace());
                        cEnv.addFunction(typeName,constructor);
                    }
                }
@@ -72,14 +80,14 @@ public final class TemplateTypeInfo extends InstanceInfo{
                writer.write(mod.getVariableDeclarations());
                writer.write(cEnv.getDataDefinition());
                writer.write(mod.getFunctionCode());
-               generatedTypes.put(args,type);
+               generatedTypes.put(argsInfo,type);
                if(mod.getInitializerCall() != null){
                    getModule().appendToInitializer(mod.getInitializerCall());
                }
                return type;
            }
        }
-       return generatedTypes.get(args);
+       return generatedTypes.get(argsInfo);
     }
     public void setDataForGeneration(List block,ArrayList<InterfaceInfo>interfaces,LinkedHashMap<String,TypeInfo>templateArgs){
         this.block = block;

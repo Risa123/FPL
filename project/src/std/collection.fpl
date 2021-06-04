@@ -61,5 +61,5 @@ class Entry;K V{
   fn void setValue V value = this value = value
 }
 class Map;K V{
-  private const ArrayList;int; entries
+  private const ArrayList;Entry;int int;; entries
 }

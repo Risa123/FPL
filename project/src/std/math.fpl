@@ -14,7 +14,7 @@ fn double sin double x{
  var cur x
  double acc 1;fact 1;pow x
  while abs acc; > 0.00000001; && i < 100{
-   var a  2 * i
+   var a 2 * i
    var b 2 * i + 1
    fact *= a * b
    pow *=  x * x * -1
@@ -30,6 +30,6 @@ private fn double abs double x{
   }
   return x -
 }
-fn double cos double x = sin x + PI / 2
+fn double cos double x = sin x + 90
 fn double tan double x = sin x; / cos x
 fn double cotan double x = 1 / sin x
