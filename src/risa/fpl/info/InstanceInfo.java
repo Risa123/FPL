@@ -7,7 +7,7 @@ import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.statement.ClassVariable;
 
 public class InstanceInfo extends TypeInfo{
-    private String attributesCode,implCode,destructorName,instanceFree;
+    private String attributesCode,implCode,destructorName,instanceFree,copyConstructorName;
     private final ModuleEnv module;
     private boolean complete;
     private ClassVariable constructor;
@@ -76,5 +76,11 @@ public class InstanceInfo extends TypeInfo{
                 addRequiredType(arg);
             }
         }
+    }
+    public final String getCopyConstructorName(){
+        return copyConstructorName;
+    }
+    public final void setCopyConstructorName(String name){
+        copyConstructorName = name;
     }
 }

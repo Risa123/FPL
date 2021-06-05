@@ -1,4 +1,5 @@
 template type as argument added
+copy constructor added
 fix template type as argument check
 fix cos function
 fix cotan function

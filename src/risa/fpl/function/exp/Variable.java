@@ -7,6 +7,7 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
@@ -33,14 +34,28 @@ public final class Variable extends ValueExp{
 	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
 	    var value = atom.getValue();
 		if(value.equals("=")){
-		   if(constant){
+		   if(constant && !(type instanceof InstanceInfo)){
 			  throw new CompilerException(line,charNum,"constant cannot be redefined");    	
 			}
-		    writePrev(writer);
-		    writer.write(code);
-			writer.write('=');
-			onlyDeclared = false;
-		    execute(it,writer,env,""); //not drf equals
+		    if(type instanceof InstanceInfo i){
+		    	writer.write(i.getCopyConstructorName());
+		    	writer.write("(&");
+		    	writePrev(writer);
+		    	writer.write(code);
+		    	writer.write(",&");
+		    	var exp = it.next();
+		    	var t = exp.compile(writer,env,it);
+		    	if(!t.equals(type)){
+		    		throw new CompilerException(exp,"expression expected to return " + type + " instead of " + t);
+				}
+		    	writer.write(");\n");
+			}else{
+				writePrev(writer);
+				writer.write(code);
+				writer.write('=');
+				onlyDeclared = false;
+				execute(it,writer,env,"");//not drf equals
+			}
 		    return TypeInfo.VOID;
 		}else if(value.equals("ref")){
 		    var b = new BuilderWriter(writer);

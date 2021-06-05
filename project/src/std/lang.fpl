@@ -66,10 +66,10 @@ class String{
     ret set i,$\0
     return ret
   }
-  fn void assign String str{
-    len = str len
-    p = str p
-    allocated = str allocated
+  =this{
+    len = o len
+    p = o p
+    allocated = o allocated
   }
   fn uint getLength = len
   fn String toString = this drf

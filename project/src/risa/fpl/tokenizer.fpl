@@ -14,7 +14,7 @@ class Token{
   this int line int tokenNum String value TokenType type{
     this line = line
     this tokenNum = tokenNum
-    this value assign value
+    this value = value
   }
   fn int getLine = line
   fn int getTokenNum = tokenNum

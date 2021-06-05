@@ -8,6 +8,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.AddModifier;
 import risa.fpl.function.SetAccessModifier;
 import risa.fpl.function.block.Constructor;
+import risa.fpl.function.block.CopyConstructor;
 import risa.fpl.function.block.Destructor;
 import risa.fpl.function.exp.*;
 import risa.fpl.function.statement.ClassVariable;
@@ -22,13 +23,14 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
-	private boolean parentConstructorCalled,destructorDeclared;
+	private boolean parentConstructorCalled,destructorDeclared,copyConstructorDeclared;
 	private static final SetAccessModifier PROTECTED = new SetAccessModifier(AccessModifier.PROTECTED);
 	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
 	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
 	private static final AddModifier OVERRIDE = new AddModifier(Modifier.OVERRIDE);
 	private static final Destructor DESTRUCTOR = new Destructor();
 	private static final Constructor CONSTRUCTOR = new Constructor();
+	private static final CopyConstructor COPY_CONSTRUCTOR = new CopyConstructor();
 	public ClassEnv(ModuleEnv superEnv,String id,TemplateStatus templateStatus){
 		super(superEnv);
 		super.addFunction("this",CONSTRUCTOR);
@@ -37,6 +39,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("override",OVERRIDE);
 		super.addFunction("internal",INTERNAL);
 		super.addFunction("-this",DESTRUCTOR);
+		super.addFunction("=this",COPY_CONSTRUCTOR);
 		var cname = IFunction.toCId(id);
 		if(templateStatus == TemplateStatus.GENERATING){
 		    nameSpace = superEnv.getNameSpace();
@@ -262,5 +265,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public String getInitializer(){
 	    return getInitializer("cinit");
+    }
+    public boolean isCopyConstructorDeclared(){
+	    return copyConstructorDeclared;
+    }
+    public void declareCopyConstructor(){
+	    copyConstructorDeclared = true;
     }
 }

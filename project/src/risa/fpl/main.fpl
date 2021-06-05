@@ -6,7 +6,7 @@ use{
 }
 class FPL{
  this{
-  Map;int int; properties
+  Map;String String; properties
  }
 }
 main{
