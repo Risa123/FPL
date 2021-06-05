@@ -124,12 +124,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     @Override
     public void addTemplateInstance(InstanceInfo type){
       if(!type.isPrimitive() && type.notIn(typesForDeclarations)){
-          typesForDeclarations.add(type);
-          for(var t:type.getRequiredTypes()){
-              if(!t.isPrimitive() && t.notIn(typesForDeclarations)){
-                  typesForDeclarations.add(t);
-              }
-          }
+         addTypesForDeclaration(type);
       }
     }
     public void requestFromOutSide(){
@@ -227,7 +222,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
     }
     public void addTypesForDeclaration(TypeInfo type){
-	   if(type.notIn(typesForDeclarations)){
+	   if(!type.isPrimitive() && type.notIn(typesForDeclarations)){
            typesForDeclarations.add(type);
            for(var t:type.getRequiredTypes()){
                addTypesForDeclaration(t);

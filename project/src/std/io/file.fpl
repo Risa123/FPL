@@ -5,7 +5,11 @@ use{
 abstract class FileHandler Closeable{
    protected const void* handle
    this String name String mode{
-      handle = fileOpen name toCString;,mode toCString
+      var cname name toCString
+      var cmode mode toCString
+      handle = fileOpen cname,cmode
+      cname free
+      cmode free
       if handle == nil{
         IOException ex "unable to open file " + name
         ex throw

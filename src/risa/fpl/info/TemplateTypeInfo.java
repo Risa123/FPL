@@ -41,7 +41,9 @@ public final class TemplateTypeInfo extends InstanceInfo{
            }
            var superMod = getModule();
            var file = superMod.getNameSpace() + cName + ".c";
-           instanceFiles.add(file);
+           if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
+               instanceFiles.add(file);
+           }
            var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
            var writer = Files.newBufferedWriter(path);
            var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL()),cName.toString());
@@ -70,10 +72,12 @@ public final class TemplateTypeInfo extends InstanceInfo{
                for(var t:type.getRequiredTypes()){
                    mod.addTypesForDeclaration(t);
                }
-               if(env instanceof ANameSpacedEnv e){
-                   e.addTemplateInstance(type);
-               }else{
-                   ((FnSubEnv)env).addTemplateInstance(type);
+               if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
+                   if(env instanceof ANameSpacedEnv e){
+                       e.addTemplateInstance(type);
+                   }else{
+                       ((FnSubEnv)env).addTemplateInstance(type);
+                   }
                }
                mod.declareTypes(writer);
                writer.write(type.getDeclaration());
@@ -83,6 +87,9 @@ public final class TemplateTypeInfo extends InstanceInfo{
                generatedTypes.put(argsInfo,type);
                if(mod.getInitializerCall() != null){
                    getModule().appendToInitializer(mod.getInitializerCall());
+               }
+               if(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo){
+                   Files.delete(path);
                }
                return type;
            }

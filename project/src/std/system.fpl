@@ -5,7 +5,9 @@ fn void exit int exitCode{
  exit exitCode
 }
 fn int execute String cmd{
-  var exitCode execute cmd toCString
+  var ccmd cmd toCString
+  var exitCode execute ccmd
+  ccmd free
   if exitCode == -1{
     IOException:new "invalid command";throw
   }

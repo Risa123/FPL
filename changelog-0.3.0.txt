@@ -1,3 +1,4 @@
 template type as argument added
 fix template type as argument check
 fix cos function
+fix cotan function

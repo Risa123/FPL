@@ -23,6 +23,7 @@ public final class ClassInfo extends TypeInfo{
     public static final ClassInfo FLOAT = new ClassInfo("float");
     public static final ClassInfo OBJECT = new ClassInfo("object");
     public static final ClassInfo MEMORY = new ClassInfo("memory");
+    private TypeInfo instanceType;
     static{
         TypeInfo.CHAR.setClassInfo(CHAR);
         TypeInfo.BOOL.setClassInfo(BOOL);
@@ -67,5 +68,11 @@ public final class ClassInfo extends TypeInfo{
     }
     public ClassInfo(String name){
         super(name + " class","",false);
+    }
+    public TypeInfo getInstanceType(){
+        return instanceType;
+    }
+    public void setInstanceType(TypeInfo type){
+        instanceType = type;
     }
 }

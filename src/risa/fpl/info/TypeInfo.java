@@ -89,6 +89,7 @@ public class TypeInfo{
   }
   public void setClassInfo(ClassInfo info){
       classInfo = info;
+      info.setInstanceType(this);
   }
   public ClassInfo getClassInfo(){
       return classInfo;
