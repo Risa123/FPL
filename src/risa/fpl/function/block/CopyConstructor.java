@@ -20,7 +20,7 @@ public final class CopyConstructor extends ABlock{
             throw new CompilerException(line,charNum,"can only be declared in class block");
         }
         if(cEnv.isCopyConstructorDeclared()){
-            throw new CompilerException(line,charNum,"copy constructor declared");
+            throw new CompilerException(line,charNum,"copy constructor already declared");
         }
         cEnv.declareCopyConstructor();
         var b = new BuilderWriter(writer);

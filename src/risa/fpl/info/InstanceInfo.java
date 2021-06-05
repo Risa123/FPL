@@ -41,6 +41,9 @@ public class InstanceInfo extends TypeInfo{
     @Override
     public final void buildDeclaration(){
         complete = true;
+        for(var t:constructor.getRequiredTypes()){
+            addRequiredType(t);
+        }
         super.buildDeclaration();
     }
     @Override

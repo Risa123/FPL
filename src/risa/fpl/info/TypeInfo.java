@@ -8,6 +8,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.IClassOwnedEnv;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 
 public class TypeInfo{
@@ -177,7 +178,7 @@ public class TypeInfo{
       }
       return true;
   }
-  public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
+  public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,boolean notReturnedByFunction){
       if(expCode.endsWith(";\n")){ //caused by Var
           expCode = expCode.substring(0,expCode.length() - 2);
       }
@@ -188,15 +189,24 @@ public class TypeInfo{
       var convName = getConversionMethodCName(to);
       if(this != npType && !primitive && convName != null /*would return null for nil pointer*/){
           var prefix = "";
+          var postfix = "";
           if(!comesFromPointer){
-              prefix = "&";
+            if(notReturnedByFunction){
+                prefix = "&";
+            }else if(this instanceof InstanceInfo i){
+                prefix = IFunction.INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + cname + "_toPointer(";
+                postfix = ")";
+            }
           }
-          return convName + "(" + prefix +  expCode + ")";
+          return convName + "(" + prefix +  expCode + postfix + ")";
       }
       return expCode;
   }
   public String ensureCast(TypeInfo to,String expCode){
-      return ensureCast(to,expCode,false);
+      return ensureCast(to,expCode,false,true);
+  }
+  public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
+      return ensureCast(to,expCode,comesFromPointer,true);
   }
     /**
      *checks if type can be implicitly  converted or is  this one

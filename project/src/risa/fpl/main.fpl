@@ -2,16 +2,27 @@ use{
   std.io.file
   std.io.base
   std.collection
-  std.backend
+  risa.fpl.tokenizer
+  risa.fpl.base
 }
 class FPL{
- this{
+ this String project{
   Map;String String; properties
+  Tokenizer tokenizer FileReader:new project
+  while tokenizer hasNext{
+    var token tokenizer next
+    if token getType; == TokenType:ID{
+
+    }{
+     CompilerException:new token getLine;,token getTokenNum;,"identifier expected";throw
+    }
+  }
+  tokenizer close
  }
 }
 main{
  if argc != 1{
    return 2 #1 is reserved for exceptions
  }
- FPL fpl
+ FPL fpl args get 0
 }

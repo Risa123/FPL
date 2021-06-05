@@ -68,7 +68,8 @@ class String{
   }
   =this{
     len = o len
-    p = o p
+    p = malloc len
+    memoryCopy o p,p,len
     allocated = o allocated
   }
   fn uint getLength = len
@@ -107,6 +108,7 @@ class Exception{
    }
    internal fn void copyAndFree Exception* to{
      memoryCopy this cast byte*,to cast byte*,getObjectSize
+     to message = message
      this free
    }
 }
@@ -155,7 +157,9 @@ Thread* currentThread
 fn void defaultExceptionHandler Exception* ex{
   print "exception happened:"
   print ex getMessage
-  ex free
+  if currentThread currentEHentry != nil{
+     ex free
+  }
   exit 1
 }
 fn void* realloc void* p memory newSize{

@@ -47,7 +47,7 @@ public class Function implements IField,ICalledOnPointer{
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         var b = new BuilderWriter(writer);
 		var argList = new ArrayList<TypeInfo>();
-		var code = new ArrayList<String>();
+		var returnedData = new ArrayList<ReturnedData>();
 		while(it.hasNext()){
 		   if(it.peek() instanceof List){
 		       break;
@@ -57,8 +57,9 @@ public class Function implements IField,ICalledOnPointer{
 			   break;
 		   }else if(exp.getType() != TokenType.ARG_SEPARATOR){
 			   var buffer = new BuilderWriter(b);
-               argList.add(exp.compile(buffer,env,it));
-               code.add(buffer.getCode());
+			   var f = env.getFunction(exp);
+               argList.add(f.compile(buffer,env,it,exp.getLine(),exp.getCharNum()));
+               returnedData.add(new ReturnedData(buffer.getCode(),!(f instanceof  Function)));
 		   }
 		}
 		var array = new TypeInfo[argList.size()];
@@ -117,7 +118,7 @@ public class Function implements IField,ICalledOnPointer{
             }else{
                 b.write(',');
             }
-            b.write(array[i].ensureCast(variant.args()[i],code.get(i)));
+            b.write(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,false,returnedData.get(i).notReturnedByFunction));
         }
 		b.write(')');
         if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == TokenType.ID){
@@ -290,4 +291,5 @@ public class Function implements IField,ICalledOnPointer{
     public final void prepareForDereference(){
         functionPointer = true;
     }
+    private record ReturnedData(String code,boolean notReturnedByFunction){}
 }
