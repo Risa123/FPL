@@ -79,4 +79,7 @@ public final class NumberInfo extends TypeInfo{
 	public boolean isFloatingPoint(){
 	    return floatingPoint;
     }
+    public int getSize(){
+	    return size;
+    }
 }

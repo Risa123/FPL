@@ -9,7 +9,6 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
-import risa.fpl.function.IFunction;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -130,7 +129,7 @@ public class Function implements IField,ICalledOnPointer{
             field.setPrevCode(b.getCode());
             if(field instanceof Function f && returnType instanceof InstanceInfo i){
                f.notCalledOnVar();
-               var c = IFunction.INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + i.getCname() + "_toPointer(" + f.getPrevCode();
+               var c = INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + i.getCname() + "_toPointer(" + f.getPrevCode();
                f.setPrevCode(c);
                var ret = field.compile(writer,env,it,id.getLine(),id.getCharNum());
                writer.write(')');

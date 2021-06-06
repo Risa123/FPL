@@ -86,7 +86,7 @@ public final class FPL{
     	        files.append(file);
             }
         }
-    	var err = Runtime.getRuntime().exec(gcc + "\\bin\\gcc -w -o " + ccArgs + " " + output + files).getErrorStream();
+    	var err = Runtime.getRuntime().exec(gcc + "\\bin\\gcc -w " + ccArgs + " -o " + output + files).getErrorStream();
         errStream.print(new String(err.readAllBytes()));
     }
     public ModuleBlock getModule(String name)throws IOException,CompilerException{

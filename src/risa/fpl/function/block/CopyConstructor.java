@@ -22,7 +22,6 @@ public final class CopyConstructor extends ABlock{
         if(cEnv.isCopyConstructorDeclared()){
             throw new CompilerException(line,charNum,"copy constructor already declared");
         }
-        cEnv.declareCopyConstructor();
         var b = new BuilderWriter(writer);
         b.write("void ");
         var type = cEnv.getInstanceType();
@@ -35,6 +34,7 @@ public final class CopyConstructor extends ABlock{
         it.nextList().compile(b,fnEnv,it);
         b.write("}\n");
         cEnv.appendFunctionCode(b.getCode());
+        cEnv.declareCopyConstructor();
         return TypeInfo.VOID;
     }
 }

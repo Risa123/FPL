@@ -21,8 +21,9 @@ class FPL{
  }
 }
 main{
- if argc != 1{
+ if argc != 2{
+   print "project directory expected " + "tes"
    return 2 #1 is reserved for exceptions
  }
- FPL fpl args get 0
+ FPL fpl args get 1
 }

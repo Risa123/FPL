@@ -29,12 +29,7 @@ fn int execute char* cmd{
   return result
 }
 alias fileClose fclose
-fn void* fileOpen char* name char* mode{
-  var p fopen name,mode
-  name free
-  mode free
-  return p
-}
+alias fileOpen fopen
 fn memory fileRead void* file byte* p memory size = fread p cast void*,size,1,file
 fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1,file
 alias fileEOF feof

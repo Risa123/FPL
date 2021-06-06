@@ -20,7 +20,6 @@ public final class Destructor extends ABlock{
         if(cEnv.isDestructorDeclared()){
             throw new CompilerException(line,charNum,"destructor already declared");
         }
-        cEnv.destructorDeclared();
         var b = new BuilderWriter(writer);
         b.write("void ");
         var type = cEnv.getInstanceType();
@@ -30,6 +29,7 @@ public final class Destructor extends ABlock{
         it.nextList().compile(b,new FnEnv(env,TypeInfo.VOID),it);
         b.write("}\n");
         cEnv.appendFunctionCode(b.getCode());
+        cEnv.destructorDeclared();
         return TypeInfo.VOID;
     }
 }

@@ -6,3 +6,4 @@ fix cotan function
 fix convert to interface function returned instance C error
 fix unknown type C error in constructor
 fix zeroMemoryError caused by throwing exception which is not caught
+fix compiler arguments C error

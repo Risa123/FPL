@@ -42,7 +42,7 @@ class String{
     return true
   }
   fn String + String str{
-    var ret char:alloc[] len + 1
+    var ret char:alloc[] len + str len
     var i 0
     while i < len{
        ret set i,p get i
@@ -54,7 +54,7 @@ class String{
       strI ++
       i ++
     }
-    return String:new ret,len,true
+    return String:new ret,len + str len,true
   }
   fn char* toCString{
     var ret char:alloc[] len + 1
@@ -68,7 +68,7 @@ class String{
   }
   =this{
     len = o len
-    p = malloc len
+    p = char:alloc[] len
     memoryCopy o p,p,len
     allocated = o allocated
   }
