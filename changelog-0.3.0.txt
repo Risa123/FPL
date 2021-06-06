@@ -1,9 +1,0 @@
-template type as argument added
-copy constructor added
-fix template type as argument check
-fix cos function
-fix cotan function
-fix convert to interface function returned instance C error
-fix unknown type C error in constructor
-fix zeroMemoryError caused by throwing exception which is not caught
-fix compiler arguments C error

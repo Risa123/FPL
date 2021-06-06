@@ -1,6 +1,9 @@
 (#this module is imported automatically)
 use std.backend
 
+fn void print char c{
+ putchar c
+}
 class String{
   private{
     char* p

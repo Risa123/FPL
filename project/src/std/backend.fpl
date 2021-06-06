@@ -1,5 +1,6 @@
 native{
  fn int puts char* str
+ fn int putchar char c
  fn void* malloc memory size
  fn void free void* p
  fn void exit int exitCode:noReturn
