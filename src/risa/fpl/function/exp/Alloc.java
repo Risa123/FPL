@@ -22,7 +22,7 @@ public final class Alloc extends AField{
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
         writer.write("((");
         writer.write(p.getCname());
-        var notOneByteType = type != TypeInfo.CHAR ||(type instanceof NumberInfo n && n.getSize() == 1);
+        var notOneByteType = type != TypeInfo.CHAR ||!(type instanceof NumberInfo n && n.getSize() == 1);
         writer.write(")_std_lang_malloc0(");
         if(notOneByteType){
             writer.write("sizeof(");
