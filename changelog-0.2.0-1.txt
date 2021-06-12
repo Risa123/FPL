@@ -101,6 +101,7 @@ fix main return in sub-block C error
 0.2.1
 template type as argument added
 copy constructor added
+variant of print with char as argument added
 fix template type as argument check
 fix cos function
 fix cotan function

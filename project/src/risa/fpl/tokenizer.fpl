@@ -63,7 +63,7 @@ class Tokenizer{
          if c == $({
             while ready; && read; == $){}
           }if c == $#{
-               while ready; && read; == $\n{}
+            while ready; && read; == $\n{}
           }if c == $${
            if ready; !{
               CompilerException:new line,tokenNum,"char expected";throw

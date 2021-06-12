@@ -8,7 +8,8 @@ use{
 class FPL{
  this String project{
   Map;String String; properties
-  Tokenizer tokenizer FileReader:new project
+  FileReader reader project + "/build.properties"
+  Tokenizer tokenizer reader #toPointer causes error ?
   while tokenizer hasNext{
     var token tokenizer next
     if token getType; == TokenType:ID{
