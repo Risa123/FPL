@@ -5,8 +5,7 @@ private fn String createMessage String message int line int tokenNum{
   var tokenNumStr tokenNum toString
   var second first + tokenNumStr
   var third second + " "
-  var ret third + message
-  return ret
+  return third + message
 }
 class CompilerException Exception{
  this int line int tokenNum String message:createMessage message,line,tokenNum

@@ -144,4 +144,7 @@ class Tokenizer{
   prepare
   return tokens isEmpty; !
  }
+ -this{
+   reader free
+ }
 }
