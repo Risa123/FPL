@@ -2,14 +2,16 @@ use{
  std.io.base
  std.backend
 }
+private{
+ [] char 2 MODE_READ $r,$\0
+ [] char 2 MODE_WRITE $w,$\0
+}
 abstract class FileHandler Closeable{
    protected const void* handle
-   this String name String mode{
+   this String name char* mode{
       var cname name toCString
-      var cmode mode toCString
-      handle = fileOpen cname,cmode
+      handle = fileOpen cname,mode
       cname free
-      cmode free
       if handle == nil{
         IOException:new "unable to open file " + name;;throw
       }
@@ -17,11 +19,11 @@ abstract class FileHandler Closeable{
    override fn void close = fileClose handle
 }
 class FileWriter FileHandler Writable{
-  this String name:name,"w"
+  this String name:name,MODE_WRITE
   override fn void write byte* p memory size = fileWrite handle,p,size
 }
 class FileReader FileHandler Readable{
-  this String name:name,"r"
+  this String name:name,MODE_READ
   override fn void read byte* p memory size = fileRead handle,p,size
   override fn bool ready = fileEOF handle; !
 }

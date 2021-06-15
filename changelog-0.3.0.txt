@@ -1,2 +1,4 @@
 
 fix destructor C error
+fix array initialization expects only atoms
+fix array initialization error on ,

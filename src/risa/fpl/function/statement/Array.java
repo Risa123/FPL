@@ -39,7 +39,7 @@ public final class Array implements IFunction{
 	    String cID;
 	    if(env.hasModifier(Modifier.NATIVE)){
 	    	cID = id.getValue();
-	    	if(IFunction.notCID(cID)) {
+	    	if(IFunction.notCID(cID)){
 	    		throw new CompilerException(id,"invalid C identifier");
 	    	}
 	    }else{
@@ -50,7 +50,7 @@ public final class Array implements IFunction{
 	    writer.write('[');
 	    writer.write(lenAtom.getValue());
 	    writer.write(']');
-	    if(it.hasNext()) {
+	    if(it.hasNext()){
 	    	writer.write("={");
 	    }
 	    int count = 0;
@@ -63,23 +63,25 @@ public final class Array implements IFunction{
 	    env.addFunction(id.getValue(),v);
 	    if(it.hasNext()){
 	    	while(it.hasNext()){
-		    	var exp = it.next();
-		    	if(first) {
-		    		first = false;
-		    	}else {
-		    		writer.write(',');
-		    	}
-		    	var buffer = new BuilderWriter(writer);
-		    	var expType = exp.compile(buffer, env, it);
-		    	if(!expType.equals(type)){
-		    		throw new CompilerException(exp,type + " expected instead of " + expType );
-		    	}
-		    	writer.write(expType.ensureCast(type,buffer.getCode()));
-		    	count++;
+		    	var exp = it.nextAtom();
+		        if(exp.getType() != TokenType.ARG_SEPARATOR){
+					if(first){
+						first = false;
+					}else{
+						writer.write(',');
+					}
+					var buffer = new BuilderWriter(writer);
+					var expType = exp.compile(buffer,env,it);
+					if(!expType.equals(type)){
+						throw new CompilerException(exp,type + " expected instead of " + expType);
+					}
+					writer.write(expType.ensureCast(type,buffer.getCode()));
+					count++;
+				}
 		    }
 		    var len = Long.parseLong(lenAtom.getValue());
 		    writer.write('}');
-		    if(count > len) {
+		    if(count > len){
 		    	throw new CompilerException(line,charNum,"can only have " + len +  " elements");
 		    }
 	    }
