@@ -150,6 +150,9 @@ public final class Variable extends ValueExp{
 	    return type;
     }
     public String getExternDeclaration(){
+		if(getAccessModifier() == AccessModifier.PRIVATE){
+			return "";
+		}
 	    return "extern " + type.getCname() + " " + code + ";\n";
     }
     public String getCname(){

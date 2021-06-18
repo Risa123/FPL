@@ -3,8 +3,8 @@ use{
  std.backend
 }
 private{
- [] char 2 MODE_READ $r,$\0
- [] char 2 MODE_WRITE $w,$\0
+ [] char 2 READ $r,$\0
+ [] char 2 WRITE $w,$\0
 }
 abstract class FileHandler Closeable{
    protected const void* handle
@@ -19,11 +19,11 @@ abstract class FileHandler Closeable{
    override fn void close = fileClose handle
 }
 class FileWriter FileHandler Writable{
-  this String name:name,MODE_WRITE
+  this String name:name,WRITE
   override fn void write byte* p memory size = fileWrite handle,p,size
 }
 class FileReader FileHandler Readable{
-  this String name:name,MODE_READ
+  this String name:name,READ
   override fn void read byte* p memory size = fileRead handle,p,size
   override fn bool ready = fileEOF handle; !
 }

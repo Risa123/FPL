@@ -46,7 +46,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            }
            var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
            var writer = Files.newBufferedWriter(path);
-           var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL()),cName.toString());
+           var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cName.toString());
            try(writer){
                var name = new StringBuilder(getName());
                for(var arg:argsInfo){

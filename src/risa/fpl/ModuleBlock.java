@@ -22,15 +22,16 @@ public final class ModuleBlock extends AThreePassBlock{
    private final List exps;
    private ModuleEnv env;
    private final FPL fpl;
-   public ModuleBlock(Path sourceFile,FPL fpl)throws IOException,CompilerException{
-       this.sourceFile = sourceFile.subpath(2,sourceFile.getNameCount()).toString();
+   public ModuleBlock(Path sourceFile,Path srcDir,FPL fpl)throws IOException,CompilerException{
+       var subPath = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount());
+       this.sourceFile = subPath.toString();
 	   cPath = fpl.getOutputDirectory() + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
 	   this.fpl = fpl;
 	   var name = new StringBuilder();
-	   for(int i = 2;i < sourceFile.getNameCount() - 1;++i){
-			name.append(sourceFile.getName(i)).append('.');
-	   }
-	   name.append(sourceFile.getFileName().toString().split("\\.")[0]);
+	   for(int i = 0; i < subPath.getNameCount() - 1;i++){
+	       name.append(subPath.getName(i)).append('.');
+       }
+	   name.append(subPath.getFileName().toString().split("\\.")[0]);
 	   this.name = name.toString();
 	   try(var parser = new Parser(Files.newBufferedReader(sourceFile))){
 		   exps = parser.parse();

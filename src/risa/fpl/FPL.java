@@ -3,6 +3,7 @@ package risa.fpl;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ public final class FPL{
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();
 	private final ArrayList<String>flags = new ArrayList<>();
 	private TypeInfo string;
+	private final Path srcDir;
     public FPL(String project,PrintStream errStream)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
@@ -25,8 +27,8 @@ public final class FPL{
             ex.setSourceFile("build.properties");
             throw ex;
         }
-    	this.gcc = build.getProperty("gcc");
-    	this.output = build.getProperty("outputFile");
+    	gcc = build.getProperty("gcc");
+    	output = build.getProperty("outputFile");
     	this.errStream = errStream;
     	if(build.containsKey("ccArgs")){
     	    ccArgs = build.getProperty("ccArgs");
@@ -36,9 +38,10 @@ public final class FPL{
     	outputDirectory = project + "/output";
         mainModule = build.getProperty("mainModule");
         Collections.addAll(flags,build.getProperty("flags","").split(","));
-        for(var p:Files.walk(Paths.get(project + "/src")).collect(Collectors.toList())){
+        srcDir = Paths.get(project + "/src");
+        for(var p:Files.walk(srcDir).collect(Collectors.toList())){
             if(p.toString().endsWith(".fpl")){
-                var mod = new ModuleBlock(p,this);
+                var mod = new ModuleBlock(p,srcDir,this);
                 modules.put(mod.getName(),mod);
             }
         }
@@ -77,13 +80,13 @@ public final class FPL{
               compileModule(name,files);
           }
     	}
+    	if(getModule(mainModule) == null){
+    	    throw new CompilerException(0,0,"main module not found");
+        }
     	compileModule(mainModule,files);
     	for(var mod:modules.values()){
     	    for(var file:mod.getEnv().getInstanceFiles()){
-    	        files.append(' ');
-    	        files.append(outputDirectory);
-    	        files.append('/');
-    	        files.append(file);
+    	        files.append(' ').append(outputDirectory).append('/').append(file);
             }
         }
     	var err = Runtime.getRuntime().exec(gcc + "\\bin\\gcc -w " + ccArgs + " -o " + output + files).getErrorStream();
@@ -106,9 +109,7 @@ public final class FPL{
         return mainModule;
     }
     private void compileModule(String name,StringBuilder files)throws IOException,CompilerException{
-        var mod = getModule(name);
-        files.append(' ');
-        files.append(mod.getCPath());
+        files.append(' ').append(getModule(name).getCPath());
     }
 	public static void main(String[] args)throws IOException{
 		if(args.length != 1) {
@@ -130,5 +131,8 @@ public final class FPL{
     }
     void setString(TypeInfo string){
         this.string = string;
+    }
+    public Path getSrcDir(){
+        return srcDir;
     }
 }
