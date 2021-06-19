@@ -262,6 +262,11 @@ fn String integerToString long this{
   this /= 10
   i ++
  }
- String ret buf,i,true
- return ret
+ var j 0
+ var ret char:alloc[] i
+ while j < i{
+   ret set j,buf get j
+   j ++
+ }
+ return String:new ret,i,true
 }

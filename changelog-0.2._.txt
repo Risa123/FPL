@@ -118,3 +118,4 @@ fix array initialization error on ,
 fix inability to find main module is now handled as error message instead of causing compiler to crash
 fix incorrect module name
 fix aliased function not declared in C
+fix integer:toString method fixed
