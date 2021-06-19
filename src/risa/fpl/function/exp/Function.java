@@ -204,6 +204,7 @@ public class Function implements IField,ICalledOnPointer{
     public final Function changeAccessModifier(AccessModifier accessModifier){
         var f = new Function(getName(),returnType,type,self,accessModifier);
         f.variants.addAll(variants);
+        f.declaration.append(declaration);
         return f;
     }
     public final void addVariant(TypeInfo[]args,String cname,String implName){

@@ -262,6 +262,6 @@ fn String integerToString long this{
   this /= 10
   i ++
  }
- String ret buf,20,true
+ String ret buf,i,true
  return ret
 }

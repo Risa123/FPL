@@ -110,3 +110,11 @@ fix unknown type C error in constructor
 fix zeroMemoryError caused by throwing exception which is not caught
 fix compiler arguments C error
 fix String literal has wrong length
+0.2.2
+exe file added to version files
+fix destructor C error
+fix array initialization expects only atoms
+fix array initialization error on ,
+fix inability to find main module is now handled as error message instead of causing compiler to crash
+fix incorrect module name
+fix aliased function not declared in C

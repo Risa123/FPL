@@ -24,11 +24,7 @@ void* stderr __acrt_iob_func STDERR_INDEX
 int IO_FULL_BUFFER 0x0000 #_IOFLBF
 int IO_LINE_BUFFER 0x0040 #_IOLBF
 int IO_NO_BUFFER 0x0004 #_IONBF
-fn int execute char* cmd{
-  var result system cmd
-  cmd free
-  return result
-}
+alias execute system
 alias fileClose fclose
 alias fileOpen fopen
 fn memory fileRead void* file byte* p memory size = fread p cast void*,size,1,file
