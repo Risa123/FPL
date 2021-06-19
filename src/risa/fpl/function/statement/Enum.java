@@ -6,6 +6,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.BinaryOperator;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.info.ClassInfo;
+import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
@@ -23,6 +24,7 @@ public final class Enum implements IFunction{
         var type = new TypeInfo(id,"unsigned int");
         type.addField("==",new BinaryOperator(TypeInfo.BOOL,type,"=="));
         type.addField("!=",new BinaryOperator(TypeInfo.BOOL,type,"!="));
+        type.addField("id",new ValueExp(NumberInfo.UBYTE,""));
         var c = new ClassInfo(id);
         type.setClassInfo(c);
         var i = 0;

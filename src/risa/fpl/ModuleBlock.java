@@ -79,7 +79,10 @@ public final class ModuleBlock extends AThreePassBlock{
                    makeMethod("toString","integerToString",NumberInfo.LONG,false);
                    makeMethod("toString","integerToString",NumberInfo.SLONG,false);
                    makeMethod("toString","integerToString",NumberInfo.ULONG,false);
-                   makeMethod("toString","integerToString",NumberInfo.MEMORY);
+                   makeMethod("toString","integerToString",NumberInfo.MEMORY,false);
+                   makeMethod("toString","integerToString",NumberInfo.BYTE,false);
+                   makeMethod("toString","integerToString",NumberInfo.UBYTE,false);
+                   makeMethod("toString","integerToString",NumberInfo.SBYTE);
                }
                if(!isMain()){
                    writer.write(env.getInitializer());

@@ -1,0 +1,3 @@
+method id added to enum types
+fix toString added to byte types
+fix called on function return C error

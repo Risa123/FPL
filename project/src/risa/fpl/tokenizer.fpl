@@ -46,7 +46,7 @@ class Tokenizer{
       return c
     }
     fn bool ready = reader ready; || readNext !
-    fn void idToken int line int tokenNum ArrayList;char;* b TokenType type{
+    fn void valueToken int line int tokenNum ArrayList;char;* b TokenType type{
       var p char:alloc[] b getSize
       memoryCopy b getArray;cast byte*,p cast byte*,b getSize
       String id p,b getSize;cast uint,true
@@ -90,7 +90,7 @@ class Tokenizer{
                }
                b add $'
                b add $\0
-               idToken line,tokenNum,b ref,TokenType:CHAR_LIT
+               valueToken line,tokenNum,b ref,TokenType:CHAR_LIT
              }if c == $\n{
                token line,tokenNum,"\n",TokenType:NEW_LINE
                break
@@ -110,7 +110,7 @@ class Tokenizer{
                  b add c
                }
                b add $\0
-               idToken line,tokenNum,b ref,TokenType:ID
+               valueToken line,tokenNum,b ref,TokenType:ID
              }
             }
          }
@@ -143,6 +143,13 @@ class Tokenizer{
  fn bool hasNext{
   prepare
   return tokens isEmpty; !
+ }
+ fn Token nextID{
+   var id next
+   if id getType; != TokenType:ID{
+     CompilerException:new id getLine;,id getTokenNum;,"identifier expected instead of " + id getValue;;;throw
+   }
+   return id
  }
  -this{
    reader free

@@ -21,7 +21,9 @@ public class Function implements IField,ICalledOnPointer{
 	private final StringBuilder declaration = new StringBuilder();
 	private final AccessModifier accessModifier;
 	private final FunctionType type;
-	private boolean calledOnPointer,notCalledOnVar,functionPointer;
+	private int callStatus;
+	private boolean asFunctionPointer;
+	public static final int NO_STATUS = 0,CALLED_ON_POINTER = 1,CALLED_ON_RETURNED_INSTANCE = 2,CALLED_ON_R_INSTANCE_BY_FUNC = 3;
 	private final String name,attrCode;
 	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
     public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
@@ -79,7 +81,7 @@ public class Function implements IField,ICalledOnPointer{
             if(self instanceof InterfaceInfo){
                 b.write(".impl->");
             }else{
-                if(calledOnPointer || getPrevCode() == null){
+                if(callStatus == CALLED_ON_POINTER || getPrevCode() == null){
                     b.write("->");
                 }else{
                     b.write('.');
@@ -87,26 +89,33 @@ public class Function implements IField,ICalledOnPointer{
                 b.write("object_data)->");
             }
         }
-        if(!functionPointer){
+        if(asFunctionPointer){
+            asFunctionPointer = false;
+        }else{
             b.write(variant.implName());
-            functionPointer = false;
         }
         b.write('(');
 		var first = self == null;
 		if(self != null){
-		    if(calledOnPointer){
-		      calledOnPointer = false;
+		    if(callStatus == CALLED_ON_POINTER){
+		      callStatus = NO_STATUS;
 		      b.write("(" + self.getCname() + "*)");
             }else if(!(self instanceof InterfaceInfo) && prevCode != null /*to prevent &this when calling method on implicit this*/){
                if(!self.isPrimitive()){
-                   if(notCalledOnVar){
-                      notCalledOnVar = false;
+                   if(callStatus == CALLED_ON_RETURNED_INSTANCE || callStatus == CALLED_ON_R_INSTANCE_BY_FUNC){
+                     if(callStatus == CALLED_ON_RETURNED_INSTANCE){
+                         callStatus = NO_STATUS;
+                     }
                    }else{
                        b.write('&');
                    }
                }
             }
             writePrev(b);
+		    if(callStatus == CALLED_ON_R_INSTANCE_BY_FUNC){
+		        b.write(')');
+		        callStatus = NO_STATUS;
+            }
             if(self instanceof InterfaceInfo){
                 b.write(".instance");
             }
@@ -128,12 +137,10 @@ public class Function implements IField,ICalledOnPointer{
             }
             field.setPrevCode(b.getCode());
             if(field instanceof Function f && returnType instanceof InstanceInfo i){
-               f.notCalledOnVar();
+               f.callStatus = CALLED_ON_R_INSTANCE_BY_FUNC;
                var c = INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + i.getCname() + "_toPointer(" + f.getPrevCode();
                f.setPrevCode(c);
-               var ret = field.compile(writer,env,it,id.getLine(),id.getCharNum());
-               writer.write(')');
-               return ret;
+                return field.compile(writer,env,it,id.getLine(),id.getCharNum());
             }
             return field.compile(writer,env,it,id.getLine(),id.getCharNum());
         }
@@ -167,9 +174,6 @@ public class Function implements IField,ICalledOnPointer{
     }
     public final boolean isVirtual(){
         return type == FunctionType.ABSTRACT || type == FunctionType.VIRTUAL;
-    }
-    public final void calledOnPointer(){
-        calledOnPointer = true;
     }
     public final TypeInfo getSelf(){
         return self;
@@ -285,11 +289,15 @@ public class Function implements IField,ICalledOnPointer{
         }
         return false;
     }
-    public final void notCalledOnVar(){
-        notCalledOnVar = true;
+    public void calledOnReturnedInstance(){
+        callStatus = CALLED_ON_RETURNED_INSTANCE;
     }
-    public final void prepareForDereference(){
-        functionPointer = true;
+    public void prepareForDereference(){
+        asFunctionPointer = true;
+    }
+    @Override
+    public void calledOnPointer(){
+        callStatus = CALLED_ON_POINTER;
     }
     private record ReturnedData(String code,boolean notReturnedByFunction){}
 }

@@ -11,12 +11,7 @@ class FPL{
   FileReader reader project + "/build.properties"
   Tokenizer tokenizer reader
   while tokenizer hasNext{
-    var token tokenizer next
-    if token getType; == TokenType:ID{
-
-    }{
-     CompilerException:new token getLine;,token getTokenNum;,"identifier expected";throw
-    }
+    var id tokenizer nextID
   }
   tokenizer close
  }
