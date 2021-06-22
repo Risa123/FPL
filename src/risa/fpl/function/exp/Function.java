@@ -59,7 +59,7 @@ public class Function implements IField,ICalledOnPointer{
 		   }else if(exp.getType() != TokenType.ARG_SEPARATOR){
 			   var buffer = new BuilderWriter(b);
 			   var f = env.getFunction(exp);
-               argList.add(f.compile(buffer,env,it,exp.getLine(),exp.getCharNum()));
+               argList.add(f.compile(buffer,env,it,exp.getLine(),exp.getTokenNum()));
                returnedData.add(new ReturnedData(buffer.getCode(),!(f instanceof  Function)));
 		   }
 		}
@@ -140,9 +140,9 @@ public class Function implements IField,ICalledOnPointer{
                f.callStatus = CALLED_ON_R_INSTANCE_BY_FUNC;
                var c = INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + i.getCname() + "_toPointer(" + f.getPrevCode();
                f.setPrevCode(c);
-                return field.compile(writer,env,it,id.getLine(),id.getCharNum());
+                return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
             }
-            return field.compile(writer,env,it,id.getLine(),id.getCharNum());
+            return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
         }
         writer.write(b.getCode());
 		return returnType;

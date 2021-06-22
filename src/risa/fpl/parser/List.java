@@ -20,8 +20,8 @@ public final class List extends AExp{
 	}
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator) throws CompilerException,IOException{
-	   TypeInfo ret = null; //has to be null see line 27
-	   var it = new ExpIterator(exps,getLine(),getCharNum());
+	   TypeInfo ret = null;//has to be null see line 27
+	   var it = new ExpIterator(exps,getLine(), getTokenNum());
 	   var appendSemicolon = false;
 	   BuilderWriter b = null;
 	   while(it.hasNext()){
@@ -30,7 +30,7 @@ public final class List extends AExp{
               if(ret == null) {
             	  var f =  env.getFunction(atom);
             	  b = new BuilderWriter(writer);
-                  ret = f.compile(b,env,it,exp.getLine(),exp.getCharNum());
+                  ret = f.compile(b,env,it,exp.getLine(),exp.getTokenNum());
                   appendSemicolon = f.appendSemicolon() && statement;
               }else if(atom.getType() == TokenType.ID){
             	 var field = ret.getField(atom.getValue(),env);
@@ -39,7 +39,7 @@ public final class List extends AExp{
             	 }
             	 field.setPrevCode(b.getCode());
             	 b = new BuilderWriter(writer);
-            	 ret = field.compile(b,env,it,atom.getLine(),atom.getCharNum());
+            	 ret = field.compile(b,env,it,atom.getLine(),atom.getTokenNum());
               }
 		   }else if(exp instanceof List){
 			   exp.compile(writer,env,it);

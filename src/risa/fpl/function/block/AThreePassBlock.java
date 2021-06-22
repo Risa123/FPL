@@ -53,7 +53,7 @@ public abstract class AThreePassBlock{
                 b.append('\n').append(info.lastEx.getMessage());
             }
             var first = infos.get(0).exp;
-            throw new CompilerException(first.getLine(),first.getCharNum(),b.toString());
+            throw new CompilerException(first.getLine(),first.getTokenNum(),b.toString());
         }
     }
     private static class ExpInfo{

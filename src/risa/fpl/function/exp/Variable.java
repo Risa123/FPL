@@ -70,7 +70,7 @@ public final class Variable extends ValueExp{
 		            throw new CompilerException(id,ret + " has no field called " + id);
                 }
 		        field.setPrevCode(b.getCode());
-		        return field.compile(writer,env,it,id.getLine(),id.getCharNum());
+		        return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
             }
 		    writer.write(b.getCode());
 			return ret;

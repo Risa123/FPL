@@ -160,7 +160,7 @@ public final class Tokenizer{
 						  throw new CompilerException(line,tokenNum,"double number expected");
 					  }
 				  }
-			  }else {
+			  }else{
 				  if(type != TokenType.ULONG){
 					  long n;
 					  if(hex){
@@ -202,12 +202,21 @@ public final class Tokenizer{
 		  }else if(c == ';'){
 			  return new Token(line,tokenNum,";",TokenType.END_ARGS);
 		  }else  if(c == '"'){
-			  var b = new StringBuilder();
+			  var b = new StringBuilder("\"");
+			  while(hasNext() && read() != '"'){
+			  	if(c == '\n'){
+			  		throw new CompilerException(line,tokenNum,"expected \"");
+				}
+			  	if(c == '\\'){
+			  		b.append('\\');
+			  		if(!hasNext()){
+			  			throw new CompilerException(line,tokenNum,"special character ");
+					}
+			  		read();//appended in following lines
+				}
+			  	b.appendCodePoint(c);
+			  }
 			  b.append('"');
-			  do{
-				  read();
-				  b.appendCodePoint(c);
-			  }while(c != '"');
 			  var id = b.toString();
 			  for(int i = 0; i < id.length();++i){
 			      if(id.charAt(i) > 127){

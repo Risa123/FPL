@@ -32,7 +32,7 @@ public class AddModifier extends AThreePassBlock implements IFunction{
               }
 	 	    }else{
 	 	    	var f = env.getFunction((Atom)exp);
-	 	        f.compile(writer,env,it,exp.getLine(),exp.getCharNum());
+	 	        f.compile(writer,env,it,exp.getLine(),exp.getTokenNum());
 	 	        appendSemicolon = f.appendSemicolon();
 	 	    }
 	    }catch(CompilerException ex){

@@ -56,7 +56,7 @@ public abstract class AEnv{
 	 case STRING:
 		 return new ValueExp(getFPL().getString(),"static_std_lang_String_new0(" + atom.getValue() + "," + (atom.getValue().length() - 2) + ",0)");
 	   default:
-		   throw new CompilerException(atom.getLine(),atom.getCharNum(),"identifier or literal expected instead of " + atom.getType());
+		   throw new CompilerException(atom.getLine(),atom.getTokenNum(),"identifier or literal expected instead of " + atom.getType());
 	 }
   }
   public boolean hasFunctionInCurrentEnv(String name){
@@ -70,7 +70,7 @@ public abstract class AEnv{
 		  throw new CompilerException(atom,"type identifier expected");
 	  }
 	  if(atom.getValue().endsWith("*")){
-	      return new PointerInfo(getType(new Atom(atom.getLine(),atom.getCharNum(),atom.getValue().substring(0,atom.getValue().length() - 1), TokenType.ID)));
+	      return new PointerInfo(getType(new Atom(atom.getLine(),atom.getTokenNum(),atom.getValue().substring(0,atom.getValue().length() - 1), TokenType.ID)));
       }
 	  var type = types.get(atom.getValue());
 	  if(type == null){

@@ -61,7 +61,7 @@ public final class Constructor extends AFunctionBlock{
             if(parentType == null){
                 throw new CompilerException(callStart,"this type has no parent");
             }
-            parentType.getConstructor().compileAsParentConstructor(b,fEnv,it,callStart.getLine(),callStart.getCharNum());
+            parentType.getConstructor().compileAsParentConstructor(b,fEnv,it,callStart.getLine(),callStart.getTokenNum());
             b.write(";\n");
             hasParentConstructor = true;
             cEnv.parentConstructorCalled();

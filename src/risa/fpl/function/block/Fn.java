@@ -12,6 +12,7 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 import risa.fpl.info.*;
+import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
@@ -166,7 +167,11 @@ public class Fn extends AFunctionBlock{
                 if(!a.getValue().equals("=")){
                     throw new CompilerException(a,"= expected");
                 }
-                block = it.nextAtom();
+                var atoms = new ArrayList<AExp>();
+                while(it.hasNext()){
+                    atoms.add(it.nextAtom());
+                }
+                block = new List(line,a.getTokenNum(),atoms,false);
             }
             b.write(macroDeclaration.toString());
 			if(macroDeclaration.isEmpty()){

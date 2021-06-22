@@ -26,7 +26,7 @@ public final class ExpIterator{
 	  }
 	  var exp = it.next();
 	  lastLine = exp.getLine();
-	  lastCharNum = exp.getCharNum();
+	  lastCharNum = exp.getTokenNum();
 	  return exp;
   }
   public Atom nextAtom()throws CompilerException{

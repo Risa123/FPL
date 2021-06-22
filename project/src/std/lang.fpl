@@ -1,9 +1,7 @@
 (#this module is imported automatically)
 use std.backend
 
-fn void print char c{
- putchar c
-}
+fn void print char c = putchar c
 class String{
   private{
     char* p
@@ -215,9 +213,7 @@ fn bool isUpper char this{
   var c this cast int
   return c <= 90; || c >= 65
 }
-fn bool isBlank char this{
-  return this == $\s ; || this == $\t
-}
+fn bool isBlank char this = this == $\s ; || this == $\t
 fn bool isHexDigit char this{
   var c this cast int
   return isDigit this; || c >= 65; && c <= 70; || c >= 97; && c <= 102

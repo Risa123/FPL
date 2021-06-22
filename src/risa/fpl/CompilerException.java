@@ -8,7 +8,7 @@ public final class CompilerException extends Exception{
 	  super(line + ":" + charNum + ":" + msg);
   }
   public CompilerException(AExp exp,String msg){
-	  this(exp.getLine(),exp.getCharNum(),msg);
+	  this(exp.getLine(),exp.getTokenNum(),msg);
   }
   public void setSourceFile(String sourceFile){
       if(this.sourceFile == null){

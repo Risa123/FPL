@@ -1,3 +1,5 @@
 method id added to enum types
+escape sequences added to string literal
 fix toString added to byte types
 fix called on function return C error
+fix lone " is now reported as specific error

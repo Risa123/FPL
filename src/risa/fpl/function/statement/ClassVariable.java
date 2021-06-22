@@ -74,9 +74,9 @@ public final class ClassVariable extends Function{
         var b = new BuilderWriter(writer);
         if(type instanceof TemplateTypeInfo){
             varType.getConstructor().setPrevCode(getPrevCode());
-            varType.getConstructor().superCompile(b,env,it,id.getLine(),id.getCharNum());
+            varType.getConstructor().superCompile(b,env,it,id.getLine(),id.getTokenNum());
         }else{
-            super.compile(b,env,it,id.getLine(),id.getCharNum());
+            super.compile(b,env,it,id.getLine(),id.getTokenNum());
         }
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);
@@ -113,7 +113,7 @@ public final class ClassVariable extends Function{
             if(field == null){
                 throw new CompilerException(atom,classType + " has no field called " + atom);
             }
-            return field.compile(writer,env,it,atom.getLine(),atom.getCharNum());
+            return field.compile(writer,env,it,atom.getLine(),atom.getTokenNum());
         }
         return classType;
     }

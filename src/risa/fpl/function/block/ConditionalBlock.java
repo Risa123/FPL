@@ -28,7 +28,7 @@ public final class ConditionalBlock extends ABlock{
 			var exp = it.peek();
 			if(expLine == 0){
 				expLine = exp.getLine();
-				expCharNum = exp.getCharNum();
+				expCharNum = exp.getTokenNum();
 			}
 			if(exp instanceof List){
 				break;

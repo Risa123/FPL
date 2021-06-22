@@ -18,7 +18,7 @@ public final class Atom extends AExp{
 	}
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it) throws IOException,CompilerException{
-		return env.getFunction(this).compile(writer,env,it,getLine(),getCharNum());
+		return env.getFunction(this).compile(writer,env,it,getLine(), getTokenNum());
 	}
 	@Override
 	public String toString(){

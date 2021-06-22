@@ -51,7 +51,7 @@ public abstract class AField implements IField{
                throw new CompilerException(id,returnType + " has no field called " + id);
            }
            field.setPrevCode(prevCode);
-           return field.compile(writer,env,it,id.getLine(),id.getCharNum());
+           return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
          }
          writer.write(prevCode);
          return returnType;

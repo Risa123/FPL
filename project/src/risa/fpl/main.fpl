@@ -8,10 +8,18 @@ use{
 class FPL{
  this String project{
   Map;String String; properties
-  FileReader reader project + "/build.properties"
+  FileReader reader project + "/build.bs"
   Tokenizer tokenizer reader
   while tokenizer hasNext{
     var id tokenizer nextID
+    if tokenizer hasNext; !{
+      CompilerException:new id getLine;,id getTokenNum;,"property value expected";throw
+    }
+    var value tokenizer next
+    if value getType; != TokenType:STRING{
+      CompilerException:new id getLine;,id getTokenNum;,"String literal expected";throw
+    }
+    properties
   }
   tokenizer close
  }

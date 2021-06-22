@@ -112,7 +112,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
             for(var v:i.getConstructor().getVariants()){
                if(v.args().length > 0){
-                   throw new CompilerException(id.getLine(),id.getCharNum(),"constructor is required to call parent constructor");
+                   throw new CompilerException(id.getLine(),id.getTokenNum(),"constructor is required to call parent constructor");
                }
             }
         }
@@ -125,7 +125,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 var name = method.getName();
                 var impl = type.getField(name,cEnv);
                 if(!(impl instanceof Function) || ((Function)impl).getType() == FunctionType.ABSTRACT){
-                    throw new CompilerException(id.getLine(),id.getCharNum(),"this class doesn't implement method " + name);
+                    throw new CompilerException(id.getLine(),id.getTokenNum(),"this class doesn't implement method " + name);
                 }
             }
         }

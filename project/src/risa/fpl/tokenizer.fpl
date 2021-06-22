@@ -4,7 +4,7 @@ use{
  risa.fpl.base
  std.backend
 }
-enum TokenType NEW_LINE ID CHAR_LIT END_BLOCK BEGIN_BLOCK
+enum TokenType NEW_LINE ID CHAR_LIT END_BLOCK BEGIN_BLOCK STRING
 class Token{
   private const{
    int line;tokenNum
@@ -15,6 +15,7 @@ class Token{
     this line = line
     this tokenNum = tokenNum
     this value = value
+    this type = type
   }
   fn int getLine = line
   fn int getTokenNum = tokenNum
@@ -25,7 +26,7 @@ class Tokenizer{
  private{
     int line 1;tokenNum 1;i 0
     char c
-    bool readNext
+    bool readNext false
     DataReader* reader
     const ArrayList;Token; tokens
     fn void token int line int tokenNum String value TokenType type{
@@ -75,7 +76,7 @@ class Tokenizer{
               if ready; !{
                CompilerException:new line,tokenNum,"character expected";throw
               }
-               if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $";|| c == $0{
+               if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $0{
                   b add $\\
                   b add c
                }if c == $s{
@@ -98,6 +99,24 @@ class Tokenizer{
                token line,tokenNum,"{",TokenType:BEGIN_BLOCK
              }if c == $}{
                token line,tokenNum,"}",TokenType:END_BLOCK
+             }if c == $"{
+              ArrayList;char; b
+              b add $"
+              while ready; && read; != $"{
+                if c == $\n{
+                  CompilerException:new line,tokenNum,"expected \"";throw
+                }
+                if c == $\\{
+                  b add $\\
+                  if ready; !{
+                    CompilerException:new line,tokenNum,"character expected";throw
+                  }
+                  read #appended in following lines
+                }
+                b add c
+              }
+              b add $"
+              valueToken line,tokenNum,b ref,TokenType:STRING
              }if c isWhitespace;!{
                ArrayList;char; b
                b add c
@@ -109,18 +128,12 @@ class Tokenizer{
                  }
                  b add c
                }
-               b add $\0
                valueToken line,tokenNum,b ref,TokenType:ID
              }
             }
          }
     }
-    fn bool isSeparator{
-      if c isWhitespace{
-         return true
-      }
-      return c == ${; || c == $}; || c == $;
-    }
+    fn bool isSeparator =  c isWhitespace; ||  c == ${; || c == $}; || c == $; #char ;
  }
  this Readable readable{
     reader = DataReader:alloc readable

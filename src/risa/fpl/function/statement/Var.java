@@ -31,9 +31,9 @@ public final class Var implements IFunction{
                    it.next();
                    var field = c.getField(a1.getValue(),env);
                    if(field == null){
-                       throw new CompilerException(a1.getLine(),a1.getCharNum(),c + " has no field called " + a1);
+                       throw new CompilerException(a1.getLine(),a1.getTokenNum(),c + " has no field called " + a1);
                    }
-                   return field.compile(writer,env,it,a1.getLine(),a1.getCharNum());
+                   return field.compile(writer,env,it,a1.getLine(),a1.getTokenNum());
                }
                return c;
            }

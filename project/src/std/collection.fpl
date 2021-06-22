@@ -62,4 +62,19 @@ class Entry;K V{
 }
 class Map;K V{
   private const ArrayList;Entry;K V;; entries
+  fn void put K key V value{
+    var notPresent true
+    var i 0L
+    while i < entries getSize{
+      var entry entries get i
+      if entry getKey; == key{
+        entry setValue value
+        break
+      }
+      i ++
+    }
+    if notPresent{
+      entries add Entry;K V:new key,value
+    }
+  }
 }
