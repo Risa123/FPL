@@ -19,7 +19,7 @@ public final class ConditionalBlock extends ABlock{
     	this.code = code;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		writer.write(code);
 		writer.write('(');
 		var list = new ArrayList<AExp>();

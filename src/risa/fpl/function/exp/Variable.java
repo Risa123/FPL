@@ -91,14 +91,14 @@ public final class Variable extends ValueExp{
 		return super.onField(atom,writer,env,it,line,charNum);
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=")){
-		    throw new CompilerException(line,charNum,"variable " + id + " not defined");
+		    throw new CompilerException(line, tokenNum,"variable " + id + " not defined");
         }
 		if(instanceType != null && getPrevCode() == null){
 		    setPrevCode("((" + instanceType.getCname() + "*)this)->");
         }
-		return super.compile(writer,env,it,line,charNum);
+		return super.compile(writer,env,it,line, tokenNum);
 	}
 	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException,CompilerException{
             switch(operator){

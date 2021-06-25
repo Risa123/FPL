@@ -11,7 +11,7 @@ import java.io.BufferedWriter;
 
 public final class Alias implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int charNum)throws CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int tokenNum)throws CompilerException{
         var id = it.nextID();
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);

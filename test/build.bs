@@ -1,1 +1,3 @@
 outputFile "test.exe"
+gcc "C:\\TDM-GCC-64"
+mainModule "main"

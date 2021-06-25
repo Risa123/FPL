@@ -22,7 +22,7 @@ public final class Var implements IFunction{
     	this.type = type;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(type != null && it.hasNext()){
            if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
                it.next();
@@ -39,7 +39,7 @@ public final class Var implements IFunction{
            }
         }
 		if(env.hasModifier(Modifier.NATIVE) && env instanceof ClassEnv){
-            throw new CompilerException(line,charNum,"native variables can only be declared in modules");
+            throw new CompilerException(line, tokenNum,"native variables can only be declared in modules");
 		}
 		var decType = type;
 		if(it.checkTemplate()){
@@ -48,7 +48,7 @@ public final class Var implements IFunction{
             }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
                 decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum()));
             }else{
-		        throw new CompilerException(line,charNum,"template type expected instead of " + type);
+		        throw new CompilerException(line, tokenNum,"template type expected instead of " + type);
             }
         }
 		while(it.hasNext()){

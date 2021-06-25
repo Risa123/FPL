@@ -69,6 +69,7 @@ class Map;K V{
       var entry entries get i
       if entry getKey; == key{
         entry setValue value
+        notPresent = false
         break
       }
       i ++
@@ -76,5 +77,15 @@ class Map;K V{
     if notPresent{
       entries add Entry;K V:new key,value
     }
+  }
+  fn bool containsKey K key{
+    var i 0L
+    while i < entries getSize{
+      if entries get i;getKey; == key{
+        return true
+      }
+      i ++
+    }
+    return false
   }
 }

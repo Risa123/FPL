@@ -15,7 +15,7 @@ public final class Dereference extends AField{
         this.type = type;
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var prev = new BuilderWriter(writer);
         prev.write("(*");
         writePrev(prev);

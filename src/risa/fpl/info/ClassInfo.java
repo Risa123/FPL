@@ -6,7 +6,6 @@ import risa.fpl.function.exp.ValueExp;
 public final class ClassInfo extends TypeInfo{
     public static final ClassInfo CHAR = new ClassInfo("char");
     public static final ClassInfo BOOL = new ClassInfo("bool");
-    public static final ClassInfo STRING = new ClassInfo("string");
     public static final ClassInfo UBYTE = new ClassInfo("ubyte");
     public static final ClassInfo SBYTE = new ClassInfo("sbyte");
     public static final ClassInfo BYTE =  new ClassInfo("byte");

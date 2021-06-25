@@ -31,7 +31,7 @@ public final class ClassVariable extends Function{
       return INTERNAL_METHOD_PREFIX + nameSpace + "_init";
    }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         BuilderWriter b = new BuilderWriter(writer);
         var id = it.nextAtom();
 		if(id.getType() == TokenType.ID){

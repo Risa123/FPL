@@ -15,9 +15,9 @@ import risa.fpl.tokenizer.TokenType;
 
 public final class Use implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		if(!(env instanceof ModuleEnv e)){
-			throw new CompilerException(line,charNum,"can only be used on module level");
+			throw new CompilerException(line, tokenNum,"can only be used on module level");
 		}
 		var exp = it.next();
 		if(exp instanceof List){

@@ -23,8 +23,8 @@ public final class TemplateTypeInfo extends InstanceInfo{
     private LinkedHashMap<String,TypeInfo>templateArgs;
     private final HashMap<ArrayList<TypeInfo>,InstanceInfo>generatedTypes = new HashMap<>();
     private final ArrayList<String>instanceFiles = new ArrayList<>();
-    public TemplateTypeInfo(String name,ModuleEnv module){
-        super(name,module);
+    public TemplateTypeInfo(String name,ModuleEnv module,String nameSpace){
+        super(name,module,nameSpace);
     }
     public InstanceInfo generateTypeFor(ArrayList<Object>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
        var argsInfo = new ArrayList<TypeInfo>();

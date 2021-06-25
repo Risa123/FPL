@@ -21,7 +21,7 @@ import risa.fpl.tokenizer.TokenType;
 public class Fn extends AFunctionBlock{
 	private boolean appendSemicolon;
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		var returnType = env.getType(it.nextID());
         var b = new BuilderWriter(writer);
 		var id = it.nextID();
@@ -110,7 +110,7 @@ public class Fn extends AFunctionBlock{
             type = FunctionType.ABSTRACT;
             appendSemicolon = false;
             if(env instanceof ClassEnv e && !e.isAbstract()){
-                throw new CompilerException(line,charNum,"abstract method can only be declared in abstract class");
+                throw new CompilerException(line, tokenNum,"abstract method can only be declared in abstract class");
             }
         }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
             type = FunctionType.VIRTUAL;
@@ -124,20 +124,20 @@ public class Fn extends AFunctionBlock{
             if(env.getFunction(id.getValue()) instanceof Function ft){
                 f = ft;
                 if(f.getType() != type){
-                    throw new CompilerException(line,charNum,"all variants require same function type");
+                    throw new CompilerException(line, tokenNum,"all variants require same function type");
                 }
                 if(f.getAccessModifier() != env.getAccessModifier()){
-                    throw new CompilerException(line,charNum,"all variants require same access modifier");
+                    throw new CompilerException(line, tokenNum,"all variants require same access modifier");
                 }
             }else{
-                throw new CompilerException(line,charNum,"there is already a function called " + id);
+                throw new CompilerException(line, tokenNum,"there is already a function called " + id);
             }
         }else{
             f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
         }
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
-		        throw new CompilerException(line,charNum,"abstract methods can only be declared");
+		        throw new CompilerException(line, tokenNum,"abstract methods can only be declared");
             }
             var block = it.next();
             if(block instanceof Atom a){
@@ -211,13 +211,13 @@ public class Fn extends AFunctionBlock{
             }
 		}else{
 		    if(!(env.hasModifier(Modifier.ABSTRACT) || env.hasModifier(Modifier.NATIVE))){
-		        throw new CompilerException(line,charNum,"block required");
+		        throw new CompilerException(line, tokenNum,"block required");
             }
 			appendSemicolon = true;
 		}
         var argsArray = args.values().toArray(new TypeInfo[0]);
         if(f.hasVariant(argsArray)){
-            throw new CompilerException(line,charNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
+            throw new CompilerException(line, tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
         }
         if(macroDeclaration.isEmpty()){
             f.addVariant(argsArray,cID,implName);
@@ -239,13 +239,13 @@ public class Fn extends AFunctionBlock{
             }
             if(env.hasModifier(Modifier.OVERRIDE)){
                 if(!(parentField instanceof Function parentMethod)){
-                    throw new CompilerException(line,charNum,"there is no method " + id + " to override");
+                    throw new CompilerException(line, tokenNum,"there is no method " + id + " to override");
                 }
                 if(!parentMethod.hasSignature(f)){
-                    throw new CompilerException(line,charNum,"this method doesn't have signature of one it overrides");
+                    throw new CompilerException(line, tokenNum,"this method doesn't have signature of one it overrides");
                 }
             }else if(parentField != null){
-                throw new CompilerException(line,charNum,"override is required");
+                throw new CompilerException(line, tokenNum,"override is required");
             }
             if(env.hasModifier(Modifier.OVERRIDE) || env.hasModifier(Modifier.VIRTUAL)){
                 String methodImplName;

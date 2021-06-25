@@ -13,12 +13,12 @@ import java.io.IOException;
 
 public final class Destructor extends ABlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(!(env instanceof ClassEnv cEnv)){
-            throw new CompilerException(line,charNum,"can only be declared in class block");
+            throw new CompilerException(line, tokenNum,"can only be declared in class block");
         }
         if(cEnv.isDestructorDeclared()){
-            throw new CompilerException(line,charNum,"destructor already declared");
+            throw new CompilerException(line, tokenNum,"destructor already declared");
         }
         var b = new BuilderWriter(writer);
         b.write("void ");

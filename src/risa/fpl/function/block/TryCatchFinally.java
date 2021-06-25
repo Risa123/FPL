@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public final class TryCatchFinally extends ABlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         writer.write("_std_lang_Thread_addEHentry0(_std_lang_currentThread);\n");
         var backend = env.getFPL().getModule("std.backend").getEnv();
         var f = (Function)backend.getFunction(new Atom(0,0,"contextSave",TokenType.ID));

@@ -19,7 +19,7 @@ public final class UnaryOperator extends AField{
 		this.postfix = postfix;
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNm)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 	    var prev = new BuilderWriter(writer);
 		if(postfix){
 			writePrev(prev);

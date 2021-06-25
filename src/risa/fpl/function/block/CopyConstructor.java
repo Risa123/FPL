@@ -15,12 +15,12 @@ import java.io.IOException;
 
 public final class CopyConstructor extends ABlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(!(env instanceof ClassEnv cEnv)){
-            throw new CompilerException(line,charNum,"can only be declared in class block");
+            throw new CompilerException(line, tokenNum,"can only be declared in class block");
         }
         if(cEnv.isCopyConstructorDeclared()){
-            throw new CompilerException(line,charNum,"copy constructor already declared");
+            throw new CompilerException(line, tokenNum,"copy constructor already declared");
         }
         var b = new BuilderWriter(writer);
         b.write("void ");

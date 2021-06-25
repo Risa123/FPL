@@ -48,7 +48,7 @@ public interface IFunction{
 	  }
 	  return b.toString();
   }
-  TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException;
+  TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException;
   default boolean appendSemicolon(){
 	  return true;
   }

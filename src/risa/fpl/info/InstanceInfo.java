@@ -11,11 +11,13 @@ public class InstanceInfo extends TypeInfo{
     private final ModuleEnv module;
     private boolean complete;
     private ClassVariable constructor;
-    public InstanceInfo(String name,ModuleEnv module){
+    private final String toPointerName;
+    public InstanceInfo(String name,ModuleEnv module,String nameSpace){
         super(name,IFunction.toCId(name));
         this.module = module;
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         instanceFree = "free";
+        toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "toPointer";
     }
     public final String getClassDataType(){
         return getCname() + "_data_type*";
@@ -85,5 +87,8 @@ public class InstanceInfo extends TypeInfo{
     }
     public final void setCopyConstructorName(String name){
         copyConstructorName = name;
+    }
+    public final String getToPointerName(){
+        return toPointerName;
     }
 }

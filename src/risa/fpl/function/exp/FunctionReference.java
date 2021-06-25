@@ -17,10 +17,10 @@ public final class FunctionReference extends ValueExp{
         info = (FunctionInfo)p.getType();
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(info.getFunction().notFunctionPointer()){
-            throw new CompilerException(line,charNum,"this function has more than one variant so it can't be a function pointer");
+            throw new CompilerException(line, tokenNum,"this function has more than one variant so it can't be a function pointer");
         }
-        return super.compile(writer,env,it,line,charNum);
+        return super.compile(writer,env,it,line, tokenNum);
     }
 }

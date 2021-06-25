@@ -48,9 +48,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
 		classType = new ClassInfo(id);
 		if(templateStatus == TemplateStatus.TEMPLATE){
-            instanceType = new TemplateTypeInfo(id,superEnv);
+            instanceType = new TemplateTypeInfo(id,superEnv,nameSpace);
         }else{
-            instanceType = new InstanceInfo(id,superEnv);
+            instanceType = new InstanceInfo(id,superEnv,nameSpace);
         }
 		instanceType.setClassInfo(classType);
 		instanceType.addField("cast",new Cast(instanceType));

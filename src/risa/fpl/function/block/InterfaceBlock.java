@@ -21,9 +21,9 @@ import java.io.IOException;
 
 public final class InterfaceBlock implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(!(env instanceof ModuleEnv)){
-            throw new CompilerException(line,charNum,"interface can only be declared on module level");
+            throw new CompilerException(line, tokenNum,"interface can only be declared on module level");
         }
         var id = it.nextID();
         var idV = id.getValue();
@@ -52,7 +52,7 @@ public final class InterfaceBlock implements IFunction{
             }
         }
         if(block == null){
-            throw new CompilerException(line,charNum,"block expected as last argument");
+            throw new CompilerException(line, tokenNum,"block expected as last argument");
         }
         var b = new BuilderWriter(writer);
         var implName = type.getImplName();

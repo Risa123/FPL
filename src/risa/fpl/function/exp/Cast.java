@@ -19,7 +19,7 @@ public final class Cast extends AField{
     	this.self = self;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var typeAtom = it.nextID();
 	    var type = env.getType(typeAtom);
 	    var prev = new BuilderWriter(writer);
@@ -34,7 +34,7 @@ public final class Cast extends AField{
           c_cast(prev,type.getCname());
           prev.write(".instance");
         }else if(type instanceof InterfaceInfo){
-	        throw new CompilerException(line,charNum,"cannot cast to interface");
+	        throw new CompilerException(line, tokenNum,"cannot cast to interface");
         }else{
 	        var npTarget = self;
 	        var npType = type;
@@ -52,7 +52,7 @@ public final class Cast extends AField{
 	            writePrev(prev);
 	            return compileChainedCall(type,writer,env,it,prev.getCode());
             }
-	        throw new CompilerException(line,charNum,"cannot cast " + self + " to " + type);
+	        throw new CompilerException(line, tokenNum,"cannot cast " + self + " to " + type);
         }
 		return compileChainedCall(type,writer,env,it,prev.getCode());
 	}

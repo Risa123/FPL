@@ -20,7 +20,7 @@ public final class BinaryOperator extends AField{
 	   this.operator = operator;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		var returnType = this.returnType;
 	    if(it.hasNext() && it.peek() instanceof Atom a && a.getType() != TokenType.END_ARGS && a.getType() != TokenType.ARG_SEPARATOR){
 			var exp = it.next();
@@ -35,7 +35,7 @@ public final class BinaryOperator extends AField{
 				throw new CompilerException(exp,operandType + " operand expected instead of " + opType);
 			}
 		}else if(!(operator.equals("+") || operator.equals("-"))){
-	    	throw new CompilerException(line,charNum,"atom expected");
+	    	throw new CompilerException(line, tokenNum,"atom expected");
 		}else{
 	    	writer.write(operator);
 	    	writePrev(writer);

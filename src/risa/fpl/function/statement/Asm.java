@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public final class Asm implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var code = it.nextAtom();
         if(code.getType() != TokenType.STRING){
             throw new CompilerException(code,"assembly code as string expected");

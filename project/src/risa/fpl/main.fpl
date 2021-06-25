@@ -19,8 +19,9 @@ class FPL{
     if value getType; != TokenType:STRING{
       CompilerException:new id getLine;,id getTokenNum;,"String literal expected";throw
     }
-    properties
+    properties put id getValue;,value getValue
   }
+
   tokenizer close
  }
 }

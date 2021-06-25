@@ -17,7 +17,7 @@ public final class SetElement extends AField{
 	}
 	@Override
 	public TypeInfo
-	compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		writePrev(writer);
 		writer.write('[');
 		int beginChar = 0;

@@ -16,7 +16,7 @@ public class IfFlagBlock extends AThreePassBlock implements IFunction{
         this.list = list;
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         compile(writer,env,list);
         return TypeInfo.VOID;
     }

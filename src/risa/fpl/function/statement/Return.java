@@ -16,7 +16,7 @@ import risa.fpl.parser.List;
 
 public final class Return implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		writer.write("return ");
 		var subEnv = (FnSubEnv)env;
 		if(it.hasNext()){
@@ -24,7 +24,7 @@ public final class Return implements IFunction{
 		    while(it.hasNext()){
 		        list.add(it.next());
             }
-			var exp = new List(line,charNum,list,true);
+			var exp = new List(line, tokenNum,list,true);
 			var buffer = new BuilderWriter(writer);
 		    var returnType = exp.compile(buffer,env,it);
 			if(!subEnv.getReturnType().equals(returnType)){
@@ -32,7 +32,7 @@ public final class Return implements IFunction{
 			}
 			writer.write(returnType.ensureCast(subEnv.getReturnType(),buffer.getCode()));
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){
-			throw new CompilerException(line,charNum,"this function doesn't return void");
+			throw new CompilerException(line, tokenNum,"this function doesn't return void");
 		}
 		return TypeInfo.VOID;
 	}

@@ -12,12 +12,12 @@ import java.io.IOException;
 
 public final class IfFlag implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var flag = it.nextID().getValue();
         var exp = it.next();
         if(env.getFPL().hasFlag(flag)){
            if(exp instanceof List list){
-               new IfFlagBlock(list).compile(writer,env,it,line,charNum);
+               new IfFlagBlock(list).compile(writer,env,it,line, tokenNum);
            }else{
                exp.compile(writer,env,it);
            }

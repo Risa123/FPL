@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public final class StructBlock extends ABlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var id = it.nextID();
         var cID = IFunction.toCId(id.getValue());
         if(env.hasTypeInCurrentEnv(id.getValue())){

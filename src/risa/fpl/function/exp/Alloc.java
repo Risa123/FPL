@@ -19,7 +19,7 @@ public final class Alloc extends AField{
         this.array = array;
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         writer.write("((");
         writer.write(p.getCname());
         var notOneByteType = !(type == TypeInfo.CHAR || type == TypeInfo.BOOL || type instanceof NumberInfo n && n.getSize() == 1);

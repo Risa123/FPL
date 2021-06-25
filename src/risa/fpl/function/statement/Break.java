@@ -10,7 +10,7 @@ import risa.fpl.parser.ExpIterator;
 
 public final class Break implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException{
 		writer.write("break");
 		return TypeInfo.VOID;
 	}

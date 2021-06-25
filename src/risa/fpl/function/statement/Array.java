@@ -17,7 +17,7 @@ import risa.fpl.tokenizer.TokenType;
 
 public final class Array implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		if(env.hasModifier(Modifier.CONST)){
 			writer.write("const ");
 		}
@@ -33,7 +33,7 @@ public final class Array implements IFunction{
         }
         writer.write(type.getCname());
 	    if(lenAtom.notIndexLiteral()){
-	    	throw new CompilerException(line,charNum,"array length expected instead of " + lenAtom);
+	    	throw new CompilerException(line, tokenNum,"array length expected instead of " + lenAtom);
 	    }
 	    var id = it.nextID();
 	    String cID;
@@ -82,7 +82,7 @@ public final class Array implements IFunction{
 		    var len = Long.parseLong(lenAtom.getValue());
 		    writer.write('}');
 		    if(count > len){
-		    	throw new CompilerException(line,charNum,"can only have " + len +  " elements");
+		    	throw new CompilerException(line, tokenNum,"can only have " + len +  " elements");
 		    }
 	    }
 		return TypeInfo.VOID;

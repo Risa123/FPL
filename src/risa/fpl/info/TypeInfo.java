@@ -38,6 +38,8 @@ public class TypeInfo{
       NIL.addField("!=",new BinaryOperator(BOOL,NIL,"!="));
       BOOL.addSize();
       CHAR.addSize();
+      OBJECT.addField("==",new BinaryOperator(BOOL,OBJECT,"&=="));
+      OBJECT.addField("!=",new BinaryOperator(BOOL,OBJECT,"&!="));
   }
   private final String name,cname;
   private String declaration = "";
@@ -220,6 +222,9 @@ public class TypeInfo{
           return true;
       }
       if(o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this)){
+          return true;
+      }
+      if(this == OBJECT){
           return true;
       }
       return identical((TypeInfo)o);

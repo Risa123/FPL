@@ -26,10 +26,10 @@ public class ValueExp extends AField{
         this(type,code,AccessModifier.PUBLIC);
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() != TokenType.END_ARGS && atom.getType() != TokenType.ARG_SEPARATOR){
 			it.next();
-			return onField(atom,writer,env,it,line,charNum);
+			return onField(atom,writer,env,it,line, tokenNum);
         }
         writePrev(writer);
 		writer.write(code);
@@ -57,7 +57,7 @@ public class ValueExp extends AField{
         }
 		var code = this.code;
 		if(!(this instanceof Variable) && field instanceof Function f && type instanceof InstanceInfo i){
-			code = IFunction.INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + i.getCname() + "_toPointer(" + code + ")";
+			code = i.getToPointerName() + "(" + code + ")";
 			f.calledOnReturnedInstance();
 		}
 		field.setPrevCode(prefix + code + selector);

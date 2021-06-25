@@ -8,6 +8,9 @@ import java.util.Arrays;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.FnEnv;
+import risa.fpl.env.FnSubEnv;
+import risa.fpl.env.TemplateStatus;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
@@ -45,7 +48,7 @@ public class Function implements IField,ICalledOnPointer{
         return accessModifier;
     }
     @Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var b = new BuilderWriter(writer);
 		var argList = new ArrayList<TypeInfo>();
 		var returnedData = new ArrayList<ReturnedData>();
@@ -66,7 +69,7 @@ public class Function implements IField,ICalledOnPointer{
 		var array = new TypeInfo[argList.size()];
 		argList.toArray(array);
 		if(!hasVariant(array)){
-		    throw new CompilerException(line,charNum,"function has no variant with arguments " + Arrays.toString(array));
+		    throw new CompilerException(line, tokenNum,"function has no variant with arguments " + Arrays.toString(array));
         }
 		var variant = getVariant(array);
         if(isVirtual()){
@@ -96,6 +99,7 @@ public class Function implements IField,ICalledOnPointer{
         }
         b.write('(');
 		var first = self == null;
+		var ref = false;
 		if(self != null){
 		    if(callStatus == CALLED_ON_POINTER){
 		      callStatus = NO_STATUS;
@@ -107,11 +111,15 @@ public class Function implements IField,ICalledOnPointer{
                          callStatus = NO_STATUS;
                      }
                    }else{
-                       b.write('&');
+                       ref = true;
+                       b.write("(&");
                    }
                }
             }
             writePrev(b);
+		    if(ref){
+                b.write(')');
+            }
 		    if(callStatus == CALLED_ON_R_INSTANCE_BY_FUNC){
 		        b.write(')');
 		        callStatus = NO_STATUS;
@@ -138,7 +146,7 @@ public class Function implements IField,ICalledOnPointer{
             field.setPrevCode(b.getCode());
             if(field instanceof Function f && returnType instanceof InstanceInfo i){
                f.callStatus = CALLED_ON_R_INSTANCE_BY_FUNC;
-               var c = INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + i.getCname() + "_toPointer(" + f.getPrevCode();
+               var c = i.getToPointerName() + "(" + f.getPrevCode();
                f.setPrevCode(c);
                 return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
             }

@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 public final class Constructor extends AFunctionBlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var cEnv = (ClassEnv)env;
         var modEnv = (ModuleEnv)cEnv.getSuperEnv();
         if(modEnv.notClassConstructorOnLine(line)){
@@ -44,7 +44,7 @@ public final class Constructor extends AFunctionBlock{
         var args = parseArguments(argsWriter,it,fEnv,type).values().toArray(new TypeInfo[0]);
         if(constructor.hasVariant(args)){
           if(modEnv.notClassConstructorOnLine(line)){
-              throw new CompilerException(line,charNum,"this class already has constructor with arguments " + Arrays.toString(args));
+              throw new CompilerException(line, tokenNum,"this class already has constructor with arguments " + Arrays.toString(args));
           }
           variantNum--;
         }
@@ -70,7 +70,7 @@ public final class Constructor extends AFunctionBlock{
         if(it.hasNext()){
            it.nextList().compile(b,fEnv,it);
         }else if(!hasParentConstructor){
-            throw new CompilerException(line,charNum,"block expected as last argument");
+            throw new CompilerException(line, tokenNum,"block expected as last argument");
         }
         b.write("}\n");
         if(!(type instanceof TemplateTypeInfo)){
