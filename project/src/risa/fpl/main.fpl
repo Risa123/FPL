@@ -6,23 +6,70 @@ use{
   risa.fpl.base
 }
 class FPL{
+ private{
+   const{
+     String gcc
+     String outputFile
+     String mainModule
+   }
+ }
  this String project{
-  Map;String String; properties
   FileReader reader project + "/build.bs"
   Tokenizer tokenizer reader
+  var noGcc true
+  var noMainModule true
+  var noOutputFile true
   while tokenizer hasNext{
     var id tokenizer nextID
     if tokenizer hasNext; !{
-      CompilerException:new id getLine;,id getTokenNum;,"property value expected";throw
+      CompilerException ex id getLine;,id getTokenNum;,"property value expected"
+      ex setFile "build.bs"
+      ex throw
     }
     var value tokenizer next
     if value getType; != TokenType:STRING{
-      CompilerException:new id getLine;,id getTokenNum;,"String literal expected";throw
+      CompilerException ex id getLine;,id getTokenNum;,"String literal expected"
+      ex setFile "build.bs"
+      ex throw
     }
-    properties put id getValue;,value getValue
+    if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
+      CompilerException ex id getLine;,id getTokenNum;,"end of line expected"
+      ex setFile "build.bs"
+      ex throw
+    }
+    var idS id getValue
+    var valueS value getValue
+    if idS == "gcc"{
+      gcc = "value"
+      noGcc = false
+    }if idS == "outputFile"{
+      outputFile = valueS
+      noOutputFile = false
+    }if idS == "mainModule"{
+      mainModule = valueS
+      noMainModule = false
+    }{
+      CompilerException ex id getLine;,id getTokenNum;,idS + " property doesn't exist"
+      ex setFile "build.bs"
+      ex throw
+    }
   }
-
   tokenizer close
+  if noMainModule{
+    CompilerException ex 0,0,"no main module"
+    ex setFile "build.bs"
+    ex throw
+  }
+  if noGcc{
+    CompilerException ex 0,0,"no gcc"
+    ex setFile "build.bs"
+    ex throw
+  }
+  if noOutputFile{
+    CompilerException ex 0,0,"no output file"
+    ex setFile "build.bs"
+    ex throw
+  }
  }
 }
 main{
@@ -30,5 +77,9 @@ main{
    print "project directory expected"
    return 2 #1 is reserved for exceptions
  }
- FPL fpl args get 1
+ try{
+    FPL fpl args get 1
+ }catch CompilerException{
+   print ex getMessage
+ }
 }

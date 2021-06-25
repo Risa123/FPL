@@ -55,7 +55,16 @@ public final class TryCatchFinally extends ABlock{
                     }else{
                         throw new CompilerException(nextExp,"exception type or block expected");
                     }
-                    if(!exception.equals(exInfo)){
+                    var notException = true;
+                    var current = exInfo;
+                    while(current != null){
+                        if(current == exception){
+                            notException = false;
+                            break;
+                        }
+                        current = current.getPrimaryParent();
+                    }
+                    if(notException){
                         throw new CompilerException(nextExp,"invalid exception");
                     }
                     writer.write("{\n");
@@ -81,7 +90,7 @@ public final class TryCatchFinally extends ABlock{
                 break;
             }
         }
-        writer.write("{\n_std_lang_Thread_removeEHentry(_std_lang_currentThread);\n");
+        writer.write("{\n_std_lang_Thread_removeEHentry0(_std_lang_currentThread);\n");
         writer.write(finallyCode);
         writer.write("}\n");
         return TypeInfo.VOID;

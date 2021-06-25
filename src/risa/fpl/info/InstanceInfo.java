@@ -17,7 +17,7 @@ public class InstanceInfo extends TypeInfo{
         this.module = module;
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         instanceFree = "free";
-        toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "toPointer";
+        toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
     }
     public final String getClassDataType(){
         return getCname() + "_data_type*";

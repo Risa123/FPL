@@ -215,10 +215,10 @@ public class TypeInfo{
      */
   @Override
   public boolean equals(Object o){
-      if(o == TypeInfo.CHAR && this instanceof NumberInfo n && !n.isFloatingPoint()){
+      if(o == TypeInfo.CHAR && this instanceof NumberInfo n && n.getSize() == 1){
           return true;
       }
-      if(this == TypeInfo.CHAR && o instanceof NumberInfo n && !n.isFloatingPoint()){
+      if(this == TypeInfo.CHAR && o instanceof NumberInfo n && n.getSize() == 1){
           return true;
       }
       if(o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this)){

@@ -88,7 +88,7 @@ fn void checkStringIndex uint len uint index{
     }
  }
 class Exception{
-   private String message
+   protected String message
    this String message{
      this message = message
    }
@@ -226,13 +226,13 @@ fn bool isGraph char this = isPrint this; || this == $\s
 fn bool isPunct char this = isGraph this; && isLetter this
 fn char toLower char this{
   if isUpper this{
-     return $a cast int + this cast int  - $A
+     return $a cast byte + this cast byte  - $A
   }
   return this
 }
 fn char toUpper char this{
  if isLower this{
-   return $A cast int + this cast int  - $a
+   return $A cast byte + this cast byte  - $a
  }
  return this
 }
@@ -253,8 +253,14 @@ fn String boolToString bool this{
 fn String integerToString long this{
  [] char 20 buf
  int i 0
+ if this < 0{
+   i = 1
+   buf set 0,$-
+   this = this -
+ }
  while this > 0;|| i == 0{
-  buf set i,this % 10 + $0
+  var code this % 10 + $0 cast byte
+  buf set i,code cast char
   this /= 10
   i ++
  }

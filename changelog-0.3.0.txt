@@ -4,3 +4,7 @@ fix toString added to byte types
 fix called on function return C error
 fix lone " is now reported as specific error
 fix one line function C error
+fix toString unable to convert negative numbers
+fix number convertible to char
+fix invalid exception error
+fix copy constructor C error

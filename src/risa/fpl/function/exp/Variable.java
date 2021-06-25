@@ -42,9 +42,12 @@ public final class Variable extends ValueExp{
 		    	writer.write("(&");
 		    	writePrev(writer);
 		    	writer.write(code);
-		    	writer.write(",&");
+		    	writer.write(",");
+		    	writer.write(i.getToPointerName());
+		    	writer.write("(");
 		    	var exp = it.next();
 		    	var t = exp.compile(writer,env,it);
+		    	writer.write(")");
 		    	if(!t.equals(type)){
 		    		throw new CompilerException(exp,"expression expected to return " + type + " instead of " + t);
 				}

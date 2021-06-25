@@ -8,7 +8,14 @@ private fn String createMessage String message int line int tokenNum{
   return third + message
 }
 class CompilerException Exception{
+ private String file
  this int line int tokenNum String message:createMessage message,line,tokenNum
+ fn void setFile String file{
+   this file = file
+ }
+ override fn String getMessage{
+   return file + ":" + message
+ }
 }
 interface IFunction{
  fn void compile
