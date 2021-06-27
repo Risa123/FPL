@@ -90,26 +90,30 @@ public final class ModuleEnv extends ANameSpacedEnv{
 		for(var mod:importedModules){
 			if(mod.hasFunctionInCurrentEnv(name.getValue())){
 			   mod.requestFromOutSide();
-			   return mod.getFunction(name);
+			   return mod.getFunctionFromModule(name);
             }
 		}
-		if(hasFunctionInCurrentEnv(name.getValue())){
-		    var f = super.getFunction(name);
-		    if(f instanceof Function func){
-		        if(func.getAccessModifier() == AccessModifier.PUBLIC && (!inaccessibleFunctions.contains(f) || !getRequestFromOutSide)){
-		            getRequestFromOutSide = false;
-		            return f;
-                }else if(!getRequestFromOutSide && !inaccessibleFunctions.contains(f)){
-		            return f;
-                }
-            }else{
-		        getRequestFromOutSide = false;
-		        return f;
-            }
+        if(hasFunctionInCurrentEnv(name.getValue())){
+            return getFunctionFromModule(name);
         }
-		getRequestFromOutSide = false;
 		return superEnv.getFunction(name);
 	}
+	private IFunction getFunctionFromModule(Atom name)throws CompilerException{
+        var f = super.getFunction(name);
+        if(f instanceof Function func){
+            if(func.getAccessModifier() == AccessModifier.PUBLIC && (!inaccessibleFunctions.contains(f) || !getRequestFromOutSide)){
+                getRequestFromOutSide = false;
+                return f;
+            }else if(!getRequestFromOutSide && !inaccessibleFunctions.contains(f)){
+                return f;
+            }
+        }else{
+            getRequestFromOutSide = false;
+            return f;
+        }
+        getRequestFromOutSide = false;
+	    return null;
+    }
 	@Override
 	public String getNameSpace(IFunction caller){
 	    if(!hasModifier(Modifier.NATIVE) && accessModifier == AccessModifier.PRIVATE){

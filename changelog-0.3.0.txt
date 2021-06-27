@@ -8,3 +8,4 @@ fix toString unable to convert negative numbers
 fix number convertible to char
 fix invalid exception error
 fix copy constructor C error
+fix module imports function from  modules imported to it

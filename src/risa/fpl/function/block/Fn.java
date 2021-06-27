@@ -110,7 +110,7 @@ public class Fn extends AFunctionBlock{
             type = FunctionType.ABSTRACT;
             appendSemicolon = false;
             if(env instanceof ClassEnv e && !e.isAbstract()){
-                throw new CompilerException(line, tokenNum,"abstract method can only be declared in abstract class");
+                throw new CompilerException(line,tokenNum,"abstract method can only be declared in abstract class");
             }
         }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
             type = FunctionType.VIRTUAL;
@@ -124,13 +124,13 @@ public class Fn extends AFunctionBlock{
             if(env.getFunction(id.getValue()) instanceof Function ft){
                 f = ft;
                 if(f.getType() != type){
-                    throw new CompilerException(line, tokenNum,"all variants require same function type");
+                    throw new CompilerException(line,tokenNum,"all variants require same function type");
                 }
                 if(f.getAccessModifier() != env.getAccessModifier()){
-                    throw new CompilerException(line, tokenNum,"all variants require same access modifier");
+                    throw new CompilerException(line,tokenNum,"all variants require same access modifier");
                 }
             }else{
-                throw new CompilerException(line, tokenNum,"there is already a function called " + id);
+                throw new CompilerException(line,tokenNum,"there is already a function called " + id);
             }
         }else{
             f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
@@ -211,13 +211,13 @@ public class Fn extends AFunctionBlock{
             }
 		}else{
 		    if(!(env.hasModifier(Modifier.ABSTRACT) || env.hasModifier(Modifier.NATIVE))){
-		        throw new CompilerException(line, tokenNum,"block required");
+		        throw new CompilerException(line,tokenNum,"block required");
             }
 			appendSemicolon = true;
 		}
         var argsArray = args.values().toArray(new TypeInfo[0]);
         if(f.hasVariant(argsArray)){
-            throw new CompilerException(line, tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
+            throw new CompilerException(line,tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
         }
         if(macroDeclaration.isEmpty()){
             f.addVariant(argsArray,cID,implName);

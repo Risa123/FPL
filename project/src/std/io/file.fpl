@@ -2,7 +2,7 @@ use{
  std.io.base
  std.backend
 }
-private{
+private const{
  [] char 2 READ $r,$\0
  [] char 2 WRITE $w,$\0
 }
@@ -16,14 +16,19 @@ abstract class FileHandler Closeable{
         IOException:new "unable to open file " + name;;throw
       }
    }
+   this void* handle{
+     this handle = handle
+   }
    override fn void close = fileClose handle
 }
 class FileWriter FileHandler Writable{
   this String name:name,WRITE
+  this void* handle:handle
   override fn void write byte* p memory size = fileWrite handle,p,size
 }
 class FileReader FileHandler Readable{
   this String name:name,READ
+  this void* handle:handle
   override fn void read byte* p memory size = fileRead handle,p,size
   override fn bool ready = fileEOF handle; !
 }

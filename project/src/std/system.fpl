@@ -1,4 +1,4 @@
-use std.backend std.io.base
+use std.backend std.io.base std.io.file
 
 fn void exit int exitCode{
  currentThread freeEHentries
@@ -9,7 +9,15 @@ fn int execute String cmd{
   var exitCode execute ccmd
   ccmd free
   if exitCode == -1{
-    IOException:new "invalid command";throw
+    IOException:new "invalid command " + cmd;;throw
   }
   return exitCode
 }
+private{
+ FileWriter fileStderr stderr
+ FileWriter fileStdout stdout
+ FileReader fileStdin stdin
+}
+DataWriter stderr fileStderr
+DataWriter stdout fileStdout
+DataReader stdin fileStdin

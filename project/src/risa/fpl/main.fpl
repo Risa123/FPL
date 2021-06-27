@@ -2,6 +2,7 @@ use{
   std.io.file
   std.io.base
   std.collection
+  std.system
   risa.fpl.tokenizer
   risa.fpl.base
 }
@@ -11,14 +12,28 @@ class FPL{
      String gcc
      String outputFile
      String mainModule
+     ArrayList;String; flags
+   }
+   fn String readValue Tokenizer* tokenizer{
+      var value tokenizer next
+      if value getType; != TokenType:STRING{
+       CompilerException ex value getLine;,value getTokenNum;,"String literal expected"
+       ex setFile "build.bs"
+       ex throw
+      }
+      if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
+       CompilerException ex value getLine;,value getTokenNum;,"end of line expected"
+        ex setFile "build.bs"
+        ex throw
+      }
+      return value getValue
    }
  }
  this String project{
   FileReader reader project + "/build.bs"
   Tokenizer tokenizer reader
-  var noGcc true
-  var noMainModule true
-  var noOutputFile true
+  var noGcc true;noMainModule true;noOutputFile true
+  String ccArgs
   while tokenizer hasNext{
     var id tokenizer nextID
     if tokenizer hasNext; !{
@@ -26,33 +41,37 @@ class FPL{
       ex setFile "build.bs"
       ex throw
     }
-    var value tokenizer next
-    if value getType; != TokenType:STRING{
-      CompilerException ex id getLine;,id getTokenNum;,"String literal expected"
-      ex setFile "build.bs"
-      ex throw
-    }
-    if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
-      CompilerException ex id getLine;,id getTokenNum;,"end of line expected"
-      ex setFile "build.bs"
-      ex throw
-    }
     var idS id getValue
-    var valueS value getValue
     if idS == "gcc"{
-      gcc = "value"
+      gcc = readValue tokenizer ref
       noGcc = false
     }if idS == "outputFile"{
-      outputFile = valueS
+      outputFile = readValue tokenizer ref
       noOutputFile = false
     }if idS == "mainModule"{
-      mainModule = valueS
+      mainModule = readValue tokenizer ref
       noMainModule = false
+    }if idS == "ccArgs"{
+      ccArgs = readValue tokenizer ref
+    }if idS == "flags"{
+      while tokenizer hasNext{
+        var flag tokenizer next
+        if flag getType; == TokenType:ID{
+          flags add flag getValue
+        }if flag getType; == TokenType:NEW_LINE{
+          break
+        }{
+         CompilerException ex flag getLine;,flag getTokenNum;,"flag expected instead of " + flag getValue
+         ex setFile "build.bs"
+         ex throw
+        }
+      }
     }{
       CompilerException ex id getLine;,id getTokenNum;,idS + " property doesn't exist"
       ex setFile "build.bs"
       ex throw
     }
+
   }
   tokenizer close
   if noMainModule{
@@ -74,11 +93,11 @@ class FPL{
 }
 main{
  if argc != 2{
-   print "project directory expected"
+   stderr write "project directory expected"
    return 2 #1 is reserved for exceptions
  }
  try{
-    FPL fpl args get 1
+    FPL:new args get 1
  }catch CompilerException{
    print ex getMessage
  }

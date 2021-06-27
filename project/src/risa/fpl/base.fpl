@@ -14,7 +14,8 @@ class CompilerException Exception{
    this file = file
  }
  override fn String getMessage{
-   return file + ":" + message
+   var str file + ":"
+   return str + message
  }
 }
 interface IFunction{
