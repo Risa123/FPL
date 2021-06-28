@@ -15,6 +15,10 @@ native{
     fn int fflush void* file
     fn void* __acrt_iob_func uint index
     fn int setvbuf void* file byte* buffer int mode memory size
+    fn void* opendir char* name
+    fn void closedir void* dir
+    fn void* readdir void* dir
+    fn long telldir void* dir
  }
 }
 private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
@@ -60,3 +64,12 @@ ifFlag ia64{
  fn void contextRestore Context context = __mingw_setjmp context,1
  fn bool contextSave Context context = __mingw_longjmp context
 }
+struct DirectoryEntry{
+  long ino
+  ushort reclen;nameLength
+  [] char 260 name
+}
+alias openDirectory opendir
+alias closeDirectory closedir
+alias tellDirectory telldir
+fn DirectoryEntry* readDirectory void* dir = readdir dir;cast DirectoryEntry*

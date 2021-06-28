@@ -11,7 +11,7 @@ class CompilerException Exception{
  private String file
  this int line int tokenNum String message:createMessage message,line,tokenNum
  fn void setFile String file{
-   this file = file
+    this file = file
  }
  override fn String getMessage{
    var str file + ":"

@@ -45,9 +45,9 @@ public final class StructBlock extends ABlock{
         next.compile(b,sEnv,it);
         b.write("}" + cID +  align +";\n");
         var type = sEnv.getType();
-        writer.write(b.getCode());
         type.appendToDeclaration(b.getCode());
         type.buildDeclaration();
+        env.addType(id.getValue(),type);
         return TypeInfo.VOID;
     }
 }

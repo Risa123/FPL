@@ -20,8 +20,7 @@ public final class TryCatchFinally extends ABlock{
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         writer.write("_std_lang_Thread_addEHentry0(_std_lang_currentThread);\n");
         var backend = env.getFPL().getModule("std.backend").getEnv();
-        var f = (Function)backend.getFunction(new Atom(0,0,"contextSave",TokenType.ID));
-        writer.write(f.getDeclaration());
+        writer.write(((Function)backend.getFunction(new Atom(0,0,"contextSave",TokenType.ID))).getDeclaration());
         writer.write("if(!_std_backend_contextSave0(_std_lang_currentThread->_currentEHentry->_context)){\n");
         it.nextList().compile(writer,new FnSubEnv(env),it);
         writer.write("}\n");

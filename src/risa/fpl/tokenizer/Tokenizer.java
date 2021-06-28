@@ -37,6 +37,9 @@ public final class Tokenizer{
 			  }
 			  var builder = new StringBuilder("'");
 			  var firstChar = read();
+			  if(firstChar > 127){
+			  	throw new CompilerException(line,tokenNum,"invalid ascii char " + Character.toString(firstChar));
+			  }
 			  if(firstChar == '\\' && hasNext()){
 			      read();
                   switch(c){
@@ -214,16 +217,13 @@ public final class Tokenizer{
 					}
 			  		read();//appended in following lines
 				}
+			  	if(c > 127){
+			  		throw new CompilerException(line,tokenNum,"not valid ascii string");
+				}
 			  	b.appendCodePoint(c);
 			  }
 			  b.append('"');
-			  var id = b.toString();
-			  for(int i = 0; i < id.length();++i){
-			      if(id.charAt(i) > 127){
-			          throw new CompilerException(line,tokenNum,"this is not valid ascii string");
-                  }
-              }
-			  return new Token(line,tokenNum,id,TokenType.STRING);
+			  return new Token(line,tokenNum,b.toString(),TokenType.STRING);
 		  }else if(c == ':'){
 		      return new Token(line,tokenNum,":",TokenType.CLASS_SELECTOR);
           } else  if(notSeparator(c)){

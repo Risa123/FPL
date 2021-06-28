@@ -32,3 +32,20 @@ class FileReader FileHandler Readable{
   override fn void read byte* p memory size = fileRead handle,p,size
   override fn bool ready = fileEOF handle; !
 }
+class DirectoryStream{
+  private void* handle
+  this String name{
+    var cstr name toCString
+    handle = openDirectory cstr
+    cstr free
+    if handle == nil{
+      IOException:new "unable to open directory " + name;;throw
+    }
+  }
+  fn void close = closeDirectory handle
+  fn String read{
+    var entry readDirectory handle
+    return String:new entry name,entry nameLength,false
+  }
+  fn long tell = tellDirectory handle
+}

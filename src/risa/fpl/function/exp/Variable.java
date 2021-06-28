@@ -43,11 +43,19 @@ public final class Variable extends ValueExp{
 		    	writePrev(writer);
 		    	writer.write(code);
 		    	writer.write(",");
-		    	writer.write(i.getToPointerName());
-		    	writer.write("(");
-		    	var exp = it.next();
-		    	var t = exp.compile(writer,env,it);
-		    	writer.write(")");
+				var exp = it.nextAtom();
+				var notVar = false;
+				if(!(env.getFunction(exp) instanceof Variable)){
+				  notVar = true;
+					writer.write(i.getToPointerName());
+					writer.write("(");
+				}else{
+					writer.write('&');
+				}
+				var t = exp.compile(writer,env,it);
+				if(notVar) {
+					writer.write(")");
+				}
 		    	if(!t.equals(type)){
 		    		throw new CompilerException(exp,"expression expected to return " + type + " instead of " + t);
 				}
@@ -95,7 +103,7 @@ public final class Variable extends ValueExp{
 	}
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=")){
+		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=") && a.getType() == TokenType.ID){
 		    throw new CompilerException(line, tokenNum,"variable " + id + " not defined");
         }
 		if(instanceType != null && getPrevCode() == null){

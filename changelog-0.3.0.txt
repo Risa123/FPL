@@ -9,3 +9,7 @@ fix number convertible to char
 fix invalid exception error
 fix copy constructor C error
 fix module imports function from  modules imported to it
+fix ascii check added for character literal
+fix struct C error
+fix struct type not added
+fix variable not defined when usage followed by atom
