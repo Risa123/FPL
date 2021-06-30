@@ -1,3 +1,8 @@
+struct DirectoryEntry{
+  long ino
+  ushort reclen;nameLength
+  [] char 260 name
+}
 native{
  fn int puts char* str
  fn int putchar char c
@@ -17,7 +22,7 @@ native{
     fn int setvbuf void* file byte* buffer int mode memory size
     fn void* opendir char* name
     fn void closedir void* dir
-    fn void* readdir void* dir
+    fn DirectoryEntry* readdir void* dir
     fn long telldir void* dir
  }
 }
@@ -62,14 +67,9 @@ ifFlag ia64{
    fn void __mingw_longjmp Context context int value
  }
  fn void contextRestore Context context = __mingw_setjmp context,1
- fn bool contextSave Context context = __mingw_longjmp context
+ alias contextSave __mingw_longjmp
 }
-struct DirectoryEntry{
-  long ino
-  ushort reclen;nameLength
-  [] char 260 name
-}
-alias openDirectory opendir
-alias closeDirectory closedir
-alias tellDirectory telldir
-fn DirectoryEntry* readDirectory void* dir = readdir dir;cast DirectoryEntry*
+alias directoryOpen opendir
+alias directoryClose closedir
+alias directoryTell telldir
+alias directoryRead readdir

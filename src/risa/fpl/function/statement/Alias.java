@@ -17,10 +17,13 @@ public final class Alias implements IFunction{
             throw new CompilerException(id,"there is already a function called " + id);
         }
         var f = env.getFunction(it.nextID());
-        if(f instanceof Function){
-            f = ((Function)f).changeAccessModifier(env.getAccessModifier());
+        if(f instanceof Function fn){
+            f = fn.changeAccessModifier(env.getAccessModifier());
         }
         env.addFunction(id.getValue(),f);
+        if(it.hasNext()){
+            throw new CompilerException(line,tokenNum,"no tokens allowed after alias");
+        }
         return TypeInfo.VOID;
     }
 }

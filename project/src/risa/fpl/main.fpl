@@ -21,8 +21,8 @@ class FPL{
        ex setFile "build.bs"
        ex throw
       }
-      if tokenizer hasNext; && tokenizer next;getType; != TokenType:NEW_LINE{
-       CompilerException ex value getLine;,value getTokenNum;,"end of line expected"
+      if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
+        CompilerException ex value getLine;,value getTokenNum;,"end of line expected"
         ex setFile "build.bs"
         ex throw
       }
@@ -91,7 +91,7 @@ class FPL{
   var outputDirectory project + "/output"
   var srcDir project + "/src"
   DirectoryStream stream srcDir
-
+  print stream tell;toString
   stream close
  }
 }

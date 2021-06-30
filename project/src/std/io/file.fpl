@@ -36,16 +36,16 @@ class DirectoryStream{
   private void* handle
   this String name{
     var cstr name toCString
-    handle = openDirectory cstr
+    handle = directoryOpen cstr
     cstr free
     if handle == nil{
       IOException:new "unable to open directory " + name;;throw
     }
   }
-  fn void close = closeDirectory handle
+  fn void close = directoryClose handle
   fn String read{
-    var entry readDirectory handle
+    var entry directoryRead handle
     return String:new entry name,entry nameLength,false
   }
-  fn long tell = tellDirectory handle
+  fn long tell = directoryTell handle
 }
