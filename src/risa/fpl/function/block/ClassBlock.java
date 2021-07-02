@@ -181,10 +181,9 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 }
             }
         }
-        internalCode.write("static " + type.getCname() + " container" + type.getCname() + ";\n");
         internalCode.write(type.getCname() + "* " + type.getToPointerName() + "(");
-        internalCode.write(type.getCname() + " this){\ncontainer" + type.getCname() + " = this;\n");
-        internalCode.write("return &container" + type.getCname() + ";\n}\n");
+        internalCode.write(type.getCname() + " this," + type.getCname() + "* p){\n*p = this;\n");
+        internalCode.write("return p;\n}\n");
         cEnv.appendFunctionCode(internalCode.getCode());
         if(templateStatus != TemplateStatus.GENERATING){
             writer.write(cEnv.getDataDefinition());

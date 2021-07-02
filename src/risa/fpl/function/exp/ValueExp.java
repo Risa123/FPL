@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InstanceInfo;
@@ -57,7 +58,7 @@ public class ValueExp extends AField{
         }
 		var code = this.code;
 		if(!(this instanceof Variable) && field instanceof Function f && type instanceof InstanceInfo i){
-			code = i.getToPointerName() + "(" + code + ")";
+			code = i.getToPointerName() + "(" + code + ",&"+ ((SubEnv)env).getToPointerVarName(i) + ")";
 			f.calledOnReturnedInstance();
 		}
 		field.setPrevCode(prefix + code + selector);

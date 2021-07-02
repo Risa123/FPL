@@ -6,6 +6,7 @@ import java.io.IOException;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.NumberInfo;
@@ -54,6 +55,8 @@ public final class Variable extends ValueExp{
 				}
 				var t = exp.compile(writer,env,it);
 				if(notVar) {
+					writer.write(",&");
+					writer.write(((SubEnv)env).getToPointerVarName(i));
 					writer.write(")");
 				}
 		    	if(!t.equals(type)){
@@ -80,7 +83,11 @@ public final class Variable extends ValueExp{
 		        if(field == null){
 		            throw new CompilerException(id,ret + " has no field called " + id);
                 }
-		        field.setPrevCode(b.getCode());
+		        var code = b.getCode();
+		        if(field instanceof Function){
+		        	code = code.substring(1);
+				}
+		        field.setPrevCode(code);
 		        return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
             }
 		    writer.write(b.getCode());

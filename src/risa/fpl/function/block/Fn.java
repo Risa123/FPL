@@ -261,15 +261,22 @@ public class Fn extends AFunctionBlock{
         }
         var p = new PointerInfo(new FunctionInfo(f));
         if(env instanceof ClassEnv cEnv){
-            cEnv.addMethod(f,argsArray,b.getCode());
+            var tmp = new BuilderWriter(writer);
+            fnEnv.compileToPointerVars(tmp);
+            tmp.write(b.getCode());
+            cEnv.addMethod(f,argsArray,tmp.getCode());
         }else if(env instanceof InterfaceEnv){
             writer.write(p.getFunctionPointerDeclaration(variant.cname()) + ";\n");
         }else if(env instanceof ModuleEnv e){
             if(f.getType() != FunctionType.NATIVE){
-                e.appendFunctionCode(b.getCode());
+                var tmp = new BuilderWriter(writer);
+                fnEnv.compileToPointerVars(tmp);
+                tmp.write(b.getCode());
+                e.appendFunctionCode(tmp.getCode());
             }
             e.appendFunctionDeclaration(f);
         }else{
+            fnEnv.compileToPointerVars(writer);
             writer.write(b.getCode());
         }
         env.addFunction("&" + id,new FunctionReference(p));

@@ -3,6 +3,7 @@ package risa.fpl.function.block;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.FnEnv;
 import risa.fpl.env.FnSubEnv;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
@@ -22,10 +23,15 @@ public final class TryCatchFinally extends ABlock{
         var backend = env.getFPL().getModule("std.backend").getEnv();
         writer.write(((Function)backend.getFunction(new Atom(0,0,"contextSave",TokenType.ID))).getDeclaration());
         writer.write("if(!_std_backend_contextSave0(_std_lang_currentThread->_currentEHentry->_context)){\n");
-        it.nextList().compile(writer,new FnSubEnv(env),it);
+        var tryEnv = new FnSubEnv(env);
+        var tmp = new BuilderWriter(writer);
+        it.nextList().compile(tmp,tryEnv,it);
+        tryEnv.compileToPointerVars(writer);
+        writer.write(tmp.getCode());
         writer.write("}\n");
         var hasFin = false;
         var finallyCode = "";
+        var finallyEnv = new FnSubEnv(env);
         while(it.hasNext()){
             var exp = it.peek();
             if(exp instanceof Atom blockName && blockName.getType() == TokenType.ID){
@@ -71,7 +77,10 @@ public final class TryCatchFinally extends ABlock{
                     writer.write(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,&ex);\n");
                     var blockEnv = new FnSubEnv(env);
                     blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
-                    block.compile(writer,blockEnv,it);
+                    var tmp1 = new BuilderWriter(writer);
+                    block.compile(tmp1,blockEnv,it);
+                    blockEnv.compileToPointerVars(writer);
+                    writer.write(tmp1.getCode());
                     writer.write("}\n");
                 }else if(blockName.getValue().equals("finally")){
                     if(hasFin){
@@ -80,7 +89,7 @@ public final class TryCatchFinally extends ABlock{
                     hasFin = true;
                     it.next();
                     var b = new BuilderWriter(writer);
-                    it.nextList().compile(b,new FnSubEnv(env),it);
+                    it.nextList().compile(b,finallyEnv,it);
                     finallyCode = b.getCode();
                 }else{
                     break;
@@ -90,7 +99,9 @@ public final class TryCatchFinally extends ABlock{
             }
         }
         writer.write("{\n_std_lang_Thread_removeEHentry0(_std_lang_currentThread);\n");
+        finallyEnv.compileToPointerVars(writer);
         writer.write(finallyCode);
+        finallyEnv.compileDestructorCalls(writer);
         writer.write("}\n");
         return TypeInfo.VOID;
     }

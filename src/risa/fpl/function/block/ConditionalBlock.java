@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnSubEnv;
@@ -37,14 +38,17 @@ public final class ConditionalBlock extends ABlock{
 				list.add(exp);
 			}
 		}
-		var ret = new List(expLine,expCharNum,list,false).compile(writer,new FnSubEnv(env),it);
+		var ret = new List(expLine,expCharNum,list,false).compile(writer,env,it);
 		if(ret != TypeInfo.BOOL){
 			throw new CompilerException(expLine,expCharNum,"expression expected to return bool instead of " + ret);
 		}
 		writer.write("){\n");
 		var ifEnv = new FnSubEnv(env);
 		var block = it.nextList();
-		block.compile(writer,ifEnv,it);
+		var tmp = new BuilderWriter(writer);
+		block.compile(tmp,ifEnv,it);
+		ifEnv.compileToPointerVars(writer);
+		writer.write(tmp.getCode());
 		ifEnv.compileDestructorCalls(writer);
 		writer.write("}\n");
 		if(code.equals("if")){
@@ -59,7 +63,10 @@ public final class ConditionalBlock extends ABlock{
 					writer.write("else{\n");
 				}
 				var subEnv = new FnSubEnv(env);
-				elseExp.compile(writer,subEnv,it);
+				var b = new BuilderWriter(writer);
+				elseExp.compile(b,subEnv,it);
+				subEnv.compileToPointerVars(writer);
+				writer.write(b.getCode());
 				subEnv.compileDestructorCalls(writer);
 				if(elseExp instanceof List){
 					writer.write("}\n");

@@ -100,6 +100,7 @@ main{
    stderr writeString "project directory expected"
    return 2 #1 is reserved for exceptions
  }
+ Exception:new "ddsd";throw
  try{
     FPL:new args get 1
  }catch CompilerException{

@@ -59,7 +59,10 @@ public final class Main implements IFunction{
         b.write("for(int i = 0;i < argc;++i){\n");
         b.write("I_std_lang_String_init0(_args + i,argv[i],strlen(argv[i]),0);\n");
         b.write("}\n");
-        it.nextList().compile(b,fnEnv,it);
+        var tmp = new BuilderWriter(writer);
+        it.nextList().compile(tmp,fnEnv,it);
+        fnEnv.compileToPointerVars(b);
+        b.write(tmp.getCode());
         fnEnv.compileDestructorCalls(b);
         var modules1 = new ArrayList<ModuleEnv>();
         addDependencies(modEnv,modules1);

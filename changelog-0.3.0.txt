@@ -14,3 +14,5 @@ fix struct C error
 fix struct type not added
 fix variable not defined when usage followed by atom
 fix alias doesn't allow any tokens after itself
+fix try-catch-finally C error
+fix call on returned instance errors

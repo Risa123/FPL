@@ -8,6 +8,7 @@ import java.util.Arrays;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
@@ -143,7 +144,7 @@ public class Function implements IField,ICalledOnPointer{
             field.setPrevCode(b.getCode());
             if(field instanceof Function f && returnType instanceof InstanceInfo i){
                f.callStatus = CALLED_ON_R_INSTANCE_BY_FUNC;
-               var c = i.getToPointerName() + "(" + f.getPrevCode();
+               var c = i.getToPointerName() + "(" + f.getPrevCode() + ",&" + ((SubEnv)env).getToPointerVarName(i);
                f.setPrevCode(c);
                 return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
             }

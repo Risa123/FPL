@@ -14,7 +14,9 @@ import java.util.ArrayList;
 
 public class SubEnv extends AEnv{
   protected final AEnv superEnv;
+  private int toPointerVarID;
   private final ArrayList<Variable>instanceVariables = new ArrayList<>();
+  private final StringBuilder toPointerVars = new StringBuilder();
   public SubEnv(AEnv superEnv){
 	  this.superEnv = superEnv;
   }
@@ -54,5 +56,16 @@ public class SubEnv extends AEnv{
           }
       }
       writer.write(b.toString());
+ }
+ public String getToPointerVarName(InstanceInfo type){
+      var name = "c" + toPointerVarID++;
+      toPointerVars.append(type.getCname());
+      toPointerVars.append(' ');
+      toPointerVars.append(name);
+      toPointerVars.append(";\n");
+      return name;
+ }
+ public void compileToPointerVars(BufferedWriter writer)throws IOException{
+      writer.write(toPointerVars.toString());
  }
 }

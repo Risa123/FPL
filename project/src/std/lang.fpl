@@ -83,8 +83,7 @@ fn void print String str{
 }
 fn void checkStringIndex uint len uint index{
     if index >= len{
-       Exception ex  "index out of bounds:" + integerToString index
-       ex throw
+       Exception:new "index out of bounds:" + integerToString index;;;throw
     }
  }
 class Exception{
