@@ -87,7 +87,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             additionalCode += primaryParent.getConstructor().getVariant(new TypeInfo[0]).cname() + "((" + primaryParent.getCname() + "*)this);\n";
         }
 	    if(!isAbstract()){
-	        additionalCode += "this->object_data=&" + dataName + ";\n";
+	        additionalCode += "this->objectData=&" + dataName + ";\n";
 	     }
 		return additionalCode + implicitConstructor;
 	}

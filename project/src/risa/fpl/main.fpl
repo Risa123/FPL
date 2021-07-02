@@ -9,7 +9,6 @@ use{
 class FPL{
  private{
    const{
-     String gcc
      String outputFile
      String mainModule
      ArrayList;String; flags
@@ -32,7 +31,7 @@ class FPL{
  this String project{
   FileReader reader project + "/build.bs"
   Tokenizer tokenizer reader
-  var noGcc true;noMainModule true;noOutputFile true
+  var noMainModule true;noOutputFile true
   String ccArgs
   while tokenizer hasNext{
     var id tokenizer nextID
@@ -42,17 +41,12 @@ class FPL{
       ex throw
     }
     var idS id getValue
-    if idS == "gcc"{
-      gcc = readValue tokenizer ref
-      noGcc = false
-    }if idS == "outputFile"{
+    if idS == "outputFile"{
       outputFile = readValue tokenizer ref
       noOutputFile = false
     }if idS == "mainModule"{
       mainModule = readValue tokenizer ref
       noMainModule = false
-    }if idS == "ccArgs"{
-      ccArgs = readValue tokenizer ref
     }if idS == "flags"{
       while tokenizer hasNext{
         var flag tokenizer next
@@ -78,11 +72,6 @@ class FPL{
     ex setFile "build.bs"
     ex throw
   }
-  if noGcc{
-    CompilerException ex 0,0,"no gcc"
-    ex setFile "build.bs"
-    ex throw
-  }
   if noOutputFile{
     CompilerException ex 0,0,"no output file"
     ex setFile "build.bs"
@@ -100,7 +89,6 @@ main{
    stderr writeString "project directory expected"
    return 2 #1 is reserved for exceptions
  }
- Exception:new "ddsd";throw
  try{
     FPL:new args get 1
  }catch CompilerException{

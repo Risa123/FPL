@@ -36,7 +36,7 @@ public final class GetObjectInfo extends AField implements ICalledOnPointer{
         }else{
             prev.write('.');
         }
-        prev.write("object_data)->" + field);
+        prev.write("objectData)->" + field);
         return  compileChainedCall(returnType,writer,env,it,prev.getCode());
     }
     @Override

@@ -1,9 +1,11 @@
 package risa.fpl.info;
 
 import risa.fpl.env.ModuleEnv;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.GetObjectInfo;
 import risa.fpl.function.exp.ValueExp;
+import risa.fpl.function.exp.Variable;
 import risa.fpl.function.statement.ClassVariable;
 
 public class InstanceInfo extends TypeInfo{
@@ -16,6 +18,7 @@ public class InstanceInfo extends TypeInfo{
         super(name,IFunction.toCId(name));
         this.module = module;
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
+        addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
         instanceFree = "free";
         toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
     }
@@ -46,6 +49,7 @@ public class InstanceInfo extends TypeInfo{
         for(var t:constructor.getRequiredTypes()){
             addRequiredType(t);
         }
+        appendToDeclaration(getCname() + "* " + getToPointerName() + "(" + getCname() + " this," + getCname() + "* p);\n");
         super.buildDeclaration();
     }
     @Override

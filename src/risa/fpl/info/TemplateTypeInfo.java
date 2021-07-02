@@ -5,7 +5,6 @@ import risa.fpl.ModuleBlock;
 import risa.fpl.env.*;
 import risa.fpl.function.TemplateArgument;
 import risa.fpl.function.block.ClassBlock;
-import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
@@ -37,7 +36,13 @@ public final class TemplateTypeInfo extends InstanceInfo{
        if(!generatedTypes.containsKey(argsInfo)){
            var cName = new StringBuilder(getCname());
            for(var arg:argsInfo){
-               cName.append(arg.getCname());
+               var cname = arg.getCname();
+               if(arg instanceof  PointerInfo p && p.getType() instanceof FunctionInfo){
+                  cname =  cname.replace('*','_');
+                  cname = cname.replace('(','_');
+                  cname = cname.replace(')','_');
+               }
+               cName.append(cname);
            }
            var superMod = getModule();
            var file = superMod.getNameSpace() + cName + ".c";

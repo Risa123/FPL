@@ -1,5 +1,7 @@
 method id added to enum types
 escape sequences added to string literal
+add getClass to all instances
+add getObjectSize to pointers
 fix toString added to byte types
 fix called on function return C error
 fix lone " is now reported as specific error
@@ -15,4 +17,6 @@ fix struct type not added
 fix variable not defined when usage followed by atom
 fix alias doesn't allow any tokens after itself
 fix try-catch-finally C error
-fix call on returned instance errors
+fix call on returned instance segfault
+fix Exceptions ignored on runtime
+fix function pointer as template argument error

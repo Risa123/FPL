@@ -87,7 +87,7 @@ public class Function implements IField,ICalledOnPointer{
                 }else{
                     b.write('.');
                 }
-                b.write("object_data)->");
+                b.write("objectData)->");
             }
         }
         if(asFunctionPointer){

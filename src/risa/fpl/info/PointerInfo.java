@@ -9,7 +9,7 @@ public final class PointerInfo extends TypeInfo{
 	private final TypeInfo type;
 	private final boolean array;
 	public PointerInfo(TypeInfo type,boolean array){
-	    super(type.getName() +"*",type.getCname() + "*",true);
+	    super(type.getName() + "*",type.getCname() + "*",true);
         this.type = type;
         this.array = array;
         if(type != TypeInfo.VOID){
@@ -33,6 +33,7 @@ public final class PointerInfo extends TypeInfo{
         addField(">=",new BinaryOperator(TypeInfo.BOOL,this,">="));
         addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
         addField("cast", new Cast(this));
+        addField("getObjectSize",new ValueExp(NumberInfo.MEMORY,Integer.toString(NumberInfo.MEMORY.getSize())));
         var cName = "free";
         if(type instanceof InstanceInfo i){
           cName = i.getInstanceFree();
@@ -40,6 +41,7 @@ public final class PointerInfo extends TypeInfo{
         var f = new Function("free",TypeInfo.VOID,FunctionType.NATIVE,type,AccessModifier.PUBLIC);
         f.addVariant(new TypeInfo[0],cName,cName);
         addField("free",f);
+        setClassInfo(ClassInfo.POINTER);
 	}
 	public PointerInfo(TypeInfo type){
 	    this(type,false);

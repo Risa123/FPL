@@ -22,6 +22,8 @@ public final class ClassInfo extends TypeInfo{
     public static final ClassInfo FLOAT = new ClassInfo("float");
     public static final ClassInfo OBJECT = new ClassInfo("object");
     public static final ClassInfo MEMORY = new ClassInfo("memory");
+    public static final ClassInfo POINTER = new ClassInfo("pointer");
+    public static final ClassInfo FUNCTION = new ClassInfo("function");
     private TypeInfo instanceType;
     static{
         TypeInfo.CHAR.setClassInfo(CHAR);
@@ -59,6 +61,8 @@ public final class ClassInfo extends TypeInfo{
         FLOAT.addMethods(NumberInfo.FLOAT);
         DOUBLE.addMethods(NumberInfo.DOUBLE);
         OBJECT.addMethods(TypeInfo.OBJECT);
+        POINTER.addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,Integer.toString(NumberInfo.MEMORY.getSize())));
+        FUNCTION.addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,Integer.toString(NumberInfo.MEMORY.getSize())));
     }
     private void addMethods(TypeInfo instance){
         addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + instance.getCname() + ")"));

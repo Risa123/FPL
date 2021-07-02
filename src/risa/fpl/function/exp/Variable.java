@@ -92,7 +92,7 @@ public final class Variable extends ValueExp{
             }
 		    writer.write(b.getCode());
 			return ret;
-		}else if(type instanceof PointerInfo p && !p.isFunctionPointer()){
+		}else if(type instanceof PointerInfo){
 		    TypeInfo t;
            if((t = processOperator(value,writer,it,env)) != null){
                return t;

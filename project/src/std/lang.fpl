@@ -86,6 +86,12 @@ fn void checkStringIndex uint len uint index{
        Exception:new "index out of bounds:" + integerToString index;;;throw
     }
  }
+class EHEntry{
+   EHEntry* prev
+   Context context
+   void** exceptionTypes
+   int exceptionTypesLen
+}
 class Exception{
    protected String message
    this String message{
@@ -93,7 +99,18 @@ class Exception{
    }
    virtual fn String getMessage = message
    fn void throw{
-     if currentThread currentEHentry == nil{
+     var target currentThread currentEHEntry
+     while target != nil{
+       var i 0
+       while i < target exceptionTypesLen{
+         if target exceptionTypes get i; == getClass{
+           break
+         }
+         i ++
+       }
+       target = target prev
+     }
+     if target == nil{
        currentThread exceptionHandler drf this
        return
      }
@@ -104,7 +121,7 @@ class Exception{
         exit 1
      }
      memoryCopy this cast byte*,currentThread exception cast byte*,getObjectSize
-     contextRestore currentThread currentEHentry context
+     contextRestore target context
    }
    internal fn void copyAndFree Exception* to{
      memoryCopy this cast byte*,to cast byte*,getObjectSize
@@ -113,38 +130,37 @@ class Exception{
    }
 }
 fpointer void ExceptionHandlerType Exception* ex
-private class EHentry{
-  EHentry* prev
-  Context context
-}
 class Thread{
  private String name
  internal{
    Exception* exception
-   EHentry* currentEHentry
+   EHEntry* currentEHEntry
    ExceptionHandlerType exceptionHandler
-   fn void addEHentry{
-        var prev currentEHentry
-        currentEHentry = EHentry:alloc
-        currentEHentry prev = prev
+   fn void addEHEntry void** exceptionTypes int exceptionTypesLen{
+        var prev currentEHEntry
+        currentEHEntry = EHEntry:alloc
+        currentEHEntry prev = prev
+        currentEHEntry exceptionTypes = exceptionTypes
+        currentEHEntry exceptionTypesLen = exceptionTypesLen
     }
-    fn void removeEHentry{
-      var prev currentEHentry prev
-      currentEHentry free
-      currentEHentry = prev
+    fn void removeEHEntry{
+      var prev currentEHEntry prev
+      currentEHEntry exceptionTypes free
+      currentEHEntry free
+      currentEHEntry = prev
     }
- }
- (#do not call)
- fn void freeEHentries{
-   while currentEHentry != nil{
-     var prev currentEHentry prev
-     currentEHentry free
-     currentEHentry = prev
-   }
+     fn void freeEHEntries{
+       while currentEHEntry != nil{
+         var prev currentEHEntry prev
+         currentEHEntry free
+         currentEHEntry = prev
+       }
+     }
+
  }
  this String name{
    this name = name
-   currentEHentry = nil
+   currentEHEntry = nil
    setExceptionHandler &defaultExceptionHandler
  }
  fn void setName String name = this name = name
@@ -157,7 +173,7 @@ Thread* currentThread
 fn void defaultExceptionHandler Exception* ex{
   print "exception happened:"
   print ex getMessage
-  if currentThread currentEHentry != nil{
+  if currentThread currentEHEntry != nil{
      ex free
   }
   exit 1

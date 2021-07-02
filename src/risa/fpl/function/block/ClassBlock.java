@@ -95,7 +95,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         var parentType = type.getPrimaryParent();
         b.write("typedef struct ");
         b.write(IFunction.toCId(id.getValue()));
-        b.write("{\nvoid* object_data;\n");
+        b.write("{\nvoid* objectData;\n");
         if(parentType instanceof InstanceInfo i){
             b.write(i.getAttributesCode());
         }
