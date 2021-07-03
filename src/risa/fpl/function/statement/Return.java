@@ -17,8 +17,12 @@ import risa.fpl.parser.List;
 public final class Return implements IFunction{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-		writer.write("return ");
 		var subEnv = (FnSubEnv)env;
+		if(subEnv.isInMainBlock()){
+			writer.write("free(args);\n");//from main block
+			writer.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
+		}
+		writer.write("return ");
 		if(it.hasNext()){
 		    var list = new ArrayList<AExp>();
 		    while(it.hasNext()){

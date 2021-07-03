@@ -36,13 +36,16 @@ public final class TemplateTypeInfo extends InstanceInfo{
        if(!generatedTypes.containsKey(argsInfo)){
            var cName = new StringBuilder(getCname());
            for(var arg:argsInfo){
-               var cname = arg.getCname();
-               if(arg instanceof  PointerInfo p && p.getType() instanceof FunctionInfo){
-                  cname =  cname.replace('*','_');
-                  cname = cname.replace('(','_');
-                  cname = cname.replace(')','_');
+               var cname = arg.getCname().toCharArray();
+               var b = new StringBuilder();
+               for(char c:cname){
+                   if(Character.isAlphabetic(c) || c == '_' || c == '-'){
+                       b.append(c);
+                   }else{
+                       b.append(Character.getName(c).replace(' ', '_'));
+                   }
                }
-               cName.append(cname);
+               cName.append(b);
            }
            var superMod = getModule();
            var file = superMod.getNameSpace() + cName + ".c";
@@ -59,6 +62,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                }
                var cEnv = new ClassEnv(mod,name.toString(),TemplateStatus.GENERATING);
                if(argsInfo.size() != templateArgs.size()){
+                   //space to make the number separate form line:tokenNum
                    throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + argsInfo.size());
                }
                for(int i = 0;i < templateArgs.size();++i){

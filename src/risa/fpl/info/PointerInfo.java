@@ -33,7 +33,7 @@ public final class PointerInfo extends TypeInfo{
         addField(">=",new BinaryOperator(TypeInfo.BOOL,this,">="));
         addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
         addField("cast", new Cast(this));
-        addField("getObjectSize",new ValueExp(NumberInfo.MEMORY,Integer.toString(NumberInfo.MEMORY.getSize())));
+        addField("getObjectSize",PointerSize.INSTANCE);
         var cName = "free";
         if(type instanceof InstanceInfo i){
           cName = i.getInstanceFree();

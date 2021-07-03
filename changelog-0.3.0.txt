@@ -19,4 +19,5 @@ fix alias doesn't allow any tokens after itself
 fix try-catch-finally C error
 fix call on returned instance segfault
 fix Exceptions ignored on runtime
-fix function pointer as template argument error
+fix template type name errors
+fix function pointer as template argument errors

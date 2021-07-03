@@ -80,7 +80,7 @@ class FPL{
   var outputDirectory project + "/output"
   var srcDir project + "/src"
   DirectoryStream stream srcDir
-  print stream tell;toString
+  print stream read
   stream close
  }
 }
@@ -89,6 +89,8 @@ main{
    stderr writeString "project directory expected"
    return 2 #1 is reserved for exceptions
  }
+ fpointer void x
+ ArrayList;x;list
  try{
     FPL:new args get 1
  }catch CompilerException{

@@ -33,7 +33,10 @@ class FileReader FileHandler Readable{
   override fn bool ready = fileEOF handle; !
 }
 class DirectoryStream{
-  private void* handle
+  private{
+    void* handle
+    DirectoryEntry* last
+  }
   this String name{
     var cstr name toCString
     handle = directoryOpen cstr
@@ -41,11 +44,26 @@ class DirectoryStream{
     if handle == nil{
       IOException:new "unable to open directory " + name;;throw
     }
+    last = nil
   }
-  fn void close = directoryClose handle
   fn String read{
-    var entry directoryRead handle
+    var entry last
+    if entry == nil{
+      entry = directoryRead handle
+      if entry == nil{
+        IOException:new "no more files";throw
+      }
+    }
     return String:new entry name,entry nameLength,false
   }
+  fn bool ready{
+    if last == nil{
+      last = directoryRead handle
+    }
+    return last != nil
+  }
   fn long tell = directoryTell handle
+  fn void seek long loc = directorySeek handle,loc
+  fn void reset = directoryReset handle
+  fn void close = directoryClose handle
 }

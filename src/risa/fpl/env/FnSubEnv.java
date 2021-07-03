@@ -33,4 +33,7 @@ public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
     protected TypeInfo getReturnTypeInternal(){
         return ((FnSubEnv)superEnv).getReturnTypeInternal();
     }
+    public boolean isInMainBlock(){
+        return ((FnSubEnv)superEnv).isInMainBlock();
+    }
 }

@@ -28,12 +28,13 @@ public final class Main implements IFunction{
             throw new CompilerException(line, tokenNum,"declaration of multiple main blocks is not allowed");
         }
         modEnv.declareMain();
-        var fnEnv = new FnEnv(env,NumberInfo.INT);
+        var fnEnv = new FnEnv(env,NumberInfo.INT,true);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
-        fnEnv.addFunction("args",new Variable(new PointerInfo(modEnv.getFPL().getString()),"_args","args"));
+        fnEnv.addFunction("args",new Variable(new PointerInfo(modEnv.getFPL().getString()),"args","args"));
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",TokenType.ID)),"mainThread","mainThread"));
         writer.write(modEnv.getInitializer());
         var b = new BuilderWriter(writer);
+        b.write("_String* args;\n");
         b.write("int main(int argc,char** argv){\n");
         var modules = new ArrayList<ModuleEnv>();
         addDependencies(modEnv,modules);
@@ -55,9 +56,9 @@ public final class Main implements IFunction{
         b.write("_Thread mainThread;\n");
         b.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
         b.write("_std_lang_currentThread = &mainThread;\n");
-        b.write("_String* _args = malloc(argc * sizeof(_String));\n");
+        b.write("args = malloc(argc * sizeof(_String));\n");
         b.write("for(int i = 0;i < argc;++i){\n");
-        b.write("I_std_lang_String_init0(_args + i,argv[i],strlen(argv[i]),0);\n");
+        b.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n");
         b.write("}\n");
         var tmp = new BuilderWriter(writer);
         it.nextList().compile(tmp,fnEnv,it);
@@ -81,8 +82,10 @@ public final class Main implements IFunction{
         }
         b.write(modEnv.getDestructor());
         if(fnEnv.isReturnNotUsed()){
-            b.write("free(_args);\nreturn 0;\n}");
+            b.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
+            b.write("free(args);\nreturn 0;\n}\n");
         }
+        b.write("void freeArgs(){\nfree(args);\n}");
         modEnv.appendFunctionCode(b.getCode());
         return TypeInfo.VOID;
     }

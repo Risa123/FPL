@@ -24,6 +24,8 @@ native{
     fn void closedir void* dir
     fn DirectoryEntry* readdir void* dir
     fn long telldir void* dir
+    fn void seekdir void* dir long loc
+    fn void rewinddir void* dir
  }
 }
 private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
@@ -73,3 +75,5 @@ alias directoryOpen opendir
 alias directoryClose closedir
 alias directoryTell telldir
 alias directoryRead readdir
+alias directorySeek seekdir
+alias directoryReset rewinddir

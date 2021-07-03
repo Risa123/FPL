@@ -169,7 +169,7 @@ class Thread{
    this exceptionHandler = exceptionHandler
  }
 }
-Thread* currentThread
+Thread* currentThread #initailized in main block
 fn void defaultExceptionHandler Exception* ex{
   print "exception happened:"
   print ex getMessage
