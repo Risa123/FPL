@@ -39,7 +39,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                var cname = arg.getCname().toCharArray();
                var b = new StringBuilder();
                for(char c:cname){
-                   if(Character.isAlphabetic(c) || c == '_' || c == '-'){
+                   if(Character.isAlphabetic(c) || Character.isDigit(c)|| c == '_' || c == '-'){
                        b.append(c);
                    }else{
                        b.append(Character.getName(c).replace(' ', '_'));

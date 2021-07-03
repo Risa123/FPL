@@ -7,11 +7,9 @@ import risa.fpl.function.exp.*;
 
 public final class PointerInfo extends TypeInfo{
 	private final TypeInfo type;
-	private final boolean array;
-	public PointerInfo(TypeInfo type,boolean array){
+	public PointerInfo(TypeInfo type){
 	    super(type.getName() + "*",type.getCname() + "*",true);
         this.type = type;
-        this.array = array;
         if(type != TypeInfo.VOID){
             addField("+", new BinaryOperator(this,NumberInfo.MEMORY, "+"));
             addField("-", new BinaryOperator(this,NumberInfo.MEMORY, "-"));
@@ -43,9 +41,6 @@ public final class PointerInfo extends TypeInfo{
         addField("free",f);
         setClassInfo(ClassInfo.POINTER);
 	}
-	public PointerInfo(TypeInfo type){
-	    this(type,false);
-    }
 	@Override
 	public boolean equals(Object o){
 		if(o instanceof PointerInfo p){
@@ -105,8 +100,5 @@ public final class PointerInfo extends TypeInfo{
 	        return getFunctionPointerDeclaration(IFunction.toCId(getName()));
         }
         return super.getCname();
-    }
-    public boolean isArray(){
-	    return array;
     }
 }
