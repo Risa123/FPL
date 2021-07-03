@@ -90,7 +90,7 @@ main{
    return 2 #1 is reserved for exceptions
  }
  fpointer void x
- ArrayList;x;list
+ ArrayList;x; list
  try{
     FPL:new args get 1
  }catch CompilerException{

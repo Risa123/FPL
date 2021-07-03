@@ -110,7 +110,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
          	 	return;
 			 }
          	 var v = method.getVariant(args);
-             implBuilder.append(new PointerInfo(new FunctionInfo(method)).getFunctionPointerDeclaration(v.implName()));
+             implBuilder.append(new FunctionInfo(method).getFunctionPointerDeclaration(v.implName()));
              implBuilder.append(";\n");
          }
     }

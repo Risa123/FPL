@@ -9,7 +9,6 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.info.FunctionInfo;
 import risa.fpl.info.InterfaceInfo;
-import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -61,7 +60,7 @@ public final class InterfaceBlock implements IFunction{
         b.write("{\n");
         for(var parent:type.getParents()){
             for(var method:parent.getMethodsOfType(FunctionType.ABSTRACT)){
-                var p = new PointerInfo(new FunctionInfo(method));
+                var p = new FunctionInfo(method);
                 for(var v:method.getVariants()){
                     b.write(p.getFunctionPointerDeclaration(v.cname()));
                     b.write(";\n");

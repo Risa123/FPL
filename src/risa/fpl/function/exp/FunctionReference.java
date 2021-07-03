@@ -3,7 +3,6 @@ package risa.fpl.function.exp;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.FunctionInfo;
-import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -12,9 +11,9 @@ import java.io.IOException;
 
 public final class FunctionReference extends ValueExp{
     private final FunctionInfo info;
-    public FunctionReference(PointerInfo p){
-        super(p,"&" + ((FunctionInfo)p.getType()).getFunction().getPointerVariant().cname());
-        info = (FunctionInfo)p.getType();
+    public FunctionReference(FunctionInfo info){
+        super(info,"&" + info.getFunction().getPointerVariant().cname());
+        this.info = info;
     }
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{

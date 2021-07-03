@@ -259,7 +259,7 @@ public class Fn extends AFunctionBlock{
                 cEnv.appendToInitializer(variant.cname() + ";\n");
             }
         }
-        var p = new PointerInfo(new FunctionInfo(f));
+        var p = new FunctionInfo(f);
         if(env instanceof ClassEnv cEnv){
             var tmp = new BuilderWriter(writer);
             fnEnv.compileToPointerVars(tmp);

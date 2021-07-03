@@ -9,7 +9,6 @@ import risa.fpl.function.block.AFunctionBlock;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.info.FunctionInfo;
-import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
@@ -25,7 +24,7 @@ public final class FPointer extends AFunctionBlock{
         var args = parseArguments(new BuilderWriter(writer),it,new FnEnv(env,returnType),null);
         var f = new Function(id.getValue(),returnType,FunctionType.NORMAL,null,env.getAccessModifier(),"");
         f.addVariant(args.values().toArray(new TypeInfo[0]),cID,cID);
-        env.addType(id.getValue(),new PointerInfo(new FunctionInfo(f)));
+        env.addType(id.getValue(),new FunctionInfo(f));
         return TypeInfo.VOID;
     }
     @Override

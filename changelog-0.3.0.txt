@@ -21,3 +21,4 @@ fix call on returned instance segfault
 fix Exceptions ignored on runtime
 fix template type name errors
 fix function pointer as template argument errors
+fix pointer to function pointer C error

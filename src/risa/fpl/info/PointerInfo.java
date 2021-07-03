@@ -2,7 +2,6 @@ package risa.fpl.info;
 
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
-import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 
 public final class PointerInfo extends TypeInfo{
@@ -45,35 +44,7 @@ public final class PointerInfo extends TypeInfo{
 	public boolean equals(Object o){
 		if(o instanceof PointerInfo p){
 			return type.equals(p.type);
-		}else return o == TypeInfo.NIL;
-    }
-    public boolean isFunctionPointer(){
-	    return type instanceof FunctionInfo;
-    }
-    public String getFunctionPointerDeclaration(String cID){
-	    var f = ((FunctionInfo)type).getFunction();
-        var b = new StringBuilder(f.getReturnType().getCname());
-        b.append("(*").append(cID).append(")(");
-        var self = f.getSelf();
-        var firstArg = self == null;
-        if(!firstArg){
-            if(self instanceof InterfaceInfo){
-               b.append("void");
-            }else{
-                b.append("struct ").append(self.getCname());
-            }
-            b.append("* this");
-        }
-        var variant = f.getPointerVariant();
-        for(var arg:variant.args()){
-            if(firstArg){
-                firstArg = false;
-            }else{
-                b.append(',');
-            }
-            b.append(arg.getCname());
-        }
-        return b.append(")").toString();
+		}else return o == NIL;
     }
     @Override
     public IField getField(String name,AEnv from){
@@ -96,9 +67,9 @@ public final class PointerInfo extends TypeInfo{
     }
     @Override
     public String getCname(){
-	    if(type instanceof FunctionInfo){
-	        return getFunctionPointerDeclaration(IFunction.toCId(getName()));
+	    if(type instanceof FunctionInfo f){
+	        return f.getFunctionPointerDeclaration("*" + f.getFunction().getPointerVariant().cname());
         }
-        return super.getCname();
+	    return super.getCname();
     }
 }
