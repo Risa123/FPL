@@ -9,10 +9,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
-import risa.fpl.info.FunctionInfo;
-import risa.fpl.info.PointerInfo;
-import risa.fpl.info.TemplateTypeInfo;
-import risa.fpl.info.TypeInfo;
+import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
@@ -114,9 +111,8 @@ public final class Var implements IFunction{
                 if((env instanceof  ClassEnv || env instanceof StructEnv) && varType instanceof PointerInfo p && !p.getType().isPrimitive()){
                    decl += "struct ";
                 }
-                String code;
-                if((code = getFunctionPointerDeclaration(varType,cID)) != null){
-                  decl += code;
+                if(varType instanceof IPointerInfo p){
+                  decl += p.getPointerVariableDeclaration(cID);
                 }else{
                     decl += varType.getCname() + " " + cID;
                 }
@@ -154,19 +150,4 @@ public final class Var implements IFunction{
 		}
 		return TypeInfo.VOID;
 	}
-	private String getFunctionPointerDeclaration(TypeInfo type,String cID){
-        FunctionInfo t = null;
-        var pointerDepth = 0;
-        while(t == null){
-            if(type instanceof FunctionInfo f){
-                t = f;
-            }else if(type instanceof PointerInfo p){
-                type = p.getType();
-                pointerDepth++;
-            }else{
-                return null;
-            }
-        }
-        return t.getFunctionPointerDeclaration("*".repeat(pointerDepth) + cID);
-    }
 }

@@ -266,7 +266,7 @@ public class Fn extends AFunctionBlock{
             tmp.write(b.getCode());
             cEnv.addMethod(f,argsArray,tmp.getCode());
         }else if(env instanceof InterfaceEnv){
-            writer.write(p.getFunctionPointerDeclaration(variant.cname()) + ";\n");
+            writer.write(p.getPointerVariableDeclaration(variant.cname()) + ";\n");
         }else if(env instanceof ModuleEnv e){
             if(f.getType() != FunctionType.NATIVE){
                 var tmp = new BuilderWriter(writer);

@@ -55,7 +55,7 @@ public abstract class AFunctionBlock extends ABlock{
             args.put(argName.getValue(),argType);
             var argNameCID = IFunction.toCId(argName.getValue());
             if(argType instanceof FunctionInfo p){
-                writer.write(p.getFunctionPointerDeclaration(argNameCID));
+                writer.write(p.getPointerVariableDeclaration(argNameCID));
             }else{
                 writer.write(argType.getCname());
                 writer.write(' ');

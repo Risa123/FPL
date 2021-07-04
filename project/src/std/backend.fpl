@@ -71,9 +71,18 @@ ifFlag ia64{
  fn void contextRestore Context context = __mingw_setjmp context,1
  alias contextSave __mingw_longjmp
 }
+fn DirectoryEntry* directoryRead void* dir{
+  var entry readdir dir
+  if entry != nil; && entry nameLength == 1S; && [ entry name get 0; == $. ]{
+    entry = readdir dir
+  }
+  if entry != nil; && entry nameLength == 2S; && [ entry name get 0; == $.] && [ entry name get 1; == $. ]{
+    entry = readdir dir
+  }
+  return entry
+}
 alias directoryOpen opendir
 alias directoryClose closedir
 alias directoryTell telldir
-alias directoryRead readdir
 alias directorySeek seekdir
 alias directoryReset rewinddir

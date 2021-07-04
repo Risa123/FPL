@@ -4,7 +4,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
-public final class PointerInfo extends TypeInfo{
+public final class PointerInfo extends TypeInfo implements IPointerInfo{
 	private final TypeInfo type;
 	public PointerInfo(TypeInfo type){
 	    super(type.getName() + "*",type.getCname() + "*",true);
@@ -66,10 +66,10 @@ public final class PointerInfo extends TypeInfo{
 	    return type;
     }
     @Override
-    public String getCname(){
-	    if(type instanceof FunctionInfo f){
-	        return f.getFunctionPointerDeclaration("*" + f.getFunction().getPointerVariant().cname());
+    public String getPointerVariableDeclaration(String cID){
+	    if(type instanceof IPointerInfo p){
+	        return p.getPointerVariableDeclaration("*" + cID);
         }
-	    return super.getCname();
+	    return getCname() + " " + cID;
     }
 }

@@ -1,2 +1,2 @@
-outputFile "test.exe"
+outputFile "test.ubf"
 mainModule "main"

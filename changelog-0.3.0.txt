@@ -2,6 +2,7 @@ method id added to enum types
 escape sequences added to string literal
 add getClass to all instances
 add getObjectSize to pointers
+parenthesis enclosed in [ ] identifiers added
 fix toString added to byte types
 fix called on function return C error
 fix lone " is now reported as specific error
@@ -19,6 +20,5 @@ fix alias doesn't allow any tokens after itself
 fix try-catch-finally C error
 fix call on returned instance segfault
 fix Exceptions ignored on runtime
-fix template type name errors
-fix function pointer as template argument errors
+fix function pointer as return type C error
 fix pointer to function pointer C error

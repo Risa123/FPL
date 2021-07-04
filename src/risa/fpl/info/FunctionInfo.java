@@ -4,7 +4,7 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionDereference;
 import risa.fpl.function.exp.PointerSize;
 
-public class FunctionInfo extends TypeInfo{
+public class FunctionInfo extends TypeInfo implements IPointerInfo {
     private final Function function;
     public FunctionInfo(Function function){
         super(function.getName(),getFunctionPointerDeclaration(function,function.getPointerVariant().cname()),true);
@@ -23,7 +23,8 @@ public class FunctionInfo extends TypeInfo{
         }
         return o == NIL;
     }
-    public String getFunctionPointerDeclaration(String cID){
+    @Override
+    public String getPointerVariableDeclaration(String cID){
         return getFunctionPointerDeclaration(function,cID);
     }
     private static String getFunctionPointerDeclaration(Function function,String cID){

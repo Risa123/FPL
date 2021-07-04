@@ -21,13 +21,13 @@ public final class List extends AExp{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator) throws CompilerException,IOException{
 	   TypeInfo ret = null;//has to be null see line 27
-	   var it = new ExpIterator(exps,getLine(), getTokenNum());
+	   var it = new ExpIterator(exps,getLine(),getTokenNum());
 	   var appendSemicolon = false;
 	   BuilderWriter b = null;
 	   while(it.hasNext()){
 		   var exp = it.next();
 		   if(exp instanceof Atom atom){
-              if(ret == null) {
+              if(ret == null){
             	  var f =  env.getFunction(atom);
             	  b = new BuilderWriter(writer);
                   ret = f.compile(b,env,it,exp.getLine(),exp.getTokenNum());

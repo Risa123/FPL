@@ -14,9 +14,7 @@ fn double sin double x{
  var cur x
  double acc 1;fact 1;pow x
  while abs acc; > 0.00000001; && i < 100{
-   var a 2 * i
-   var b 2 * i + 1
-   fact *= a * b
+   fact *= [ 2 * i ] * [ 2 * i + 1 ]
    pow *=  x * x * -1
    acc = pow / fact
    cur += acc

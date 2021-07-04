@@ -268,10 +268,10 @@ fn String boolToString bool this{
 fn String integerToString long this{
  [] char 20 buf
  int i 0
+ var negative false
  if this < 0{
-   i = 1
-   buf set 0,$-
    this = this -
+   negative = true
  }
  while this > 0;|| i == 0{
   var code this % 10 + $0 cast byte
@@ -280,10 +280,19 @@ fn String integerToString long this{
   i ++
  }
  var j 0
- var ret char:alloc[] i
- while j < i{
-   ret set j,buf get j
-   j ++
+ var len i --
+ if negative{
+   j = 1
+   len ++
  }
- return String:new ret,i,true
+ var ret char:alloc[] i
+ if negative{
+   ret set 0,$-
+ }
+ while j < len{
+   ret set j,buf get i
+   j ++
+   i --
+ }
+ return String:new ret,len,true
 }

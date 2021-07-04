@@ -84,13 +84,15 @@ class FPL{
   stream close
  }
 }
+fpointer void x
+fn x func {
+  return nil
+}
 main{
  if argc != 2{
    stderr writeString "project directory expected"
    return 2 #1 is reserved for exceptions
  }
- fpointer void x
- ArrayList;x; list
  try{
     FPL:new args get 1
  }catch CompilerException{

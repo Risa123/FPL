@@ -62,7 +62,7 @@ public final class InterfaceBlock implements IFunction{
             for(var method:parent.getMethodsOfType(FunctionType.ABSTRACT)){
                 var p = new FunctionInfo(method);
                 for(var v:method.getVariants()){
-                    b.write(p.getFunctionPointerDeclaration(v.cname()));
+                    b.write(p.getPointerVariableDeclaration(v.cname()));
                     b.write(";\n");
                 }
             }

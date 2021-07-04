@@ -36,6 +36,7 @@ public final class ProgramEnv extends AEnv{
       addFunction("[]",new Array());
       addFunction("alias",new Alias());
       addFunction("enum",new Enum());
+      addFunction("[",new ParenthExp());
       addType("void",TypeInfo.VOID,false);
 	  addType("byte",NumberInfo.BYTE);
 	  addType("sbyte",NumberInfo.SBYTE);
