@@ -51,4 +51,12 @@ public class FunctionInfo extends TypeInfo implements IPointerInfo {
         }
         return b.append(")").toString();
     }
+    @Override
+    public FunctionInfo getFunctionPointer(){
+        return this;
+    }
+    @Override
+    public int getFunctionPointerDepth(){
+        return 0;
+    }
 }

@@ -6,6 +6,7 @@ import risa.fpl.function.exp.*;
 
 public final class PointerInfo extends TypeInfo implements IPointerInfo{
 	private final TypeInfo type;
+	private int functionPointerDepth;
 	public PointerInfo(TypeInfo type){
 	    super(type.getName() + "*",type.getCname() + "*",true);
         this.type = type;
@@ -71,5 +72,24 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
 	        return p.getPointerVariableDeclaration("*" + cID);
         }
 	    return getCname() + " " + cID;
+    }
+    @Override
+    public FunctionInfo getFunctionPointer(){
+	    var t = type;
+	    for(;;){
+	        if(t instanceof FunctionInfo info){
+	            return info;
+            }else if(t instanceof PointerInfo p){
+	            t = p.getType();
+	            functionPointerDepth++;
+            }else{
+	            break;
+            }
+        }
+        return null;
+    }
+    @Override
+    public int getFunctionPointerDepth(){
+	    return functionPointerDepth;
     }
 }

@@ -52,7 +52,17 @@ public class Fn extends AFunctionBlock{
         if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
             headWriter.write("static ");
         }
-        headWriter.write(returnType.getCname());
+        FunctionInfo fPointer = null;
+        if(returnType instanceof IPointerInfo p){
+            fPointer = p.getFunctionPointer();
+        }
+        if(fPointer != null){
+            headWriter.write(fPointer.getFunction().getReturnType().getCname());
+            headWriter.write('(');
+            headWriter.write("*".repeat(((IPointerInfo)returnType).getFunctionPointerDepth() + 1));
+        }else{
+            headWriter.write(returnType.getCname());
+        }
         headWriter.write(' ');
         headWriter.write(cID);
         if(!env.hasModifier(Modifier.NATIVE)){
@@ -63,6 +73,10 @@ public class Fn extends AFunctionBlock{
            }
         }
 		var args = parseArguments(headWriter,it,fnEnv,self);
+        if(fPointer != null){
+            headWriter.write(")(");
+            headWriter.write(')');
+        }
 		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
             it.next();

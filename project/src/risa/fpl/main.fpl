@@ -85,6 +85,7 @@ class FPL{
  }
 }
 fpointer void x
+x* test
 fn x func {
   return nil
 }

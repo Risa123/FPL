@@ -220,11 +220,23 @@ public class Function implements IField,ICalledOnPointer{
     public final void addVariant(TypeInfo[]args,String cname,String implName){
         if(type == FunctionType.NATIVE){
             declaration.append("extern ");
-        }
-        if(accessModifier == AccessModifier.PRIVATE && type != FunctionType.NATIVE){
+        } else if(accessModifier == AccessModifier.PRIVATE){
             declaration.append("static ");
         }
+        FunctionInfo f = null;
+        var returnType = this.returnType;
+        if(returnType instanceof IPointerInfo p){
+            f = p.getFunctionPointer();
+            if(f != null){
+                returnType = f.getFunction().returnType;
+            }
+        }
         declaration.append(returnType.getCname()).append(' ');
+        if(f != null){
+            declaration.append('(');
+            var times = ((IPointerInfo)this.returnType).getFunctionPointerDepth() + 1;
+            declaration.append("*".repeat(Math.max(0,times)));
+        }
         if(attrCode != null){
             declaration.append(attrCode).append(' ');
         }
@@ -245,7 +257,15 @@ public class Function implements IField,ICalledOnPointer{
             }
             declaration.append(arg.getCname());
         }
-        declaration.append(");\n");
+        declaration.append(')');
+        if(f != null){
+            declaration.append(")(");
+            for(var arg:f.getFunction().getPointerVariant().args()){
+                declaration.append(arg.getCname());
+            }
+            declaration.append(')');
+        }
+        declaration.append(";\n");
         variants.add(new FunctionVariant(args,cname,implName));
     }
     public final String getName(){
