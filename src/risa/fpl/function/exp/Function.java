@@ -101,7 +101,7 @@ public class Function implements IField,ICalledOnPointer{
 		if(self != null){
 		    if(callStatus == CALLED_ON_POINTER){
 		      callStatus = NO_STATUS;
-		      b.write("(" + self.getCname() + "*)");
+		      b.write(self.ensureCast(self,""));
             }else if(!(self instanceof InterfaceInfo) && prevCode != null /*to prevent &this when calling method on implicit this*/){
                if(!self.isPrimitive()){
                    if(callStatus == CALLED_ON_RETURNED_INSTANCE || callStatus == CALLED_ON_R_INSTANCE_BY_FUNC){

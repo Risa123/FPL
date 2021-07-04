@@ -75,6 +75,13 @@ public class Fn extends AFunctionBlock{
 		var args = parseArguments(headWriter,it,fnEnv,self);
         if(fPointer != null){
             headWriter.write(")(");
+            for(var arg:args.entrySet()){
+                if(arg.getValue() instanceof IPointerInfo p){
+                    headWriter.write(p.getPointerVariableDeclaration(arg.getKey()));
+                }else{
+                    headWriter.write(arg.getValue().getCname() + " " + arg.getKey());
+                }
+            }
             headWriter.write(')');
         }
 		var attrCode = new StringBuilder();

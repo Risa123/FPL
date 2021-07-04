@@ -22,3 +22,4 @@ fix call on returned instance segfault
 fix Exceptions ignored on runtime
 fix function pointer as return type C error
 fix pointer to function pointer C error
+fix function pointer C errors

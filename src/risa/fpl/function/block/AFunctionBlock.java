@@ -5,6 +5,7 @@ import risa.fpl.env.FnEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.FunctionInfo;
+import risa.fpl.info.IPointerInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -54,7 +55,7 @@ public abstract class AFunctionBlock extends ABlock{
             }
             args.put(argName.getValue(),argType);
             var argNameCID = IFunction.toCId(argName.getValue());
-            if(argType instanceof FunctionInfo p){
+            if(argType instanceof IPointerInfo p){
                 writer.write(p.getPointerVariableDeclaration(argNameCID));
             }else{
                 writer.write(argType.getCname());

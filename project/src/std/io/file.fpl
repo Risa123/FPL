@@ -48,6 +48,7 @@ class DirectoryStream{
   }
   fn String read{
     var entry last
+    last = nil
     if entry == nil{
       entry = directoryRead handle
       if entry == nil{
@@ -57,9 +58,7 @@ class DirectoryStream{
     return String:new entry name,entry nameLength,false
   }
   fn bool ready{
-    if last == nil{
-      last = directoryRead handle
-    }
+    last = directoryRead handle
     return last != nil
   }
   fn long tell = directoryTell handle

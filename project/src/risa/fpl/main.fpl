@@ -27,6 +27,9 @@ class FPL{
       }
       return value getValue
    }
+   fn void compileModule String srcDir String directory{
+
+   }
  }
  this String project{
   FileReader reader project + "/build.bs"
@@ -77,17 +80,8 @@ class FPL{
     ex setFile "build.bs"
     ex throw
   }
-  var outputDirectory project + "/output"
-  var srcDir project + "/src"
-  DirectoryStream stream srcDir
-  print stream read
-  stream close
+  compileModule project + "/src",""
  }
-}
-fpointer void x
-x* test
-fn x func {
-  return nil
 }
 main{
  if argc != 2{
