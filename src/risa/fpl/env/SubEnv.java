@@ -49,20 +49,15 @@ public class SubEnv extends AEnv{
       for(var v:instanceVariables){
           var name = ((InstanceInfo)v.getType()).getDestructorName();
           if(name != null){ //null happens when there is no destructor
-              b.append(name);
-              b.append("(&");
-              b.append(v.getCname());
-              b.append(");\n");
+              b.append(name).append("(&").append(v.getCname()).append(");\n");
           }
       }
       writer.write(b.toString());
  }
  public String getToPointerVarName(InstanceInfo type){
       var name = "c" + toPointerVarID++;
-      toPointerVars.append(type.getCname());
-      toPointerVars.append(' ');
-      toPointerVars.append(name);
-      toPointerVars.append(";\n");
+      toPointerVars.append(type.getCname()).append(' ');
+      toPointerVars.append(name).append(";\n");
       return name;
  }
  public void compileToPointerVars(BufferedWriter writer)throws IOException{

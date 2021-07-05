@@ -27,8 +27,12 @@ class FPL{
       }
       return value getValue
    }
-   fn void compileModule String srcDir String directory{
-
+   fn void compileDirectory String srcDir String directory{
+     DirectoryStream stream srcDir + "/" + directory
+     while stream ready{
+       print stream read
+     }
+     stream close
    }
  }
  this String project{
@@ -80,7 +84,7 @@ class FPL{
     ex setFile "build.bs"
     ex throw
   }
-  compileModule project + "/src",""
+  compileDirectory project + "/src";,""
  }
 }
 main{

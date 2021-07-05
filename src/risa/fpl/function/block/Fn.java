@@ -196,8 +196,7 @@ public class Fn extends AFunctionBlock{
             }
             b.write(macroDeclaration.toString());
 			if(macroDeclaration.isEmpty()){
-                b.write(headWriter.getCode());
-                b.write("{\n");
+                headWriter.write("{\n");
             }
 			if(macroDeclaration.isEmpty() && oneLine && returnType != TypeInfo.VOID){
 			    b.write("return ");
@@ -283,6 +282,9 @@ public class Fn extends AFunctionBlock{
         var p = new FunctionInfo(f);
         if(env instanceof ClassEnv cEnv){
             var tmp = new BuilderWriter(writer);
+            if(macroDeclaration.isEmpty()){
+                tmp.write(headWriter.getCode());
+            }
             fnEnv.compileToPointerVars(tmp);
             tmp.write(b.getCode());
             cEnv.addMethod(f,argsArray,tmp.getCode());
@@ -291,6 +293,9 @@ public class Fn extends AFunctionBlock{
         }else if(env instanceof ModuleEnv e){
             if(f.getType() != FunctionType.NATIVE){
                 var tmp = new BuilderWriter(writer);
+                if(macroDeclaration.isEmpty()){
+                    tmp.write(headWriter.getCode());
+                }
                 fnEnv.compileToPointerVars(tmp);
                 tmp.write(b.getCode());
                 e.appendFunctionCode(tmp.getCode());
