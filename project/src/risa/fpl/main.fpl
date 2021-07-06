@@ -28,7 +28,7 @@ class FPL{
       return value getValue
    }
    fn void compileDirectory String srcDir String directory{
-     DirectoryStream stream srcDir + "/" + directory
+     DirectoryStream stream srcDir + "/"; + directory
      while stream ready{
        print stream read
      }

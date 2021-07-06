@@ -3,20 +3,17 @@ package risa.fpl.env;
 import risa.fpl.CompilerException;
 import risa.fpl.FPL;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class SubEnv extends AEnv{
   protected final AEnv superEnv;
   private int toPointerVarID;
-  private final ArrayList<Variable>instanceVariables = new ArrayList<>();
-  private final StringBuilder toPointerVars = new StringBuilder();
+  private final StringBuilder toPointerVars = new StringBuilder(),destructorCalls = new StringBuilder();
   public SubEnv(AEnv superEnv){
 	  this.superEnv = superEnv;
   }
@@ -35,32 +32,34 @@ public class SubEnv extends AEnv{
       return super.getType(atom);
   }
  @Override
- public FPL getFPL(){
+ public final FPL getFPL(){
       return superEnv.getFPL();
  }
  public ModuleEnv getModule(){
       return ((SubEnv)superEnv).getModule();
  }
- public void addInstanceVariable(Variable instanceVariable){
-      instanceVariables.add(instanceVariable);
+ public final void addInstanceVariable(InstanceInfo type,String cname){
+     var destructor = type.getDestructorName();
+     if(destructor != null){//null happens when there is no destructor
+         destructorCalls.append(destructor).append("(&").append(cname).append(");\n");
+     }
  }
- public void compileDestructorCalls(BufferedWriter writer)throws IOException{
-      var b = new StringBuilder();
-      for(var v:instanceVariables){
-          var name = ((InstanceInfo)v.getType()).getDestructorName();
-          if(name != null){ //null happens when there is no destructor
-              b.append(name).append("(&").append(v.getCname()).append(");\n");
-          }
-      }
-      writer.write(b.toString());
+ public final void compileDestructorCalls(BufferedWriter writer)throws IOException{
+      writer.write(destructorCalls.toString());
  }
- public String getToPointerVarName(InstanceInfo type){
+ public final String getToPointerVarName(InstanceInfo type){
       var name = "c" + toPointerVarID++;
-      toPointerVars.append(type.getCname()).append(' ');
-      toPointerVars.append(name).append(";\n");
+      toPointerVars.append(type.getCname()).append(' ').append(name).append(";\n");
+      var destructor = type.getDestructorName();
+      if(destructor != null){
+          destructorCalls.append(destructor).append("(&").append(name).append(");\n");
+      }
       return name;
  }
- public void compileToPointerVars(BufferedWriter writer)throws IOException{
+ public final void compileToPointerVars(BufferedWriter writer)throws IOException{
       writer.write(toPointerVars.toString());
+ }
+ public final int getToPointerVarID(){
+      return toPointerVarID;
  }
 }

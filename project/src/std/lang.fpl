@@ -181,16 +181,14 @@ fn void defaultExceptionHandler Exception* ex{
 fn void* realloc void* p memory newSize{
   p = realloc p,newSize
   if p == nil{
-    Exception ex "reallocation of memory failed"
-    ex throw
+    Exception:new "reallocation of memory failed";throw
   }
   return p
 }
 fn void* malloc memory size{
   var p malloc size
   if p == nil{
-    Exception ex "allocation of memory failed"
-    ex throw
+    Exception:new "allocation of memory failed";throw
   }
   return p
 }

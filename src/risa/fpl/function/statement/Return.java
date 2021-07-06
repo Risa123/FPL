@@ -18,26 +18,33 @@ public final class Return implements IFunction{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		var subEnv = (FnSubEnv)env;
-		if(subEnv.isInMainBlock()){
-			writer.write("free(args);\n");//from main block
-			writer.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
-		}
-		writer.write("return ");
+		var expCode = "";
 		if(it.hasNext()){
 		    var list = new ArrayList<AExp>();
 		    while(it.hasNext()){
 		        list.add(it.next());
             }
-			var exp = new List(line, tokenNum,list,true);
+			var exp = new List(line,tokenNum,list,true);
 			var buffer = new BuilderWriter(writer);
 		    var returnType = exp.compile(buffer,env,it);
 			if(!subEnv.getReturnType().equals(returnType)){
 				throw new CompilerException(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
 			}
-			writer.write(returnType.ensureCast(subEnv.getReturnType(),buffer.getCode()));
+			var code = returnType.ensureCast(subEnv.getReturnType(),buffer.getCode());
+			if(subEnv.getToPointerVarID() != 0){//no destructor calls needed
+				expCode = code;
+			}else{
+				expCode = "tmp";
+				writer.write(returnType.getCname() + " tmp=" + code + ";\n");
+			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){
-			throw new CompilerException(line, tokenNum,"this function doesn't return void");
+			throw new CompilerException(line,tokenNum,"this function doesn't return void");
 		}
+		subEnv.compileDestructorCallsFromWholeFunction(writer);
+		if(subEnv.isInMainBlock()){
+			writer.write("free(args);\n_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");//args is from main module
+		}
+		writer.write("return " + expCode);
 		return TypeInfo.VOID;
 	}
 }

@@ -87,8 +87,7 @@ public final class ClassVariable extends Function{
         if(env instanceof ClassEnv e){
             instanceType = e.getInstanceType();
         }
-        var v = new Variable(varType,varCid,false,vID,env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
-        env.addFunction(id.getValue(),v);
+        env.addFunction(id.getValue(),new Variable(varType,varCid,false,vID,env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
         if(env instanceof ClassEnv e){
             e.appendToImplicitConstructor(b.getCode() + ";\n");
         }else if(env instanceof ModuleEnv e){
@@ -96,7 +95,7 @@ public final class ClassVariable extends Function{
         }else{
             writer.write(b.getCode());
         }
-        ((SubEnv)env).addInstanceVariable(v);
+        ((SubEnv)env).addInstanceVariable(varType,varCid);
         return null;
     }
 	public void compileAsParentConstructor(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{

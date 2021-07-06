@@ -2,7 +2,7 @@ method id added to enum types
 escape sequences added to string literal
 add getClass to all instances
 add getObjectSize to pointers
-parenthesis enclosed in [ ] identifiers added
+parenthesis added as pair of [ identifiers
 fix toString added to byte types
 fix called on function return C error
 fix lone " is now reported as specific error
@@ -23,3 +23,5 @@ fix Exceptions ignored on runtime
 fix function pointer as return type C error
 fix pointer to function pointer C error
 fix function pointer as function argument C error
+fix native variables not defined error and C error
+fix memory leaks

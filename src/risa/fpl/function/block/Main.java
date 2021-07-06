@@ -85,7 +85,6 @@ public final class Main implements IFunction{
             b.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
             b.write("free(args);\nreturn 0;\n}\n");
         }
-        b.write("void freeArgs(){\nfree(args);\n}");
         modEnv.appendFunctionCode(b.getCode());
         return TypeInfo.VOID;
     }

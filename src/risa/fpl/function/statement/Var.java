@@ -52,9 +52,17 @@ public final class Var implements IFunction{
 		while(it.hasNext()){
             var id = it.nextAtom();
             if(id.getType() == TokenType.ID){
-                var cID = IFunction.toCId(id.getValue());
-                if(env instanceof ModuleEnv e){
-                    cID = e.getNameSpace() + cID;
+                String cID;
+                if(env.hasModifier(Modifier.NATIVE)){
+                    cID = id.getValue();
+                    if(IFunction.notCID(cID)){
+                        throw new CompilerException(line,tokenNum,cID + " is not a valid C identifier");
+                    }
+                }else{
+                    cID = IFunction.toCId(id.getValue());
+                    if(env instanceof ModuleEnv e){
+                        cID = e.getNameSpace() + cID;
+                    }
                 }
                 if(env.hasFunctionInCurrentEnv(id.getValue())){
                     throw new CompilerException(id,"there is already a function called " + id);
@@ -104,25 +112,25 @@ public final class Var implements IFunction{
                 if(!varType.isPrimitive()){
                     onlyDeclared = false;
                 }
-                var decl = "";
+                var declaration = "";
                 if(env.hasModifier(Modifier.NATIVE)){
-                    decl = "extern ";
+                    declaration = "extern ";
                 }
                 if((env instanceof  ClassEnv || env instanceof StructEnv) && varType instanceof PointerInfo p && !p.getType().isPrimitive()){
-                   decl += "struct ";
+                   declaration += "struct ";
                 }
                 if(varType instanceof IPointerInfo p){
-                  decl += p.getPointerVariableDeclaration(cID);
+                  declaration += p.getPointerVariableDeclaration(cID);
                 }else{
-                    decl += varType.getCname() + " " + cID;
+                    declaration += varType.getCname() + " " + cID;
                 }
                 if(env instanceof ModuleEnv mod){
-                    mod.appendVariableDeclaration(decl);
+                    mod.appendVariableDeclaration(declaration);
                     if(!constantExp){
                         mod.appendVariableDeclaration(";\n");
                     }
                 }else{
-                    writer.write(decl);
+                    writer.write(declaration);
                 }
                 if(expType != null){
                     expCode = expType.ensureCast(this.type,expCode);
@@ -143,6 +151,9 @@ public final class Var implements IFunction{
                     writer.write(";\n");
                 }
                 var constant = env.hasModifier(Modifier.CONST) && !(env instanceof  ClassEnv);
+                if(env.hasModifier(Modifier.NATIVE)){
+                    onlyDeclared = false;
+                }
                 env.addFunction(id.getValue(),new Variable(varType,cID,onlyDeclared,id.getValue(),constant,instanceType,env.getAccessModifier()));
             }else if(id.getType() != TokenType.END_ARGS){
                 throw new CompilerException(id,"expected ;");
