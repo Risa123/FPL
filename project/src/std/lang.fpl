@@ -143,9 +143,8 @@ class Thread{
         currentEHEntry exceptionTypes = exceptionTypes
         currentEHEntry exceptionTypesLen = exceptionTypesLen
     }
-    fn void removeEHEntry{
+    fn void removeEHEntry{#exceptionTypes is not dynamically allocated
       var prev currentEHEntry prev
-      currentEHEntry exceptionTypes free
       currentEHEntry free
       currentEHEntry = prev
     }

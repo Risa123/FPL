@@ -24,7 +24,7 @@ public class Function implements IField,ICalledOnPointer{
 	private final FunctionType type;
 	private int callStatus;
 	private boolean asFunctionPointer;
-	public static final int NO_STATUS = 0,CALLED_ON_POINTER = 1,CALLED_ON_RETURNED_INSTANCE = 2,CALLED_ON_R_INSTANCE_BY_FUNC = 3;
+	public static final int NO_STATUS = 0,CALLED_ON_POINTER = 1,CALLED_ON_RETURNED_INSTANCE = 2,CALLED_ON_INSTANCE_R_BY_FUNC = 3;
 	private final String name,attrCode;
 	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
     public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
@@ -103,7 +103,7 @@ public class Function implements IField,ICalledOnPointer{
 		      callStatus = NO_STATUS;
             }else if(!(self instanceof InterfaceInfo) && prevCode != null /*to prevent &this when calling method on implicit this*/){
                if(!self.isPrimitive()){
-                   if(callStatus == CALLED_ON_RETURNED_INSTANCE || callStatus == CALLED_ON_R_INSTANCE_BY_FUNC){
+                   if(callStatus == CALLED_ON_RETURNED_INSTANCE || callStatus == CALLED_ON_INSTANCE_R_BY_FUNC){
                      if(callStatus == CALLED_ON_RETURNED_INSTANCE){
                          callStatus = NO_STATUS;
                      }
@@ -117,7 +117,7 @@ public class Function implements IField,ICalledOnPointer{
 		    if(ref){
                 b.write(')');
             }
-		    if(callStatus == CALLED_ON_R_INSTANCE_BY_FUNC){
+		    if(callStatus == CALLED_ON_INSTANCE_R_BY_FUNC){
 		        b.write(')');
 		        callStatus = NO_STATUS;
             }
@@ -131,11 +131,7 @@ public class Function implements IField,ICalledOnPointer{
             }else{
                 b.write(',');
             }
-            var code = array[i].ensureCast(variant.args()[i],returnedData.get(i).code,false,returnedData.get(i).notReturnedByFunction);
-            if(array[i] instanceof InstanceInfo instance && instance.getCopyConstructorName() != null){
-                code = instance.getCopyConstructorName() + "AndReturn(" + code + ')';
-            }
-            b.write(code);
+            b.write(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,false,returnedData.get(i).notReturnedByFunction));
         }
 		b.write(')');
         if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == TokenType.ID){
@@ -146,7 +142,7 @@ public class Function implements IField,ICalledOnPointer{
             }
             field.setPrevCode(b.getCode());
             if(field instanceof Function f && returnType instanceof InstanceInfo i){
-               f.callStatus = CALLED_ON_R_INSTANCE_BY_FUNC;
+               f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
                var c = i.getToPointerName() + "(" + f.getPrevCode() + ",&" + ((SubEnv)env).getToPointerVarName(i);
                f.setPrevCode(c);
                 return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
@@ -318,14 +314,14 @@ public class Function implements IField,ICalledOnPointer{
         }
         return false;
     }
-    public void calledOnReturnedInstance(){
+    public final void calledOnReturnedInstance(){
         callStatus = CALLED_ON_RETURNED_INSTANCE;
     }
-    public void prepareForDereference(){
+    public final void prepareForDereference(){
         asFunctionPointer = true;
     }
     @Override
-    public void calledOnPointer(){
+    public final void calledOnPointer(){
         callStatus = CALLED_ON_POINTER;
     }
     private record ReturnedData(String code,boolean notReturnedByFunction){}

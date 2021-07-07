@@ -6,7 +6,6 @@ import java.io.IOException;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
-import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.NumberInfo;
@@ -17,7 +16,7 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
 public final class Variable extends ValueExp{
-	private boolean onlyDeclared;
+	private boolean onlyDeclared,copyCallNeeded = true;
 	private final String id;
 	private final boolean constant;
 	private final TypeInfo instanceType;
@@ -33,27 +32,17 @@ public final class Variable extends ValueExp{
     }
 	@Override
 	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
+		copyCallNeeded = false;
 	    var value = atom.getValue();
 		if(value.equals("=")){
 		   if(constant && !(type instanceof InstanceInfo)){
-			  throw new CompilerException(line,charNum,"constant cannot be redefined");    	
+			  throw new CompilerException(line,charNum,"constant cannot be redefined");
 			}
-		    if(type instanceof InstanceInfo i){
-		    	writePrev(writer);
-		    	writer.write(code + "=" + i.getCopyConstructorName() + "AndReturn(");
-				var exp = it.nextAtom();
-				var t = exp.compile(writer,env,it);
-		    	if(!t.equals(type)){
-		    		throw new CompilerException(exp,"expression expected to return " + type + " instead of " + t);
-				}
-		    	writer.write(");\n");
-			}else{
-				writePrev(writer);
-				writer.write(code);
-				writer.write('=');
-				onlyDeclared = false;
-				execute(it,writer,env,"");//not drf equals
-			}
+			writePrev(writer);
+			writer.write(code);
+			writer.write('=');
+			onlyDeclared = false;
+			execute(it,writer,env,"");//not drf equals
 		    return TypeInfo.VOID;
 		}else if(value.equals("ref")){
 		    var b = new BuilderWriter(writer);
@@ -100,7 +89,18 @@ public final class Variable extends ValueExp{
 		if(instanceType != null && getPrevCode() == null){
 		    setPrevCode("((" + instanceType.getCname() + "*)this)->");
         }
-		return super.compile(writer,env,it,line, tokenNum);
+		var b = new BuilderWriter(writer);
+		var ret = super.compile(b,env,it,line,tokenNum);
+		copyCallNeeded = copyCallNeeded && type instanceof InstanceInfo i && i.getCopyConstructorName() != null;
+		if(copyCallNeeded){
+			writer.write(((InstanceInfo)type).getCopyConstructorName() + "AndReturn(");
+		}
+		writer.write(b.getCode());
+		if(copyCallNeeded){
+			writer.write(')');
+		}
+		copyCallNeeded = true;
+		return ret;
 	}
 	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException,CompilerException{
             switch(operator){
@@ -130,7 +130,11 @@ public final class Variable extends ValueExp{
 					writePrev(writer);
 					writer.write(code + ",&");
 					var exp = it.nextAtom();
-					var ret  = exp.compile(writer,env,it);
+					var func = env.getFunction(exp);
+					if(func instanceof Variable v){
+						v.copyCallNeeded = false;
+					}
+					var ret  = func.compile(writer,env,it,exp.getLine(),exp.getTokenNum());
 					if(!i.equals(ret)){
 						throw new CompilerException(exp,"expression expected to return " + i + " instead of " + ret);
 					}

@@ -28,3 +28,4 @@ fix memory leaks
 fix destructor calls parent destructor
 fix copy constructor calls parent copy constructor
 fix this added to copy constructor
+if calling method on string literal C error
