@@ -197,6 +197,11 @@ public class Fn extends AFunctionBlock{
             b.write(macroDeclaration.toString());
 			if(macroDeclaration.isEmpty()){
                 headWriter.write("{\n");
+                for(var arg:args.entrySet()){
+                    if(arg.getValue() instanceof InstanceInfo i){
+                        fnEnv.addInstanceVariable(i,IFunction.toCId(arg.getKey()));
+                    }
+                }
             }
 			if(macroDeclaration.isEmpty() && oneLine && returnType != TypeInfo.VOID){
 			    b.write("return ");

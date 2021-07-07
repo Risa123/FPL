@@ -23,6 +23,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implBuilder = new StringBuilder();
+	private final StringBuilder implCopyConstructorCode = new StringBuilder();
+	private final StringBuilder defaultCopyConstructorCode = new StringBuilder();
 	private boolean parentConstructorCalled,destructorDeclared,copyConstructorDeclared;
 	private static final SetAccessModifier PROTECTED = new SetAccessModifier(AccessModifier.PROTECTED);
 	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
@@ -66,11 +68,21 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	public void addFunction(String name,IFunction value){
 		if(value instanceof IField field){
 			instanceType.addField(name,field);
-			if(value instanceof Variable v && v.getType() instanceof InstanceInfo i){
-			    appendToDestructor(i.getDestructorName());
-			    appendToDestructor("(&this->");
-			    appendToDestructor(v.getCname());
-			    appendToDestructor(");\n");
+			if(value instanceof Variable v){
+			   var cname = v.getCname();
+			   if(v.getType() instanceof InstanceInfo i){
+                   var destructor = i.getDestructorName();
+                   var copyName = i.getCopyConstructorName();
+                   if(destructor != null){
+                       appendToDestructor(destructor + "(&this->" + cname +");\n");
+                   }
+                   if(copyName != null){
+                       implCopyConstructorCode.append(copyName).append("(&this->").append(cname);
+                       implCopyConstructorCode.append(",&o->").append(v.getCname()).append(");\n");
+                   }
+               }else if(v.getType().isPrimitive() && !(v.getType() instanceof IPointerInfo)){
+			       defaultCopyConstructorCode.append("this->").append(cname).append("=o->").append(cname).append(";\n");
+               }
             }
         }else{
 		    super.addFunction(name,value);
@@ -271,5 +283,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public void declareCopyConstructor(){
 	    copyConstructorDeclared = true;
+    }
+    public String getImplicitCopyConstructorCode(){
+	    return implCopyConstructorCode.toString();
+    }
+    public String getDefaultCopyConstructorCode(){
+	    return defaultCopyConstructorCode.toString();
     }
 }

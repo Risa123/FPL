@@ -25,3 +25,6 @@ fix pointer to function pointer C error
 fix function pointer as function argument C error
 fix native variables not defined error and C error
 fix memory leaks
+fix destructor calls parent destructor
+fix copy constructor calls parent copy constructor
+fix this added to copy constructor

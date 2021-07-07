@@ -21,7 +21,7 @@ public final class Enum implements IFunction{
         if(env.hasFunctionInCurrentEnv(id)){
             throw new CompilerException(a,"there is already function called " + id);
         }
-        var type = new TypeInfo(id,"unsigned int");
+        var type = new TypeInfo(id,"unsigned char",true);
         type.addField("==",new BinaryOperator(TypeInfo.BOOL,type,"=="));
         type.addField("!=",new BinaryOperator(TypeInfo.BOOL,type,"!="));
         type.addField("id",new ValueExp(NumberInfo.UBYTE,""));

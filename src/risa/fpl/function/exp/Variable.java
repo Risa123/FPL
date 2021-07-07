@@ -39,26 +39,10 @@ public final class Variable extends ValueExp{
 			  throw new CompilerException(line,charNum,"constant cannot be redefined");    	
 			}
 		    if(type instanceof InstanceInfo i){
-		    	writer.write(i.getCopyConstructorName());
-		    	writer.write("(&");
 		    	writePrev(writer);
-		    	writer.write(code);
-		    	writer.write(",");
+		    	writer.write(code + "=" + i.getCopyConstructorName() + "AndReturn(");
 				var exp = it.nextAtom();
-				var notVar = false;
-				if(!(env.getFunction(exp) instanceof Variable)){
-				  notVar = true;
-					writer.write(i.getToPointerName());
-					writer.write("(");
-				}else{
-					writer.write('&');
-				}
 				var t = exp.compile(writer,env,it);
-				if(notVar) {
-					writer.write(",&");
-					writer.write(((SubEnv)env).getToPointerVarName(i));
-					writer.write(")");
-				}
 		    	if(!t.equals(type)){
 		    		throw new CompilerException(exp,"expression expected to return " + type + " instead of " + t);
 				}
@@ -140,10 +124,22 @@ public final class Variable extends ValueExp{
             if(operator.equals("%=") && (type instanceof NumberInfo n && !n.isFloatingPoint() || type instanceof PointerInfo)){
                 process(operator,writer,it,env);
                 return TypeInfo.VOID;
-            }else if(type instanceof PointerInfo && operator.equals("drf=")){
-                writer.write('*');
-                writePrev(writer);
-                process("=",writer,it,env);
+            }else if(type instanceof PointerInfo p && operator.equals("drf=")){
+                if(p.getType() instanceof InstanceInfo i && i.getCopyConstructorName() != null){
+                	writer.write(i.getCopyConstructorName() + "(");
+					writePrev(writer);
+					writer.write(code + ",&");
+					var exp = it.nextAtom();
+					var ret  = exp.compile(writer,env,it);
+					if(!i.equals(ret)){
+						throw new CompilerException(exp,"expression expected to return " + i + " instead of " + ret);
+					}
+					writer.write(");\n");
+				}else{
+					writer.write('*');
+					writePrev(writer);
+					process("=",writer,it,env);
+				}
                 return TypeInfo.VOID;
             }
 	    return null;
