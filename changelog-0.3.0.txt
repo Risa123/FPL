@@ -4,6 +4,7 @@ add getClass to all instances
 add getObjectSize to pointers
 parenthesis added as pair of [ identifiers
 contextSave removed
+error reporting in std.io.file improved
 fix toString added to byte types
 fix called on function return C error
 fix lone " is now reported as specific error
@@ -31,3 +32,4 @@ fix copy constructor calls parent copy constructor
 fix this added to copy constructor
 fix function attributes can be added to one line functions
 fix copy constructor not assigning objectData
+fix classes with same names causing C error

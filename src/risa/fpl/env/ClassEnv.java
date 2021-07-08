@@ -48,7 +48,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }else{
             nameSpace = superEnv.getNameSpace() + cname;
         }
-		classType = new ClassInfo(id);
+        dataType = cname + "_data_type";
+        dataName = nameSpace + "_data";
+		classType = new ClassInfo(id,dataName);
 		if(templateStatus == TemplateStatus.TEMPLATE){
             instanceType = new TemplateTypeInfo(id,superEnv,nameSpace);
         }else{
@@ -56,8 +58,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
 		instanceType.setClassInfo(classType);
 		instanceType.addField("cast",new Cast(instanceType));
-		dataType = cname + "_data_type";
-		dataName = cname + "_data";
         //checking if not generating from template to prevent generated type from displacing the template
 		if(templateStatus != TemplateStatus.GENERATING){
             superEnv.addType(id,instanceType);

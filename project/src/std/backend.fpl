@@ -28,6 +28,7 @@ native{
     fn void rewinddir void* dir
     fn char* strerror int errnum
     fn int* _errno
+    fn int ferror void* file
  }
 }
 private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
@@ -75,4 +76,6 @@ alias directoryClose closedir
 alias directoryTell telldir
 alias directorySeek seekdir
 alias directoryReset rewinddir
-fn char* getErrorMessage = strerror _errno;drf
+alias fileError ferror
+fn char* getErrorMessage int errnum = strerror errnum
+fn char* getErrNoMessage = getErrorMessage _errno; drf

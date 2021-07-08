@@ -26,6 +26,7 @@ public final class ClassInfo extends TypeInfo{
     public static final ClassInfo POINTER = new ClassInfo("pointer");
     public static final ClassInfo FUNCTION = new ClassInfo("function");
     private TypeInfo instanceType;
+    private final String dataName;
     static{
         TypeInfo.CHAR.setClassInfo(CHAR);
         TypeInfo.BOOL.setClassInfo(BOOL);
@@ -70,13 +71,20 @@ public final class ClassInfo extends TypeInfo{
         addField("alloc",new Alloc(instance,false));
         addField("alloc[]",new Alloc(instance,true));
     }
-    public ClassInfo(String name){
+    public ClassInfo(String name,String dataName){
         super(name + " class","",false);
+        this.dataName = dataName;
+    }
+    public ClassInfo(String name){
+        this(name,"");
     }
     public TypeInfo getInstanceType(){
         return instanceType;
     }
     public void setInstanceType(TypeInfo type){
         instanceType = type;
+    }
+    public String getDataName(){
+        return dataName;
     }
 }

@@ -42,7 +42,8 @@ public final class TryCatchFinally extends ABlock{
         var hasFin = false;
         var finallyCode = "";
         var finallyEnv = new FnSubEnv(env);
-        var exNames = new ArrayList<String >();
+        var exDataNames = new ArrayList<String>();
+        var exception = env.getType(new Atom(0,0,"Exception",TokenType.ID));
         while(it.hasNext()){
             var exp = it.peek();
             if(exp instanceof Atom blockName && blockName.getType() == TokenType.ID){
@@ -55,7 +56,6 @@ public final class TryCatchFinally extends ABlock{
                     postEntry.write("else");
                     var nextExp = it.next();
                     TypeInfo exInfo;
-                    var exception = env.getType(new Atom(0,0,"Exception",TokenType.ID));
                     if(nextExp instanceof List){
                         block = (List)nextExp;
                         exInfo = exception;
@@ -65,10 +65,9 @@ public final class TryCatchFinally extends ABlock{
                         }
                         postEntry.write(" if(_std_lang_currentThread->_exception->objectData==&");
                         exInfo = env.getType(exType);
-                        postEntry.write(exInfo.getCname());
-                        postEntry.write("_data)");
+                        postEntry.write(exInfo.getClassInfo().getDataName() + ")");
                         block = it.nextList();
-                        exNames.add(exInfo.getCname());
+                        exDataNames.add(exInfo.getClassInfo().getDataName());
                     }else{
                         throw new CompilerException(nextExp,"exception type or block expected");
                     }
@@ -115,13 +114,13 @@ public final class TryCatchFinally extends ABlock{
         postEntry.write(finallyCode);
         finallyEnv.compileDestructorCalls(postEntry);
         postEntry.write("}\n");
-        if(exNames.isEmpty()){
-            exNames.add("_Exception");
+        if(exDataNames.isEmpty()){
+            exDataNames.add(exception.getClassInfo().getDataName());
         }
-        writer.write("{\nvoid* types[" + exNames.size() + "] = {");
+        writer.write("{\nvoid* types[" + exDataNames.size() + "] = {");
         var first = true;
-        for(var name:exNames){
-            writer.write("&" + name + "_data");
+        for(var name:exDataNames){
+            writer.write("&" + name);
             if(first){
                 first = false;
             }else{
@@ -129,7 +128,7 @@ public final class TryCatchFinally extends ABlock{
             }
         }
         writer.write("};\n");
-        writer.write("_std_lang_Thread_addEHEntry0(_std_lang_currentThread,types," + exNames.size() + ");\n");
+        writer.write("_std_lang_Thread_addEHEntry0(_std_lang_currentThread,types," + exDataNames.size() + ");\n");
         writer.write("}\n");
         writer.write(postEntry.getCode());
         return TypeInfo.VOID;

@@ -14,20 +14,32 @@ private const{
  }
 }
 abstract class FileHandler Closeable{
-   protected const void* handle
+   protected{
+     const void* handle
+     fn void checkError{
+          var num fileError handle
+          if num == -1{
+            var msg getErrorMessage num
+            IOException:new String:new msg,getCStringLen msg;,false;;throw
+          }
+        }
+   }
    this String name char* mode{
       var cname name toCString
       handle = fileOpen cname,mode
       cname free
       if handle == nil{
-        var msg getErrorMessage
-        IOException:new String:new msg,getCStringLen msg;,false; + name;;throw
+        var msg getErrNoMessage
+        IOException:new String:new msg,getCStringLen msg;,false; + " "; + name;;throw
       }
    }
    this void* handle{
      this handle = handle
    }
-   override fn void close = fileClose handle
+   override fn void close{
+     fileClose handle
+     checkError
+   }
 }
 class FileWriter FileHandler Writable{
   this String name:name,WRITE
@@ -50,7 +62,8 @@ class DirectoryStream{
     handle = directoryOpen cstr
     cstr free
     if handle == nil{
-      IOException:new "unable to open directory " + name;;throw
+      var msg getErrNoMessage
+      IOException:new String:new msg,getCStringLen msg;,false; + " "; + name;;throw
     }
     last = nil
   }

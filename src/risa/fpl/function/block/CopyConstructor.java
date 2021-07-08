@@ -34,7 +34,7 @@ public final class CopyConstructor extends ABlock{
         if(parent != null){
             b.write(parent.getDestructorName() + "(this,o);\n");
         }
-        b.write("this->objectData=&" + type.getCname() + "_data;\n");
+        b.write("this->objectData=&" + type.getClassInfo().getDataName() + ";\n");
         var fnEnv = new FnEnv(env,TypeInfo.VOID);
         fnEnv.addFunction("o",new Variable(new PointerInfo(type),"o","o"));
         fnEnv.addFunction("this",new Variable(new PointerInfo(type),"this","this"));
