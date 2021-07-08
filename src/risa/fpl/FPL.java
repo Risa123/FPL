@@ -46,9 +46,9 @@ public final class FPL{
             }
         }
         switch(System.getProperty("os.arch")){
-            case "x86" -> flags.add("x86");
-            case "amd64" -> flags.add("x64");
-            case "ia64" -> flags.add("ia64");
+            case "x86"->flags.add("x86");
+            case "amd64"->flags.add("x64");
+            case "ia64"->flags.add("ia64");
         }
     }
     private boolean buildFileInvalid(Properties buildFile,List<String>requiredKeys,List<String>optionalKeys){

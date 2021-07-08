@@ -100,15 +100,20 @@ class Exception{
    virtual fn String getMessage = message
    fn void throw{
      var target currentThread currentEHEntry
+     var stop false
      while target != nil{
-       var i 0
-       while i < target exceptionTypesLen{
-         if target exceptionTypes get i; == getClass{
+      var i 0
+      while i < target exceptionTypesLen{
+      if target exceptionTypes get i; == getClass{
+           stop = true
            break
-         }
-         i ++
-       }
-       target = target prev
+      }
+      i ++
+     }
+     if stop{
+       break
+     }
+     target = target prev
      }
      if target == nil{
        currentThread exceptionHandler drf this
@@ -124,10 +129,10 @@ class Exception{
      contextRestore target context
    }
    internal fn void copyAndFree Exception* to{
-     memoryCopy this cast byte*,to cast byte*,getObjectSize
-     to message = message
-     this free
-   }
+      memoryCopy this cast byte*,to cast byte*,getObjectSize
+      to message = message
+      this free
+    }
 }
 fpointer void ExceptionHandlerType Exception* ex
 class Thread{
@@ -172,9 +177,6 @@ Thread* currentThread #initailized in main block
 fn void defaultExceptionHandler Exception* ex{
   print "exception happened:"
   print ex getMessage
-  if currentThread currentEHEntry != nil{
-     ex free
-  }
   exit 1
 }
 fn void* realloc void* p memory newSize{

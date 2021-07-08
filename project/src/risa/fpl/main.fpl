@@ -87,9 +87,7 @@ class FPL{
   compileDirectory project + "/src";,""
  }
 }
-fn String func  = "";toString
 main{
- func
  if argc != 2{
    stderr writeString "project directory expected"
    return 2 #1 is reserved for exceptions

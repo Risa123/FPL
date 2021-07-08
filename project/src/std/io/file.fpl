@@ -5,6 +5,13 @@ use{
 private const{
  [] char 2 READ $r,$\0
  [] char 2 WRITE $w,$\0
+ fn int getCStringLen char* str{
+   var len 0
+   while str get len; != $\0{
+    len ++
+   }
+   return len
+ }
 }
 abstract class FileHandler Closeable{
    protected const void* handle
@@ -13,7 +20,8 @@ abstract class FileHandler Closeable{
       handle = fileOpen cname,mode
       cname free
       if handle == nil{
-        IOException:new "unable to open file " + name;;throw
+        var msg getErrorMessage
+        IOException:new String:new msg,getCStringLen msg;,false; + name;;throw
       }
    }
    this void* handle{

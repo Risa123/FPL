@@ -92,7 +92,7 @@ public class Fn extends AFunctionBlock{
                 attrCode.append("__attribute__((");
             }
             while(it.hasNext()){
-               if(it.peek() instanceof List){
+               if(it.peek() instanceof List || it.peek() instanceof Atom atom && atom.getValue().equals("=")){
                    break;
                }else{
                    var attr = it.nextID();
@@ -101,13 +101,13 @@ public class Fn extends AFunctionBlock{
                    }
                    attrs.add(attr.getValue());
                    switch(attr.getValue()){
-                       case "noReturn" ->{
+                       case "noReturn"->{
                            if(attrs.contains("returnsTwice")){
                                throw new CompilerException(attr,"noReturn is mutually exclusive with returnsTwice");
                            }
                            attrCode.append("__noreturn__");
                        }
-                       case "returnsTwice" ->{
+                       case "returnsTwice"->{
                            if(attrs.contains("noReturn")){
                                throw new CompilerException(attr, "returnsTwice is mutually exclusive with noReturn");
                            }
@@ -119,11 +119,9 @@ public class Fn extends AFunctionBlock{
             }
             if(attrCode.length() > 0){
                 attrCode.append("))");
-                headWriter.write(attrCode.toString());
             }
         }
         var oneLine = false;
-        var macroDeclaration = new StringBuilder();
         Function f;
         FunctionType type;
         var implName = cID;
@@ -163,28 +161,6 @@ public class Fn extends AFunctionBlock{
             var block = it.next();
             if(block instanceof Atom a){
                 oneLine = true;
-                if(!(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)) && env.getAccessModifier() != AccessModifier.PRIVATE){
-                    macroDeclaration.append("#define ");
-                    macroDeclaration.append(cID);
-                    macroDeclaration.append(f.getVariants().size());
-                    macroDeclaration.append('(');
-                    if(self != null){
-                        macroDeclaration.append("this");
-                    }
-                    var first = true;
-                    for(var arg:args.keySet()){
-                        if(first){
-                            if(self != null){
-                                macroDeclaration.append(',');
-                            }
-                            first = false;
-                        }else{
-                            macroDeclaration.append(',');
-                        }
-                        macroDeclaration.append(IFunction.toCId(arg));
-                    }
-                    macroDeclaration.append(')');
-                }
                 if(!a.getValue().equals("=")){
                     throw new CompilerException(a,"= expected");
                 }
@@ -194,16 +170,13 @@ public class Fn extends AFunctionBlock{
                 }
                 block = new List(line,a.getTokenNum(),atoms,false);
             }
-            b.write(macroDeclaration.toString());
-			if(macroDeclaration.isEmpty()){
-                headWriter.write("{\n");
-                for(var arg:args.entrySet()){
-                    if(arg.getValue() instanceof InstanceInfo i){
-                        fnEnv.addInstanceVariable(i,IFunction.toCId(arg.getKey()));
-                    }
+            headWriter.write("{\n");
+            for(var arg:args.entrySet()){
+                if(arg.getValue() instanceof InstanceInfo i){
+                    fnEnv.addInstanceVariable(i,IFunction.toCId(arg.getKey()));
                 }
             }
-			if(macroDeclaration.isEmpty() && oneLine && returnType != TypeInfo.VOID){
+			if(oneLine && returnType != TypeInfo.VOID){
 			    b.write("return ");
             }
 			var code = new BuilderWriter(writer);
@@ -211,29 +184,18 @@ public class Fn extends AFunctionBlock{
 			if(oneLine && fnEnv.getReturnType() != TypeInfo.VOID && !fReturnType.equals(fnEnv.getReturnType())){
 			    throw new CompilerException(block,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
             }
-			if(!macroDeclaration.isEmpty() && oneLine){
-			    macroDeclaration.append('(');
-			    var c = code.getCode();
-			    if(c.endsWith(";\n")){
-			      c =  c.substring(0,c.length() - 2);
-                }
-			    macroDeclaration.append(c).append(")\n");
-            }
 			b.write(code.getCode());
+			b.write(";\n");
             if(returnType == TypeInfo.VOID){
                 fnEnv.compileDestructorCalls(b);
             }
-			if(oneLine && macroDeclaration.isEmpty()){
+			if(oneLine){
 			    b.write(";\n");
-            }else if(oneLine){
-			    b.write('\n');
             }
 			if(fnEnv.isReturnNotUsed() && returnType != TypeInfo.VOID){
 				throw new CompilerException(block,"there is no return in this function and this function doesn't return void");
 			}
-			if(macroDeclaration.isEmpty()){
-                b.write("}\n");
-            }
+            b.write("}\n");
 		}else{
 		    if(!(env.hasModifier(Modifier.ABSTRACT) || env.hasModifier(Modifier.NATIVE))){
 		        throw new CompilerException(line,tokenNum,"block required");
@@ -244,11 +206,7 @@ public class Fn extends AFunctionBlock{
         if(f.hasVariant(argsArray)){
             throw new CompilerException(line,tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
         }
-        if(macroDeclaration.isEmpty()){
-            f.addVariant(argsArray,cID,implName);
-        }else{
-            f.addVariant(argsArray,cID,macroDeclaration);
-        }
+        f.addVariant(argsArray,cID,implName);
         var array = args.values().toArray(new TypeInfo[0]);
         var variant = f.getVariant(array);
         if(self != null){
@@ -287,9 +245,8 @@ public class Fn extends AFunctionBlock{
         var p = new FunctionInfo(f);
         if(env instanceof ClassEnv cEnv){
             var tmp = new BuilderWriter(writer);
-            if(macroDeclaration.isEmpty()){
-                tmp.write(headWriter.getCode());
-            }
+            tmp.write(attrCode.toString());
+            tmp.write(headWriter.getCode());
             fnEnv.compileToPointerVars(tmp);
             tmp.write(b.getCode());
             cEnv.addMethod(f,argsArray,tmp.getCode());
@@ -298,15 +255,15 @@ public class Fn extends AFunctionBlock{
         }else if(env instanceof ModuleEnv e){
             if(f.getType() != FunctionType.NATIVE){
                 var tmp = new BuilderWriter(writer);
-                if(macroDeclaration.isEmpty()){
-                    tmp.write(headWriter.getCode());
-                }
+                tmp.write(attrCode.toString());
+                tmp.write(headWriter.getCode());
                 fnEnv.compileToPointerVars(tmp);
                 tmp.write(b.getCode());
                 e.appendFunctionCode(tmp.getCode());
             }
             e.appendFunctionDeclaration(f);
         }else{
+            writer.write(attrCode.toString());
             fnEnv.compileToPointerVars(writer);
             writer.write(b.getCode());
         }

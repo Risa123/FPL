@@ -20,9 +20,19 @@ public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var postEntry = new BuilderWriter(writer);
-        var backend = env.getFPL().getModule("std.backend").getEnv();
-        postEntry.write(((Function)backend.getFunction(new Atom(0,0,"contextSave",TokenType.ID))).getDeclaration());
-        postEntry.write("if(!_std_backend_contextSave0(_std_lang_currentThread->_currentEHEntry->_context)){\n");
+        postEntry.write("if(!");
+        var arch = System.getProperty("os.arch");
+        switch(arch){
+            case "x86"->postEntry.write("_setjmp3");
+            case "ia64"->postEntry.write("__mingw_setjmp");
+            case "amd64"->postEntry.write("_setjmp");
+        }
+        postEntry.write("(_std_lang_currentThread->_currentEHEntry->_context");
+        switch(arch){
+            case "x86"->postEntry.write(",nil");
+            case "amd64"->postEntry.write(",__builtin_frame_address(0)");
+        }
+        postEntry.write(")){\n");
         var tryEnv = new FnSubEnv(env);
         var tmp = new BuilderWriter(writer);
         it.nextList().compile(tmp,tryEnv,it);
@@ -105,7 +115,10 @@ public final class TryCatchFinally extends ABlock{
         postEntry.write(finallyCode);
         finallyEnv.compileDestructorCalls(postEntry);
         postEntry.write("}\n");
-        writer.write("{\nvoid** types = {");
+        if(exNames.isEmpty()){
+            exNames.add("_Exception");
+        }
+        writer.write("{\nvoid* types[" + exNames.size() + "] = {");
         var first = true;
         for(var name:exNames){
             writer.write("&" + name + "_data");

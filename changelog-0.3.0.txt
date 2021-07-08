@@ -3,6 +3,7 @@ escape sequences added to string literal
 add getClass to all instances
 add getObjectSize to pointers
 parenthesis added as pair of [ identifiers
+contextSave removed
 fix toString added to byte types
 fix called on function return C error
 fix lone " is now reported as specific error
@@ -28,4 +29,5 @@ fix memory leaks
 fix destructor calls parent destructor
 fix copy constructor calls parent copy constructor
 fix this added to copy constructor
-if calling method on string literal C error
+fix function attributes can be added to one line functions
+fix copy constructor not assigning objectData

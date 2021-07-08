@@ -26,6 +26,8 @@ native{
     fn long telldir void* dir
     fn void seekdir void* dir long loc
     fn void rewinddir void* dir
+    fn char* strerror int errnum
+    fn int* _errno
  }
 }
 private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
@@ -45,31 +47,18 @@ alias fileFlush fflush
 fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
 ifFlag x64{
  typedef Context [] 32 memory
- fn int contextSave Context context = _setjmp context,__builtin_frame_address 0
  fn void contextRestore Context context = longjmp context,1
- private native{
-  fn int _setjmp Context context void* frame
-  fn void longjmp Context context int value
-  fn void* __builtin_frame_address uint level
- }
+ private native fn void longjmp Context context int value
 }
 ifFlag x86{
  typedef Context [] 16 memory
- private native{
-   fn bool _setjmp3 Context context void* frame
-   fn void longjmp Context context int value
- }
+ private native fn void longjmp Context context int value
  fn void contextRestore Context context = longjmp context,1
- fn bool contextSave Context context = _setjmp3 context,nil
 }
 ifFlag ia64{
  typedef Context [] 32 memory
- private native{
-   fn  bool __mingw_setmp Context context
-   fn void __mingw_longjmp Context context int value
- }
+ private native fn void __mingw_longjmp Context context int value
  fn void contextRestore Context context = __mingw_setjmp context,1
- alias contextSave __mingw_longjmp
 }
 fn DirectoryEntry* directoryRead void* dir{
   var entry readdir dir
@@ -86,3 +75,4 @@ alias directoryClose closedir
 alias directoryTell telldir
 alias directorySeek seekdir
 alias directoryReset rewinddir
+fn char* getErrorMessage = strerror _errno;drf
