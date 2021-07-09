@@ -13,7 +13,7 @@ public final class PointerSize extends AField{
     public static final PointerSize INSTANCE = new PointerSize();
     private PointerSize(){}
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException{
         writer.write(Integer.toString(NumberInfo.MEMORY.getSize()));
         return NumberInfo.MEMORY;
     }

@@ -112,7 +112,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             return f;
         }
         getRequestFromOutSide = false;
-	    return null;
+	    throw new CompilerException(name,"function " +  name + " not found");
     }
 	@Override
 	public String getNameSpace(IFunction caller){

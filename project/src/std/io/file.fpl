@@ -18,7 +18,7 @@ abstract class FileHandler Closeable{
      const void* handle
      fn void checkError{
           var num fileError handle
-          if num == -1{
+          if num != 0{
             var msg getErrorMessage num
             IOException:new String:new msg,getCStringLen msg;,false;;throw
           }
@@ -44,12 +44,18 @@ abstract class FileHandler Closeable{
 class FileWriter FileHandler Writable{
   this String name:name,WRITE
   this void* handle:handle
-  override fn void write byte* p memory size = fileWrite handle,p,size
+  override fn void write byte* p memory size{
+    fileWrite handle,p,size
+    checkError
+  }
 }
 class FileReader FileHandler Readable{
   this String name:name,READ
   this void* handle:handle
-  override fn void read byte* p memory size = fileRead handle,p,size
+  override fn void read byte* p memory size{
+    fileRead handle,p,size
+    checkError
+  }
   override fn bool ready = fileEOF handle; !
 }
 class DirectoryStream{
@@ -85,5 +91,19 @@ class DirectoryStream{
   fn long tell = directoryTell handle
   fn void seek long loc = directorySeek handle,loc
   fn void reset = directoryReset handle
-  fn void close = directoryClose handle
+  fn void close{
+    if directoryClose handle; == -1{
+      var msg getErrNoMessage
+      IOException:new String:new msg,getCStringLen msg;,false;;throw
+    }
+  }
+}
+fn bool isDirectory String path{
+  FileStatus status
+  if FS_Status path toCString;,status ref; != 0{
+    var msg getErrNoMessage
+    IOException:new String:new msg,getCStringLen msg;,false
+  }
+
+  return false
 }

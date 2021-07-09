@@ -4,7 +4,6 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.FnEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
-import risa.fpl.info.FunctionInfo;
 import risa.fpl.info.IPointerInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;

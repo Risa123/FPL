@@ -1,7 +1,15 @@
 struct DirectoryEntry{
-  long ino
-  ushort reclen;nameLength
+  long nodeNumber
+  ushort recordLength;nameLength
   [] char 260 name
+}
+struct FileStatus{
+ uint device
+ ushort nodeNumber;mode
+ short numberOfHardLinks;userID;groupID
+ uint specialDevice #if special file
+ long size
+ memory accessTime;modifyTime;creationTime
 }
 native{
  fn int puts char* str
@@ -14,14 +22,14 @@ native{
     fn memory fwrite void* p memory size memory nmen void* file
     fn bool feof void* file
     fn int system char* cmd
-    fn void* fopen char* name char* mode
+    fn void* fopen char* path char* mode
     fn memory fread void* p memory size memory msize void* file
     fn void fclose void* file
     fn int fflush void* file
     fn void* __acrt_iob_func uint index
     fn int setvbuf void* file byte* buffer int mode memory size
-    fn void* opendir char* name
-    fn void closedir void* dir
+    fn void* opendir char* path
+    fn int closedir void* dir
     fn DirectoryEntry* readdir void* dir
     fn long telldir void* dir
     fn void seekdir void* dir long loc
@@ -29,6 +37,7 @@ native{
     fn char* strerror int errnum
     fn int* _errno
     fn int ferror void* file
+    fn int stat char* path FileStatus* status
  }
 }
 private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
@@ -63,10 +72,10 @@ ifFlag ia64{
 }
 fn DirectoryEntry* directoryRead void* dir{
   var entry readdir dir
-  if entry != nil; && entry nameLength == 1S; && [ entry name get 0; == $. ]{
+  if entry != nil; && entry nameLength == 1S; && [ entry name get 0; == $.]{
     entry = readdir dir
   }
-  if entry != nil; && entry nameLength == 2S; && [ entry name get 0; == $.] && [ entry name get 1; == $. ]{
+  if entry != nil; && entry nameLength == 2S; && [ entry name get 0; == $.] && [ entry name get 1; == $.]{
     entry = readdir dir
   }
   return entry
@@ -77,5 +86,8 @@ alias directoryTell telldir
 alias directorySeek seekdir
 alias directoryReset rewinddir
 alias fileError ferror
+alias FS_Status stat
 fn char* getErrorMessage int errnum = strerror errnum
 fn char* getErrNoMessage = getErrorMessage _errno; drf
+private var S_IFMT 0xF000;S_IFDIR 0x40000
+fn bool FS_isDirectory FileStatus* status = [ status mode & S_IFMT ] == S_IFDIR

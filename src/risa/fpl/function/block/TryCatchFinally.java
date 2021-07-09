@@ -4,7 +4,6 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnSubEnv;
-import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;

@@ -281,11 +281,6 @@ public class Function implements IField,ICalledOnPointer{
         }
         return null;
     }
-    public final void addVariant(TypeInfo[] args,String cname,StringBuilder macroCode){
-        cname = cname + variants.size();
-        variants.add(new FunctionVariant(args,cname,cname));
-        declaration.append(macroCode);
-    }
     public final ArrayList<TypeInfo>getRequiredTypes(){
         var list = new ArrayList<TypeInfo>();
         list.add(returnType);

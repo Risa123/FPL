@@ -28,7 +28,7 @@ public final class Main implements IFunction{
             throw new CompilerException(line, tokenNum,"declaration of multiple main blocks is not allowed");
         }
         modEnv.declareMain();
-        var fnEnv = new FnEnv(env,NumberInfo.INT,true);
+        var fnEnv = new FnEnv(env,NumberInfo.INT);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("args",new Variable(new PointerInfo(modEnv.getFPL().getString()),"args","args"));
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",TokenType.ID)),"mainThread","mainThread"));

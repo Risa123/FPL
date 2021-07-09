@@ -105,7 +105,7 @@ public final class Var implements IFunction{
                 if(env instanceof ClassEnv e){
                     instanceType = e.getInstanceType();
                 }
-                if(env instanceof ModuleEnv || env instanceof ClassEnv){
+                if(env instanceof ANameSpacedEnv || env instanceof StructEnv){
                     onlyDeclared = false;
                 }
                 var varType = Objects.requireNonNullElse(decType,expType);

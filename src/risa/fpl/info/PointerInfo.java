@@ -2,7 +2,6 @@ package risa.fpl.info;
 
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
-import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 
 public final class PointerInfo extends TypeInfo implements IPointerInfo{
