@@ -72,10 +72,10 @@ ifFlag ia64{
 }
 fn DirectoryEntry* directoryRead void* dir{
   var entry readdir dir
-  if entry != nil; && entry nameLength == 1S; && [ entry name get 0; == $.]{
+  if entry != nil; && entry nameLength == 1; && [ entry name get 0; == $.]{
     entry = readdir dir
   }
-  if entry != nil; && entry nameLength == 2S; && [ entry name get 0; == $.] && [ entry name get 1; == $.]{
+  if entry != nil; && entry nameLength == 2; && [ entry name get 0; == $.] && [ entry name get 1; == $.]{
     entry = readdir dir
   }
   return entry
@@ -86,8 +86,9 @@ alias directoryTell telldir
 alias directorySeek seekdir
 alias directoryReset rewinddir
 alias fileError ferror
-alias FS_Status stat
+alias FS_status stat
 fn char* getErrorMessage int errnum = strerror errnum
 fn char* getErrNoMessage = getErrorMessage _errno; drf
-private var S_IFMT 0xF000;S_IFDIR 0x40000
-fn bool FS_isDirectory FileStatus* status = [ status mode & S_IFMT ] == S_IFDIR
+private var S_IFDIR 16895;S_IFREG 33206
+fn bool FS_isDirectory FileStatus* status = status mode == S_IFDIR
+fn bool FS_isFile FileStatus* status = status mode  == S_IFREG

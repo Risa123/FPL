@@ -98,12 +98,19 @@ class DirectoryStream{
     }
   }
 }
+private fn void checkErrNo int num String path{
+   if num == -1{
+      var msg getErrNoMessage
+      IOException:new String:new msg,getCStringLen msg;,false; + " "; + path;;throw
+    }
+}
 fn bool isDirectory String path{
   FileStatus status
-  if FS_Status path toCString;,status ref; != 0{
-    var msg getErrNoMessage
-    IOException:new String:new msg,getCStringLen msg;,false
-  }
-
-  return false
+  checkErrNo FS_status path toCString;,status ref;,path
+  return FS_isDirectory status ref
+}
+fn bool isFile String path{
+ FileStatus status
+ checkErrNo FS_status path toCString;,status ref;,path
+ return FS_isFile status ref
 }

@@ -33,3 +33,6 @@ fix this added to copy constructor
 fix function attributes can be added to one line functions
 fix copy constructor not assigning objectData
 fix classes with same names causing C error
+fix struct fields don't have to be declared now
+fix binary comparing operators now ignore precise type of operands
+fix toString added to short

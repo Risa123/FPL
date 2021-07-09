@@ -28,13 +28,14 @@ class FPL{
       return value getValue
    }
    fn void compileDirectory String srcDir String directory{
-     DirectoryStream stream srcDir + "/"; + directory
+     srcDir = srcDir + "/"; + directory
+     DirectoryStream stream srcDir
      while stream ready{
        var path stream read
-       if isDirectory path{
+        print path
+       if isDirectory srcDir + path{
          print "directory"
        }
-       print path
      }
      stream close
    }

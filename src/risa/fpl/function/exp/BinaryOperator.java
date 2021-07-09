@@ -31,7 +31,7 @@ public final class BinaryOperator extends AField{
 				if(on.isFloatingPoint()){
 					returnType = on;
 				}
-			}else if(!operandType.equals(opType)){
+			}else if(!operandType.equals(opType) && !(operandType instanceof NumberInfo && opType instanceof NumberInfo && returnType == TypeInfo.BOOL)){
 				throw new CompilerException(exp,operandType + " operand expected instead of " + opType);
 			}
 		}else if(!(operator.equals("+") || operator.equals("-"))){

@@ -7,6 +7,7 @@ import java.util.Objects;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.*;
@@ -60,7 +61,7 @@ public final class Var implements IFunction{
                     }
                 }else{
                     cID = IFunction.toCId(id.getValue());
-                    if(env instanceof ModuleEnv e){
+                    if(env instanceof ModuleEnv e && env.getAccessModifier() != AccessModifier.PRIVATE){
                         cID = e.getNameSpace() + cID;
                     }
                 }
@@ -123,6 +124,9 @@ public final class Var implements IFunction{
                   declaration += p.getPointerVariableDeclaration(cID);
                 }else{
                     declaration += varType.getCname() + " " + cID;
+                    if(env.getAccessModifier() == AccessModifier.PRIVATE && !env.hasModifier(Modifier.NATIVE) && env instanceof ModuleEnv){
+                        declaration = "static " + declaration;
+                    }
                 }
                 if(env instanceof ModuleEnv mod){
                     mod.appendVariableDeclaration(declaration);
