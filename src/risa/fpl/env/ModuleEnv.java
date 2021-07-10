@@ -3,6 +3,7 @@ package risa.fpl.env;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
@@ -17,6 +18,7 @@ import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
+import risa.fpl.tokenizer.TokenType;
 
 public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
@@ -93,6 +95,16 @@ public final class ModuleEnv extends ANameSpacedEnv{
 			   return mod.getFunctionFromModule(name);
             }
 		}
+        if(name.getType() == TokenType.ID && name.getValue().contains(".")){
+            var tmp = name.getValue().split("\\.");
+            var modName = String.join(".",Arrays.copyOf(tmp,tmp.length - 1));
+            for(var mod:importedModules){
+                if(mod.moduleBlock.getName().equals(modName)){
+                    return mod.getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1], TokenType.ID));
+                }
+            }
+            throw new CompilerException(name,"module " + modName + " not found");
+        }
         if(hasFunctionInCurrentEnv(name.getValue())){
             return getFunctionFromModule(name);
         }

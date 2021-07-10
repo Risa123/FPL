@@ -1,0 +1,3 @@
+getSize added to std.io.file
+if module is imported functions with can be now accessed as (module name).(function name)
+fix recursion made possible

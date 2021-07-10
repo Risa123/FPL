@@ -92,3 +92,4 @@ fn char* getErrNoMessage = getErrorMessage _errno; drf
 private var S_IFDIR 16895;S_IFREG 33206
 fn bool FS_isDirectory FileStatus* status = status mode == S_IFDIR
 fn bool FS_isFile FileStatus* status = status mode  == S_IFREG
+fn memory FS_getSize FileStatus* status = status size

@@ -7,11 +7,11 @@ fn void exit int exitCode{
  }
  args free
  _std_lang_Thread_freeEHEntries0 currentThread
- exit exitCode
+ std.backend.exit exitCode
 }
 fn int execute String cmd{
   var CCmd cmd toCString
-  var exitCode execute CCmd
+  var exitCode std.backend.execute CCmd
   CCmd free
   if exitCode == -1{
     IOException:new "invalid command " + cmd;;throw

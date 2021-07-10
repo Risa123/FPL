@@ -114,3 +114,8 @@ fn bool isFile String path{
  checkErrNo FS_status path toCString;,status ref;,path
  return FS_isFile status ref
 }
+fn memory getSize String path{
+ FileStatus status
+ checkErrNo FS_status path toCString;,status ref;,path
+ return FS_getSize status ref
+}

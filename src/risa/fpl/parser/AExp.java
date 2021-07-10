@@ -9,9 +9,9 @@ import risa.fpl.info.TypeInfo;
 
 public abstract class AExp{
  private final int line,tokenNum;
- public AExp(int line,int charNum){
+ public AExp(int line,int tokenNum){
 	 this.line = line;
-	 this.tokenNum = charNum;
+	 this.tokenNum = tokenNum;
  }
  public final int getLine(){
      return line;

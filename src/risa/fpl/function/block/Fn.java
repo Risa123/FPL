@@ -154,6 +154,15 @@ public class Fn extends AFunctionBlock{
         }else{
             f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
         }
+        var argsArray = args.values().toArray(new TypeInfo[0]);
+        if(f.hasVariant(argsArray)){
+            throw new CompilerException(line,tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
+        }
+        f.addVariant(argsArray,cID,implName);
+        var p = new FunctionInfo(f);
+        fnEnv.addFunction("&" + id,new FunctionReference(p));
+        fnEnv.addFunction(id.getValue(),f);
+        fnEnv.addType(id.getValue(),p,false);
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
 		        throw new CompilerException(line, tokenNum,"abstract methods can only be declared");
@@ -202,11 +211,6 @@ public class Fn extends AFunctionBlock{
             }
 			appendSemicolon = true;
 		}
-        var argsArray = args.values().toArray(new TypeInfo[0]);
-        if(f.hasVariant(argsArray)){
-            throw new CompilerException(line,tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
-        }
-        f.addVariant(argsArray,cID,implName);
         var array = args.values().toArray(new TypeInfo[0]);
         var variant = f.getVariant(array);
         if(self != null){
@@ -242,7 +246,6 @@ public class Fn extends AFunctionBlock{
                 cEnv.appendToInitializer(variant.cname() + ";\n");
             }
         }
-        var p = new FunctionInfo(f);
         if(env instanceof ClassEnv cEnv){
             var tmp = new BuilderWriter(writer);
             tmp.write(attrCode.toString());

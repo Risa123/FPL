@@ -11,8 +11,8 @@ import risa.fpl.tokenizer.TokenType;
 public final class Atom extends AExp{
 	private final String value;
 	private final TokenType type;
-	public Atom(int line,int charNum,String value,TokenType type){
-		super(line,charNum);
+	public Atom(int line,int tokenNum,String value,TokenType type){
+		super(line,tokenNum);
 		this.value = value;
 		this.type = type;
 	}

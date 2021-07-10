@@ -180,14 +180,14 @@ fn void defaultExceptionHandler Exception* ex{
   exit 1
 }
 fn void* realloc void* p memory newSize{
-  p = realloc p,newSize
+  p = std.backend.realloc p,newSize
   if p == nil{
     Exception:new "reallocation of memory failed";throw
   }
   return p
 }
 fn void* malloc memory size{
-  var p malloc size
+  var p std.backend.malloc size
   if p == nil{
     Exception:new "allocation of memory failed";throw
   }
