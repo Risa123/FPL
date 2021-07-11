@@ -1,3 +1,6 @@
 getSize added to std.io.file
 if module is imported functions with can be now accessed as (module name).(function name)
+ifFlag removed
+compile time if added
 fix recursion made possible
+fix instance free C error

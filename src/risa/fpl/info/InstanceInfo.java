@@ -3,6 +3,7 @@ package risa.fpl.info;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.Cast;
 import risa.fpl.function.exp.GetObjectInfo;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
@@ -19,6 +20,7 @@ public class InstanceInfo extends TypeInfo{
         this.module = module;
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
+        addField("cast",new Cast(this));
         instanceFree = "free";
         toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
     }

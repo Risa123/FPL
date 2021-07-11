@@ -22,7 +22,7 @@ public final class ProgramEnv extends AEnv{
       addFunction("interface",new InterfaceBlock());
       addFunction("fpointer",new FPointer());
       addFunction("struct",new StructBlock());
-      addFunction("ifFlag",new IfFlag());
+      addFunction("compIf",new CompileTimeIf());
       addFunction("asm",new Asm());
       addFunction("typedef",new Typedef());
       addFunction("fn",new Fn());

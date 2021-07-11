@@ -33,10 +33,11 @@ class FPL{
      while stream ready{
        var name stream read
        var path fullPath + name
+       var fplPath directory + "/"; + name
        if isDirectory path{
-         compileDirectory srcDir,directory + name
-       }{
-
+         compileDirectory srcDir,fplPath
+       }if isFile path{
+        ModuleBlock block this,srcDir,fplPath
        }
      }
      stream close
@@ -92,6 +93,11 @@ class FPL{
     ex throw
   }
   compileDirectory project + "/src";,""
+ }
+}
+class ModuleBlock{
+ this FPL* fpl String srcDir String fplPath{
+
  }
 }
 main{

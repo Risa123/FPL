@@ -36,7 +36,7 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
         if(type instanceof InstanceInfo i){
           cName = i.getInstanceFree();
         }
-        var f = new Function("free",TypeInfo.VOID,FunctionType.NATIVE,type,AccessModifier.PUBLIC);
+        var f = new Function("free",TypeInfo.VOID,FunctionType.NATIVE,this,AccessModifier.PUBLIC);
         f.addVariant(new TypeInfo[0],cName,cName);
         addField("free",f);
         setClassInfo(ClassInfo.POINTER);

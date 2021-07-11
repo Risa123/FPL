@@ -8,6 +8,16 @@ class ArrayList;T{
       Exception:new "index out of bounds:" + index toString;;;throw
     }
   }
+  fn void freeArray{
+    compIf isInstance T{
+      var i 0L
+      while i < len{
+         [ array + i ] free
+         i ++
+      }
+    }
+    array cast void* free
+  }
  }
  this{
    len = 0
@@ -35,7 +45,7 @@ class ArrayList;T{
  fn void clear{
   len = 0
   if array != nil{
-    array free
+    freeArray
     array = nil
   }
  }
@@ -43,7 +53,9 @@ class ArrayList;T{
  fn memory getSize = len
  fn T* getArray = array
  -this{
-   array free
+   if array != nil{
+     freeArray
+   }
  }
 }
 class Entry;K V{
