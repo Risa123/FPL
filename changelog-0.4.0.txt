@@ -4,3 +4,4 @@ ifFlag removed
 compile time if added
 fix recursion made possible
 fix instance free C error
+fix unknown type C error

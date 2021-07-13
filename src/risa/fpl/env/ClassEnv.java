@@ -219,7 +219,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public AEnv getSuperEnv(){
 	    return superEnv;
     }
-    public void compileNewAndAlloc(BuilderWriter writer, TypeInfo[]args, ClassVariable constructor){
+    public void compileNewAndAlloc(BuilderWriter writer,TypeInfo[]args,ClassVariable constructor){
         var allocName = "static" + getNameSpace() + "_alloc";
         Function allocMethod;
         if(classType.getFieldFromThisType("alloc") instanceof Function tmp){
@@ -241,12 +241,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             b.append(args[i].getCname()).append(" a").append(i);
         }
         var compiledArgs = b.toString();
-        writer.write(compiledArgs);
-        writer.write("){\n");
-        writer.write(instanceType.getCname());
-        writer.write("* p=malloc(sizeof(");
-        writer.write(instanceType.getCname());
-        writer.write("));\n");
+        writer.write(compiledArgs + "){\n" + instanceType.getCname() + "* p=malloc(sizeof(");
+        writer.write(instanceType.getCname() + "));\n");
         writer.write(constructorCall(constructor,"p",args));
         writer.write("return p;\n}\n");
         var newName = "static" + nameSpace + "_new";

@@ -35,10 +35,7 @@ public final class Constructor extends AFunctionBlock{
         }
         var fEnv = new FnEnv(env,TypeInfo.VOID);
         var b = new BuilderWriter(writer);
-        b.write("void ");
-        b.write(INTERNAL_METHOD_PREFIX);
-        b.write(cEnv.getNameSpace(this));
-        b.write("_init");
+        b.write("void " + INTERNAL_METHOD_PREFIX + cEnv.getNameSpace(this) + "_init");
         var variantNum = constructor.getVariants().size();
         var argsWriter = new BuilderWriter(writer);
         var args = parseArguments(argsWriter,it,fEnv,type).values().toArray(new TypeInfo[0]);
@@ -52,8 +49,7 @@ public final class Constructor extends AFunctionBlock{
         if(!(type instanceof TemplateTypeInfo)){
             constructor.addVariant(args,cEnv.getNameSpace());
         }
-        b.write(argsWriter.getCode());
-        b.write("{\n");
+        b.write(argsWriter.getCode() + "{\n");
         var hasParentConstructor = false;
         if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
             var callStart = it.next();

@@ -106,8 +106,14 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             ex.setSourceFile("");
             throw ex;
         }
-        cEnv.getInstanceType().setAttributesCode(attributes.getCode());
-        b.write(attributes.getCode());
+        var attrCode = new StringBuilder();
+        for(var line:attributes.getCode().lines().toList()){
+            if(!line.equals(";")){
+                attrCode.append(line).append("\n");
+            }
+        }
+        cEnv.getInstanceType().setAttributesCode(attrCode.toString());
+        b.write(attrCode.toString());
         //parent type doesn't have implicit constructor
         if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
             for(var v:i.getConstructor().getVariants()){
@@ -124,7 +130,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
                 var name = method.getName();
                 var impl = type.getField(name,cEnv);
-                if(!(impl instanceof Function) || ((Function)impl).getType() == FunctionType.ABSTRACT){
+                if(!(impl instanceof Function f) || f.getType() == FunctionType.ABSTRACT){
                     throw new CompilerException(id.getLine(),id.getTokenNum(),"this class doesn't implement method " + name);
                 }
             }
@@ -193,8 +199,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }
         if(copyName != null){
             var header = type.getCname() + " " + copyName + "AndReturn(" + type.getCname() + " original)";
-            internalCode.write(header + "{\n");
-            internalCode.write(type.getCname() + " instance;\n");
+            internalCode.write(header + "{\n" + type.getCname() + " instance;\n");
             internalCode.write(copyName + "(&instance,&original);\n");
             internalCode.write("return instance;\n}\n");
             type.appendToDeclaration(header + ";\n");
