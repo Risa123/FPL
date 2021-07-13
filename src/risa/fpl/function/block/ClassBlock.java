@@ -106,14 +106,8 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             ex.setSourceFile("");
             throw ex;
         }
-        var attrCode = new StringBuilder();
-        for(var line:attributes.getCode().lines().toList()){
-            if(!line.equals(";")){
-                attrCode.append(line).append("\n");
-            }
-        }
-        cEnv.getInstanceType().setAttributesCode(attrCode.toString());
-        b.write(attrCode.toString());
+        cEnv.getInstanceType().setAttributesCode(attributes.getCode());
+        b.write(attributes.getCode());
         //parent type doesn't have implicit constructor
         if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
             for(var v:i.getConstructor().getVariants()){
@@ -122,10 +116,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                }
             }
         }
-        b.write('}');
-        b.write(IFunction.toCId(id.getValue()));
-        b.write(";\n");
-        b.write(cEnv.getDataDeclaration());
+        b.write('}' + IFunction.toCId(id.getValue())+ ";\n" + cEnv.getDataDeclaration());
         if(!cEnv.isAbstract()){
             for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
                 var name = method.getName();

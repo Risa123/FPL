@@ -16,10 +16,11 @@ public final class StructBlock extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var id = it.nextID();
-        var cID = IFunction.toCId(id.getValue());
         if(env.hasTypeInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"type " + id +  " is already declared");
         }
+        var sEnv = new StructEnv(env,id.getValue());
+        var cID = sEnv.getType().getCname();
         var b  = new BuilderWriter(writer);
         var next = it.next();
         var align = "";
@@ -41,7 +42,6 @@ public final class StructBlock extends ABlock{
             align = " __attribute__((aligned" + alignValue + "))";
         }
         b.write("typedef struct " + cID + "{\n");
-        var sEnv = new StructEnv(env,cID);
         next.compile(b,sEnv,it);
         b.write("}" + cID +  align +";\n");
         var type = sEnv.getType();

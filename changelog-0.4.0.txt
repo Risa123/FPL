@@ -2,6 +2,8 @@ getSize added to std.io.file
 if module is imported functions with can be now accessed as (module name).(function name)
 ifFlag removed
 compile time if added
+fix pointer to instance  not implicitly convertible to interface it implements
 fix recursion made possible
 fix instance free C error
 fix unknown type C error
+fix struct name reported as C name

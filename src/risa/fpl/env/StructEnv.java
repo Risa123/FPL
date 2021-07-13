@@ -8,7 +8,7 @@ public final class StructEnv extends SubEnv{
     private final TypeInfo type;
     public StructEnv(AEnv superEnv,String id){
         super(superEnv);
-        type = new TypeInfo(id,id);
+        type = new TypeInfo(id,IFunction.toCId(id));
         superEnv.addType(id,type);
     }
     @Override

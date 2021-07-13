@@ -15,8 +15,13 @@ public final class InterfaceInfo extends TypeInfo{
     }
     @Override
     public boolean equals(Object o){
-        if(o instanceof TypeInfo type && type.getParents().contains(this)){
-            return true;
+        if(o instanceof TypeInfo type){
+            if(type instanceof PointerInfo p){
+                type = p.getType();
+            }
+            if(type.getParents().contains(this)){
+                return true;
+            }
         }
         return this == o;
     }

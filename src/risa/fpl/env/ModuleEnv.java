@@ -222,6 +222,11 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
             }
         }
+        for(var type:declared){
+            if(type instanceof InstanceInfo i){
+                writer.write(i.getMethodDeclarations());
+            }
+        }
         if(superEnv instanceof ModuleEnv mod){
             importDeclarations.append(mod.importDeclarations);
         }

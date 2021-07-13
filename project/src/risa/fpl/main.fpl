@@ -6,7 +6,7 @@ use{
   risa.fpl.tokenizer
   risa.fpl.base
 }
-class FPL{
+class FPL IFPL{
  private{
    const{
      String outputFile
@@ -93,11 +93,6 @@ class FPL{
     ex throw
   }
   compileDirectory project + "/src";,""
- }
-}
-class ModuleBlock{
- this FPL* fpl String srcDir String fplPath{
-
  }
 }
 main{

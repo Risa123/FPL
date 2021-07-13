@@ -15,6 +15,7 @@ public class InstanceInfo extends TypeInfo{
     private boolean complete;
     private ClassVariable constructor;
     private final String toPointerName;
+    private String methodDeclarations = "";
     public InstanceInfo(String name,ModuleEnv module,String nameSpace){
         super(name,IFunction.toCId(name));
         this.module = module;
@@ -96,5 +97,11 @@ public class InstanceInfo extends TypeInfo{
     }
     public final String getToPointerName(){
         return toPointerName;
+    }
+    public final void setMethodDeclarations(String code){
+        methodDeclarations = code;
+    }
+    public final String getMethodDeclarations(){
+        return methodDeclarations;
     }
 }

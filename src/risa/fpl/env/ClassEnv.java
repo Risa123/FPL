@@ -148,7 +148,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         ((ANameSpacedEnv)superEnv).addTemplateInstance(type);
     }
     public void appendDeclarations(){
-        instanceType.appendToDeclaration(getFunctionDeclarations());
+        if(!(instanceType instanceof TemplateTypeInfo)){
+            instanceType.setMethodDeclarations(getFunctionDeclarations());
+        }
     }
     @Override
     public IFunction getFunction(Atom name)throws CompilerException{

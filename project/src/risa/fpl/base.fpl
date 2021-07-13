@@ -21,3 +21,11 @@ class CompilerException Exception{
 interface IFunction{
  fn void compile
 }
+interface IFPL{
+
+}
+class ModuleBlock{
+ this IFPL fpl String srcDir String fplPath{
+
+ }
+}

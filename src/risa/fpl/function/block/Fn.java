@@ -194,12 +194,11 @@ public class Fn extends AFunctionBlock{
 			    throw new CompilerException(block,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
             }
 			b.write(code.getCode());
-			b.write(";\n");
+		    if(oneLine){
+                b.write(";\n");
+            }
             if(returnType == TypeInfo.VOID){
                 fnEnv.compileDestructorCalls(b);
-            }
-			if(oneLine){
-			    b.write(";\n");
             }
 			if(fnEnv.isReturnNotUsed() && returnType != TypeInfo.VOID){
 				throw new CompilerException(block,"there is no return in this function and this function doesn't return void");

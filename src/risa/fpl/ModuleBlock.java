@@ -55,7 +55,13 @@ public final class ModuleBlock extends AThreePassBlock{
                }
                env.importModules();
                env.declareTypes(writer);
-               writer.write(b.getCode());
+               var tmp = new StringBuilder();
+               for(var line:b.getCode().lines().toList()){
+                   if(!line.equals(";")){
+                       tmp.append(line).append("\n");
+                   }
+               }
+               writer.write(tmp.toString());
                writer.write(env.getVariableDeclarations());
                writer.write(env.getFunctionDeclarations());
                writer.write(env.getFunctionCode());
@@ -121,7 +127,7 @@ public final class ModuleBlock extends AThreePassBlock{
           func = (Function)env.getFunction(oldName);
       }
       if(func == null){
-          return;
+          throw new RuntimeException("internal error: function " + name + " not found");
        }
        ofType.addField(name,func.makeMethod(ofType,name));
    }
