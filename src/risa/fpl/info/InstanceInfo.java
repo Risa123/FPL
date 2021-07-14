@@ -104,4 +104,7 @@ public class InstanceInfo extends TypeInfo{
     public final String getMethodDeclarations(){
         return methodDeclarations;
     }
+    public String getConversionMethod(InterfaceInfo i){
+        return IFunction.INTERNAL_METHOD_PREFIX + module.getNameSpace() + getCname() + "_as" + i.getCname();
+    }
 }

@@ -5,6 +5,7 @@ use{
   std.system
   risa.fpl.tokenizer
   risa.fpl.base
+  risa.fpl.block
 }
 class FPL IFPL{
  private{

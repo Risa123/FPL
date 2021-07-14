@@ -56,12 +56,16 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
 	    return field;
     }
     @Override
-    public String getConversionMethodCName(TypeInfo type){
-        return this.type.getConversionMethodCName(type);
-    }
-    @Override
     public String ensureCast(TypeInfo to,String expCode){
         return type.ensureCast(to,expCode,true);
+    }
+    @Override
+    public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
+	    return type.ensureCast(to,expCode,comesFromPointer);
+    }
+    @Override
+    public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,boolean returnedByFunction){
+	    return type.ensureCast(to,expCode,comesFromPointer,returnedByFunction);
     }
     public TypeInfo getType(){
 	    return type;

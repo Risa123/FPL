@@ -48,7 +48,6 @@ public class TypeInfo{
   private final HashMap<String, IField>fields = new HashMap<>();
   private ClassInfo classInfo;
   private final ArrayList<TypeInfo>parents = new ArrayList<>(),requiredTypes = new ArrayList<>();
-  private final HashMap<TypeInfo,String> conversionMethodCNames = new HashMap<>();
   private TypeInfo primaryParent;
   public TypeInfo(String name,String cname,boolean primitive){
 	  this.name = name;
@@ -188,19 +187,18 @@ public class TypeInfo{
       if(npType instanceof PointerInfo p){
           npType = p.getType();
       }
-      var convName = getConversionMethodCName(to);
-      if(this != npType && !primitive && convName != null /*would return null for nil pointer*/){
+      if(this != npType && this instanceof InstanceInfo instance && npType instanceof InterfaceInfo i && parents.contains(i)){
           var prefix = "";
           var postfix = "";
           if(!comesFromPointer){
-            if(notReturnedByFunction){
+            if(notReturnedByFunction && !comesFromPointer){
                 prefix = "&";
-            }else if(this instanceof InstanceInfo i){
-                prefix = IFunction.INTERNAL_METHOD_PREFIX + i.getModule().getNameSpace() + cname + "_toPointer(";
+            }else{
+                prefix = instance.getToPointerName() + "(";
                 postfix = ")";
             }
           }
-          return convName + "(" + prefix +  expCode + postfix + ")";
+          return instance.getConversionMethod(i) + "(" + prefix +  expCode + postfix + ")";
       }
       return expCode;
   }
@@ -231,12 +229,6 @@ public class TypeInfo{
   }
   protected boolean identical(TypeInfo type){
       return name.equals(type.name);
-  }
-  public String getConversionMethodCName(TypeInfo type){
-      return conversionMethodCNames.get(type);
-  }
-  public void addConversionMethodCName(TypeInfo type,String cname){
-      conversionMethodCNames.put(type,cname);
   }
   public void setPrimaryParent(TypeInfo primaryParent){
       this.primaryParent = primaryParent;

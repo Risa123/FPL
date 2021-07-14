@@ -55,17 +55,17 @@ fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1,
 alias fileEOF feof
 alias fileFlush fflush
 fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
-compIf flag x64{
+compIf arch x64{
  typedef Context [] 32 memory
  fn void contextRestore Context context = longjmp context,1
  private native fn void longjmp Context context int value
 }
-compIf flag x86{
+compIf arch x86{
  typedef Context [] 16 memory
  private native fn void longjmp Context context int value
  fn void contextRestore Context context = longjmp context,1
 }
-compIf flag ia64{
+compIf arch ia64{
  typedef Context [] 32 memory
  private native fn void __mingw_longjmp Context context int value
  fn void contextRestore Context context = __mingw_setjmp context,1

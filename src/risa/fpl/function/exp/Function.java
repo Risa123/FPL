@@ -131,7 +131,11 @@ public class Function implements IField,ICalledOnPointer{
             }else{
                 b.write(',');
             }
-            b.write(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,false,returnedData.get(i).notReturnedByFunction));
+            var comesFromPointer = false;
+            if(array[i] instanceof PointerInfo){
+                comesFromPointer = true;
+            }
+            b.write(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
         }
 		b.write(')');
         if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == TokenType.ID){

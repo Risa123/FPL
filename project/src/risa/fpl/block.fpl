@@ -1,0 +1,13 @@
+use{
+ std.io.file
+ risa.fpl.base
+ risa.fpl.tokenizer
+}
+class ModuleBlock{
+ this IFPL fpl String srcDir String fplPath{
+   FileReader reader srcDir + fplPath
+   Tokenizer tokenizer reader
+
+   tokenizer close
+ }
+}

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import risa.fpl.env.ProgramEnv;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
 
 public final class FPL{
 	private final String gcc,output,outputDirectory,mainModule,ccArgs;
@@ -44,11 +45,6 @@ public final class FPL{
                 var mod = new ModuleBlock(p,srcDir,this);
                 modules.put(mod.getName(),mod);
             }
-        }
-        switch(System.getProperty("os.arch")){
-            case "x86"->flags.add("x86");
-            case "amd64"->flags.add("x64");
-            case "ia64"->flags.add("ia64");
         }
     }
     private boolean buildFileInvalid(Properties buildFile,List<String>requiredKeys,List<String>optionalKeys){
@@ -134,5 +130,15 @@ public final class FPL{
     }
     public Path getSrcDir(){
         return srcDir;
+    }
+    public boolean isCompiledOnArchitecture(Atom architecture)throws CompilerException{
+        var str = architecture.getValue();
+        if(!(str.equals("x86") || str.equals("x64") || str.equals("ia64"))) {
+            throw new CompilerException(architecture, "there is no architecture called " + str);
+        }
+        if(str.equals("x64")){
+            str = "amd64";
+        }
+        return System.getProperty("os.arch").equals(str);
     }
 }

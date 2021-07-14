@@ -24,8 +24,3 @@ interface IFunction{
 interface IFPL{
 
 }
-class ModuleBlock{
- this IFPL fpl String srcDir String fplPath{
-
- }
-}

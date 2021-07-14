@@ -146,20 +146,14 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             internalCode.write("static " + i.getImplName() + " " + cID + i.getCname() + "_impl;\n");
             internalCode.write(i.getCname() + ' ');
             var callBuilder = new StringBuilder(INTERNAL_METHOD_PREFIX);
-            callBuilder.append(cEnv.getNameSpace());
-            callBuilder.append("_as");
-            callBuilder.append(i.getCname());
+            callBuilder.append(cEnv.getNameSpace()).append("_as").append(i.getCname());
             var asCName = callBuilder.toString();
-            internalCode.write(asCName);
-            internalCode.write('(');
-            internalCode.write(type.getCname());
-            internalCode.write("* this){\n");
+            internalCode.write(asCName + '(' + type.getCname() +"* this){\n");
             internalCode.write(i.getCname());
             internalCode.write(" tmp;\ntmp.instance=this;\ntmp.impl=&");
             internalCode.write(cEnv.getImplOf(i));
             internalCode.write(";\nreturn tmp;\n}\n");
             type.appendToDeclaration(i.getCname() + " " + callBuilder + "(" + type.getCname() + "*);\n");
-            type.addConversionMethodCName(i,callBuilder.toString());
             var parent = type.getPrimaryParent();
             if(!cEnv.isAbstract() && parent != null){
                 for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
