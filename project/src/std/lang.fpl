@@ -13,7 +13,11 @@ class String{
     this p = p
     this allocated = allocated
   }
-  this{}
+  this{
+   p = nil
+   len = 0
+   allocated = false
+  }
   -this{
     if allocated{
        p free
@@ -71,7 +75,16 @@ class String{
     len = o len
     p = char:alloc[] len
     memoryCopy o p,p,len
-    allocated = o allocated
+    allocated = true
+  }
+  fn void = String str{
+    len = str len
+    p = char:alloc[] len
+    memoryCopy str p,p,len
+    allocated = true
+    if allocated && p == nil{
+      p free
+    }
   }
   fn uint getLength = len
   fn String toString = this drf
@@ -200,7 +213,6 @@ fn void memoryCopy byte* src byte* dest memory size{
      i ++
     }
 }
-alias free free
 #these functions will be made inaccessible by compiler
 #char methods
 fn bool isDigit char this{

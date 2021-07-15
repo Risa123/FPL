@@ -38,11 +38,24 @@ public final class Variable extends ValueExp{
 		   if(constant && !(type instanceof InstanceInfo)){
 			  throw new CompilerException(line,charNum,"constant cannot be redefined");
 			}
+		    var assignmentOperator = false;
+		    if(type instanceof InstanceInfo && type.getField("=",env) instanceof Function f){
+		    	writer.write(f.getPointerVariant().cname() + "(&");
+		    	assignmentOperator = true;
+			}
 			writePrev(writer);
 			writer.write(code);
-			writer.write('=');
+			if(assignmentOperator){
+				writer.write(',');
+			}else{
+				writer.write('=');
+			}
 			onlyDeclared = false;
 			execute(it,writer,env,"");//not drf equals
+			if(assignmentOperator){
+				writer.write(')');
+			}
+			copyCallNeeded = false;
 		    return TypeInfo.VOID;
 		}else if(value.equals("ref")){
 		    var b = new BuilderWriter(writer);

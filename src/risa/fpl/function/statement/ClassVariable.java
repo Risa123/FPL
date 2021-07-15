@@ -61,11 +61,8 @@ public final class ClassVariable extends Function{
         }else{
           varType = type;
         }
-        writer.write(varType.getCname());
-        writer.write(' ');
         var cID = IFunction.toCId(id.getValue());
-        writer.write(cID);
-        writer.write(";\n");
+        writer.write(varType.getCname() + ' ' + cID + ";\n");
         if(env instanceof ClassEnv){
             setPrevCode("this->" + cID);
         }else{

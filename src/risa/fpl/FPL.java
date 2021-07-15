@@ -131,7 +131,7 @@ public final class FPL{
     public Path getSrcDir(){
         return srcDir;
     }
-    public boolean isCompiledOnArchitecture(Atom architecture)throws CompilerException{
+    public boolean isOnArchitecture(Atom architecture)throws CompilerException{
         var str = architecture.getValue();
         if(!(str.equals("x86") || str.equals("x64") || str.equals("ia64"))) {
             throw new CompilerException(architecture, "there is no architecture called " + str);

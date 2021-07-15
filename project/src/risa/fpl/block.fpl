@@ -2,12 +2,15 @@ use{
  std.io.file
  risa.fpl.base
  risa.fpl.tokenizer
+ risa.fpl.object
 }
-class ModuleBlock{
+class ModuleBlock ObjectInfo{
  this IFPL fpl String srcDir String fplPath{
    FileReader reader srcDir + fplPath
    Tokenizer tokenizer reader
-
+   while tokenizer hasNext{
+     print tokenizer next;getValue
+   }
    tokenizer close
  }
 }
