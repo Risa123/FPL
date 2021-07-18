@@ -9,7 +9,10 @@ class ModuleBlock ObjectInfo{
    FileReader reader srcDir + fplPath
    Tokenizer tokenizer reader
    while tokenizer hasNext{
-     print tokenizer next;getValue
+     var token tokenizer next
+     if token getType; == TokenType:ID{
+       
+     }
    }
    tokenizer close
  }

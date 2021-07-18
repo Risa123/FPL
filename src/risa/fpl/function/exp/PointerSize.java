@@ -1,6 +1,5 @@
 package risa.fpl.function.exp;
 
-import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;

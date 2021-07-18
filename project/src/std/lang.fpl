@@ -206,6 +206,14 @@ fn void* malloc memory size{
   }
   return p
 }
+fn void;T; free[] T* this memory len{
+ var i 0L
+ while i < len{
+   [ this + i ] free
+   i ++
+ }
+ free this cast void*
+}
 fn void memoryCopy byte* src byte* dest memory size{
     memory i 0L
     while i < size{

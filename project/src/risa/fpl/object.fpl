@@ -1,4 +1,9 @@
+use std.collection
 
 class ObjectInfo{
-
+ Map;String Field;fields
+ fn Field getField String name = fields get name
+}
+class Field{
+ ObjectInfo* value
 }

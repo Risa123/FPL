@@ -3,6 +3,10 @@ if module is imported functions with can be now accessed as (module name).(funct
 ifFlag removed
 compile time if added
 assignment variable method calls = method if possible
+free removed from std.lang
+free[] added to pointers
+template functions added
+Map finished in std.collection
 fix pointer to instance  not implicitly convertible to interface it implements
 fix recursion made possible
 fix instance free C error

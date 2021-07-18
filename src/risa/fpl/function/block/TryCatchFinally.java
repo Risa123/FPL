@@ -5,6 +5,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.env.FnSubEnv;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -21,11 +22,12 @@ public final class TryCatchFinally extends ABlock{
         var postEntry = new BuilderWriter(writer);
         postEntry.write("if(!");
         var arch = System.getProperty("os.arch");
-        switch(arch){
-            case "x86"->postEntry.write("_setjmp3");
-            case "ia64"->postEntry.write("__mingw_setjmp");
-            case "amd64"->postEntry.write("_setjmp");
-        }
+        postEntry.write(switch(arch){
+            case "x86"->"_setjmp3";
+            case "ia64"->"__mingw_setjmp";
+            case "amd64"->"_setjmp";
+            default ->throw new RuntimeException("unsupported architecture:" + arch);
+        });
         postEntry.write("(_std_lang_currentThread->_currentEHEntry->_context");
         switch(arch){
             case "x86"->postEntry.write(",nil");
@@ -70,16 +72,7 @@ public final class TryCatchFinally extends ABlock{
                     }else{
                         throw new CompilerException(nextExp,"exception type or block expected");
                     }
-                    var notException = true;
-                    var current = exInfo;
-                    while(current != null){
-                        if(current == exception){
-                            notException = false;
-                            break;
-                        }
-                        current = current.getPrimaryParent();
-                    }
-                    if(notException){
+                    if(!(exInfo instanceof InstanceInfo i) || !i.isException()){
                         throw new CompilerException(nextExp,"invalid exception");
                     }
                     postEntry.write("{\n");

@@ -23,6 +23,10 @@ public class Fn extends AFunctionBlock{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		var returnType = env.getType(it.nextID());
+        var fnEnv = new FnEnv(env,returnType);
+        if(it.checkTemplate()){
+            var args = IFunction.parseTemplateArguments(it,fnEnv);
+        }
         var b = new BuilderWriter(writer);
 		var id = it.nextID();
         if(env instanceof  ModuleEnv e && e.isMain() && id.getValue().equals("main")){
@@ -47,7 +51,6 @@ public class Fn extends AFunctionBlock{
         }else if(env instanceof InterfaceEnv e){
             self = e.getType();
         }
-        var fnEnv = new FnEnv(env,returnType);
         var headWriter = new BuilderWriter(writer);
         if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
             headWriter.write("static ");
