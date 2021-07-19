@@ -8,7 +8,6 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.IClassOwnedEnv;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
-import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 
 public class TypeInfo{
@@ -61,7 +60,7 @@ public class TypeInfo{
   public String toString(){
 	  return name;
   }
-  public void addField(String name,IField value){
+  public final void addField(String name,IField value){
 	  fields.put(name,value);
   }
   //returns null if field cannot be accessed from Env from
@@ -93,7 +92,7 @@ public class TypeInfo{
       classInfo = info;
       info.setInstanceType(this);
   }
-  public ClassInfo getClassInfo(){
+  public final ClassInfo getClassInfo(){
       return classInfo;
   }
   public final String getName(){
@@ -120,14 +119,14 @@ public class TypeInfo{
       }
       declaration = declarationBuilder.toString();
   }
-  protected void addRequiredType(TypeInfo type){
+  protected final void addRequiredType(TypeInfo type){
       if(type != this && !type.isPrimitive() && type.notIn(requiredTypes)){
          requiredTypes.add(type);
       }else if(type instanceof PointerInfo p && p.getType() != this && !p.getType().isPrimitive() && p.getType().notIn(requiredTypes)){
           requiredTypes.add(p.getType());
       }
   }
-  public boolean notIn(Collection<TypeInfo> types){
+  public final boolean notIn(Collection<TypeInfo> types){
         for(var t:types){
             if(t == this){
                 return false;
@@ -141,16 +140,16 @@ public class TypeInfo{
   public final boolean isPrimitive(){
       return primitive;
   }
-  public void addParent(TypeInfo parent){
+  public final void addParent(TypeInfo parent){
       parents.add(parent);
   }
-  public ArrayList<TypeInfo>getRequiredTypes(){
+  public final ArrayList<TypeInfo>getRequiredTypes(){
       return requiredTypes;
   }
-  public ArrayList<TypeInfo>getParents(){
+  public final ArrayList<TypeInfo>getParents(){
       return parents;
   }
-  public ArrayList<Function> getMethodsOfType(FunctionType type){
+  public final ArrayList<Function> getMethodsOfType(FunctionType type){
       var list = new ArrayList<Function>();
       for(var field:fields.values()){
           if(field instanceof Function f && f.getType() == type){
@@ -174,9 +173,6 @@ public class TypeInfo{
       return list;
   }
   public boolean notIntegerNumber(){
-      if(this instanceof NumberInfo n){
-          return n.isFloatingPoint();
-      }
       return true;
   }
   public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,boolean notReturnedByFunction){
@@ -230,17 +226,17 @@ public class TypeInfo{
   protected boolean identical(TypeInfo type){
       return name.equals(type.name);
   }
-  public void setPrimaryParent(TypeInfo primaryParent){
+  public final void setPrimaryParent(TypeInfo primaryParent){
       this.primaryParent = primaryParent;
       addParent(primaryParent);
   }
-  public TypeInfo getPrimaryParent(){
+  public final TypeInfo getPrimaryParent(){
       return primaryParent;
   }
   private void addSize(){
       addField("getObjectSize",new UnaryOperator(NumberInfo.MEMORY,"sizeof ",false));
   }
-  public IField getFieldFromThisType(String name){
+  public final IField getFieldFromThisType(String name){
       return fields.get(name);
   }
 }

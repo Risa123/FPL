@@ -4,13 +4,17 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.FnSubEnv;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.function.IFunction;
 import risa.fpl.info.*;
+import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
@@ -27,6 +31,7 @@ public class Function implements IField,ICalledOnPointer{
 	public static final int NO_STATUS = 0,CALLED_ON_POINTER = 1,CALLED_ON_RETURNED_INSTANCE = 2,CALLED_ON_INSTANCE_R_BY_FUNC = 3;
 	private final String name,attrCode;
 	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
+	private final ArrayList<TemplateVariant>templateVariants = new ArrayList<>();
     public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
        this.returnType = returnType;
        this.accessModifier = accessModifier;
@@ -50,10 +55,12 @@ public class Function implements IField,ICalledOnPointer{
         var b = new BuilderWriter(writer);
 		var argList = new ArrayList<TypeInfo>();
 		var returnedData = new ArrayList<ReturnedData>();
-		while(it.hasNext()){
-		   if(it.peek() instanceof List){
-		       break;
+		if(self instanceof InstanceInfo i && i.isException() && name.equals("throw")){
+           if(env instanceof FnSubEnv subEnv){
+               subEnv.getReturnType();//to prevent no return error
            }
+        }
+		while(it.hasNext() && !(it.peek() instanceof List)){
 		   var exp = it.nextAtom();
 		   if(exp.getType() == TokenType.END_ARGS){
 			   break;
@@ -220,7 +227,7 @@ public class Function implements IField,ICalledOnPointer{
         f.declaration.append(declaration);
         return f;
     }
-    public final void addVariant(TypeInfo[]args,String cname,String implName){
+    public final FunctionVariant addVariant(TypeInfo[]args, String cname, String implName){
         if(type == FunctionType.NATIVE){
             declaration.append("extern ");
         } else if(accessModifier == AccessModifier.PRIVATE){
@@ -269,7 +276,9 @@ public class Function implements IField,ICalledOnPointer{
             declaration.append(')');
         }
         declaration.append(";\n");
-        variants.add(new FunctionVariant(args,cname,implName));
+        var v = new FunctionVariant(args,cname,implName);
+        variants.add(v);
+        return v;
     }
     public final String getName(){
         return name;
@@ -282,6 +291,14 @@ public class Function implements IField,ICalledOnPointer{
             if(Arrays.equals(v.args(),args)){
                 return v;
             }
+        }
+        for(var v:templateVariants){
+          if(args.length == v.args.length){
+              var compatible = true;
+              for(int i = 0; i < args.length;++i){
+
+              }
+          }
         }
         return null;
     }
@@ -323,5 +340,9 @@ public class Function implements IField,ICalledOnPointer{
     public final void calledOnPointer(){
         callStatus = CALLED_ON_POINTER;
     }
+    public final void addTemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,TypeInfo[]args){
+        templateVariants.add(new TemplateVariant(templateArgs,code,args));
+    }
     private record ReturnedData(String code,boolean notReturnedByFunction){}
+    private record TemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,TypeInfo[]args){}
 }

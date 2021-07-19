@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -24,8 +25,9 @@ public class Fn extends AFunctionBlock{
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		var returnType = env.getType(it.nextID());
         var fnEnv = new FnEnv(env,returnType);
+        LinkedHashMap<String,TypeInfo> templateArgs = null;
         if(it.checkTemplate()){
-            var args = IFunction.parseTemplateArguments(it,fnEnv);
+            templateArgs = IFunction.parseTemplateArguments(it,fnEnv);
         }
         var b = new BuilderWriter(writer);
 		var id = it.nextID();
@@ -161,7 +163,7 @@ public class Fn extends AFunctionBlock{
         if(f.hasVariant(argsArray)){
             throw new CompilerException(line,tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
         }
-        f.addVariant(argsArray,cID,implName);
+        var variant = f.addVariant(argsArray,cID,implName);
         var p = new FunctionInfo(f);
         fnEnv.addFunction("&" + id,new FunctionReference(p));
         fnEnv.addFunction(id.getValue(),f);
@@ -170,8 +172,8 @@ public class Fn extends AFunctionBlock{
 		    if(env.hasModifier(Modifier.ABSTRACT)){
 		        throw new CompilerException(line, tokenNum,"abstract methods can only be declared");
             }
-            var block = it.next();
-            if(block instanceof Atom a){
+            var codeExp = it.next();
+            if(codeExp instanceof Atom a){
                 oneLine = true;
                 if(!a.getValue().equals("=")){
                     throw new CompilerException(a,"= expected");
@@ -180,7 +182,7 @@ public class Fn extends AFunctionBlock{
                 while(it.hasNext()){
                     atoms.add(it.nextAtom());
                 }
-                block = new List(line,a.getTokenNum(),atoms,false);
+                codeExp = new List(line,a.getTokenNum(),atoms,false);
             }
             headWriter.write("{\n");
             for(var arg:args.entrySet()){
@@ -192,9 +194,9 @@ public class Fn extends AFunctionBlock{
 			    b.write("return ");
             }
 			var code = new BuilderWriter(writer);
-			var fReturnType = block.compile(code,fnEnv,it);
+			var fReturnType = codeExp.compile(code,fnEnv,it);
 			if(oneLine && fnEnv.getReturnType() != TypeInfo.VOID && !fReturnType.equals(fnEnv.getReturnType())){
-			    throw new CompilerException(block,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
+			    throw new CompilerException(codeExp,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
             }
 			b.write(code.getCode());
 		    if(oneLine){
@@ -204,7 +206,7 @@ public class Fn extends AFunctionBlock{
                 fnEnv.compileDestructorCalls(b);
             }
 			if(fnEnv.isReturnNotUsed() && returnType != TypeInfo.VOID){
-				throw new CompilerException(block,"there is no return in this function and this function doesn't return void");
+				throw new CompilerException(codeExp,"there is no return in this function and this function doesn't return void");
 			}
             b.write("}\n");
 		}else{
@@ -214,7 +216,6 @@ public class Fn extends AFunctionBlock{
 			appendSemicolon = true;
 		}
         var array = args.values().toArray(new TypeInfo[0]);
-        var variant = f.getVariant(array);
         if(self != null){
             IField parentField = null;
             var parents = self.getParents();
@@ -248,29 +249,31 @@ public class Fn extends AFunctionBlock{
                 cEnv.appendToInitializer(variant.cname() + ";\n");
             }
         }
-        if(env instanceof ClassEnv cEnv){
-            var tmp = new BuilderWriter(writer);
-            tmp.write(attrCode.toString());
-            tmp.write(headWriter.getCode());
-            fnEnv.compileToPointerVars(tmp);
-            tmp.write(b.getCode());
-            cEnv.addMethod(f,argsArray,tmp.getCode());
-        }else if(env instanceof InterfaceEnv){
-            writer.write(p.getPointerVariableDeclaration(variant.cname()));
-        }else if(env instanceof ModuleEnv e){
-            if(f.getType() != FunctionType.NATIVE){
+        if(templateArgs == null){
+            if(env instanceof ClassEnv cEnv){
                 var tmp = new BuilderWriter(writer);
                 tmp.write(attrCode.toString());
                 tmp.write(headWriter.getCode());
                 fnEnv.compileToPointerVars(tmp);
                 tmp.write(b.getCode());
-                e.appendFunctionCode(tmp.getCode());
+                cEnv.addMethod(f,argsArray,tmp.getCode());
+            }else if(env instanceof InterfaceEnv){
+                writer.write(p.getPointerVariableDeclaration(variant.cname()));
+            }else if(env instanceof ModuleEnv e){
+                if(f.getType() != FunctionType.NATIVE){
+                    var tmp = new BuilderWriter(writer);
+                    tmp.write(attrCode.toString());
+                    tmp.write(headWriter.getCode());
+                    fnEnv.compileToPointerVars(tmp);
+                    tmp.write(b.getCode());
+                    e.appendFunctionCode(tmp.getCode());
+                }
+                e.appendFunctionDeclaration(f);
+            }else{
+                writer.write(attrCode.toString());
+                fnEnv.compileToPointerVars(writer);
+                writer.write(b.getCode());
             }
-            e.appendFunctionDeclaration(f);
-        }else{
-            writer.write(attrCode.toString());
-            fnEnv.compileToPointerVars(writer);
-            writer.write(b.getCode());
         }
         env.addFunction("&" + id,new FunctionReference(p));
         env.addFunction(id.getValue(),f);

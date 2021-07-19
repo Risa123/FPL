@@ -3,6 +3,7 @@ package risa.fpl.info;
 import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
 import risa.fpl.env.*;
+import risa.fpl.function.IFunction;
 import risa.fpl.function.TemplateArgument;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.parser.Atom;
@@ -34,27 +35,15 @@ public final class TemplateTypeInfo extends InstanceInfo{
            argsInfo.add((TypeInfo)arg);
        }
        if(!generatedTypes.containsKey(argsInfo)){
-           var cName = new StringBuilder(getCname());
-           for(var arg:argsInfo){
-               var cname = arg.getCname().toCharArray();
-               var b = new StringBuilder();
-               for(char c:cname){
-                   if(Character.isAlphabetic(c) || Character.isDigit(c)|| c == '_' || c == '-'){
-                       b.append(c);
-                   }else{
-                       b.append(Character.getName(c).replace(' ', '_'));
-                   }
-               }
-               cName.append(b);
-           }
            var superMod = getModule();
-           var file = superMod.getNameSpace() + cName + ".c";
+           var cname = IFunction.createTemplateTypeCname(getCname(),argsInfo.toArray(new TypeInfo[0]));
+           var file = superMod.getNameSpace() + cname  + ".c";
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
                instanceFiles.add(file);
            }
            var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
            var writer = Files.newBufferedWriter(path);
-           var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cName.toString());
+           var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
            try(writer){
                var name = new StringBuilder(getName());
                for(var arg:argsInfo){

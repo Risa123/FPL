@@ -7,6 +7,7 @@ free removed from std.lang
 free[] added to pointers
 template functions added
 Map finished in std.collection
+throw method now ends the function so no return error doesn't happen
 fix pointer to instance  not implicitly convertible to interface it implements
 fix recursion made possible
 fix instance free C error

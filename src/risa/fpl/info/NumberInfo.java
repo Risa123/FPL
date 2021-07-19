@@ -82,4 +82,8 @@ public final class NumberInfo extends TypeInfo{
     public int getSize(){
 	    return size;
     }
+    @Override
+    public boolean notIntegerNumber(){
+	    return floatingPoint;
+    }
 }

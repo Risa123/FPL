@@ -134,5 +134,21 @@ public interface IFunction{
       }
       throw new CompilerException(typeAtom,"template type expected instead of " + template);
   }
+  static String createTemplateTypeCname(String cname,TypeInfo[] argsInfo){
+      var cName = new StringBuilder(cname);
+      for(var arg:argsInfo){
+          var chars = arg.getCname().toCharArray();
+          var b = new StringBuilder();
+          for(char c:chars){
+              if(Character.isAlphabetic(c) || Character.isDigit(c)|| c == '_' || c == '-'){
+                  b.append(c);
+              }else{
+                  b.append(Character.getName(c).replace(' ', '_'));
+              }
+          }
+          cName.append(b);
+      }
+      return cName.toString();
+  }
   String INTERNAL_METHOD_PREFIX = "I";
 }
