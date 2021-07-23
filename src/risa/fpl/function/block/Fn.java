@@ -163,11 +163,15 @@ public class Fn extends AFunctionBlock{
         if(f.hasVariant(argsArray)){
             throw new CompilerException(line,tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
         }
-        var variant = f.addVariant(argsArray,cID,implName);
-        var p = new FunctionInfo(f);
-        fnEnv.addFunction("&" + id,new FunctionReference(p));
+        FunctionInfo p = null;
+        FunctionVariant variant = null;
+        if(templateArgs == null){
+            variant = f.addVariant(argsArray,cID,implName);
+            p = new FunctionInfo(f);
+            fnEnv.addFunction("&" + id,new FunctionReference(p));
+            fnEnv.addType(id.getValue(),p,false);
+        }
         fnEnv.addFunction(id.getValue(),f);
-        fnEnv.addType(id.getValue(),p,false);
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
 		        throw new CompilerException(line, tokenNum,"abstract methods can only be declared");
@@ -183,6 +187,9 @@ public class Fn extends AFunctionBlock{
                     atoms.add(it.nextAtom());
                 }
                 codeExp = new List(line,a.getTokenNum(),atoms,false);
+            }
+            if(templateArgs != null){
+                f.addTemplateVariant(templateArgs,codeExp,args,env);
             }
             headWriter.write("{\n");
             for(var arg:args.entrySet()){
@@ -229,7 +236,7 @@ public class Fn extends AFunctionBlock{
             }
             if(env.hasModifier(Modifier.OVERRIDE)){
                 if(!(parentField instanceof Function parentMethod)){
-                    throw new CompilerException(line, tokenNum,"there is no method " + id + " to override");
+                    throw new CompilerException(line,tokenNum,"there is no method " + id + " to override");
                 }
                 if(!parentMethod.hasSignature(f)){
                     throw new CompilerException(line, tokenNum,"this method doesn't have signature of one it overrides");
@@ -237,7 +244,7 @@ public class Fn extends AFunctionBlock{
             }else if(parentField != null){
                 throw new CompilerException(line, tokenNum,"override is required");
             }
-            if(env.hasModifier(Modifier.OVERRIDE) || env.hasModifier(Modifier.VIRTUAL)){
+            if((env.hasModifier(Modifier.OVERRIDE) || env.hasModifier(Modifier.VIRTUAL)) && templateArgs == null){
                 String methodImplName;
                 if(env.hasModifier(Modifier.VIRTUAL)){
                     methodImplName = variant.implName();
@@ -275,9 +282,11 @@ public class Fn extends AFunctionBlock{
                 writer.write(b.getCode());
             }
         }
-        env.addFunction("&" + id,new FunctionReference(p));
+        if(templateArgs == null){
+            env.addFunction("&" + id,new FunctionReference(p));
+            env.addType(id.getValue(),p,false);
+        }
         env.addFunction(id.getValue(),f);
-        env.addType(id.getValue(),p,false);
 		return TypeInfo.VOID;
 	}
 	@Override

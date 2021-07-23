@@ -9,15 +9,7 @@ class ArrayList;T{
     }
   }
   fn void freeArray{
-    compIf isInstance T{
-      var i 0L
-      while i < len{
-         [ array + i ] free
-         i ++
-      }
-    }
-    array cast void* free
-  }
+    array free[]
  }
  this{
    len = 0

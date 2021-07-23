@@ -1,8 +1,11 @@
 package risa.fpl.info;
 
+import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
+
+import java.io.IOException;
 
 public final class PointerInfo extends TypeInfo implements IPointerInfo{
 	private final TypeInfo type;
@@ -35,6 +38,17 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
         var cName = "free";
         if(type instanceof InstanceInfo i){
           cName = i.getInstanceFree();
+        }
+        if(type instanceof InstanceInfo i){
+            var mod = i.getModule();
+            var freeArray = mod.getFPL().getFreeArray();
+            if(freeArray != null){
+                addField("free[]",freeArray.makeMethodFromTemplate(this,new TypeInfo[]{NumberInfo.MEMORY},mod));
+            }
+        }else{
+            var f = new Function("free[]",TypeInfo.VOID,FunctionType.NATIVE,this,AccessModifier.PUBLIC);
+            f.addVariant(new TypeInfo[0],cName,cName);
+            addField("free[]",f);
         }
         var f = new Function("free",TypeInfo.VOID,FunctionType.NATIVE,this,AccessModifier.PUBLIC);
         f.addVariant(new TypeInfo[0],cName,cName);

@@ -2,15 +2,16 @@ package risa.fpl.function.exp;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
-import risa.fpl.env.FnSubEnv;
-import risa.fpl.env.SubEnv;
+import risa.fpl.env.*;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.*;
@@ -138,10 +139,7 @@ public class Function implements IField,ICalledOnPointer{
             }else{
                 b.write(',');
             }
-            var comesFromPointer = false;
-            if(array[i] instanceof PointerInfo){
-                comesFromPointer = true;
-            }
+            var comesFromPointer = array[i] instanceof PointerInfo;
             b.write(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
         }
 		b.write(')');
@@ -227,7 +225,7 @@ public class Function implements IField,ICalledOnPointer{
         f.declaration.append(declaration);
         return f;
     }
-    public final FunctionVariant addVariant(TypeInfo[]args, String cname, String implName){
+    public final FunctionVariant addVariant(TypeInfo[]args,String cname,String implName){
         if(type == FunctionType.NATIVE){
             declaration.append("extern ");
         } else if(accessModifier == AccessModifier.PRIVATE){
@@ -243,9 +241,8 @@ public class Function implements IField,ICalledOnPointer{
         }
         declaration.append(returnType.getCname()).append(' ');
         if(f != null){
-            declaration.append('(');
             var times = ((IPointerInfo)this.returnType).getFunctionPointerDepth() + 1;
-            declaration.append("*".repeat(Math.max(0,times)));
+            declaration.append('(').append("*".repeat(Math.max(0,times)));
         }
         if(attrCode != null){
             declaration.append(attrCode).append(' ');
@@ -292,14 +289,6 @@ public class Function implements IField,ICalledOnPointer{
                 return v;
             }
         }
-        for(var v:templateVariants){
-          if(args.length == v.args.length){
-              var compatible = true;
-              for(int i = 0; i < args.length;++i){
-
-              }
-          }
-        }
         return null;
     }
     public final ArrayList<TypeInfo>getRequiredTypes(){
@@ -340,9 +329,83 @@ public class Function implements IField,ICalledOnPointer{
     public final void calledOnPointer(){
         callStatus = CALLED_ON_POINTER;
     }
-    public final void addTemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,TypeInfo[]args){
-        templateVariants.add(new TemplateVariant(templateArgs,code,args));
+    public final void addTemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,LinkedHashMap<String,TypeInfo>args,AEnv env){
+        templateVariants.add(new TemplateVariant(templateArgs,code,args,env));
+    }
+    public final Function makeMethodFromTemplate(TypeInfo self,TypeInfo[]args,AEnv env){
+        var f = new Function(name,returnType,FunctionType.NORMAL,self,accessModifier);
+        var array = new TypeInfo[args.length + 1];
+        array[0] = self;
+        for(int i = 1,j = 0;i < array.length;++i,++j){
+            array[i] = args[j];
+        }
+        var v = getTemplateVariant(array);
+        if(v == null){
+            throw new IllegalStateException("internal error:template not found " + Arrays.toString(args));
+        }
+        f.addVariantFromTemplate(v,env,array);
+        return f;
+    }
+    private TemplateVariant getTemplateVariant(TypeInfo[]args){
+        for(var v:templateVariants){
+           var vArgs  = new ArrayList<>(v.args.values());
+           if(args.length == v.args.size()){
+               var found = true;
+               for(int i = 0; i < v.args.size();++i){
+                   var arg = args[i];
+                   if(arg instanceof PointerInfo p){
+                       arg = p.getType();
+                   }
+                   var variantArg = vArgs.get(i);
+                   if(variantArg instanceof PointerInfo p){
+                       variantArg = p.getType();
+                   }
+                   if(!v.templateArgs.containsKey(variantArg.getName()) && !variantArg.equals(arg)){
+                       found = false;
+                       break;
+                   }
+               }
+               if(found){
+                   return v;
+               }
+           }
+        }
+        return null;
+    }
+    private void addVariantFromTemplate(TemplateVariant variant,AEnv env,TypeInfo[]argsForTemplate){
+        var cname = IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
+       try(var writer = Files.newBufferedWriter(Paths.get(env.getFPL().getOutputDirectory() + "/" + cname + ".c"))){
+           var fnEnv = new FnEnv(variant.superEnv,returnType);
+           for(var entry:variant.args.entrySet()){
+               var type = entry.getValue();
+               var pointerDepth = 0;
+               while(type instanceof PointerInfo p){
+                   type = p.getType();
+                   pointerDepth++;
+               }
+               if(variant.templateArgs.containsKey(type.getName())){
+                   var argNum = 0;
+                   for(var key:variant.templateArgs.keySet()){
+                       if(key.equals(type.getName())){
+                           break;
+                       }
+                       argNum++;
+                   }
+                   type = argsForTemplate[argNum];
+                   for(int i = 0;i < pointerDepth;++i){
+                       type = new PointerInfo(type);
+                   }
+               }
+               fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
+           }
+           variant.code.compile(writer,fnEnv,null);
+       }catch(IOException e){
+           throw new UncheckedIOException(e);
+       }catch(CompilerException e){
+           throw new RuntimeException(e);
+       }
     }
     private record ReturnedData(String code,boolean notReturnedByFunction){}
-    private record TemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,TypeInfo[]args){}
+    private record TemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,LinkedHashMap<String,TypeInfo>args,
+                                   AEnv superEnv){}
 }

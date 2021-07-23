@@ -142,6 +142,8 @@ public interface IFunction{
           for(char c:chars){
               if(Character.isAlphabetic(c) || Character.isDigit(c)|| c == '_' || c == '-'){
                   b.append(c);
+              }else if(c == ' '){
+                  b.append('_');
               }else{
                   b.append(Character.getName(c).replace(' ', '_'));
               }

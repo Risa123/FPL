@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import risa.fpl.env.ProgramEnv;
+import risa.fpl.function.exp.Function;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
@@ -20,6 +21,7 @@ public final class FPL{
 	private final ArrayList<String>flags = new ArrayList<>();
 	private TypeInfo string;
 	private final Path srcDir;
+	private Function freeArray;
     public FPL(String project,PrintStream errStream)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
@@ -140,5 +142,11 @@ public final class FPL{
             str = "amd64";
         }
         return System.getProperty("os.arch").equals(str);
+    }
+    public Function getFreeArray(){
+        return freeArray;
+    }
+    public void setFreeArray(Function f){
+        freeArray = f;
     }
 }
