@@ -22,7 +22,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum) throws IOException,CompilerException{
 		if(!(env instanceof ModuleEnv modEnv)){
-		    throw new CompilerException(line, tokenNum,"can only be used on module level");
+		    throw new CompilerException(line,tokenNum,"can only be used on module level");
         }
         var id = it.nextID();
 		var idV = id.getValue();
@@ -141,8 +141,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             type.setConstructor(constructor);
             cEnv.compileNewAndAlloc(internalCode,new TypeInfo[0],constructor);
         }
-        type.appendToDeclaration(b.getCode());
-        type.appendToDeclaration("extern " + cEnv.getDataDefinition());
+        type.appendToDeclaration(b.getCode() + "extern " + cEnv.getDataDefinition());
         cEnv.appendDeclarations();
         var cID = IFunction.toCId(id.getValue());
         if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){

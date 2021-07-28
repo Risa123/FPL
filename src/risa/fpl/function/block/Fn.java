@@ -251,7 +251,7 @@ public class Fn extends AFunctionBlock{
                 }else{
                     methodImplName = ((Function)parentField).getVariant(array).implName();
                 }
-                var cEnv = (ClassEnv)env; //override can only appear in ClassEnv
+                var cEnv = (ClassEnv)env;//override can only appear in ClassEnv
                 cEnv.appendToInitializer(cEnv.getDataName() + "." + methodImplName + "=&");
                 cEnv.appendToInitializer(variant.cname() + ";\n");
             }

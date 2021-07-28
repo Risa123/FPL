@@ -47,7 +47,7 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
             }
         }else{
             var f = new Function("free[]",TypeInfo.VOID,FunctionType.NATIVE,this,AccessModifier.PUBLIC);
-            f.addVariant(new TypeInfo[0],cName,cName);
+            f.addVariant(new TypeInfo[]{NumberInfo.MEMORY},cName,cName);
             addField("free[]",f);
         }
         var f = new Function("free",TypeInfo.VOID,FunctionType.NATIVE,this,AccessModifier.PUBLIC);

@@ -9,7 +9,7 @@ class ArrayList;T{
     }
   }
   fn void freeArray{
-    array free[]
+    array free[] len
  }
  this{
    len = 0
@@ -40,6 +40,7 @@ class ArrayList;T{
     freeArray
     array = nil
   }
+ }
  }
  fn bool isEmpty = len == 0
  fn memory getSize = len

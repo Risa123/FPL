@@ -343,7 +343,7 @@ public class Function implements IField,ICalledOnPointer{
         if(v == null){
             throw new IllegalStateException("internal error:template not found " + Arrays.toString(args));
         }
-        f.addVariantFromTemplate(v,env,array);
+        f.addVariantFromTemplate(v,env,array,true);
         return f;
     }
     private TemplateVariant getTemplateVariant(TypeInfo[]args){
@@ -372,10 +372,17 @@ public class Function implements IField,ICalledOnPointer{
         }
         return null;
     }
-    private void addVariantFromTemplate(TemplateVariant variant,AEnv env,TypeInfo[]argsForTemplate){
+    private void addVariantFromTemplate(TemplateVariant variant,AEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
         var cname = IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
        try(var writer = Files.newBufferedWriter(Paths.get(env.getFPL().getOutputDirectory() + "/" + cname + ".c"))){
            var fnEnv = new FnEnv(variant.superEnv,returnType);
+           var len = variant.args.size();
+           if(asMethod){
+               len--;
+           }
+           var args = new TypeInfo[len];
+           var argsI = 0;
+           var first = true;
            for(var entry:variant.args.entrySet()){
                var type = entry.getValue();
                var pointerDepth = 0;
@@ -395,10 +402,23 @@ public class Function implements IField,ICalledOnPointer{
                    for(int i = 0;i < pointerDepth;++i){
                        type = new PointerInfo(type);
                    }
+
+               }
+               if(asMethod){
+                   if(first){
+                       first = false;
+                   }else{
+                       args[argsI] = type;
+                       argsI++;
+                   }
+               }else{
+                   args[argsI] = type;
+                   argsI++;
                }
                fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
            }
            variant.code.compile(writer,fnEnv,null);
+           addVariant(args,cname,cname);
        }catch(IOException e){
            throw new UncheckedIOException(e);
        }catch(CompilerException e){
