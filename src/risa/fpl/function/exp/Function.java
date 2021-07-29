@@ -228,7 +228,7 @@ public class Function implements IField,ICalledOnPointer{
     public final FunctionVariant addVariant(TypeInfo[]args,String cname,String implName){
         if(type == FunctionType.NATIVE){
             declaration.append("extern ");
-        } else if(accessModifier == AccessModifier.PRIVATE){
+        }else if(accessModifier == AccessModifier.PRIVATE){
             declaration.append("static ");
         }
         FunctionInfo f = null;
@@ -374,8 +374,14 @@ public class Function implements IField,ICalledOnPointer{
     }
     private void addVariantFromTemplate(TemplateVariant variant,AEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
         var cname = IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
-       try(var writer = Files.newBufferedWriter(Paths.get(env.getFPL().getOutputDirectory() + "/" + cname + ".c"))){
+        var file =  cname + ".c";
+       try(var writer = Files.newBufferedWriter(Paths.get(env.getFPL().getOutputDirectory() + "/" + file))){
            var fnEnv = new FnEnv(variant.superEnv,returnType);
+           if(variant.superEnv instanceof ModuleEnv e){
+               e.addInstanceFile(file);
+           }else if(variant.superEnv instanceof ClassEnv e){
+               e.getModule().addInstanceFile(file);
+           }
            var len = variant.args.size();
            if(asMethod){
                len--;
@@ -417,8 +423,10 @@ public class Function implements IField,ICalledOnPointer{
                }
                fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
            }
-           variant.code.compile(writer,fnEnv,null);
            addVariant(args,cname,cname);
+           writer.write("{\n");
+           variant.code.compile(writer,fnEnv,null);
+           writer.write('}');
        }catch(IOException e){
            throw new UncheckedIOException(e);
        }catch(CompilerException e){

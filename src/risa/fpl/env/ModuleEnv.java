@@ -32,6 +32,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<Function>inaccessibleFunctions = new ArrayList<>();
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
+	private final ArrayList<String>instanceFiles = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -185,13 +186,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    return importedModules;
     }
     public ArrayList<String>getInstanceFiles(){
-	    var files = new ArrayList<String>();
-	    for(var type:types.values()){
-	        if(type instanceof TemplateTypeInfo t){
-	            files.addAll(t.getInstanceFiles());
-            }
-        }
-	    return files;
+	    return instanceFiles;
     }
     public void declareMain(){
 	    mainDeclared++;
@@ -293,5 +288,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
             return "";
         }
         return getInitializer("init");
+    }
+    public void addInstanceFile(String file){
+        instanceFiles.add(file);
     }
 }

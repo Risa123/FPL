@@ -22,7 +22,6 @@ public final class TemplateTypeInfo extends InstanceInfo{
     private ArrayList<InterfaceInfo>interfaces;
     private LinkedHashMap<String,TypeInfo>templateArgs;
     private final HashMap<ArrayList<TypeInfo>,InstanceInfo>generatedTypes = new HashMap<>();
-    private final ArrayList<String>instanceFiles = new ArrayList<>();
     public TemplateTypeInfo(String name,ModuleEnv module,String nameSpace){
         super(name,module,nameSpace);
     }
@@ -39,7 +38,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            var cname = IFunction.createTemplateTypeCname(getCname(),argsInfo.toArray(new TypeInfo[0]));
            var file = superMod.getNameSpace() + cname  + ".c";
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
-               instanceFiles.add(file);
+               superMod.addInstanceFile(file);
            }
            var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
            var writer = Files.newBufferedWriter(path);
@@ -96,8 +95,5 @@ public final class TemplateTypeInfo extends InstanceInfo{
         this.block = block;
         this.interfaces = interfaces;
         this.templateArgs = templateArgs;
-    }
-    public ArrayList<String>getInstanceFiles(){
-        return instanceFiles;
     }
 }
