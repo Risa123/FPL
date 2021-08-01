@@ -36,7 +36,7 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
         if(type instanceof InstanceInfo i){
           cName = i.getInstanceFree();
         }
-        if(type instanceof InstanceInfo i){
+        if(type instanceof InstanceInfo i && i.getDestructorName() != null){
             var mod = i.getModule();
             var freeArray = mod.getFPL().getFreeArray();
             if(freeArray != null){

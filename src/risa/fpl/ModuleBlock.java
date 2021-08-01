@@ -92,6 +92,7 @@ public final class ModuleBlock extends AThreePassBlock{
                    makeMethod("toString","integerToString",NumberInfo.SHORT,false);
                    makeMethod("toString","integerToString",NumberInfo.USHORT,false);
                    makeMethod("toString","integerToString",NumberInfo.SSHORT);
+               }else if(name.equals("std.backend")){
                    fpl.setFreeArray((Function)env.getFunction("free[]"));
                }
                if(!isMain()){

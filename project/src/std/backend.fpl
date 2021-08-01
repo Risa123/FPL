@@ -80,6 +80,17 @@ fn DirectoryEntry* directoryRead void* dir{
   }
   return entry
 }
+fn void;T; free[] T* this memory len{
+ var i 0L
+ while i < len{
+   [ this + i ] free
+   i ++
+ }
+ free this cast void*
+}
+fn void free[] void* p memory len{
+  free p
+}
 alias directoryOpen opendir
 alias directoryClose closedir
 alias directoryTell telldir

@@ -3,7 +3,7 @@ package risa.fpl.function.exp;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
+import java.io.Writer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -375,13 +375,12 @@ public class Function implements IField,ICalledOnPointer{
     private void addVariantFromTemplate(TemplateVariant variant,AEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
         var cname = IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
         var file =  cname + ".c";
-       try(var writer = Files.newBufferedWriter(Paths.get(env.getFPL().getOutputDirectory() + "/" + file))){
+        var path = Paths.get(env.getFPL().getOutputDirectory() + "/" + file);
+        var writer = new BuilderWriter(new BufferedWriter(Writer.nullWriter()));
+       try{
            var fnEnv = new FnEnv(variant.superEnv,returnType);
-           if(variant.superEnv instanceof ModuleEnv e){
-               e.addInstanceFile(file);
-           }else if(variant.superEnv instanceof ClassEnv e){
-               e.getModule().addInstanceFile(file);
-           }
+           var mod = ((SubEnv)env).getModule();
+           mod.addInstanceFile(file);
            var len = variant.args.size();
            if(asMethod){
                len--;
@@ -424,9 +423,31 @@ public class Function implements IField,ICalledOnPointer{
                fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
            }
            addVariant(args,cname,cname);
-           writer.write("{\n");
+           writer.write(returnType.getCname() + " " + cname + '(');
+           var firstArg = true;
+           if(self != null){
+               writer.write(self.getCname());
+           }
+           for(var arg:variant.args.entrySet()){
+               if(firstArg){
+                   firstArg = false;
+               }else{
+                   writer.write(',');
+               }
+               var type = arg.getValue();
+               while(type instanceof PointerInfo p){
+                   type = p.getType();
+               }
+               var typeName = type.getName();
+               if(variant.templateArgs.containsKey(typeName)){
+                  type = variant.templateArgs().get(typeName);
+               }
+               writer.write(type.getCname() + " " + arg.getKey());
+           }
+           writer.write("){\n");
            variant.code.compile(writer,fnEnv,null);
            writer.write('}');
+           mod.addVariantGenerationData(new VariantGenData(writer.getCode(),path));
        }catch(IOException e){
            throw new UncheckedIOException(e);
        }catch(CompilerException e){

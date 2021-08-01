@@ -2,9 +2,11 @@ package risa.fpl.env;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
 import risa.fpl.function.AccessModifier;
@@ -13,9 +15,9 @@ import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.function.exp.VariantGenData;
 import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.InstanceInfo;
-import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.tokenizer.TokenType;
@@ -33,6 +35,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
+	private final ArrayList<VariantGenData>functionVariantGenerationData = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -199,6 +202,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public void declareTypes(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
+        var b = new BuilderWriter(writer);
         while(!typesForDeclarations.isEmpty()){
             var it = typesForDeclarations.iterator();
             while(it.hasNext()){
@@ -212,20 +216,27 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
                 if(hasAll){
                     declared.add(t);
-                    writer.write(t.getDeclaration());
+                    b.write(t.getDeclaration());
                     it.remove();
                 }
             }
         }
         for(var type:declared){
             if(type instanceof InstanceInfo i){
-                writer.write(i.getMethodDeclarations());
+                b.write(i.getMethodDeclarations());
             }
         }
         if(superEnv instanceof ModuleEnv mod){
             importDeclarations.append(mod.importDeclarations);
         }
-        writer.write(importDeclarations.toString());
+        b.write(importDeclarations.toString());
+        writer.write(b.getCode());
+        for(var data:functionVariantGenerationData){
+            try(var w = Files.newBufferedWriter(data.path())){
+                w.write(b.getCode());
+                w.write(data.code());
+            }
+        }
     }
     @Override
     public void addType(String name,TypeInfo type,boolean declaration){
@@ -291,5 +302,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public void addInstanceFile(String file){
         instanceFiles.add(file);
+    }
+    public void addVariantGenerationData(VariantGenData data){
+        functionVariantGenerationData.add(data);
     }
 }

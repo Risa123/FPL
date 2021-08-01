@@ -173,7 +173,6 @@ class Thread{
          currentEHEntry = prev
        }
      }
-
  }
  this String name{
    this name = name
@@ -205,17 +204,6 @@ fn void* malloc memory size{
     Exception:new "allocation of memory failed";throw
   }
   return p
-}
-fn void;T; free[] T* this memory len{
- var i 0L
- while i < len{
-   [ this + i ] free
-   i ++
- }
- free this cast void*
-}
-fn void free[] void* p memory len{
-  free p
 }
 fn void memoryCopy byte* src byte* dest memory size{
     memory i 0L
