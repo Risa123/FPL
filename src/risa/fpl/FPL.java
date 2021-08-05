@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import risa.fpl.env.ProgramEnv;
 import risa.fpl.function.exp.Function;
+import risa.fpl.function.exp.VariantGenData;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
@@ -22,6 +23,7 @@ public final class FPL{
 	private TypeInfo string;
 	private final Path srcDir;
 	private Function freeArray;
+	private final ArrayList<VariantGenData>functionVariantGenerationData = new ArrayList<>();
     public FPL(String project,PrintStream errStream)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
@@ -87,6 +89,13 @@ public final class FPL{
     	        files.append(' ').append(outputDirectory).append('/').append(file);
             }
         }
+    	for(var data:functionVariantGenerationData){
+    	    files.append(' ').append(data.path());
+    	    try(var w = Files.newBufferedWriter(data.path())){
+    	        w.write(data.module().getDeclarationCode());
+    	        w.write(data.code());
+            }
+        }
     	var err = Runtime.getRuntime().exec(gcc + "\\bin\\gcc -w " + ccArgs + " -o " + output + files).getErrorStream();
         errStream.print(new String(err.readAllBytes()));
     }
@@ -148,5 +157,10 @@ public final class FPL{
     }
     public void setFreeArray(Function f){
         freeArray = f;
+    }
+    public void addFunctionVariantGenerationData(VariantGenData data){
+        if(!functionVariantGenerationData.contains(data)){
+            functionVariantGenerationData.add(data);
+        }
     }
 }

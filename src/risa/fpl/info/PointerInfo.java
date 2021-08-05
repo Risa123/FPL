@@ -44,7 +44,7 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
             }
         }else{
             var f = new Function("free[]",TypeInfo.VOID,FunctionType.NATIVE,this,AccessModifier.PUBLIC);
-            var freeArray = "_std_lang_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET0";
+            var freeArray = "_std_backend_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET0";
             f.addVariant(new TypeInfo[]{NumberInfo.MEMORY},freeArray,freeArray);
             addField("free[]",f);
         }

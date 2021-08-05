@@ -2,7 +2,6 @@ package risa.fpl.env;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,7 +14,6 @@ import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
-import risa.fpl.function.exp.VariantGenData;
 import risa.fpl.function.statement.ClassVariable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
@@ -35,7 +33,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
-	private final ArrayList<VariantGenData>functionVariantGenerationData = new ArrayList<>();
+	private String declarationCode;
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -231,12 +229,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
         b.write(importDeclarations.toString());
         writer.write(b.getCode());
-        for(var data:functionVariantGenerationData){
-            try(var w = Files.newBufferedWriter(data.path())){
-                w.write(b.getCode());
-                w.write(data.code());
-            }
-        }
+        declarationCode = b.getCode();
     }
     @Override
     public void addType(String name,TypeInfo type,boolean declaration){
@@ -269,7 +262,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
         return "";
     }
-    public final String getDestructorCall(){
+    public String getDestructorCall(){
         return destructorCall;
     }
     public void destructorCalled(){
@@ -301,9 +294,11 @@ public final class ModuleEnv extends ANameSpacedEnv{
         return getInitializer("init");
     }
     public void addInstanceFile(String file){
-        instanceFiles.add(file);
+        if(!instanceFiles.contains(file)){
+            instanceFiles.add(file);
+        }
     }
-    public void addVariantGenerationData(VariantGenData data){
-        functionVariantGenerationData.add(data);
+    public String getDeclarationCode(){
+        return declarationCode;
     }
 }

@@ -373,14 +373,13 @@ public class Function implements IField,ICalledOnPointer{
         return null;
     }
     private void addVariantFromTemplate(TemplateVariant variant,AEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
-        var cname = IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
+        var mod = ((SubEnv)env).getModule();
+        var cname = mod.getNameSpace() + IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
         var file =  cname + ".c";
         var path = Paths.get(env.getFPL().getOutputDirectory() + "/" + file);
         var writer = new BuilderWriter(new BufferedWriter(Writer.nullWriter()));
        try{
            var fnEnv = new FnEnv(variant.superEnv,returnType);
-           var mod = ((SubEnv)env).getModule();
-           mod.addInstanceFile(file);
            var len = variant.args.size();
            if(asMethod){
                len--;
@@ -422,8 +421,8 @@ public class Function implements IField,ICalledOnPointer{
                }
                fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
            }
-           addVariant(args,cname,cname);
-           writer.write(returnType.getCname() + " " + cname + '(');
+           var v  = addVariant(args,cname,cname);
+           writer.write(returnType.getCname() + " " + v.cname() + '(');
            var firstArg = true;
            if(self != null){
                writer.write(self.getCname());
@@ -442,12 +441,12 @@ public class Function implements IField,ICalledOnPointer{
                if(variant.templateArgs.containsKey(typeName)){
                   type = variant.templateArgs().get(typeName);
                }
-               writer.write(type.getCname() + " " + arg.getKey());
+               writer.write(type.getCname() + " " + IFunction.toCId(arg.getKey()));
            }
            writer.write("){\n");
            variant.code.compile(writer,fnEnv,null);
            writer.write('}');
-           mod.addVariantGenerationData(new VariantGenData(writer.getCode(),path));
+           mod.getFPL().addFunctionVariantGenerationData(new VariantGenData(writer.getCode(),path,mod));
        }catch(IOException e){
            throw new UncheckedIOException(e);
        }catch(CompilerException e){
