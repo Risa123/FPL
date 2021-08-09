@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        var postEntry = new BuilderWriter(writer);
+        var postEntry = new BuilderWriter();
         postEntry.write("if(!");
         var arch = System.getProperty("os.arch");
         postEntry.write(switch(arch){
@@ -35,7 +35,7 @@ public final class TryCatchFinally extends ABlock{
         }
         postEntry.write(")){\n");
         var tryEnv = new FnSubEnv(env);
-        var tmp = new BuilderWriter(writer);
+        var tmp = new BuilderWriter();
         it.nextList().compile(tmp,tryEnv,it);
         tryEnv.compileToPointerVars(writer);
         postEntry.write(tmp.getCode());
@@ -80,7 +80,7 @@ public final class TryCatchFinally extends ABlock{
                     postEntry.write(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,&ex);\n");
                     var blockEnv = new FnSubEnv(env);
                     blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
-                    var tmp1 = new BuilderWriter(writer);
+                    var tmp1 = new BuilderWriter();
                     block.compile(tmp1,blockEnv,it);
                     blockEnv.compileToPointerVars(writer);
                     postEntry.write(tmp1.getCode());
@@ -91,7 +91,7 @@ public final class TryCatchFinally extends ABlock{
                     }
                     hasFin = true;
                     it.next();
-                    var b = new BuilderWriter(writer);
+                    var b = new BuilderWriter();
                     it.nextList().compile(b,finallyEnv,it);
                     finallyCode = b.getCode();
                 }else{

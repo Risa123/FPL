@@ -22,7 +22,7 @@ public final class SetElement extends AField{
 		writer.write('[');
 		int beginChar = 0;
 		var indexExp = it.next();
-		var tmpWriter = new BuilderWriter(writer);
+		var tmpWriter = new BuilderWriter();
 	    var indexType = indexExp.compile(tmpWriter,env,it);
 	    if(indexType.notIntegerNumber()){
 	    	throw new CompilerException(indexExp,"integer number expected");

@@ -53,7 +53,7 @@ public final class InterfaceBlock implements IFunction{
         if(block == null){
             throw new CompilerException(line, tokenNum,"block expected as last argument");
         }
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
         var implName = type.getImplName();
         b.write("typedef struct ");
         b.write(implName);

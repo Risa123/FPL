@@ -48,7 +48,7 @@ public final class ModuleBlock extends AThreePassBlock{
                if(!(name.equals("std.lang") || name.equals("std.backend"))){
                    env.addModuleToImport(new Atom(0,0,"std.lang",TokenType.ID));
                }
-               var b = new BuilderWriter(writer);
+               var b = new BuilderWriter();
                compile(b,env,exps);
                if(!env.isMainDeclared() && isMain()){
                    throw new CompilerException(1,1,"declaration of main expected");

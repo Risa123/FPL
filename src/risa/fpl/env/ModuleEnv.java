@@ -200,7 +200,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public void declareTypes(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
         while(!typesForDeclarations.isEmpty()){
             var it = typesForDeclarations.iterator();
             while(it.hasNext()){

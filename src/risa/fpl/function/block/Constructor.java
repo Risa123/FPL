@@ -34,10 +34,10 @@ public final class Constructor extends AFunctionBlock{
             cEnv.getSuperEnv().addFunction(type.getName(),constructor);
         }
         var fEnv = new FnEnv(env,TypeInfo.VOID);
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
         b.write("void " + INTERNAL_METHOD_PREFIX + cEnv.getNameSpace(this) + "_init");
         var variantNum = constructor.getVariants().size();
-        var argsWriter = new BuilderWriter(writer);
+        var argsWriter = new BuilderWriter();
         var args = parseArguments(argsWriter,it,fEnv,type).values().toArray(new TypeInfo[0]);
         if(constructor.hasVariant(args)){
           if(modEnv.notClassConstructorOnLine(line)){

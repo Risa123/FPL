@@ -34,7 +34,7 @@ public final class ParenthExp extends AField{
             }
             list.add(exp);
         }
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
         b.write('(');
         var ret = new List(line,tokenNum,list,false).compile(b,env,it);
         b.write(')');

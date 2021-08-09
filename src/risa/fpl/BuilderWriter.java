@@ -1,11 +1,13 @@
 package risa.fpl;
 
 import java.io.BufferedWriter;
+import java.io.Writer;
 
 public final class BuilderWriter extends BufferedWriter{
  private final StringBuilder builder = new StringBuilder();
- public BuilderWriter(BufferedWriter writer){
-     super(writer);
+ private static final Writer NULL_WRITER = Writer.nullWriter();
+ public BuilderWriter(){
+     super(NULL_WRITER);
  }
  @Override
  public void write(int c){

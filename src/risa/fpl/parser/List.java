@@ -29,7 +29,7 @@ public final class List extends AExp{
 		   if(exp instanceof Atom atom){
               if(ret == null){
             	  var f =  env.getFunction(atom);
-            	  b = new BuilderWriter(writer);
+            	  b = new BuilderWriter();
                   ret = f.compile(b,env,it,exp.getLine(),exp.getTokenNum());
                   appendSemicolon = f.appendSemicolon() && statement;
               }else if(atom.getType() == TokenType.ID){
@@ -38,7 +38,7 @@ public final class List extends AExp{
             		 throw new CompilerException(atom,ret + " has no field called " + atom);
             	 }
             	 field.setPrevCode(b.getCode());
-            	 b = new BuilderWriter(writer);
+            	 b = new BuilderWriter();
             	 ret = field.compile(b,env,it,atom.getLine(),atom.getTokenNum());
               }
 		   }else if(exp instanceof List){

@@ -3,7 +3,6 @@ package risa.fpl.function.exp;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.io.Writer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +52,7 @@ public class Function implements IField,ICalledOnPointer{
     }
     @Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
 		var argList = new ArrayList<TypeInfo>();
 		var returnedData = new ArrayList<ReturnedData>();
 		if(self instanceof InstanceInfo i && i.isException() && name.equals("throw")){
@@ -66,7 +65,7 @@ public class Function implements IField,ICalledOnPointer{
 		   if(exp.getType() == TokenType.END_ARGS){
 			   break;
 		   }else if(exp.getType() != TokenType.ARG_SEPARATOR){
-			   var buffer = new BuilderWriter(b);
+			   var buffer = new BuilderWriter();
 			   var f = env.getFunction(exp);
                argList.add(f.compile(buffer,env,it,exp.getLine(),exp.getTokenNum()));
                returnedData.add(new ReturnedData(buffer.getCode(),!(f instanceof  Function)));
@@ -377,7 +376,7 @@ public class Function implements IField,ICalledOnPointer{
         var cname = mod.getNameSpace() + IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
         var file =  cname + ".c";
         var path = Paths.get(env.getFPL().getOutputDirectory() + "/" + file);
-        var writer = new BuilderWriter(new BufferedWriter(Writer.nullWriter()));
+        var writer = new BuilderWriter();
        try{
            var fnEnv = new FnEnv(variant.superEnv,returnType);
            var len = variant.args.size();

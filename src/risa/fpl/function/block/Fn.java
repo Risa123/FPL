@@ -29,7 +29,7 @@ public class Fn extends AFunctionBlock{
         if(it.checkTemplate()){
             templateArgs = IFunction.parseTemplateArguments(it,fnEnv);
         }
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
 		var id = it.nextID();
         if(env instanceof  ModuleEnv e && e.isMain() && id.getValue().equals("main")){
            throw new CompilerException(id,"main function can only be declared using build-in function main");
@@ -53,7 +53,7 @@ public class Fn extends AFunctionBlock{
         }else if(env instanceof InterfaceEnv e){
             self = e.getType();
         }
-        var headWriter = new BuilderWriter(writer);
+        var headWriter = new BuilderWriter();
         if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
             headWriter.write("static ");
         }
@@ -200,7 +200,7 @@ public class Fn extends AFunctionBlock{
 			if(oneLine && returnType != TypeInfo.VOID){
 			    b.write("return ");
             }
-			var code = new BuilderWriter(writer);
+			var code = new BuilderWriter();
 			var fReturnType = codeExp.compile(code,fnEnv,it);
 			if(oneLine && fnEnv.getReturnType() != TypeInfo.VOID && !fReturnType.equals(fnEnv.getReturnType())){
 			    throw new CompilerException(codeExp,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
@@ -258,7 +258,7 @@ public class Fn extends AFunctionBlock{
         }
         if(templateArgs == null){
             if(env instanceof ClassEnv cEnv){
-                var tmp = new BuilderWriter(writer);
+                var tmp = new BuilderWriter();
                 tmp.write(attrCode.toString());
                 tmp.write(headWriter.getCode());
                 fnEnv.compileToPointerVars(tmp);
@@ -268,7 +268,7 @@ public class Fn extends AFunctionBlock{
                 writer.write(p.getPointerVariableDeclaration(variant.cname()));
             }else if(env instanceof ModuleEnv e){
                 if(f.getType() != FunctionType.NATIVE){
-                    var tmp = new BuilderWriter(writer);
+                    var tmp = new BuilderWriter();
                     tmp.write(attrCode.toString());
                     tmp.write(headWriter.getCode());
                     fnEnv.compileToPointerVars(tmp);

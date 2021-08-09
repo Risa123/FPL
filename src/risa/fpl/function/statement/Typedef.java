@@ -39,7 +39,7 @@ public final class Typedef implements IFunction{
         if(t == null){
             throw new CompilerException(originalType,"type " + originalType + " not found");
         }
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
         b.write(t.getCname());
         b.write(' ');
         b.write(IFunction.toCId(type.getValue()));

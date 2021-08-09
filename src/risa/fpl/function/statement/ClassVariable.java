@@ -32,7 +32,7 @@ public final class ClassVariable extends Function{
    }
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        BuilderWriter b = new BuilderWriter(writer);
+        BuilderWriter b = new BuilderWriter();
         var id = it.nextAtom();
 		if(id.getType() == TokenType.ID){
             compileVariable(b,id,env,it);
@@ -68,7 +68,7 @@ public final class ClassVariable extends Function{
         }else{
             setPrevCode(cID);
         }
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
         if(type instanceof TemplateTypeInfo){
             varType.getConstructor().setPrevCode(getPrevCode());
             varType.getConstructor().superCompile(b,env,it,id.getLine(),id.getTokenNum());

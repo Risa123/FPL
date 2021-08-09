@@ -70,7 +70,7 @@ public final class Array implements IFunction{
 					}else{
 						writer.write(',');
 					}
-					var buffer = new BuilderWriter(writer);
+					var buffer = new BuilderWriter();
 					var expType = exp.compile(buffer,env,it);
 					if(!expType.equals(type)){
 						throw new CompilerException(exp,type + " expected instead of " + expType);

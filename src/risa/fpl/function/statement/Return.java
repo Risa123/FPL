@@ -27,7 +27,7 @@ public final class Return implements IFunction{
 		        list.add(it.next());
             }
 			var exp = new List(line,tokenNum,list,true);
-			var buffer = new BuilderWriter(writer);
+			var buffer = new BuilderWriter();
 		    returnType = exp.compile(buffer,env,it);
 			if(!subEnv.getReturnType().equals(returnType)){
 				throw new CompilerException(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());

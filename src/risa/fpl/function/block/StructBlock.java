@@ -20,7 +20,7 @@ public final class StructBlock extends ABlock{
         }
         var sEnv = new StructEnv(env,id.getValue());
         var cID = sEnv.getType().getCname();
-        var b  = new BuilderWriter(writer);
+        var b  = new BuilderWriter();
         var next = it.next();
         var align = "";
         if(next instanceof Atom a){

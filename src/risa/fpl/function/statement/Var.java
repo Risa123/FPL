@@ -86,7 +86,7 @@ public final class Var implements IFunction{
                         if(env.hasModifier(Modifier.NATIVE)){
                             throw new CompilerException(exp,"native variables can only be declared");
                         }
-                        var buffer = new BuilderWriter(writer);
+                        var buffer = new BuilderWriter();
                         if(!it.hasNext() || it.peek() instanceof Atom p && p.getType() == TokenType.END_ARGS && exp instanceof Atom a && a.getType() != TokenType.ID){
                             constantExp = true;
                         }

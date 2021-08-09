@@ -23,7 +23,7 @@ public final class GetObjectInfo extends AField implements ICalledOnPointer{
     }
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        var prev = new BuilderWriter(writer);
+        var prev = new BuilderWriter();
         prev.write("((" + self.getClassDataType() + ")");
         var calledOnThis = getPrevCode() == null && self.getClassInfo() == ((IClassOwnedEnv)env).getClassType();
         if(calledOnThis){

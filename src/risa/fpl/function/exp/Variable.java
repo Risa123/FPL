@@ -58,7 +58,7 @@ public final class Variable extends ValueExp{
 			copyCallNeeded = false;
 		    return TypeInfo.VOID;
 		}else if(value.equals("ref")){
-		    var b = new BuilderWriter(writer);
+		    var b = new BuilderWriter();
             b.write('&');
             writePrev(b);
 		    b.write(code);
@@ -102,7 +102,7 @@ public final class Variable extends ValueExp{
 		if(instanceType != null && getPrevCode() == null){
 		    setPrevCode("((" + instanceType.getCname() + "*)this)->");
         }
-		var b = new BuilderWriter(writer);
+		var b = new BuilderWriter();
 		var ret = super.compile(b,env,it,line,tokenNum);
 		copyCallNeeded = copyCallNeeded && type instanceof InstanceInfo i && i.getCopyConstructorName() != null;
 		if(copyCallNeeded){

@@ -45,7 +45,7 @@ public final class ConditionalBlock extends ABlock{
 		writer.write("){\n");
 		var ifEnv = new FnSubEnv(env);
 		var block = it.nextList();
-		var tmp = new BuilderWriter(writer);
+		var tmp = new BuilderWriter();
 		block.compile(tmp,ifEnv,it);
 		ifEnv.compileToPointerVars(writer);
 		writer.write(tmp.getCode());
@@ -63,7 +63,7 @@ public final class ConditionalBlock extends ABlock{
 					writer.write("else{\n");
 				}
 				var subEnv = new FnSubEnv(env);
-				var b = new BuilderWriter(writer);
+				var b = new BuilderWriter();
 				elseExp.compile(b,subEnv,it);
 				subEnv.compileToPointerVars(writer);
 				writer.write(b.getCode());

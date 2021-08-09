@@ -141,11 +141,6 @@ class Exception{
      memoryCopy this cast byte*,currentThread exception cast byte*,getObjectSize
      contextRestore target context
    }
-   internal fn void copyAndFree Exception* to{
-      memoryCopy this cast byte*,to cast byte*,getObjectSize
-      to message = message
-      this free
-    }
 }
 fpointer void ExceptionHandlerType Exception* ex
 class Thread{

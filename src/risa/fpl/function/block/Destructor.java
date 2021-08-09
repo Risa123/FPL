@@ -21,7 +21,7 @@ public final class Destructor extends ABlock{
         if(cEnv.isDestructorDeclared()){
             throw new CompilerException(line,tokenNum,"destructor already declared");
         }
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
         b.write("void ");
         var type = cEnv.getInstanceType();
         type.setDestructorName(INTERNAL_METHOD_PREFIX + cEnv.getNameSpace());

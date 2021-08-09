@@ -83,14 +83,14 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		if(templateArgs == null){
            cWriter = writer;
         }else{
-		    cWriter = new BuilderWriter(writer);
+		    cWriter = new BuilderWriter();
             ((TemplateTypeInfo)cEnv.getInstanceType()).setDataForGeneration(block,interfaces,templateArgs);
         }
         compileClassBlock(cWriter,cEnv,modEnv,id,block,interfaces,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
 		return TypeInfo.VOID;
 	}
 	public void compileClassBlock(BufferedWriter writer,ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException,IOException{
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
         var type = cEnv.getInstanceType();
         var parentType = type.getPrimaryParent();
         b.write("typedef struct ");
@@ -99,7 +99,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         if(parentType instanceof InstanceInfo i){
             b.write(i.getAttributesCode());
         }
-        var attributes = new BuilderWriter(b);
+        var attributes = new BuilderWriter();
         try{
             compile(attributes,cEnv,block);
         }catch(CompilerException ex){
@@ -132,7 +132,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 }
             }
         }
-        var internalCode = new BuilderWriter(writer);
+        var internalCode = new BuilderWriter();
         var constructor = type.getConstructor();
         if(constructor == null){
             constructor = new ClassVariable(type,cEnv.getClassType());

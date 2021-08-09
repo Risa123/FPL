@@ -33,7 +33,7 @@ public final class Main implements IFunction{
         fnEnv.addFunction("args",new Variable(new PointerInfo(modEnv.getFPL().getString()),"args","args"));
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",TokenType.ID)),"mainThread","mainThread"));
         writer.write(modEnv.getInitializer());
-        var b = new BuilderWriter(writer);
+        var b = new BuilderWriter();
         b.write("_String* args;\n");
         b.write("int main(int argc,char** argv){\n");
         var modules = new ArrayList<ModuleEnv>();
@@ -60,7 +60,7 @@ public final class Main implements IFunction{
         b.write("for(int i = 0;i < argc;++i){\n");
         b.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n");
         b.write("}\n");
-        var tmp = new BuilderWriter(writer);
+        var tmp = new BuilderWriter();
         it.nextList().compile(tmp,fnEnv,it);
         fnEnv.compileToPointerVars(b);
         b.write(tmp.getCode());

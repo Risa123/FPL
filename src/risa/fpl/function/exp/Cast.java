@@ -22,7 +22,7 @@ public final class Cast extends AField{
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var typeAtom = it.nextID();
 	    var type = env.getType(typeAtom);
-	    var prev = new BuilderWriter(writer);
+	    var prev = new BuilderWriter();
 	    if(it.checkTemplate()){
             type = IFunction.generateTypeFor(type,typeAtom,it,env,false);
         }

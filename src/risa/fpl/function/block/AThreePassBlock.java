@@ -19,7 +19,7 @@ public abstract class AThreePassBlock{
         for(var exp:list.getExps()){
             var info = new ExpInfo();
             info.exp = exp;
-            info.writer = new BuilderWriter(writer);
+            info.writer = new BuilderWriter();
             infos.add(info);
         }
         for(int i = 0; i < MAX_PASSES && !infos.isEmpty();++i){
@@ -36,7 +36,7 @@ public abstract class AThreePassBlock{
                         throw e;
                     }
                     info.lastEx = e;
-                    info.writer = new BuilderWriter(writer);
+                    info.writer = new BuilderWriter();
                 }
             }
         }
