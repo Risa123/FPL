@@ -27,7 +27,7 @@ public final class ClassVariable extends Function{
 	   this.type = type;
 	   this.classType = classType;
    }
-   private static String makeCName(String nameSpace){
+   private String makeCName(String nameSpace){
       return INTERNAL_METHOD_PREFIX + nameSpace + "_init";
    }
 	@Override

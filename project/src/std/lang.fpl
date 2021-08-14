@@ -141,6 +141,12 @@ class Exception{
      memoryCopy this cast byte*,currentThread exception cast byte*,getObjectSize
      contextRestore target context
    }
+   #DO NOT REMOVE used in try-catch-finally
+   internal fn void copyAndFree Exception* target{
+       memoryCopy this cast byte*,target cast byte*,getObjectSize
+       target message = message
+       this free
+   }
 }
 fpointer void ExceptionHandlerType Exception* ex
 class Thread{
