@@ -56,8 +56,8 @@ public interface IFunction{
      var args = new LinkedHashMap<String,TypeInfo>();
      var lastLine = it.getLastLine();
      var lastChar = it.getLastCharNum();
-      var list = new ArrayList<Atom>();
-      while(it.hasNext()){
+     var list = new ArrayList<Atom>();
+     while(it.hasNext()){
           var exp = it.peek();
           if(exp instanceof Atom typeID){
               if(typeID.getType() == TokenType.ID){
