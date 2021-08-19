@@ -1,18 +1,7 @@
 use std.collection
 
 class ObjectInfo{
- Map;String Field;fields
- fn Field getField String name = fields get name
- fn void addField String name ObjectInfo* value AccessModifier accessModifier = fields put name,Field:new value,accessModifier
+ Map;String ObjectInfo;fields
+ this{}
 }
 enum AccessModifier PUBLIC PROTECTED PRIVATE
-class Field{
- private const{
-   ObjectInfo* value
-   AccessModifier accessModifier
- }
- this ObjectInfo* value AccessModifier accessModifier{
-   this value = value
-   this accessModifier = accessModifier
- }
-}
