@@ -121,8 +121,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
          	 	return;
 			 }
          	 var v = method.getVariant(args);
-             implBuilder.append(new FunctionInfo(method).getPointerVariableDeclaration(v.implName()));
-             implBuilder.append(";\n");
+             implBuilder.append(new FunctionInfo(method).getPointerVariableDeclaration(v.implName())).append(";\n");
          }
     }
     @Override
@@ -208,8 +207,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             var b = new StringBuilder("void ");
             var prefix = IFunction.INTERNAL_METHOD_PREFIX + nameSpace;
             instanceType.setDestructorName(prefix);
-            b.append(prefix);
-            b.append("_destructor(").append(instanceType.getCname());
+            b.append(prefix).append("_destructor(").append(instanceType.getCname());
             b.append("* this){\n").append(destructor).append("}\n");
             return b.toString();
         }

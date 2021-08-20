@@ -35,11 +35,7 @@ public final class FPL{
     	gcc = build.getProperty("gcc");
     	output = build.getProperty("outputFile");
     	this.errStream = errStream;
-    	if(build.containsKey("ccArgs")){
-    	    ccArgs = build.getProperty("ccArgs");
-        }else{
-    	    ccArgs = "";
-        }
+    	ccArgs = build.getProperty("ccArgs","");
     	outputDirectory = project + "/output";
         mainModule = build.getProperty("mainModule");
         Collections.addAll(flags,build.getProperty("flags","").split(","));
