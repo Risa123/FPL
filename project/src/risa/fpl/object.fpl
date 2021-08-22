@@ -2,5 +2,6 @@ use std.collection
 
 class ObjectInfo{
  Map;String ObjectInfo;fields
+ this{}
 }
 enum AccessModifier PUBLIC PROTECTED PRIVATE

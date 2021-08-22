@@ -107,7 +107,7 @@ public final class ModuleBlock extends AThreePassBlock{
    }
    public ModuleEnv getModule(Atom name)throws CompilerException,IOException{
 	   var mod = fpl.getModule(name.getValue());
-	   if(mod == null) {
+	   if(mod == null){
 		   throw new CompilerException(name,"module " + name + " not found");
 	   }
 	   return mod.env;

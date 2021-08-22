@@ -4,7 +4,7 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionDereference;
 import risa.fpl.function.exp.PointerSize;
 
-public class FunctionInfo extends TypeInfo implements IPointerInfo {
+public final class FunctionInfo extends TypeInfo implements IPointerInfo{
     private final Function function;
     public FunctionInfo(Function function){
         super(function.getName(),getFunctionPointerDeclaration(function,function.getPointerVariant().cname()),true);

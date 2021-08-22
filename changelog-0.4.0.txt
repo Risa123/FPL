@@ -13,3 +13,4 @@ fix recursion made possible
 fix instance free C error
 fix unknown type C error
 fix struct name reported as C name
+fix compilation caught in infinite loop
