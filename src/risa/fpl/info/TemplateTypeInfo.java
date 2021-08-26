@@ -43,50 +43,47 @@ public final class TemplateTypeInfo extends InstanceInfo{
            var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
            var writer = Files.newBufferedWriter(path);
            var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
-           try(writer){
-               var name = new StringBuilder(getName());
-               for(var arg:argsInfo){
-                   name.append(arg.getName());
-               }
-               var cEnv = new ClassEnv(mod,name.toString(),TemplateStatus.GENERATING);
-               if(argsInfo.size() != templateArgs.size()){
-                   //space to make the number separate form line:tokenNum
-                   throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + argsInfo.size());
-               }
-               for(int i = 0;i < templateArgs.size();++i){
-                   var typeName = (String)templateArgs.keySet().toArray()[i];
-                   var type = argsInfo.get(i);
-                   cEnv.addType(typeName,type);
-                   if(type instanceof InstanceInfo instance){
-                       cEnv.addFunction(typeName,instance.getConstructor());
-                   }
-               }
-               mod.importModules();
-               new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
-               var type = cEnv.getInstanceType();
-               for(var t:type.getRequiredTypes()){
-                   mod.addTypesForDeclaration(t);
-               }
-               if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
-                   if(env instanceof ANameSpacedEnv e){
-                       e.addTemplateInstance(type);
-                   }else{
-                       ((FnSubEnv)env).addTemplateInstance(type);
-                   }
-               }
-               mod.addType(name.toString(),type);
-               mod.declareTypes(writer);
-               writer.write(cEnv.getDataDefinition());
-               writer.write(mod.getFunctionCode());
-               generatedTypes.put(argsInfo,type);
-               if(mod.getInitializerCall() != null){
-                   getModule().appendToInitializer(mod.getInitializerCall());
-               }
-               if(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo){
-                   Files.delete(path);
-               }
-               return type;
+           var name = new StringBuilder(getName());
+           for(var arg:argsInfo){
+               name.append(arg.getName());
            }
+           var cEnv = new ClassEnv(mod,name.toString(),TemplateStatus.GENERATING);
+           if(argsInfo.size() != templateArgs.size()){
+               //space to make the number separate form line:tokenNum
+               throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + argsInfo.size());
+           }
+           for(int i = 0;i < templateArgs.size();++i){
+               var typeName = (String)templateArgs.keySet().toArray()[i];
+               var type = argsInfo.get(i);
+               cEnv.addType(typeName,type);
+               if(type instanceof InstanceInfo instance){
+                   cEnv.addFunction(typeName,instance.getConstructor());
+               }
+           }
+           mod.importModules();
+           new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
+           var type = cEnv.getInstanceType();
+           for(var t:type.getRequiredTypes()){
+               mod.addTypesForDeclaration(t);
+           }
+           if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
+               if(env instanceof ANameSpacedEnv e){
+                   e.addTemplateInstance(type);
+               }else{
+                   ((FnSubEnv)env).addTemplateInstance(type);
+               }
+           }
+           mod.addType(name.toString(),type);
+           writer.write(cEnv.getDataDefinition());
+           writer.write(mod.getFunctionCode());
+           generatedTypes.put(argsInfo,type);
+           if(mod.getInitializerCall() != null){
+               getModule().appendToInitializer(mod.getInitializerCall());
+           }
+           if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
+               mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path));
+           }
+           return type;
        }
        return generatedTypes.get(argsInfo);
     }

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import risa.fpl.env.ProgramEnv;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.VariantGenData;
+import risa.fpl.info.TemplateCompData;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
@@ -24,6 +25,7 @@ public final class FPL{
 	private final Path srcDir;
 	private Function freeArray;
 	private final ArrayList<VariantGenData>functionVariantGenerationData = new ArrayList<>();
+	private final ArrayList<TemplateCompData>templateCompData = new ArrayList<>();
     public FPL(String project,PrintStream errStream)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
@@ -83,6 +85,11 @@ public final class FPL{
     	for(var mod:modules.values()){
     	    for(var file:mod.getEnv().getInstanceFiles()){
     	        files.append(' ').append(outputDirectory).append('/').append(file);
+            }
+        }
+    	for(var tData:templateCompData){
+    	    try(var w = Files.newBufferedWriter(tData.path())){
+    	        tData.module().declareTypes(w);
             }
         }
     	for(var data:functionVariantGenerationData){
@@ -158,5 +165,8 @@ public final class FPL{
         if(!functionVariantGenerationData.contains(data)){
             functionVariantGenerationData.add(data);
         }
+    }
+    public void addTemplateCompData(TemplateCompData data){
+        templateCompData.add(data);
     }
 }
