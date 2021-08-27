@@ -26,7 +26,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
         super(name,module,nameSpace);
     }
     public InstanceInfo generateTypeFor(ArrayList<Object>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
-       var argsInfo = new ArrayList<TypeInfo>();
+       var argsInfo = new ArrayList<TypeInfo>(args.size());
        for(var arg:args){
            if(arg instanceof TemplateArgument t){
             arg = t.type().generateTypeFor(t.args(),env,line,charNum);
@@ -63,6 +63,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            mod.importModules();
            new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
            var type = cEnv.getInstanceType();
+           Files.delete(path);
            for(var t:type.getRequiredTypes()){
                mod.addTypesForDeclaration(t);
            }
@@ -81,7 +82,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                getModule().appendToInitializer(mod.getInitializerCall());
            }
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
-               mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path));
+               mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + mod.getFunctionCode()));
            }
            return type;
        }

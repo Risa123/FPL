@@ -61,19 +61,28 @@ public final class ClassVariable extends Function{
         }else{
           varType = type;
         }
-        var cID = IFunction.toCId(id.getValue());
-        writer.write(varType.getCname() + ' ' + cID + ";\n");
-        if(env instanceof ClassEnv){
-            setPrevCode("this->" + cID);
-        }else{
-            setPrevCode(cID);
+        var typeCname = varType.getCname();
+        var notPointer = true;
+        if(id.getValue().equals("*")){
+            id = it.nextID();
+            notPointer = false;
+            typeCname += "*";
         }
+        var cID = IFunction.toCId(id.getValue());
+        writer.write(typeCname + ' ' + cID + ";\n");
         var b = new BuilderWriter();
-        if(type instanceof TemplateTypeInfo){
-            varType.getConstructor().setPrevCode(getPrevCode());
-            varType.getConstructor().superCompile(b,env,it,id.getLine(),id.getTokenNum());
-        }else{
-            super.compile(b,env,it,id.getLine(),id.getTokenNum());
+        if(notPointer){
+            if(env instanceof ClassEnv){
+                setPrevCode("this->" + cID);
+            }else{
+                setPrevCode(cID);
+            }
+            if(type instanceof TemplateTypeInfo){
+                varType.getConstructor().setPrevCode(getPrevCode());
+                varType.getConstructor().superCompile(b,env,it,id.getLine(),id.getTokenNum());
+            }else{
+                super.compile(b,env,it,id.getLine(),id.getTokenNum());
+            }
         }
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);
@@ -84,7 +93,6 @@ public final class ClassVariable extends Function{
         if(env instanceof ClassEnv e){
             instanceType = e.getInstanceType();
         }
-        env.addFunction(id.getValue(),new Variable(varType,varCid,false,vID,env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
         if(env instanceof ClassEnv e){
             e.appendToImplicitConstructor(b.getCode() + ";\n");
         }else if(env instanceof ModuleEnv e){
@@ -92,6 +100,7 @@ public final class ClassVariable extends Function{
         }else{
             writer.write(b.getCode());
         }
+        env.addFunction(id.getValue(),new Variable(varType,varCid,false,vID,env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
         ((SubEnv)env).addInstanceVariable(varType,varCid);
         return null;
     }

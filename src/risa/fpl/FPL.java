@@ -122,7 +122,7 @@ public final class FPL{
         files.append(' ').append(getModule(name).getCPath());
     }
 	public static void main(String[] args)throws IOException{
-		if(args.length != 1) {
+		if(args.length != 1){
 			System.err.println("<project directory> expected");
 			System.exit(2);
 		}
