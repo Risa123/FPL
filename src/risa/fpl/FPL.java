@@ -90,6 +90,7 @@ public final class FPL{
     	for(var tData:templateCompData){
     	    try(var w = Files.newBufferedWriter(tData.path())){
     	        tData.module().declareTypes(w);
+                w.write(tData.code());
             }
         }
     	for(var data:functionVariantGenerationData){

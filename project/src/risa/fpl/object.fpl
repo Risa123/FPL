@@ -1,7 +1,13 @@
 use std.collection
 
 class ObjectInfo{
- Map;String ObjectInfo;* fields
+ Map;String Field; fields
  this{}
+}
+class Field{
+  private const{
+   AccessModifier accessModifier
+   void* value
+  }
 }
 enum AccessModifier PUBLIC PROTECTED PRIVATE
