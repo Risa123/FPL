@@ -1,13 +1,17 @@
 use std.collection
 
 class ObjectInfo{
- Map;String Field; fields
- this{}
+ Map;String Field;fields
 }
 class Field{
   private const{
    AccessModifier accessModifier
    void* value
   }
+  this{
+
+  }
+  fn AccessModifier getAccessModifier = accessModifier
+  fn void* getValue = value
 }
 enum AccessModifier PUBLIC PROTECTED PRIVATE
