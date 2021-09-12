@@ -19,10 +19,10 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
-public final class ClassVariable extends Function{
+public final class InstanceVar extends Function{
    private final ClassInfo classType;
    private final InstanceInfo type;
-   public ClassVariable(InstanceInfo type,ClassInfo classType){
+   public InstanceVar(InstanceInfo type, ClassInfo classType){
        super("constructor",TypeInfo.VOID,FunctionType.NORMAL,type,AccessModifier.PUBLIC);
 	   this.type = type;
 	   this.classType = classType;

@@ -14,7 +14,7 @@ import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
-import risa.fpl.function.statement.ClassVariable;
+import risa.fpl.function.statement.InstanceVar;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -72,7 +72,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
 		for(var mod:importedModules){
             for(var func:mod.functions.values()){
-                if(func instanceof Function f  && !(func instanceof ClassVariable)  && f.getAccessModifier() != AccessModifier.PRIVATE){
+                if(func instanceof Function f  && !(func instanceof InstanceVar)  && f.getAccessModifier() != AccessModifier.PRIVATE){
                     importDeclarations.append(f.getDeclaration());
                 }else if(func instanceof Variable v){
                     importDeclarations.append(v.getExternDeclaration());
@@ -254,10 +254,9 @@ public final class ModuleEnv extends ANameSpacedEnv{
             destructorCall = "";
         }else{
             var b = new StringBuilder("void ");
-            destructorCall = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + "_destructor";
-            b.append(destructorCall);
-            destructorCall += "();\n";
-            b.append("(){\n").append(destructor).append("}\n");
+            destructorCall = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + "_destructor()";
+            b.append(destructorCall).append("{\n").append(destructor).append("}\n");
+            destructorCall += ";\n";
             return b.toString();
         }
         return "";

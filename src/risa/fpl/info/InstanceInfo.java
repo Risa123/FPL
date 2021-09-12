@@ -7,13 +7,13 @@ import risa.fpl.function.exp.Cast;
 import risa.fpl.function.exp.GetObjectInfo;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
-import risa.fpl.function.statement.ClassVariable;
+import risa.fpl.function.statement.InstanceVar;
 
 public class InstanceInfo extends TypeInfo{
     private String attributesCode,implCode,destructorName,instanceFree,copyConstructorName;
     private final ModuleEnv module;
     private boolean complete;
-    private ClassVariable constructor;
+    private InstanceVar constructor;
     private final String toPointerName;
     private String methodDeclarations = "";
     public InstanceInfo(String name,ModuleEnv module,String nameSpace){
@@ -78,10 +78,10 @@ public class InstanceInfo extends TypeInfo{
         destructorName = prefix + "_destructor";
         instanceFree = prefix + "_free";
     }
-    public final ClassVariable getConstructor(){
+    public final InstanceVar getConstructor(){
         return constructor;
     }
-    public final void setConstructor(ClassVariable constructor){
+    public final void setConstructor(InstanceVar constructor){
         this.constructor = constructor;
         for(var v:constructor.getVariants()){
             for(var arg:v.args()){

@@ -11,7 +11,7 @@ import risa.fpl.function.block.Constructor;
 import risa.fpl.function.block.CopyConstructor;
 import risa.fpl.function.block.Destructor;
 import risa.fpl.function.exp.*;
-import risa.fpl.function.statement.ClassVariable;
+import risa.fpl.function.statement.InstanceVar;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
@@ -219,7 +219,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public AEnv getSuperEnv(){
 	    return superEnv;
     }
-    public void compileNewAndAlloc(BuilderWriter writer,TypeInfo[]args,ClassVariable constructor){
+    public void compileNewAndAlloc(BuilderWriter writer, TypeInfo[]args, InstanceVar constructor){
         var allocName = "static" + getNameSpace() + "_alloc";
         Function allocMethod;
         if(classType.getFieldFromThisType("alloc") instanceof Function tmp){

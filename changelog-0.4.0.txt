@@ -15,3 +15,4 @@ fix unknown type C error
 fix struct name reported as C name
 fix compilation caught in infinite loop
 fix pointer to template instance
+fix class with instance used as template argument C error

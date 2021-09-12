@@ -11,7 +11,7 @@ import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
-import risa.fpl.function.statement.ClassVariable;
+import risa.fpl.function.statement.InstanceVar;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -32,7 +32,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		InstanceInfo parentType = null;
 		List block = null;
 		var interfaces = new ArrayList<InterfaceInfo>();
-		LinkedHashMap<String,TypeInfo> templateArgs = null;
+		LinkedHashMap<String,TypeInfo>templateArgs = null;
         ClassEnv cEnv;
 		if(it.checkTemplate()){
             cEnv = new ClassEnv(modEnv,idV,TemplateStatus.TEMPLATE);
@@ -77,7 +77,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             }
         }
         if(block == null){
-            throw new CompilerException(line, tokenNum,"block expected as last argument");
+            throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
         BufferedWriter cWriter;
 		if(templateArgs == null){
@@ -93,9 +93,8 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         var b = new BuilderWriter();
         var type = cEnv.getInstanceType();
         var parentType = type.getPrimaryParent();
-        b.write("typedef struct ");
-        b.write(IFunction.toCId(id.getValue()));
-        b.write("{\nvoid* objectData;\n");
+        var cID = IFunction.toCId(id.getValue());
+        b.write("typedef struct "+ cID + "{\nvoid* objectData;\n");
         if(parentType instanceof InstanceInfo i){
             b.write(i.getAttributesCode());
         }
@@ -122,7 +121,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                }
             }
         }
-        b.write('}' + IFunction.toCId(id.getValue())+ ";\n" + cEnv.getDataDeclaration());
+        b.write('}' + cID + ";\n" + cEnv.getDataDeclaration());
         if(!cEnv.isAbstract()){
             for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
                 var name = method.getName();
@@ -135,7 +134,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         var internalCode = new BuilderWriter();
         var constructor = type.getConstructor();
         if(constructor == null){
-            constructor = new ClassVariable(type,cEnv.getClassType());
+            constructor = new InstanceVar(type,cEnv.getClassType());
             constructor.addVariant(new TypeInfo[0],cEnv.getNameSpace());
             cEnv.addMethod(constructor,new TypeInfo[0],cEnv.getImplicitConstructor());
             type.setConstructor(constructor);
@@ -143,7 +142,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }
         type.appendToDeclaration(b.getCode() + "extern " + cEnv.getDataDefinition());
         cEnv.appendDeclarations();
-        var cID = IFunction.toCId(id.getValue());
         if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){
             modEnv.addFunction(id.getValue(),constructor);
         }
@@ -153,7 +151,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             var callBuilder = new StringBuilder(INTERNAL_METHOD_PREFIX);
             callBuilder.append(cEnv.getNameSpace()).append("_as").append(i.getCname());
             var asCName = callBuilder.toString();
-            internalCode.write(asCName + '(' + type.getCname() +"* this){\n");
+            internalCode.write(asCName + '(' + type.getCname() + "* this){\n");
             internalCode.write(i.getCname());
             internalCode.write(" tmp;\ntmp.instance=this;\ntmp.impl=&");
             internalCode.write(cEnv.getImplOf(i));
