@@ -15,6 +15,7 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.tokenizer.TokenType;
 
+@SuppressWarnings("ClassCanBeRecord")
 public final class Var implements IFunction{
     private final TypeInfo type;
     public Var(TypeInfo type){

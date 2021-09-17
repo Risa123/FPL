@@ -166,10 +166,14 @@ public final class Tokenizer{
 			  }else{
 				  if(type != TokenType.ULONG){
 					  long n;
-					  if(hex){
-					  	n = Long.parseLong(value,16);
-					  }else{
-					  	 n = Long.parseLong(value);
+					  try{
+						  if(hex){
+							  n = Long.parseLong(value,16);
+						  }else{
+							  n = Long.parseLong(value);
+						  }
+					  }catch(NumberFormatException e){
+						  throw new CompilerException(tokenNum,line,"invalid number");
 					  }
 					  if(type == TokenType.SBYTE && (n < Byte.MIN_VALUE || n > Byte.MAX_VALUE)){
 						  throw new CompilerException(line,tokenNum,"sbyte numbere expected");
@@ -177,16 +181,12 @@ public final class Tokenizer{
 						  throw new CompilerException(line,tokenNum,"sshort number expected");
 					  }else if(type == TokenType.SINT && (n < Integer.MIN_VALUE || n > Integer.MAX_VALUE)){
 						  throw new CompilerException(line,tokenNum,"sint number expected");
-					  }else if(type == TokenType.SLONG && (n < Long.MIN_VALUE || n > Long.MAX_VALUE)) {
-						  throw new CompilerException(line,tokenNum,"slong number expected");
 					  }else if(type == TokenType.UBYTE &&  n > UBYTE_MAX){
 						  throw new CompilerException(line,tokenNum,"ubyte number expected");
 					  }else if(type == TokenType.USHORT && n > USHORT_MAX){
 						  throw new CompilerException(line,tokenNum,"ushort number expected");
 					  }else if(type == TokenType.UINT && n > UINT_MAX){
 						  throw new CompilerException(line,tokenNum,"uint number expected");
-					  }else if(type == TokenType.ULONG && n > ULONG_MAX){
-						  throw new CompilerException(line,tokenNum,"ulong number expected");
 					  }
 				  }
 			  }

@@ -20,11 +20,12 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.tokenizer.TokenType;
 
+@SuppressWarnings("JavaDoc")
 public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
-	private String destructorCall;
+	private String destructorCall,declarationCode;
 	private boolean getRequestFromOutSide,initCalled,destructorCalled;
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	private int mainDeclared;
@@ -33,7 +34,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
-	private String declarationCode;
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;

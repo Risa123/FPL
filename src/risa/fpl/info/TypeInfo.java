@@ -187,7 +187,7 @@ public class TypeInfo{
           var prefix = "";
           var postfix = "";
           if(!comesFromPointer){
-            if(notReturnedByFunction && !comesFromPointer){
+            if(notReturnedByFunction){
                 prefix = "&";
             }else{
                 prefix = instance.getToPointerName() + "(";
