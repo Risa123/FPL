@@ -20,7 +20,6 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.tokenizer.TokenType;
 
-@SuppressWarnings("JavaDoc")
 public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
@@ -278,7 +277,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     /**
      * Add line where constructor is declared on list.
      * Prevents constructors form being compiled multiple times
-     * @param line
      */
     public void addClassConstructorLine(int line){
 	    classConstructorLines.add(line);

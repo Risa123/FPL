@@ -104,10 +104,10 @@ public class InstanceInfo extends TypeInfo{
     public final String getMethodDeclarations(){
         return methodDeclarations;
     }
-    public String getConversionMethod(InterfaceInfo i){
+    public final String getConversionMethod(InterfaceInfo i){
         return IFunction.INTERNAL_METHOD_PREFIX + module.getNameSpace() + getCname() + "_as" + i.getCname();
     }
-    public boolean isException(){
+    public final boolean isException(){
         if(module.getNameSpace().equals("_std_lang") && getName().equals("Exception")){
             return true;
         }else if(getPrimaryParent() instanceof InstanceInfo i){
