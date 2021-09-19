@@ -6,7 +6,6 @@ import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.env.ModuleEnv;
-import risa.fpl.function.statement.InstanceVar;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
@@ -28,11 +27,6 @@ public final class Constructor extends AFunctionBlock{
         }
         var type = cEnv.getInstanceType();
         var constructor = type.getConstructor();
-        if(constructor == null){
-            constructor = new InstanceVar(cEnv.getInstanceType(),cEnv.getClassType());
-            type.setConstructor(constructor);
-            cEnv.getSuperEnv().addFunction(type.getName(),constructor);
-        }
         var fEnv = new FnEnv(env,TypeInfo.VOID);
         var b = new BuilderWriter();
         b.write("void " + INTERNAL_METHOD_PREFIX + cEnv.getNameSpace(this) + "_init");

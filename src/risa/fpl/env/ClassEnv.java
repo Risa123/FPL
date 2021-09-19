@@ -61,6 +61,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		if(templateStatus != TemplateStatus.GENERATING){
             superEnv.addType(id,instanceType);
         }
+        instanceType.setConstructor(new InstanceVar(instanceType,classType));
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
 	}
 	@Override

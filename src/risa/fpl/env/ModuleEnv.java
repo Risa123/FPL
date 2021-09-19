@@ -33,6 +33,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
+    private final ArrayList<InstanceInfo>templateInstances = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -142,6 +143,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public void addTemplateInstance(InstanceInfo type){
       if(!type.isPrimitive() && type.notIn(typesForDeclarations)){
          addTypesForDeclaration(type);
+         templateInstances.add(type);
       }
     }
     public void requestFromOutSide(){
@@ -200,6 +202,17 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public void declareTypes(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
         var b = new BuilderWriter();
+        //remove duplicates 0.4 changelog line 18
+        var names = new ArrayList<String>();
+        var iterator = typesForDeclarations.iterator();
+        while(iterator.hasNext()){
+            var t = iterator.next();
+            if(names.contains(t.getName()) && !types.containsKey(t.getName())){
+                iterator.remove();
+            }else{
+                names.add(t.getName());
+            }
+        }
         while(!typesForDeclarations.isEmpty()){
             var it = typesForDeclarations.iterator();
             while(it.hasNext()){
@@ -218,6 +231,18 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
             }
         }
+        for(var type:templateInstances){
+            for(var rt:type.getRequiredTypes()){
+                if(rt.getDeclaration().isEmpty()){
+                    for(var mType:types.values()){
+                        if(rt.identical(mType)){
+                            rt.setDeclaration(mType.getDeclaration());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         for(var type:declared){
             if(type instanceof InstanceInfo i){
                 b.write(i.getMethodDeclarations());
@@ -233,9 +258,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     @Override
     public void addType(String name,TypeInfo type,boolean declaration){
 	    super.addType(name,type,declaration);
-	    if(!type.isPrimitive()){
-            addTypesForDeclaration(type);
-        }
+        addTypesForDeclaration(type);
 	    if(nameSpace.equals("_std_lang") && name.equals("String")){
 	        moduleBlock.setString(type);
         }
@@ -253,7 +276,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             destructorCall = "";
         }else{
             var b = new StringBuilder("void ");
-            destructorCall = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + "_destructor()";
+            destructorCall = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_destructor()";
             b.append(destructorCall).append("{\n").append(destructor).append("}\n");
             destructorCall += ";\n";
             return b.toString();

@@ -61,7 +61,7 @@ public class InstanceInfo extends TypeInfo{
         getClassInfo().addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + getCname() + ")"));
     }
     @Override
-    protected final boolean identical(TypeInfo type){
+    public final boolean identical(TypeInfo type){
         var nameResult = super.identical(type);
         if(type instanceof InstanceInfo i && nameResult){
             return module.getNameSpace().equals(i.module.getNameSpace());

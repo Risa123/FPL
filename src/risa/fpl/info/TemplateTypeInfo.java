@@ -64,9 +64,6 @@ public final class TemplateTypeInfo extends InstanceInfo{
            new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0,name.toString(),TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
            var type = cEnv.getInstanceType();
            Files.delete(path);
-           for(var t:type.getRequiredTypes()){
-               mod.addTypesForDeclaration(t);
-           }
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(type);

@@ -39,7 +39,7 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
         if(type instanceof InstanceInfo i && i.getDestructorName() != null){
             var mod = i.getModule();
             var freeArray = mod.getFPL().getFreeArray();
-            if(freeArray != null){
+            if(freeArray != null && !(i instanceof TemplateTypeInfo)){
                 addField("free[]",freeArray.makeMethodFromTemplate(this,new TypeInfo[]{NumberInfo.MEMORY},mod));
             }
         }else{

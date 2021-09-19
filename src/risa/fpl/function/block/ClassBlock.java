@@ -11,7 +11,6 @@ import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
-import risa.fpl.function.statement.InstanceVar;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -133,11 +132,11 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }
         var internalCode = new BuilderWriter();
         var constructor = type.getConstructor();
-        if(constructor == null){
-            constructor = new InstanceVar(type,cEnv.getClassType());
+        if(constructor.getVariants().size() == 0){
             constructor.addVariant(new TypeInfo[0],cEnv.getNameSpace());
             cEnv.addMethod(constructor,new TypeInfo[0],cEnv.getImplicitConstructor());
             type.setConstructor(constructor);
+            cEnv.getSuperEnv().addFunction(type.getName(),constructor);
             cEnv.compileNewAndAlloc(internalCode,new TypeInfo[0],constructor);
         }
         type.appendToDeclaration(b.getCode() + "extern " + cEnv.getDataDefinition());

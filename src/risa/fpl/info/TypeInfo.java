@@ -149,7 +149,7 @@ public class TypeInfo{
   public final ArrayList<TypeInfo>getParents(){
       return parents;
   }
-  public final ArrayList<Function> getMethodsOfType(FunctionType type){
+  public final ArrayList<Function>getMethodsOfType(FunctionType type){
       var list = new ArrayList<Function>();
       for(var field:fields.values()){
           if(field instanceof Function f && f.getType() == type){
@@ -223,7 +223,7 @@ public class TypeInfo{
       }
       return identical((TypeInfo)o);
   }
-  protected boolean identical(TypeInfo type){
+  public boolean identical(TypeInfo type){
       return name.equals(type.name);
   }
   public final void setPrimaryParent(TypeInfo primaryParent){
@@ -238,5 +238,8 @@ public class TypeInfo{
   }
   public final IField getFieldFromThisType(String name){
       return fields.get(name);
+  }
+  public final void setDeclaration(String declaration){
+      this.declaration = declaration;
   }
 }
