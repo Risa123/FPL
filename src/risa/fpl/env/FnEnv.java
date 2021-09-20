@@ -6,7 +6,7 @@ import risa.fpl.function.statement.Break;
 import risa.fpl.function.statement.Return;
 import risa.fpl.info.TypeInfo;
 
-public final class FnEnv extends FnSubEnv{
+public class FnEnv extends FnSubEnv{
 	private static final Return RETURN = new Return();
 	private static final ConditionalBlock IF = new ConditionalBlock("if");
 	private static final ConditionalBlock WHILE = new ConditionalBlock("while");

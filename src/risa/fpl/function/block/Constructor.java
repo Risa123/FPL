@@ -2,10 +2,8 @@ package risa.fpl.function.block;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
-import risa.fpl.env.ClassEnv;
-import risa.fpl.env.FnEnv;
-import risa.fpl.env.ModuleEnv;
+import risa.fpl.env.*;
+import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
@@ -27,12 +25,12 @@ public final class Constructor extends AFunctionBlock{
         }
         var type = cEnv.getInstanceType();
         var constructor = type.getConstructor();
-        var fEnv = new FnEnv(env,TypeInfo.VOID);
+        var fnEnv = new ConstructorEnv(env);
         var b = new BuilderWriter();
         b.write("void " + INTERNAL_METHOD_PREFIX + cEnv.getNameSpace(this) + "_init");
         var variantNum = constructor.getVariants().size();
         var argsWriter = new BuilderWriter();
-        var args = parseArguments(argsWriter,it,fEnv,type).values().toArray(new TypeInfo[0]);
+        var args = parseArguments(argsWriter,it,fnEnv,type).values().toArray(new TypeInfo[0]);
         if(constructor.hasVariant(args)){
           if(modEnv.notClassConstructorOnLine(line)){
               throw new CompilerException(line,tokenNum,"this class already has constructor with arguments " + Arrays.toString(args));
@@ -51,14 +49,14 @@ public final class Constructor extends AFunctionBlock{
             if(parentType == null){
                 throw new CompilerException(callStart,"this type has no parent");
             }
-            parentType.getConstructor().compileAsParentConstructor(b,fEnv,it,callStart.getLine(),callStart.getTokenNum());
+            parentType.getConstructor().compileAsParentConstructor(b,fnEnv,it,callStart.getLine(),callStart.getTokenNum());
             b.write(";\n");
             hasParentConstructor = true;
             cEnv.parentConstructorCalled();
         }
         b.write(cEnv.getImplicitConstructorCode());
         if(it.hasNext()){
-           it.nextList().compile(b,fEnv,it);
+           it.nextList().compile(b,fnEnv,it);
         }else if(!hasParentConstructor){
             throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
@@ -66,6 +64,11 @@ public final class Constructor extends AFunctionBlock{
         if(!(type instanceof TemplateTypeInfo)){
             cEnv.compileNewAndAlloc(b,args,constructor);
             cEnv.addMethod(constructor,args,b.getCode());
+        }
+        for(var field:type.getFields().values()){
+            if(field instanceof Variable v && v.getType().isPrimitive() && v.isConstant() && !v.getId().equals("getClass") && !fnEnv.getDefinedConstFields().contains(v.getId())){
+              throw new CompilerException(line,tokenNum,"constant field " + v.getId() + " not defined in this constructor");
+            }
         }
         return TypeInfo.VOID;
     }

@@ -44,7 +44,7 @@ public class TypeInfo{
   private String declaration = "";
   private final boolean primitive;
   private final StringBuilder declarationBuilder =  new StringBuilder();
-  private final HashMap<String, IField>fields = new HashMap<>();
+  private final HashMap<String,IField>fields = new HashMap<>();
   private ClassInfo classInfo;
   private final ArrayList<TypeInfo>parents = new ArrayList<>(),requiredTypes = new ArrayList<>();
   private TypeInfo primaryParent;
@@ -241,5 +241,8 @@ public class TypeInfo{
   }
   public final void setDeclaration(String declaration){
       this.declaration = declaration;
+  }
+  public final HashMap<String,IField>getFields(){
+      return fields;
   }
 }

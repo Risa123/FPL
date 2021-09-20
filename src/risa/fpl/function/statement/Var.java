@@ -39,7 +39,7 @@ public final class Var implements IFunction{
            }
         }
 		if(env.hasModifier(Modifier.NATIVE) && env instanceof ClassEnv){
-            throw new CompilerException(line, tokenNum,"native variables can only be declared in modules");
+            throw new CompilerException(line,tokenNum,"native variables can only be declared in modules");
 		}
 		var decType = type;
 		if(it.checkTemplate()){
@@ -155,7 +155,7 @@ public final class Var implements IFunction{
                 if(it.hasNext()){
                     writer.write(";\n");
                 }
-                var constant = env.hasModifier(Modifier.CONST) && !(env instanceof  ClassEnv);
+                var constant = env.hasModifier(Modifier.CONST);
                 if(env.hasModifier(Modifier.NATIVE)){
                     onlyDeclared = false;
                 }

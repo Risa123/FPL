@@ -8,8 +8,9 @@ class Field{
    AccessModifier accessModifier
    void* value
   }
-  this{
-
+  this AccessModifier accessModifier void* value{
+   this accessModifier = accessModifier
+   this value = value
   }
   fn AccessModifier getAccessModifier = accessModifier
   fn void* getValue = value

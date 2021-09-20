@@ -6,6 +6,8 @@ import java.io.IOException;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.ClassEnv;
+import risa.fpl.env.ConstructorEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.NumberInfo;
@@ -35,7 +37,7 @@ public final class Variable extends ValueExp{
 		copyCallNeeded = false;
 	    var value = atom.getValue();
 		if(value.equals("=")){
-		   if(constant && !(type instanceof InstanceInfo)){
+		   if(constant && !(type instanceof InstanceInfo) && (!(env instanceof ConstructorEnv e) || e.getDefinedConstFields().contains(id))){
 			  throw new CompilerException(line,charNum,"constant cannot be redefined");
 			}
 		    var assignmentOperator = false;
@@ -56,6 +58,9 @@ public final class Variable extends ValueExp{
 				writer.write(')');
 			}
 			copyCallNeeded = false;
+			if(env instanceof ConstructorEnv e && constant){
+				e.getDefinedConstFields().add(id);
+			}
 		    return TypeInfo.VOID;
 		}else if(value.equals("ref")){
 		    var b = new BuilderWriter();
@@ -87,6 +92,9 @@ public final class Variable extends ValueExp{
 			if(constant && value.endsWith("=")){
 				throw new CompilerException(line,charNum,"constant cannot be redefined");
 			}
+			if(constant && env instanceof ConstructorEnv e){
+				e.getDefinedConstFields().add(id);
+			}
 			TypeInfo t;
 			if((t = processOperator(value,writer,it,env)) != null){
 			    return t;
@@ -97,7 +105,7 @@ public final class Variable extends ValueExp{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=") && a.getType() == TokenType.ID){
-		    throw new CompilerException(line, tokenNum,"variable " + id + " not defined");
+		    throw new CompilerException(line,tokenNum,"variable " + id + " not defined");
         }
 		if(instanceType != null && getPrevCode() == null){
 		    setPrevCode("((" + instanceType.getCname() + "*)this)->");
@@ -188,5 +196,14 @@ public final class Variable extends ValueExp{
     }
     public String getCname(){
 		return code;
+	}
+	public boolean isConstant(){
+		return constant;
+	}
+	public String getId(){
+		return id;
+	}
+	public boolean isOnlyDeclared(){
+		return onlyDeclared;
 	}
 }
