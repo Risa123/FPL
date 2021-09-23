@@ -18,9 +18,6 @@ class CompilerException Exception{
    return str + message
  }
 }
-interface IFunction{
- fn void compile
-}
 interface IFPL{
 
 }

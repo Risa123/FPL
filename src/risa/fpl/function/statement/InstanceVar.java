@@ -61,6 +61,9 @@ public final class InstanceVar extends Function{
         }else{
           varType = type;
         }
+        if(env.hasFunctionInCurrentEnv(id.getValue())){
+            throw new CompilerException(id,"there is already a function called " + id);
+        }
         var typeCname = varType.getCname();
         var notPointer = true;
         if(id.getValue().equals("*")){
@@ -70,38 +73,40 @@ public final class InstanceVar extends Function{
         }
         var cID = IFunction.toCId(id.getValue());
         writer.write(typeCname + ' ' + cID + ";\n");
-        var b = new BuilderWriter();
-        if(notPointer){
-            if(env instanceof ClassEnv){
-                setPrevCode("this->" + cID);
+        if(it.hasNext()){
+            if(it.peek() instanceof Atom a && a.getValue().equals("init")){
+                it.next();
+                var b = new BuilderWriter();
+                if(notPointer){
+                    if(env instanceof ClassEnv){
+                        setPrevCode("this->" + cID);
+                    }else{
+                        setPrevCode(cID);
+                    }
+                    if(type instanceof TemplateTypeInfo){
+                        varType.getConstructor().setPrevCode(getPrevCode());
+                        varType.getConstructor().superCompile(b,env,it,id.getLine(),id.getTokenNum());
+                    }else{
+                        super.compile(b,env,it,id.getLine(),id.getTokenNum());
+                    }
+                }
+                if(env instanceof ClassEnv e){
+                    e.appendToImplicitConstructor(b.getCode() + ";\n");
+                }else if(env instanceof ModuleEnv e){
+                    e.appendToInitializer(b.getCode() + ";\n");
+                }else{
+                    writer.write(b.getCode());
+                }
             }else{
-                setPrevCode(cID);
-            }
-            if(type instanceof TemplateTypeInfo){
-                varType.getConstructor().setPrevCode(getPrevCode());
-                varType.getConstructor().superCompile(b,env,it,id.getLine(),id.getTokenNum());
-            }else{
-                super.compile(b,env,it,id.getLine(),id.getTokenNum());
+                throw new CompilerException(id,"init(constructor arguments) or nothing expected");
             }
         }
-        if(env.hasFunctionInCurrentEnv(id.getValue())){
-            throw new CompilerException(id,"there is already a function called " + id);
-        }
-        var vID = id.getValue();
-        var varCid = IFunction.toCId(vID);
         TypeInfo instanceType = null;
         if(env instanceof ClassEnv e){
             instanceType = e.getInstanceType();
         }
-        if(env instanceof ClassEnv e){
-            e.appendToImplicitConstructor(b.getCode() + ";\n");
-        }else if(env instanceof ModuleEnv e){
-            e.appendToInitializer(b.getCode() + ";\n");
-        }else{
-            writer.write(b.getCode());
-        }
-        env.addFunction(id.getValue(),new Variable(varType,varCid,false,vID,env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
-        ((SubEnv)env).addInstanceVariable(varType,varCid);
+        env.addFunction(id.getValue(),new Variable(varType,cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
+        ((SubEnv)env).addInstanceVariable(varType,cID);
         return null;
     }
 	public void compileAsParentConstructor(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{

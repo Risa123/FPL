@@ -40,7 +40,7 @@ public class SubEnv extends AEnv{
  }
  public final void addInstanceVariable(InstanceInfo type,String cname){
      var destructor = type.getDestructorName();
-     if(destructor != null){//null happens when there is no destructor
+     if(destructor != null){//check presence of destructor
          destructorCalls.append(destructor).append("(&").append(cname).append(");\n");
      }
  }

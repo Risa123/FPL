@@ -28,7 +28,7 @@ class Tokenizer{
     char c
     bool readNext true
     DataReader* reader
-    const ArrayList;Token; tokens
+    const ArrayList;Token; tokens init
     fn void token int line int tokenNum String value TokenType type{
      tokens add Token:new line,tokenNum,value,type
      if type == TokenType:NEW_LINE{
@@ -50,7 +50,7 @@ class Tokenizer{
     fn void valueToken int line int tokenNum ArrayList;char;* b TokenType type{
       var p char:alloc[] b getSize
       memoryCopy b getArray;cast byte*,p cast byte*,b getSize
-      String id p,b getSize;cast uint,true
+      String id init p,b getSize;cast uint,true
       token tokenNum,line,id,type
     }
     fn void prepare{
@@ -69,7 +69,7 @@ class Tokenizer{
            if ready; !{
               CompilerException:new line,tokenNum,"char expected";throw
             }
-            ArrayList;char; b
+            ArrayList;char; b init
             b add $'
             var firstChar read
             if firstChar == $\\{
@@ -100,7 +100,7 @@ class Tokenizer{
              }if c == $}{
                token line,tokenNum,"}",TokenType:END_BLOCK
              }if c == $"{
-              ArrayList;char; b
+              ArrayList;char; b init
               b add $"
               while ready; && read; != $"{
                 if c == $\n{
@@ -118,7 +118,7 @@ class Tokenizer{
               b add $"
               valueToken line,tokenNum,b ref,TokenType:STRING
              }if c isWhitespace;!{
-               ArrayList;char; b
+               ArrayList;char; b init
                b add c
                while ready{
                  read

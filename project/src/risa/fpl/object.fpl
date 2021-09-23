@@ -2,6 +2,9 @@ use std.collection
 
 class ObjectInfo{
  Map;String Field;fields
+ fn Field getField String name{
+   return fields get name
+ }
 }
 class Field{
   private const{
@@ -14,5 +17,8 @@ class Field{
   }
   fn AccessModifier getAccessModifier = accessModifier
   fn void* getValue = value
+}
+interface IFunction{
+ fn void compile
 }
 enum AccessModifier PUBLIC PROTECTED PRIVATE

@@ -12,17 +12,17 @@ class FPL IFPL{
    const{
      String outputFile
      String mainModule
-     ArrayList;String; flags
+     ArrayList;String; flags init
    }
    fn String readValue Tokenizer* tokenizer{
       var value tokenizer next
       if value getType; != TokenType:STRING{
-       CompilerException ex value getLine;,value getTokenNum;,"String literal expected"
+       CompilerException ex init value getLine;,value getTokenNum;,"String literal expected"
        ex setFile "build.bs"
        ex throw
       }
       if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
-        CompilerException ex value getLine;,value getTokenNum;,"end of line expected"
+        CompilerException ex init value getLine;,value getTokenNum;,"end of line expected"
         ex setFile "build.bs"
         ex throw
       }
@@ -30,7 +30,7 @@ class FPL IFPL{
    }
    fn void compileDirectory String srcDir String directory{
      var fullPath srcDir + "/"; + directory
-     DirectoryStream stream srcDir
+     DirectoryStream stream init  srcDir
      while stream ready{
        var name stream read
        var path fullPath + name
@@ -38,21 +38,21 @@ class FPL IFPL{
        if isDirectory path{
          compileDirectory srcDir,fplPath
        }if isFile path{
-        ModuleBlock block this,srcDir,fplPath
+        ModuleBlock block init this,srcDir,fplPath
        }
      }
      stream close
    }
  }
  this String project{
-  FileReader reader project + "/build.bs"
-  Tokenizer tokenizer reader
+  FileReader reader init project + "/build.bs"
+  Tokenizer tokenizer init reader
   var noMainModule true;noOutputFile true
   String ccArgs
   while tokenizer hasNext{
     var id tokenizer nextID
     if tokenizer hasNext; !{
-      CompilerException ex id getLine;,id getTokenNum;,"property value expected"
+      CompilerException ex init id getLine;,id getTokenNum;,"property value expected"
       ex setFile "build.bs"
       ex throw
     }
@@ -71,25 +71,25 @@ class FPL IFPL{
         }if flag getType; == TokenType:NEW_LINE{
           break
         }{
-         CompilerException ex flag getLine;,flag getTokenNum;,"flag expected instead of " + flag getValue
+         CompilerException ex init flag getLine;,flag getTokenNum;,"flag expected instead of " + flag getValue
          ex setFile "build.bs"
          ex throw
         }
       }
     }{
-      CompilerException ex id getLine;,id getTokenNum;,idS + " property doesn't exist"
+      CompilerException ex init id getLine;,id getTokenNum;,idS + " property doesn't exist"
       ex setFile "build.bs"
       ex throw
     }
   }
   tokenizer close
   if noMainModule{
-    CompilerException ex 0,0,"no main module"
+    CompilerException ex init 0,0,"no main module"
     ex setFile "build.bs"
     ex throw
   }
   if noOutputFile{
-    CompilerException ex 0,0,"no output file"
+    CompilerException ex init 0,0,"no output file"
     ex setFile "build.bs"
     ex throw
   }

@@ -264,7 +264,7 @@ fn char toUpper char this{
 }
 fn String charToString char this{
   var b char:alloc[] 1
-  String str b,1,true
+  String str init b,1,true
   str set 0,this
   return str
 }

@@ -19,10 +19,10 @@ fn int execute String cmd{
   return exitCode
 }
 private{
- FileWriter fileStderr stderr
- FileWriter fileStdout stdout
- FileReader fileStdin stdin
+ FileWriter fileStderr init stderr
+ FileWriter fileStdout init stdout
+ FileReader fileStdin init stdin
 }
-DataWriter stderr fileStderr
-DataWriter stdout fileStdout
-DataReader stdin fileStdin
+DataWriter stderr init fileStderr
+DataWriter stdout init fileStdout
+DataReader stdin init fileStdin

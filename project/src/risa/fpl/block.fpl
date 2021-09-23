@@ -6,8 +6,8 @@ use{
 }
 class ModuleBlock ObjectInfo{
  this IFPL fpl String srcDir String fplPath{
-   FileReader reader srcDir + fplPath
-   Tokenizer tokenizer reader
+   FileReader reader init srcDir + fplPath
+   Tokenizer tokenizer init reader
    while tokenizer hasNext{
      var token tokenizer next
      if token getType; == TokenType:ID{
