@@ -102,7 +102,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             var modName = String.join(".",Arrays.copyOf(tmp,tmp.length - 1));
             for(var mod:importedModules){
                 if(mod.moduleBlock.getName().equals(modName)){
-                    return mod.getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1], TokenType.ID));
+                    return mod.getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1],TokenType.ID));
                 }
             }
             throw new CompilerException(name,"module " + modName + " not found");
@@ -202,12 +202,24 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public void declareTypes(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
         var b = new BuilderWriter();
-        //remove duplicates 0.4 changelog line 18
         var names = new ArrayList<String>();
         var iterator = typesForDeclarations.iterator();
+        for(var type:templateInstances){
+            for(var rt:type.getRequiredTypes()){
+                if(rt.getDeclaration().isEmpty()){
+                    for(var mType:types.values()){
+                        if(rt.identical(mType)){
+                            rt.setDeclaration(mType.getDeclaration());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        //remove duplicates 0.4 changelog line 18
         while(iterator.hasNext()){
             var t = iterator.next();
-            if(names.contains(t.getName()) && !types.containsKey(t.getName())){
+            if(names.contains(t.getName()) || t.getDeclaration().isEmpty()){
                 iterator.remove();
             }else{
                 names.add(t.getName());
@@ -228,18 +240,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
                     declared.add(t);
                     b.write(t.getDeclaration());
                     it.remove();
-                }
-            }
-        }
-        for(var type:templateInstances){
-            for(var rt:type.getRequiredTypes()){
-                if(rt.getDeclaration().isEmpty()){
-                    for(var mType:types.values()){
-                        if(rt.identical(mType)){
-                            rt.setDeclaration(mType.getDeclaration());
-                            break;
-                        }
-                    }
                 }
             }
         }
