@@ -78,7 +78,7 @@ public class TypeInfo{
           if(from instanceof SubEnv sub && field.getAccessModifier() == AccessModifier.INTERNAL && this instanceof InstanceInfo i && i.getModule() == sub.getModule()){
               return field;
           }else if(from instanceof IClassOwnedEnv e){
-              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() != null && e.getClassType().identical(classInfo)){
+              if(field.getAccessModifier() == AccessModifier.PRIVATE && e.getClassType() != null && e.getClassType() == classInfo){
                   return field;
               }else if(field.getAccessModifier() == AccessModifier.PROTECTED){
                   return field;

@@ -5,21 +5,21 @@ class ObjectInfo{
  fn Field getField String name{
    return fields get name
  }
- fn void addField String name AccessModifier accessModifier IFunction* func{
-  fields put name,Field:new accessModifier,func cast void*
+ fn void addField String name AccessModifier accessModifier IFunction func{
+  fields put name,Field:new accessModifier,func
  }
 }
 class Field{
   private const{
    AccessModifier accessModifier
-   void* value
+   IFunction value
   }
-  this AccessModifier accessModifier void* value{
+  this AccessModifier accessModifier IFunction value{
    this accessModifier = accessModifier
    this value = value
   }
   fn AccessModifier getAccessModifier = accessModifier
-  fn void* getValue = value
+  fn IFunction getValue = value
 }
 interface IFunction{
  fn void compile

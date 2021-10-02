@@ -6,7 +6,6 @@ import java.io.IOException;
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
-import risa.fpl.env.ClassEnv;
 import risa.fpl.env.ConstructorEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.InstanceInfo;
@@ -202,8 +201,5 @@ public final class Variable extends ValueExp{
 	}
 	public String getId(){
 		return id;
-	}
-	public boolean isOnlyDeclared(){
-		return onlyDeclared;
 	}
 }
