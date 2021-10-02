@@ -200,9 +200,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    return mainDeclared == AThreePassBlock.MAX_PASSES;
     }
     public void declareTypes(BufferedWriter writer)throws IOException{
-        var declared = new ArrayList<TypeInfo>();
-        var b = new BuilderWriter();
-        var names = new ArrayList<String>();
         var iterator = typesForDeclarations.iterator();
         for(var type:templateInstances){
             for(var rt:type.getRequiredTypes()){
@@ -216,6 +213,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
             }
         }
+        var names = new ArrayList<String>();
         //remove duplicates 0.4 changelog line 18
         while(iterator.hasNext()){
             var t = iterator.next();
@@ -225,13 +223,15 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 names.add(t.getName());
             }
         }
+        var declared = new ArrayList<TypeInfo>();
+        var b = new BuilderWriter();
         while(!typesForDeclarations.isEmpty()){
             var it = typesForDeclarations.iterator();
             while(it.hasNext()){
                 var t = it.next();
                 var hasAll = true;
                 for(var rt:t.getRequiredTypes()){
-                    if(rt.notIn(declared) && !rt.notIn(typesForDeclarations) && t.notIn(rt.getRequiredTypes())){
+                    if(rt.notIn(declared) && !rt.notIn(typesForDeclarations)){
                         hasAll = false;
                         break;
                     }
