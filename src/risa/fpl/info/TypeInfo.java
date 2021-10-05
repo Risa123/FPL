@@ -221,10 +221,7 @@ public class TypeInfo{
       if(this == OBJECT){
           return true;
       }
-      return identical((TypeInfo)o);
-  }
-  public boolean identical(TypeInfo type){
-      return name.equals(type.name);
+      return  this == o;
   }
   public final void setPrimaryParent(TypeInfo primaryParent){
       this.primaryParent = primaryParent;

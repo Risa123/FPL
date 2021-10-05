@@ -50,18 +50,23 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         dataType = cname + "_data_type";
         dataName = nameSpace + "_data";
-		classType = new ClassInfo(id,dataName);
-		if(templateStatus == TemplateStatus.TEMPLATE){
-            instanceType = new TemplateTypeInfo(id,superEnv,nameSpace);
+		if(superEnv.hasTypeInCurrentEnv(id)){
+            instanceType = (InstanceInfo)superEnv.types.get(id);
+            classType = instanceType.getClassInfo();
         }else{
-            instanceType = new InstanceInfo(id,superEnv,nameSpace);
+            classType = new ClassInfo(id,dataName);
+            if(templateStatus == TemplateStatus.TEMPLATE){
+                instanceType = new TemplateTypeInfo(id,superEnv,nameSpace);
+            }else{
+                instanceType = new InstanceInfo(id,superEnv,nameSpace);
+            }
+            instanceType.setClassInfo(classType);
+            //checking if not generating from template to prevent generated type from displacing the template
+            if(templateStatus != TemplateStatus.GENERATING){
+                superEnv.addType(id,instanceType);
+            }
+            instanceType.setConstructor(new InstanceVar(instanceType,classType));
         }
-		instanceType.setClassInfo(classType);
-        //checking if not generating from template to prevent generated type from displacing the template
-		if(templateStatus != TemplateStatus.GENERATING){
-            superEnv.addType(id,instanceType);
-        }
-        instanceType.setConstructor(new InstanceVar(instanceType,classType));
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
 	}
 	@Override

@@ -35,7 +35,6 @@ public final class Constructor extends AFunctionBlock{
           if(modEnv.notClassConstructorOnLine(line)){
               throw new CompilerException(line,tokenNum,"this class already has constructor with arguments " + Arrays.toString(args));
           }
-          variantNum--;
         }
         b.write(Integer.toString(variantNum));
         if(!(type instanceof TemplateTypeInfo)){

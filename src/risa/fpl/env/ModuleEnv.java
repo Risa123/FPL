@@ -205,7 +205,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             for(var rt:type.getRequiredTypes()){
                 if(rt.getDeclaration().isEmpty()){
                     for(var mType:types.values()){
-                        if(rt.identical(mType)){
+                        if(rt == mType){
                             rt.setDeclaration(mType.getDeclaration());
                             break;
                         }
