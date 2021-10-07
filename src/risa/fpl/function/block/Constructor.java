@@ -31,10 +31,8 @@ public final class Constructor extends AFunctionBlock{
         var variantNum = constructor.getVariants().size();
         var argsWriter = new BuilderWriter();
         var args = parseArguments(argsWriter,it,fnEnv,type).values().toArray(new TypeInfo[0]);
-        if(constructor.hasVariant(args)){
-          if(modEnv.notClassConstructorOnLine(line)){
-              throw new CompilerException(line,tokenNum,"this class already has constructor with arguments " + Arrays.toString(args));
-          }
+        if(constructor.hasVariant(args) && modEnv.notClassConstructorOnLine(line)){
+            throw new CompilerException(line,tokenNum,"this class already has constructor with arguments " + Arrays.toString(args));
         }
         b.write(Integer.toString(variantNum));
         if(!(type instanceof TemplateTypeInfo)){

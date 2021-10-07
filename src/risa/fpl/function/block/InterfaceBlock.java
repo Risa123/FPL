@@ -68,17 +68,10 @@ public final class InterfaceBlock implements IFunction{
             }
         }
         block.compile(b,iEnv,it);
-        b.write('}');
-        b.write(implName);
-        b.write(";\n");
-        b.write("typedef struct ");
-        b.write(cID);
-        b.write("{\n");
+        b.write('}' + implName + ";\n");
+        b.write("typedef struct "  + cID + "{\n");
         b.write("void* instance;\n");
-        b.write(implName);
-        b.write("* impl;\n}");
-        b.write(cID);
-        b.write(";\n");
+        b.write(implName + "* impl;\n}" + cID + ";\n");
         type.appendToDeclaration(b.getCode());
         type.buildDeclaration();
         env.addType(idV,type);

@@ -10,8 +10,8 @@ public final class Tokenizer{
 	  private int line = 1,tokenNum = 1,c;
 	  private boolean readNext = true,forceEnd;
 	  private static final int  UBYTE_MAX = 255,USHORT_MAX = 65_535;
-	  private static final long UINT_MAX = 4_294_967_295L,ULONG_MAX = Long.parseUnsignedLong("18446744073709551615");
-	  private Token current;
+	  private static final long UINT_MAX = 4_294_967_295L;
+	private Token current;
 	  public Tokenizer(Reader reader){
 		  this.reader = reader;
 	  }
