@@ -27,11 +27,11 @@ public final class Cast extends AField{
             type = IFunction.generateTypeFor(type,typeAtom,it,env,false);
         }
 	    if((self instanceof NumberInfo || self instanceof PointerInfo) && (type instanceof  NumberInfo || type instanceof PointerInfo)){
-	        c_cast(prev,type.getCname());
+	        CCast(prev,type.getCname());
         }else if(isCharOrNumber(self) && isCharOrNumber(type)){
-	        c_cast(prev,"char");
+	        CCast(prev,"char");
         }else if(!type.isPrimitive() && self instanceof InterfaceInfo && type.getParents().contains(self)){
-          c_cast(prev,type.getCname());
+          CCast(prev,type.getCname());
           prev.write(".instance");
         }else if(type instanceof InterfaceInfo){
 	        throw new CompilerException(line, tokenNum,"cannot cast to interface");
@@ -59,7 +59,7 @@ public final class Cast extends AField{
     private boolean isCharOrNumber(TypeInfo type){
         return type == TypeInfo.CHAR || type instanceof NumberInfo n && !n.isFloatingPoint();
     }
-    private void c_cast(BufferedWriter writer, String ctype)throws IOException{
+    private void CCast(BufferedWriter writer,String ctype)throws IOException{
         writer.write("((" + ctype + ")");
         writePrev(writer);
         writer.write(')');

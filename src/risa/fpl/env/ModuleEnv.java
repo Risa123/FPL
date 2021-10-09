@@ -33,7 +33,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
-    private final ArrayList<InstanceInfo>templateInstances = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
@@ -143,7 +142,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public void addTemplateInstance(InstanceInfo type){
       if(!type.isPrimitive() && type.notIn(typesForDeclarations)){
          addTypesForDeclaration(type);
-         templateInstances.add(type);
       }
     }
     public void requestFromOutSide(){
@@ -200,18 +198,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    return mainDeclared == AThreePassBlock.MAX_PASSES;
     }
     public void declareTypes(BufferedWriter writer)throws IOException{
-        for(var type:templateInstances){
-            for(var rt:type.getRequiredTypes()){
-                if(rt.getDeclaration().isEmpty()){
-                    for(var mType:types.values()){
-                        if(rt == mType){
-                            rt.setDeclaration(mType.getDeclaration());
-                            break;
-                        }
-                    }
-                }
-            }
-        }
         var declared = new ArrayList<TypeInfo>();
         var b = new BuilderWriter();
         while(!typesForDeclarations.isEmpty()){
@@ -309,5 +295,16 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public String getDeclarationCode(){
         return declarationCode;
+    }
+    /**
+     * adds all required types declared after generation of template type
+     */
+    public void updateTypesForDeclaration(){
+        var copy = new ArrayList<>(typesForDeclarations);
+        for(var type:copy){
+            for(var t:type.getRequiredTypes()){
+                addTypesForDeclaration(t);
+            }
+        }
     }
 }

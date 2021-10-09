@@ -68,8 +68,7 @@ public class Fn extends AFunctionBlock{
         }else{
             headWriter.write(returnType.getCname());
         }
-        headWriter.write(' ');
-        headWriter.write(cID);
+        headWriter.write(' ' + cID);
         if(!env.hasModifier(Modifier.NATIVE)){
            if(env.hasFunctionInCurrentEnv(id.getValue()) && env.getFunction(id) instanceof  Function f){
                headWriter.write(Integer.toString(f.getVariants().size()));

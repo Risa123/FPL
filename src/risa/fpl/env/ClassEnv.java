@@ -60,6 +60,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             }else{
                 instanceType = new InstanceInfo(id,superEnv,nameSpace);
             }
+            classType.addField("alloc",new Function("alloc",new PointerInfo(instanceType),AccessModifier.PUBLIC));
+            classType.addField("new",new Function("new",instanceType,AccessModifier.PUBLIC));
             instanceType.setClassInfo(classType);
             //checking if not generating from template to prevent generated type from displacing the template
             if(templateStatus != TemplateStatus.GENERATING){
@@ -153,6 +155,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         ((ANameSpacedEnv)superEnv).addTemplateInstance(type);
     }
     public void appendDeclarations(){
+        for(var field:classType.getFields().values()){
+            if(field instanceof Function f){
+              appendFunctionDeclaration(f);
+            }
+        }
         if(!(instanceType instanceof TemplateTypeInfo)){
             instanceType.setMethodDeclarations(getFunctionDeclarations());
         }
@@ -225,15 +232,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public AEnv getSuperEnv(){
 	    return superEnv;
     }
-    public void compileNewAndAlloc(BuilderWriter writer, TypeInfo[]args, InstanceVar constructor){
+    public void compileNewAndAlloc(BuilderWriter writer,TypeInfo[]args,InstanceVar constructor){
         var allocName = "static" + getNameSpace() + "_alloc";
-        Function allocMethod;
-        if(classType.getFieldFromThisType("alloc") instanceof Function tmp){
-            allocMethod = tmp;
-        }else{
-            allocMethod = new Function("alloc",new PointerInfo(instanceType),AccessModifier.PUBLIC);
-            classType.addField("alloc",allocMethod);
-        }
+        var allocMethod = (Function)classType.getFieldFromThisType("alloc");
         allocMethod.addStaticVariant(args,allocName);
         writer.write(instanceType.getCname() + "* " + allocMethod.getVariant(args).cname() + "(");
         var first = true;
@@ -252,20 +253,12 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         writer.write(constructorCall(constructor,"p",args));
         writer.write("return p;\n}\n");
         var newName = "static" + nameSpace + "_new";
-        Function newMethod;
-        if(classType.getFieldFromThisType("new") instanceof Function tmp){
-            newMethod = tmp;
-        }else{
-            newMethod = new Function("new",instanceType,AccessModifier.PUBLIC);
-            classType.addField("new",newMethod);
-        }
+        var newMethod = (Function)classType.getFieldFromThisType("new");
         newMethod.addStaticVariant(args,newName);
         writer.write(instanceType.getCname() + " " + newMethod.getVariant(args).cname() + "(" + compiledArgs + "){\n");
         writer.write(instanceType.getCname() + " inst;\n");
         writer.write(constructorCall(constructor,"&inst",args));
         writer.write("return inst;\n}\n");
-        appendFunctionDeclaration(newMethod);
-        appendFunctionDeclaration(allocMethod);
     }
     private String constructorCall(Function constructor, String self, TypeInfo[]args){
         var b = new StringBuilder();

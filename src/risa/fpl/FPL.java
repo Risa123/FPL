@@ -89,6 +89,7 @@ public final class FPL{
         }
     	for(var tData:templateCompData){
     	    try(var w = Files.newBufferedWriter(tData.path())){
+                tData.module().updateTypesForDeclaration();
     	        tData.module().declareTypes(w);
                 w.write(tData.code());
             }
