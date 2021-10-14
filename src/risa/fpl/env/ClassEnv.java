@@ -7,14 +7,14 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.AddModifier;
 import risa.fpl.function.SetAccessModifier;
-import risa.fpl.function.block.Constructor;
-import risa.fpl.function.block.CopyConstructor;
-import risa.fpl.function.block.Destructor;
+import risa.fpl.function.block.*;
 import risa.fpl.function.exp.*;
 import risa.fpl.function.statement.InstanceVar;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
+
+import java.util.ArrayList;
 
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
@@ -26,6 +26,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implCopyConstructorCode = new StringBuilder();
 	private final StringBuilder defaultCopyConstructorCode = new StringBuilder();
 	private boolean parentConstructorCalled,destructorDeclared,copyConstructorDeclared;
+    private ArrayList<ExpressionInfo> block;
 	private static final SetAccessModifier PROTECTED = new SetAccessModifier(AccessModifier.PROTECTED);
 	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
 	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
@@ -50,8 +51,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         dataType = cname + "_data_type";
         dataName = nameSpace + "_data";
-		if(superEnv.hasTypeInCurrentEnv(id)){
-            instanceType = (InstanceInfo)superEnv.types.get(id);
+		if(superEnv.types.get(id) instanceof InstanceInfo i){
+            instanceType = i;
             classType = instanceType.getClassInfo();
         }else{
             classType = new ClassInfo(id,dataName);
@@ -120,9 +121,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
          if(method.getType() != FunctionType.ABSTRACT){
              appendFunctionCode(code);
          }
-         if(method.getAccessModifier() != AccessModifier.PRIVATE){
-             appendFunctionDeclaration(method);
-         }
          if(method.isVirtual()){
          	 var parent = instanceType.getPrimaryParent();
          	 if(parent != null && parent.getField(method.getName(),this) instanceof Function){
@@ -160,6 +158,13 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
               appendFunctionDeclaration(f);
             }
         }
+        for(var field:instanceType.getFields().values()){
+            if(field instanceof Function f){
+                if(f.getAccessModifier() != AccessModifier.PRIVATE){
+                    appendFunctionDeclaration(f);
+                }
+            }
+        }
         if(!(instanceType instanceof TemplateTypeInfo)){
             instanceType.setMethodDeclarations(getFunctionDeclarations());
         }
@@ -177,13 +182,23 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public String getDataDeclaration(){
 	    var b = new StringBuilder("typedef struct ");
-	    instanceType.setImplCode(implBuilder.toString());
+        var builder = new StringBuilder();
+        for(var field:instanceType.getFields().values()){
+            if(field instanceof Function f && f.isVirtual()){
+                var parent = instanceType.getPrimaryParent();
+                if(parent == null || parent.getFieldFromThisType(f.getName()) == null){
+                    builder.append(new FunctionInfo(f).getPointerVariableDeclaration(f.getPointerVariant().implName()));
+                    builder.append(";\n");
+                }
+            }
+        }
+	    instanceType.setImplCode(builder.toString());
         var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
 	    b.append(dataType).append("{\nunsigned long size;\n");
 	    if(primaryParent != null){
 	        b.append(primaryParent.getImplCode());
         }
-	    b.append(implBuilder).append('}').append(dataType).append(";\n");
+	    b.append(builder).append('}').append(dataType).append(";\n");
 	    return b.toString();
     }
     public String getImplOf(InterfaceInfo i){
@@ -281,7 +296,21 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public String getImplicitCopyConstructorCode(){
 	    return implCopyConstructorCode.toString();
     }
+    @Override
+    public String getFunctionCode(){
+        return instanceType.getMethodCode();
+    }
+    @Override
+    public void appendFunctionCode(String code){
+        instanceType.appendMethodCode(code);
+    }
     public String getDefaultCopyConstructorCode(){
 	    return defaultCopyConstructorCode.toString();
+    }
+    public void setBlock(ArrayList<ExpressionInfo>block){
+        this.block = block;
+    }
+    public ArrayList<ExpressionInfo>getBlock(){
+        return block;
     }
 }

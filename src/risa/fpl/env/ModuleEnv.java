@@ -307,4 +307,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             }
         }
     }
+    public ModuleBlock getModuleBlock(){
+        return moduleBlock;
+    }
 }

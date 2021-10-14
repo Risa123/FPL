@@ -11,6 +11,7 @@ import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
+import risa.fpl.function.exp.Variable;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -18,6 +19,16 @@ import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
 public final class ClassBlock extends AThreePassBlock implements IFunction{
+    private ClassEnv getEnv(ModuleEnv modEnv,String id,TemplateStatus templateStatus){
+        for(var classEnv:modEnv.getModuleBlock().getClassEnvList()){
+            if(classEnv.getInstanceType().getName().equals(id)){
+                return classEnv;
+            }
+        }
+        var env = new ClassEnv(modEnv,id,templateStatus);
+        modEnv.getModuleBlock().getClassEnvList().add(env);
+        return env;
+    }
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum) throws IOException,CompilerException{
 		if(!(env instanceof ModuleEnv modEnv)){
@@ -34,10 +45,10 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		LinkedHashMap<String,TypeInfo>templateArgs = null;
         ClassEnv cEnv;
 		if(it.checkTemplate()){
-            cEnv = new ClassEnv(modEnv,idV,TemplateStatus.TEMPLATE);
+            cEnv = getEnv(modEnv,idV,TemplateStatus.TEMPLATE);
 		    templateArgs = IFunction.parseTemplateArguments(it,cEnv);
         }else{
-		    cEnv = new ClassEnv(modEnv,idV,TemplateStatus.INSTANCE);
+		    cEnv = getEnv(modEnv,idV,TemplateStatus.INSTANCE);
         }
         while(it.hasNext()){
             var exp = it.next();
@@ -98,20 +109,36 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             b.write(i.getAttributesCode());
         }
         var attributes = new BuilderWriter();
+        ArrayList<ExpressionInfo>infos;
+        if(cEnv.getBlock() == null){
+            infos = new ArrayList<>(block.getExps().size());
+            for (var exp:block.getExps()) {
+                infos.add(new ExpressionInfo(exp));
+            }
+            cEnv.setBlock(infos);
+        }else{
+            infos = cEnv.getBlock();
+        }
         try{
-            compile(attributes,cEnv,block);
+            compile(new BuilderWriter(),cEnv,infos);
         }catch(CompilerException ex){
             ex.setSourceFile("");
             throw ex;
         }
-        var attrCode = new StringBuilder();
-        for(var line:attributes.getCode().lines().toArray()){
-            if(!line.equals(";")){
-                attrCode.append(line).append("\n");
+        for(var field:type.getFields().values()){
+            if(field instanceof Variable v && !v.getCname().equals("objectData")){
+               if(v.getType() instanceof FunctionInfo f){
+                   attributes.write(f.getPointerVariableDeclaration(v.getCname()));
+               }else{
+                   if(v.getType() instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
+                       attributes.write("struct ");
+                   }
+                   attributes.write(v.getType().getCname() + " " + v.getCname() + ";\n");
+               }
             }
         }
-        cEnv.getInstanceType().setAttributesCode(attrCode.toString());
-        b.write(attrCode.toString());
+        cEnv.getInstanceType().setAttributesCode(attributes.getCode());
+        b.write(attributes.getCode());
         //parent type doesn't have implicit constructor
         if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
             for(var v:i.getConstructor().getVariants()){

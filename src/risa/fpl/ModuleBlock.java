@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
+import risa.fpl.env.ClassEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.exp.Function;
@@ -22,6 +24,7 @@ public final class ModuleBlock extends AThreePassBlock{
    private final List exps;
    private ModuleEnv env;
    private final FPL fpl;
+   private final ArrayList<ClassEnv>classEnvList = new ArrayList<>();
    public ModuleBlock(Path sourceFile,Path srcDir,FPL fpl)throws IOException,CompilerException{
        var subPath = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount());
        this.sourceFile = subPath.toString();
@@ -144,5 +147,8 @@ public final class ModuleBlock extends AThreePassBlock{
    }
    public void setString(TypeInfo string){
        fpl.setString(string);
+   }
+   public ArrayList<ClassEnv>getClassEnvList(){
+       return classEnvList;
    }
 }
