@@ -11,7 +11,7 @@ public final class ExpressionInfo{
     public ExpressionInfo(AExp exp){
         this.exp = exp;
     }
-    public void reactToException(CompilerException ex){
+    public void setLastEx(CompilerException ex){
         lastEx = ex;
         writer = new BuilderWriter();
     }

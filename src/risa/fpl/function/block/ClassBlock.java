@@ -128,7 +128,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         for(var field:type.getFields().values()){
             if(field instanceof Variable v && !v.getCname().equals("objectData")){
                if(v.getType() instanceof FunctionInfo f){
-                   attributes.write(f.getPointerVariableDeclaration(v.getCname()));
+                   attributes.write(f.getPointerVariableDeclaration(v.getCname()) + ";\n");
                }else{
                    if(v.getType() instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
                        attributes.write("struct ");
@@ -223,7 +223,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             writer.write(cEnv.getDataDefinition());
         }
         if(templateStatus != TemplateStatus.TEMPLATE){
-            modEnv.appendFunctionDeclarations(cEnv.getFunctionDeclarations());
+            modEnv.appendFunctionDeclaration(cEnv.getFunctionDeclarations());
             modEnv.appendFunctionCode(cEnv.getDestructor());
             if(type.getDestructorName() != null){
                 cEnv.appendFunctionCode("void " + type.getInstanceFree() + "(" + type.getCname() + "* this){\n");

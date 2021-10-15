@@ -18,3 +18,4 @@ fix compilation caught in infinite loop
 fix pointer to template instance
 fix type used as template argument in module in which is declared C error
 fix unknown type C error
+fix try-catch-finally segfault

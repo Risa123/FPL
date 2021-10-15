@@ -135,6 +135,9 @@ public class Fn extends AFunctionBlock{
             if(env instanceof ClassEnv e && !e.isAbstract()){
                 throw new CompilerException(line,tokenNum,"abstract method can only be declared in abstract class");
             }
+            if(env.getAccessModifier() == AccessModifier.PRIVATE){
+                throw new CompilerException(line,tokenNum,"abstract function can't be private");
+            }
         }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
             type = FunctionType.VIRTUAL;
             implName = IFunction.toCId(id.getValue());

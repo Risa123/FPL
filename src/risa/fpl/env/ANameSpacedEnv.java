@@ -45,7 +45,7 @@ public abstract class ANameSpacedEnv extends SubEnv{
     public void appendFunctionDeclaration(Function func){
         functionDeclarations.append(func.getDeclaration());
     }
-    public final void appendFunctionDeclarations(String code){
+    public final void appendFunctionDeclaration(String code){
         functionDeclarations.append(code);
     }
     public void appendToDestructor(String code){

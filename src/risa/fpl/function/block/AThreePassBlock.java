@@ -33,7 +33,7 @@ public abstract class AThreePassBlock{
                     if(!exps.isEmpty() && exps.get(0) instanceof Atom a && a.getValue().equals("use") && this instanceof ModuleBlock){
                         throw e;
                     }
-                    info.reactToException(e);
+                    info.setLastEx(e);
                 }
             }
         }

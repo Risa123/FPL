@@ -3,14 +3,11 @@ package risa.fpl.info;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.exp.Cast;
 import risa.fpl.function.exp.GetObjectInfo;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.function.statement.InstanceVar;
-
-import java.util.ArrayList;
 
 public class InstanceInfo extends TypeInfo{
     private String attributesCode,implCode,destructorName,instanceFree,copyConstructorName;
@@ -19,8 +16,6 @@ public class InstanceInfo extends TypeInfo{
     private InstanceVar constructor;
     private final String toPointerName;
     private String methodDeclarations = "";
-    private final StringBuilder methodCode = new StringBuilder();
-    private ArrayList<AThreePassBlock.ExpInfo> block;
     public InstanceInfo(String name,ModuleEnv module,String nameSpace){
         super(name,IFunction.toCId(name));
         this.module = module;
@@ -111,17 +106,5 @@ public class InstanceInfo extends TypeInfo{
             return i.isException();
         }
         return false;
-    }
-    public void appendMethodCode(String code){
-        methodCode.append(code);
-    }
-    public String getMethodCode(){
-        return methodCode.toString();
-    }
-    public ArrayList<AThreePassBlock.ExpInfo> getBlock(){
-        return block;
-    }
-    public void setBlock(ArrayList<AThreePassBlock.ExpInfo> block){
-        this.block = block;
     }
 }

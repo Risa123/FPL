@@ -51,25 +51,20 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         dataType = cname + "_data_type";
         dataName = nameSpace + "_data";
-		if(superEnv.types.get(id) instanceof InstanceInfo i){
-            instanceType = i;
-            classType = instanceType.getClassInfo();
+        classType = new ClassInfo(id,dataName);
+        if(templateStatus == TemplateStatus.TEMPLATE){
+            instanceType = new TemplateTypeInfo(id,superEnv,nameSpace);
         }else{
-            classType = new ClassInfo(id,dataName);
-            if(templateStatus == TemplateStatus.TEMPLATE){
-                instanceType = new TemplateTypeInfo(id,superEnv,nameSpace);
-            }else{
-                instanceType = new InstanceInfo(id,superEnv,nameSpace);
-            }
-            classType.addField("alloc",new Function("alloc",new PointerInfo(instanceType),AccessModifier.PUBLIC));
-            classType.addField("new",new Function("new",instanceType,AccessModifier.PUBLIC));
-            instanceType.setClassInfo(classType);
-            //checking if not generating from template to prevent generated type from displacing the template
-            if(templateStatus != TemplateStatus.GENERATING){
-                superEnv.addType(id,instanceType);
-            }
-            instanceType.setConstructor(new InstanceVar(instanceType,classType));
+            instanceType = new InstanceInfo(id,superEnv,nameSpace);
         }
+        classType.addField("alloc",new Function("alloc",new PointerInfo(instanceType),AccessModifier.PUBLIC));
+        classType.addField("new",new Function("new",instanceType,AccessModifier.PUBLIC));
+        instanceType.setClassInfo(classType);
+        //checking if not generating from template to prevent generated type from displacing the template
+        if(templateStatus != TemplateStatus.GENERATING){
+            superEnv.addType(id,instanceType);
+        }
+        instanceType.setConstructor(new InstanceVar(instanceType,classType));
 		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
 	}
 	@Override
@@ -182,23 +177,13 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public String getDataDeclaration(){
 	    var b = new StringBuilder("typedef struct ");
-        var builder = new StringBuilder();
-        for(var field:instanceType.getFields().values()){
-            if(field instanceof Function f && f.isVirtual()){
-                var parent = instanceType.getPrimaryParent();
-                if(parent == null || parent.getFieldFromThisType(f.getName()) == null){
-                    builder.append(new FunctionInfo(f).getPointerVariableDeclaration(f.getPointerVariant().implName()));
-                    builder.append(";\n");
-                }
-            }
-        }
-	    instanceType.setImplCode(builder.toString());
+	    instanceType.setImplCode(implBuilder.toString());
         var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
 	    b.append(dataType).append("{\nunsigned long size;\n");
 	    if(primaryParent != null){
 	        b.append(primaryParent.getImplCode());
         }
-	    b.append(builder).append('}').append(dataType).append(";\n");
+	    b.append(implBuilder).append('}').append(dataType).append(";\n");
 	    return b.toString();
     }
     public String getImplOf(InterfaceInfo i){
@@ -263,15 +248,17 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             b.append(args[i].getCname()).append(" a").append(i);
         }
         var compiledArgs = b.toString();
-        writer.write(compiledArgs + "){\n" + instanceType.getCname() + "* p=malloc(sizeof(");
-        writer.write(instanceType.getCname() + "));\n");
+        var cname = instanceType.getCname();
+        writer.write(compiledArgs + "){\n void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
+        writer.write(cname + "* p=malloc(sizeof(");
+        writer.write(cname + "));\n");
         writer.write(constructorCall(constructor,"p",args));
         writer.write("return p;\n}\n");
         var newName = "static" + nameSpace + "_new";
         var newMethod = (Function)classType.getFieldFromThisType("new");
         newMethod.addStaticVariant(args,newName);
-        writer.write(instanceType.getCname() + " " + newMethod.getVariant(args).cname() + "(" + compiledArgs + "){\n");
-        writer.write(instanceType.getCname() + " inst;\n");
+        writer.write(cname + " " + newMethod.getVariant(args).cname() + "(" + compiledArgs + "){\n");
+        writer.write(cname + " inst;\n");
         writer.write(constructorCall(constructor,"&inst",args));
         writer.write("return inst;\n}\n");
     }
@@ -295,14 +282,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public String getImplicitCopyConstructorCode(){
 	    return implCopyConstructorCode.toString();
-    }
-    @Override
-    public String getFunctionCode(){
-        return instanceType.getMethodCode();
-    }
-    @Override
-    public void appendFunctionCode(String code){
-        instanceType.appendMethodCode(code);
     }
     public String getDefaultCopyConstructorCode(){
 	    return defaultCopyConstructorCode.toString();

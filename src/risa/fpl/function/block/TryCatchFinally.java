@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public final class TryCatchFinally extends ABlock{
+    private static TypeInfo exception;
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var postEntry = new BuilderWriter();
@@ -26,11 +27,11 @@ public final class TryCatchFinally extends ABlock{
             case "x86"->"_setjmp3";
             case "ia64"->"__mingw_setjmp";
             case "amd64"->"_setjmp";
-            default ->throw new RuntimeException("unsupported architecture:" + arch);
+            default->throw new RuntimeException("unsupported architecture:" + arch);
         });
         postEntry.write("(_std_lang_currentThread->_currentEHEntry->_context");
         switch(arch){
-            case "x86"->postEntry.write(",nil");
+            case "x86"->postEntry.write(",0");
             case "amd64"->postEntry.write(",__builtin_frame_address(0)");
         }
         postEntry.write(")){\n");
@@ -44,7 +45,9 @@ public final class TryCatchFinally extends ABlock{
         var finallyCode = "";
         var finallyEnv = new FnSubEnv(env);
         var exDataNames = new ArrayList<String>();
-        var exception = env.getType(new Atom(0,0,"Exception",TokenType.ID));
+        if(exception == null){
+            exception = env.getType(new Atom(0,0,"Exception",TokenType.ID));
+        }
         while(it.hasNext()){
             var exp = it.peek();
             if(exp instanceof Atom blockName && blockName.getType() == TokenType.ID){
@@ -119,9 +122,7 @@ public final class TryCatchFinally extends ABlock{
                 writer.write(',');
             }
         }
-        writer.write("};\n");
-        writer.write("_std_lang_Thread_addEHEntry0(_std_lang_currentThread,types," + exDataNames.size() + ");\n");
-        writer.write("}\n");
+        writer.write("};\n_std_lang_Thread_addEHEntry0(_std_lang_currentThread,types," + exDataNames.size() + ");\n}\n");
         writer.write(postEntry.getCode());
         return TypeInfo.VOID;
     }
