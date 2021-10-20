@@ -49,11 +49,10 @@ public final class TryCatchFinally extends ABlock{
             exception = env.getType(new Atom(0,0,"Exception",TokenType.ID));
         }
         while(it.hasNext()){
-            var exp = it.peek();
-            if(exp instanceof Atom blockName && blockName.getType() == TokenType.ID){
+            if(it.peek() instanceof Atom blockName && blockName.getType() == TokenType.ID){
                 if(blockName.getValue().equals("catch")){
                     if(hasFin){
-                        throw new CompilerException(exp,"catch can only come before finally");
+                        throw new CompilerException(blockName,"catch can only come before finally");
                     }
                     it.next();
                     List block;

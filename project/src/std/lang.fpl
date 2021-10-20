@@ -13,11 +13,6 @@ class String{
     this p = p
     this allocated = allocated
   }
-  this{
-   p = nil
-   len = 0
-   allocated = false
-  }
   -this{
     if allocated{
        p free
@@ -132,8 +127,7 @@ class Exception{
        currentThread exceptionHandler drf this
        return
      }
-     native fn void* malloc memory size
-     currentThread exception = malloc getObjectSize;cast Exception*
+     currentThread exception = std.backend.malloc getObjectSize;cast Exception*
      if currentThread exception == nil{
         print "unable to allocate exception"
         exit 1
@@ -162,7 +156,7 @@ class Thread{
         currentEHEntry exceptionTypes = exceptionTypes
         currentEHEntry exceptionTypesLen = exceptionTypesLen
     }
-    fn void removeEHEntry{#exceptionTypes is not dynamically allocated
+    fn void removeEHEntry{ #exceptionTypes is not dynamically allocated
       var prev currentEHEntry prev
       currentEHEntry free
       currentEHEntry = prev
@@ -182,9 +176,7 @@ class Thread{
  }
  fn void setName String name = this name = name
  fn String getName = name
- fn void setExceptionHandler ExceptionHandlerType exceptionHandler{
-   this exceptionHandler = exceptionHandler
- }
+ fn void setExceptionHandler ExceptionHandlerType exceptionHandler = this exceptionHandler = exceptionHandler
 }
 Thread* currentThread #initailized in main block
 fn void defaultExceptionHandler Exception* ex{

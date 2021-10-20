@@ -33,7 +33,7 @@ public final class Return implements IFunction{
 				throw new CompilerException(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
 			}
 			var code = returnType.ensureCast(subEnv.getReturnType(),buffer.getCode());
-			if(subEnv.getToPointerVarID() != 0){//no destructor calls needed
+			if(subEnv.getToPointerVarID() != 0 || returnType.isPrimitive()){//no destructor calls needed
 				expCode = code;
 			}else{
 				expCode = "tmp";

@@ -88,9 +88,7 @@ fn void;T; free[] T* this memory len{
  }
  free this cast void*
 }
-fn void free[] void* p memory len{
-  free p
-}
+fn void free[] void* p memory len = free p
 alias directoryOpen opendir
 alias directoryClose closedir
 alias directoryTell telldir

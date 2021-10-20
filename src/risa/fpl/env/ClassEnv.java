@@ -26,7 +26,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implCopyConstructorCode = new StringBuilder();
 	private final StringBuilder defaultCopyConstructorCode = new StringBuilder();
 	private boolean parentConstructorCalled,destructorDeclared,copyConstructorDeclared;
-    private ArrayList<ExpressionInfo> block;
+    private ArrayList<ExpressionInfo>block;
 	private static final SetAccessModifier PROTECTED = new SetAccessModifier(AccessModifier.PROTECTED);
 	private static final SetAccessModifier INTERNAL = new SetAccessModifier(AccessModifier.INTERNAL);
 	private static final AddModifier VIRTUAL = new AddModifier(Modifier.VIRTUAL);
@@ -249,7 +249,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         var compiledArgs = b.toString();
         var cname = instanceType.getCname();
-        writer.write(compiledArgs + "){\n void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
+        writer.write(compiledArgs + "){\n");
         writer.write(cname + "* p=malloc(sizeof(");
         writer.write(cname + "));\n");
         writer.write(constructorCall(constructor,"p",args));
