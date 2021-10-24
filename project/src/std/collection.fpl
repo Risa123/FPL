@@ -104,4 +104,5 @@ class Map;K V{
     }
     Exception:new "map has no entry for key";throw
   }
+  fn void clear = entries clear
 }

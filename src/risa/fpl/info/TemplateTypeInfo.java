@@ -54,7 +54,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            var writer = Files.newBufferedWriter(path);
            var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
            var name = getName() + nameBuilder;
-           var cEnv = new ClassEnv(mod, name,TemplateStatus.GENERATING);
+           var cEnv = new ClassEnv(mod, name,TemplateStatus.GENERATING,false);
            if(argsInfo.size() != templateArgs.size()){
                //space to make the number separate form line:tokenNum
                throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + argsInfo.size());
@@ -68,7 +68,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                }
            }
            mod.importModules();
-           new ClassBlock().compileClassBlock(writer,cEnv,mod,new Atom(0,0, name,TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
+           new ClassBlock(false).compileClassBlock(writer,cEnv,mod,new Atom(0,0, name,TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
            type = cEnv.getInstanceType();
            Files.delete(path);
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){

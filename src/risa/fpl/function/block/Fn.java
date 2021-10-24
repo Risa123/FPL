@@ -288,6 +288,9 @@ public class Fn extends AFunctionBlock{
             env.addFunction("&" + id,new FunctionReference(p));
             env.addType(id.getValue(),p,false);
         }
+        if(type == FunctionType.NATIVE && env instanceof FnSubEnv){
+            appendSemicolon = false;
+        }
         env.addFunction(id.getValue(),f);
 		return TypeInfo.VOID;
 	}

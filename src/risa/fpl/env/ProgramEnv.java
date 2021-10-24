@@ -2,7 +2,6 @@ package risa.fpl.env;
 
 import risa.fpl.FPL;
 import risa.fpl.function.*;
-import risa.fpl.function.block.StructBlock;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.function.block.Fn;
 import risa.fpl.function.block.InterfaceBlock;
@@ -21,7 +20,7 @@ public final class ProgramEnv extends AEnv{
       addFunction("abstract",new AddModifier(Modifier.ABSTRACT));
       addFunction("interface",new InterfaceBlock());
       addFunction("fpointer",new FPointer());
-      addFunction("struct",new StructBlock());
+      addFunction("struct",new ClassBlock(true));
       addFunction("compIf",new CompileTimeIf());
       addFunction("asm",new Asm());
       addFunction("typedef",new Typedef());
@@ -31,7 +30,7 @@ public final class ProgramEnv extends AEnv{
       addFunction("use",new Use());
       addFunction("true",new ValueExp(TypeInfo.BOOL,"1"));
       addFunction("false",new ValueExp(TypeInfo.BOOL,"0"));
-      addFunction("class",new ClassBlock());
+      addFunction("class",new ClassBlock(false));
       addFunction("var",new Var(null));
       addFunction("[]",new Array());
       addFunction("alias",new Alias());

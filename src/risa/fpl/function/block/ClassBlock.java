@@ -19,13 +19,17 @@ import risa.fpl.parser.List;
 import risa.fpl.tokenizer.TokenType;
 
 public final class ClassBlock extends AThreePassBlock implements IFunction{
+    private final boolean struct;
+    public ClassBlock(boolean struct){
+       this.struct = struct;
+    }
     private ClassEnv getEnv(ModuleEnv modEnv,String id,TemplateStatus templateStatus){
         for(var classEnv:modEnv.getModuleBlock().getClassEnvList()){
             if(classEnv.getInstanceType().getName().equals(id)){
                 return classEnv;
             }
         }
-        var env = new ClassEnv(modEnv,id,templateStatus);
+        var env = new ClassEnv(modEnv,id,templateStatus,struct);
         modEnv.getModuleBlock().getClassEnvList().add(env);
         return env;
     }
@@ -82,6 +86,9 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                     }else{
                         throw new CompilerException(typeID,"can only inherit from other classes");
                     }
+                    if(struct){
+                        throw new CompilerException(line,tokenNum,"struct cannot inherit");
+                    }
                     cEnv.setPrimaryParent(parentType);
                 }
             }
@@ -104,7 +111,10 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         var type = cEnv.getInstanceType();
         var parentType = type.getPrimaryParent();
         var cID = IFunction.toCId(id.getValue());
-        b.write("typedef struct "+ cID + "{\nvoid* objectData;\n");
+        b.write("typedef struct "+ cID + "{\n");
+        if(!struct){
+            b.write("void* objectData;\n");
+        }
         if(parentType instanceof InstanceInfo i){
             b.write(i.getAttributesCode());
         }

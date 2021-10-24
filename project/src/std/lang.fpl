@@ -94,7 +94,7 @@ fn void checkStringIndex uint len uint index{
        Exception:new "index out of bounds:" + integerToString index;;;throw
     }
  }
-class EHEntry{
+struct EHEntry{
    EHEntry* prev
    Context context
    void** exceptionTypes

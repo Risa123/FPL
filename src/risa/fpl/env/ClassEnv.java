@@ -25,6 +25,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implBuilder = new StringBuilder();
 	private final StringBuilder implCopyConstructorCode = new StringBuilder();
 	private final StringBuilder defaultCopyConstructorCode = new StringBuilder();
+    private final boolean struct;
 	private boolean parentConstructorCalled,destructorDeclared,copyConstructorDeclared;
     private ArrayList<ExpressionInfo>block;
 	private static final SetAccessModifier PROTECTED = new SetAccessModifier(AccessModifier.PROTECTED);
@@ -34,12 +35,14 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private static final Destructor DESTRUCTOR = new Destructor();
 	private static final Constructor CONSTRUCTOR = new Constructor();
 	private static final CopyConstructor COPY_CONSTRUCTOR = new CopyConstructor();
-	public ClassEnv(ModuleEnv superEnv,String id,TemplateStatus templateStatus){
+	public ClassEnv(ModuleEnv superEnv,String id,TemplateStatus templateStatus,boolean struct){
 		super(superEnv);
 		super.addFunction("this",CONSTRUCTOR);
 		super.addFunction("protected",PROTECTED);
-		super.addFunction("virtual",VIRTUAL);
-		super.addFunction("override",OVERRIDE);
+		if(!struct){
+            super.addFunction("virtual",VIRTUAL);
+            super.addFunction("override",OVERRIDE);
+        }
 		super.addFunction("internal",INTERNAL);
 		super.addFunction("-this",DESTRUCTOR);
 		super.addFunction("=this",COPY_CONSTRUCTOR);
@@ -52,6 +55,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         dataType = cname + "_data_type";
         dataName = nameSpace + "_data";
         classType = new ClassInfo(id,dataName);
+        this.struct = struct;
         if(templateStatus == TemplateStatus.TEMPLATE){
             instanceType = new TemplateTypeInfo(id,superEnv,nameSpace);
         }else{
@@ -65,7 +69,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             superEnv.addType(id,instanceType);
         }
         instanceType.setConstructor(new InstanceVar(instanceType,classType));
-		appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
+        if(!struct){
+            appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
+        }
 	}
 	@Override
 	public void addFunction(String name,IFunction value){
@@ -101,12 +107,15 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         if(primaryParent != null && primaryParent.getConstructor().hasVariant(new TypeInfo[0])){
             additionalCode += primaryParent.getConstructor().getVariant(new TypeInfo[0]).cname() + "((" + primaryParent.getCname() + "*)this);\n";
         }
-	    if(!isAbstract()){
+	    if(!isAbstract() && !struct){
 	        additionalCode += "this->objectData=&" + dataName + ";\n";
 	     }
 		return additionalCode + implicitConstructor;
 	}
 	public String getImplicitConstructor(){
+        if(struct){
+            return "";
+        }
         return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init0(" + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
     }
     public void addMethod(Function method,TypeInfo[] args,String code){
@@ -176,20 +185,26 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    return superEnv.hasModifier(Modifier.ABSTRACT);
     }
     public String getDataDeclaration(){
-	    var b = new StringBuilder("typedef struct ");
-	    instanceType.setImplCode(implBuilder.toString());
-        var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
-	    b.append(dataType).append("{\nunsigned long size;\n");
-	    if(primaryParent != null){
-	        b.append(primaryParent.getImplCode());
+        if(struct){
+            return "";
         }
-	    b.append(implBuilder).append('}').append(dataType).append(";\n");
-	    return b.toString();
+        var b = new StringBuilder("typedef struct ");
+        instanceType.setImplCode(implBuilder.toString());
+        var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
+        b.append(dataType).append("{\nunsigned long size;\n");
+        if(primaryParent != null){
+            b.append(primaryParent.getImplCode());
+        }
+        b.append(implBuilder).append('}').append(dataType).append(";\n");
+        return b.toString();
     }
     public String getImplOf(InterfaceInfo i){
 	    return instanceType.getCname() + i.getCname() + "_impl";
     }
     public String getDataDefinition(){
+        if(struct){
+            return "";
+        }
         return dataType + ' ' + dataName + ";\n";
     }
     public void parentConstructorCalled(){
@@ -250,19 +265,26 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var compiledArgs = b.toString();
         var cname = instanceType.getCname();
         writer.write(compiledArgs + "){\n");
-        writer.write(cname + "* p=malloc(sizeof(");
-        writer.write(cname + "));\n");
-        writer.write(constructorCall(constructor,"p",args));
-        writer.write("return p;\n}\n");
+        if(struct && implicitConstructor.isEmpty()){
+            writer.write("return malloc(sizeof(" + cname + "))");
+        }else{
+            writer.write(cname + "* p=malloc(sizeof(");
+            writer.write(cname + "));\n");
+            writer.write(constructorCall(constructor,"p",args));
+            writer.write("return p");
+        }
+        writer.write(";\n}\n");
         var newName = "static" + nameSpace + "_new";
         var newMethod = (Function)classType.getFieldFromThisType("new");
         newMethod.addStaticVariant(args,newName);
         writer.write(cname + " " + newMethod.getVariant(args).cname() + "(" + compiledArgs + "){\n");
         writer.write(cname + " inst;\n");
-        writer.write(constructorCall(constructor,"&inst",args));
+        if(!struct && implicitConstructor.isEmpty()){
+            writer.write(constructorCall(constructor,"&inst",args));
+        }
         writer.write("return inst;\n}\n");
     }
-    private String constructorCall(Function constructor, String self, TypeInfo[]args){
+    private String constructorCall(Function constructor,String self,TypeInfo[]args){
         var b = new StringBuilder();
         var v = constructor.getVariant(args);
         b.append(v.cname()).append("(").append(self);
