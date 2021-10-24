@@ -21,19 +21,8 @@ public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var postEntry = new BuilderWriter();
-        postEntry.write("if(!");
-        var arch = System.getProperty("os.arch");
-        postEntry.write(switch(arch){
-            case "x86"->"_setjmp3";
-            case "ia64"->"__mingw_setjmp";
-            case "amd64"->"_setjmp";
-            default->throw new RuntimeException("unsupported architecture:" + arch);
-        });
+        postEntry.write("if(!__builtin_setjmp");
         postEntry.write("(_std_lang_currentThread->_currentEHEntry->_context");
-        switch(arch){
-            case "x86"->postEntry.write(",0");
-            case "amd64"->postEntry.write(",__builtin_frame_address(0)");
-        }
         postEntry.write(")){\n");
         var tryEnv = new FnSubEnv(env);
         var tmp = new BuilderWriter();

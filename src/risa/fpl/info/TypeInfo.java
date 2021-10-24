@@ -236,9 +236,6 @@ public class TypeInfo{
   public final IField getFieldFromThisType(String name){
       return fields.get(name);
   }
-  public final void setDeclaration(String declaration){
-      this.declaration = declaration;
-  }
   public final HashMap<String,IField>getFields(){
       return fields;
   }

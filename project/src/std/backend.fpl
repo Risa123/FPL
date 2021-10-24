@@ -57,18 +57,16 @@ alias fileFlush fflush
 fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
 compIf arch x64{
  typedef Context [] 32 memory
- fn void contextRestore Context context = longjmp context,1
- private native fn void longjmp Context context int value
 }
 compIf arch x86{
  typedef Context [] 16 memory
- private native fn void longjmp Context context int value
- fn void contextRestore Context context = longjmp context,1
 }
 compIf arch ia64{
  typedef Context [] 32 memory
- private native fn void __mingw_longjmp Context context int value
- fn void contextRestore Context context = __mingw_setjmp context,1
+}
+fn void contextRestore Context context{
+  native fn void __builtin_longjmp Context context int value
+  return __builtin_longjmp context,1
 }
 fn DirectoryEntry* directoryRead void* dir{
   var entry readdir dir
