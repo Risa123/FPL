@@ -113,10 +113,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		return additionalCode + implicitConstructor;
 	}
 	public String getImplicitConstructor(){
+        var header = IFunction.INTERNAL_METHOD_PREFIX +  nameSpace  + "_init0(";
         if(struct){
-            return "";
+            return "#define " + header + "this) //struct without implicit constructor\n";
         }
-        return "void " + IFunction.INTERNAL_METHOD_PREFIX +  nameSpace + "_init0(" + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
+        return "void " + header + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
     }
     public void addMethod(Function method,TypeInfo[] args,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
@@ -265,23 +266,16 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var compiledArgs = b.toString();
         var cname = instanceType.getCname();
         writer.write(compiledArgs + "){\n");
-        if(struct && implicitConstructor.isEmpty()){
-            writer.write("return malloc(sizeof(" + cname + "))");
-        }else{
-            writer.write(cname + "* p=malloc(sizeof(");
-            writer.write(cname + "));\n");
-            writer.write(constructorCall(constructor,"p",args));
-            writer.write("return p");
-        }
-        writer.write(";\n}\n");
+        writer.write(cname + "* p=malloc(sizeof(");
+        writer.write(cname + "));\n");
+        writer.write(constructorCall(constructor,"p",args));
+        writer.write("return p;\n}\n");
         var newName = "static" + nameSpace + "_new";
         var newMethod = (Function)classType.getFieldFromThisType("new");
         newMethod.addStaticVariant(args,newName);
         writer.write(cname + " " + newMethod.getVariant(args).cname() + "(" + compiledArgs + "){\n");
         writer.write(cname + " inst;\n");
-        if(!struct && implicitConstructor.isEmpty()){
-            writer.write(constructorCall(constructor,"&inst",args));
-        }
+        writer.write(constructorCall(constructor,"&inst",args));
         writer.write("return inst;\n}\n");
     }
     private String constructorCall(Function constructor,String self,TypeInfo[]args){

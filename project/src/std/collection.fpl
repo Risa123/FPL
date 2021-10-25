@@ -102,7 +102,12 @@ class Map;K V{
       }
       i ++
     }
-    Exception:new "map has no entry for key";throw
+    NoElementException:new "map has no entry for key";throw
   }
   fn void clear = entries clear
+  fn memory getSize = entries getSize
+  fn bool isEmpty = entries getSize; == 0
+}
+class NoElementException Exception{
+  this String message:message
 }
