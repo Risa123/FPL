@@ -2,7 +2,7 @@ use std.backend std.io.base std.io.file
 
 fn void exit int exitCode{
  native{
-    fn void _std_lang_Thread_freeEHEntries0 Thread* thread #should not be accessed publicly
+    fn void _std_lang_Thread_freeEHEntries0 Thread* thread
     String* args
  }
  args free

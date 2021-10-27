@@ -16,6 +16,7 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.function.statement.InstanceVar;
 import risa.fpl.info.InstanceInfo;
+import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.tokenizer.TokenType;
@@ -200,6 +201,11 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public void declareTypes(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
         var b = new BuilderWriter();
+        for(var type:types.values()){
+            if(type instanceof TemplateTypeInfo t){
+                t.setTypesForDeclaration(typesForDeclarations);
+            }
+        }
         while(!typesForDeclarations.isEmpty()){
             var it = typesForDeclarations.iterator();
             while(it.hasNext()){

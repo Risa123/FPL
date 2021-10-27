@@ -21,6 +21,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
     private ArrayList<InterfaceInfo>interfaces;
     private LinkedHashMap<String,TypeInfo>templateArgs;
     private final ArrayList<InstanceInfo>generatedTypes = new ArrayList<>();
+    private ArrayList<TypeInfo> typesForDeclaration;
     public TemplateTypeInfo(String name,ModuleEnv module,String nameSpace){
         super(name,module,nameSpace);
     }
@@ -52,9 +53,9 @@ public final class TemplateTypeInfo extends InstanceInfo{
            }
            var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
            var writer = Files.newBufferedWriter(path);
-           var mod = new ModuleEnv(getModule(),new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
+           var mod = new ModuleEnv(superMod,new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
            var name = getName() + nameBuilder;
-           var cEnv = new ClassEnv(mod, name,TemplateStatus.GENERATING,false);
+           var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false);
            if(argsInfo.size() != templateArgs.size()){
                //space to make the number separate form line:tokenNum
                throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + argsInfo.size());
@@ -86,7 +87,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                getModule().appendToInitializer(mod.getInitializerCall());
            }
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
-               mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + mod.getFunctionCode()));
+               mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + mod.getFunctionCode(),typesForDeclaration));
            }
        }
        return type;
@@ -95,5 +96,8 @@ public final class TemplateTypeInfo extends InstanceInfo{
         this.block = block;
         this.interfaces = interfaces;
         this.templateArgs = templateArgs;
+    }
+    public void setTypesForDeclaration(ArrayList<TypeInfo>types){
+        typesForDeclaration = new ArrayList<>(types);
     }
 }

@@ -77,7 +77,15 @@ public interface IFunction{
           }
       }
      for(var arg:list){
-         var argType = new TypeInfo(arg.getValue(),"");
+         var argType = new TypeInfo(arg.getValue(),""){
+             @Override
+             public boolean equals(Object o){
+                 if(o instanceof TypeInfo t){
+                     return getPrimaryParent() == t.getPrimaryParent();
+                 }
+                 return false;
+             }
+         };
          argType.setPrimaryParent(TypeInfo.OBJECT);
          var cls = new ClassInfo(arg.getValue());
          argType.setClassInfo(cls);

@@ -89,8 +89,12 @@ public final class FPL{
         }
     	for(var tData:templateCompData){
     	    try(var w = Files.newBufferedWriter(tData.path())){
-                tData.module().updateTypesForDeclaration();
-    	        tData.module().declareTypes(w);
+                var mod = tData.module();
+                for(var type:tData.typesForDeclaration()){
+                    mod.addTypesForDeclaration(type);
+                }
+                mod.updateTypesForDeclaration();
+    	        mod.declareTypes(w);
                 w.write(tData.code());
             }
         }
@@ -149,11 +153,10 @@ public final class FPL{
     }
     public boolean isOnArchitecture(Atom architecture)throws CompilerException{
         var str = architecture.getValue();
-        if(!(str.equals("x86") || str.equals("x64") || str.equals("ia64"))) {
-            throw new CompilerException(architecture,"there is no architecture called " + str);
-        }
         if(str.equals("x64")){
             str = "amd64";
+        }else if(!(str.equals("x86") || str.equals("ia64"))){
+            throw new CompilerException(architecture,"there is no architecture called " + str);
         }
         return System.getProperty("os.arch").equals(str);
     }
