@@ -2,7 +2,7 @@ use std.backend std.io.base std.io.file
 
 fn void exit int exitCode{
  native{
-    fn void _std_lang_Thread_freeEHEntries0 Thread* thread
+    fn void _std_lang_Thread_freeEHEntries0 Thread* thread#this method is internal in std.lang
     String* args
  }
  args free

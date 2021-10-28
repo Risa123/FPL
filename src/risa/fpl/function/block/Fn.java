@@ -228,12 +228,10 @@ public class Fn extends AFunctionBlock{
         if(self != null){
             IField parentField = null;
             var parents = self.getParents();
-            if(!parents.isEmpty()){
-                for(var parent:parents){
-                    parentField = parent.getField(id.getValue(),env);
-                    if(parentField != null){
-                        break;
-                    }
+            for(var parent:parents){
+                parentField = parent.getField(id.getValue(),env);
+                if(parentField != null){
+                    break;
                 }
             }
             if(env.hasModifier(Modifier.OVERRIDE)){
@@ -241,7 +239,7 @@ public class Fn extends AFunctionBlock{
                     throw new CompilerException(line,tokenNum,"there is no method " + id + " to override");
                 }
                 if(!parentMethod.hasSignature(f)){
-                    throw new CompilerException(line, tokenNum,"this method doesn't have signature of one it overrides");
+                    throw new CompilerException(line,tokenNum,"this method doesn't have signature of one it overrides");
                 }
             }else if(parentField != null){
                 throw new CompilerException(line, tokenNum,"override is required");
