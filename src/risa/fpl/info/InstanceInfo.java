@@ -9,16 +9,14 @@ import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.function.statement.InstanceVar;
 
-public class InstanceInfo extends TypeInfo{
+public class InstanceInfo extends NonTrivialTypeInfo {
     private String attributesCode,implCode,destructorName,instanceFree,copyConstructorName;
-    private final ModuleEnv module;
     private boolean complete;
     private InstanceVar constructor;
     private final String toPointerName;
     private String methodDeclarations = "";
     public InstanceInfo(String name,ModuleEnv module,String nameSpace){
-        super(name,IFunction.toCId(name));
-        this.module = module;
+        super(module,name,IFunction.toCId(name));
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
         addField("cast",new Cast(this));
@@ -75,11 +73,7 @@ public class InstanceInfo extends TypeInfo{
     }
     public final void setConstructor(InstanceVar constructor){
         this.constructor = constructor;
-        for(var v:constructor.getVariants()){
-            for(var arg:v.args()){
-                addRequiredType(arg);
-            }
-        }
+        addFunctionRequiredTypes(constructor);
     }
     public final String getCopyConstructorName(){
         return copyConstructorName;

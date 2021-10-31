@@ -100,4 +100,8 @@ public final class TemplateTypeInfo extends InstanceInfo{
     public void setTypesForDeclaration(ArrayList<TypeInfo>types){
         typesForDeclaration = new ArrayList<>(types);
     }
+    @Override
+    public String getDeclaration(){
+        return "";
+    }
 }

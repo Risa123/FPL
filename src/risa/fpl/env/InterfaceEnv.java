@@ -12,7 +12,7 @@ public final class InterfaceEnv extends SubEnv{
     public InterfaceEnv(AEnv superEnv,String id){
         super(superEnv);
         addModifier(Modifier.ABSTRACT);
-        type = new InterfaceInfo(id);
+        type = new InterfaceInfo((ModuleEnv)superEnv,id);
     }
     @Override
     public IFunction getFunction(Atom atom)throws CompilerException{

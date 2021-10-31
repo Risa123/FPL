@@ -41,12 +41,10 @@ public class TypeInfo{
       OBJECT.addField("!=",new BinaryOperator(BOOL,OBJECT,"&!="));
   }
   private final String name,cname;
-  private String declaration = "";
   private final boolean primitive;
-  private final StringBuilder declarationBuilder =  new StringBuilder();
-  private final HashMap<String,IField>fields = new HashMap<>();
+  protected final HashMap<String,IField>fields = new HashMap<>();
   private ClassInfo classInfo;
-  private final ArrayList<TypeInfo>parents = new ArrayList<>(),requiredTypes = new ArrayList<>();
+  protected final ArrayList<TypeInfo>parents = new ArrayList<>(),requiredTypes = new ArrayList<>();
   private TypeInfo primaryParent;
   public TypeInfo(String name,String cname,boolean primitive){
 	  this.name = name;
@@ -101,23 +99,8 @@ public class TypeInfo{
   public String getCname(){
       return cname;
   }
-  public final String getDeclaration(){
-      return declaration;
-  }
-  public void buildDeclaration(){
-      for(var field:fields.values()){
-        if(field instanceof Variable v){
-            addRequiredType(v.getType());
-        }else if(field instanceof Function f){
-            for(var t:f.getRequiredTypes()){
-                addRequiredType(t);
-            }
-        }
-      }
-      for(var parent:parents){
-          addRequiredType(parent);
-      }
-      declaration = declarationBuilder.toString();
+  public  String getDeclaration(){
+      return "";
   }
   protected final void addRequiredType(TypeInfo type){
       if(type != this && !type.isPrimitive() && type.notIn(requiredTypes)){
@@ -134,9 +117,6 @@ public class TypeInfo{
         }
         return true;
     }
-  public final void appendToDeclaration(String code){
-      declarationBuilder.append(code);
-  }
   public final boolean isPrimitive(){
       return primitive;
   }

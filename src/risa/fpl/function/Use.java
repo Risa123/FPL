@@ -43,7 +43,7 @@ public final class Use implements IFunction{
                     throw new CompilerException(atom,"this module is imported automatically");
                 }
                 env.addModuleToImport(atom);
-            }else {
+            }else{
                 addFromList(mod,env);
             }
         }

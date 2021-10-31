@@ -6,14 +6,12 @@ import risa.fpl.function.exp.IField;
 
 public final class CustomTypeInfo extends TypeInfo{
     private final TypeInfo original;
+    private final String declaration;
     public CustomTypeInfo(String name,TypeInfo original,String declaration){
         super(name,IFunction.toCId(name));
         this.original = original;
         addRequiredType(original);
-        appendToDeclaration("typedef ");
-        appendToDeclaration(declaration);
-        appendToDeclaration(";\n");
-        buildDeclaration();
+        this.declaration = "typedef " + declaration + ";\n";
     }
     @Override
     public IField getField(String name,AEnv from){
@@ -22,5 +20,9 @@ public final class CustomTypeInfo extends TypeInfo{
     @Override
     public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
         return original.ensureCast(to,expCode,comesFromPointer);
+    }
+    @Override
+    public String getDeclaration(){
+        return declaration;
     }
 }
