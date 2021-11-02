@@ -3,8 +3,10 @@ use{
  risa.fpl.base
  risa.fpl.tokenizer
  risa.fpl.object
+ risa.fpl.env
 }
 class ModuleBlock ObjectInfo{
+ private ModuleEnv modEnv init
  this IFPL fpl String srcDir String fplPath{
    FileReader reader init srcDir + fplPath
    Tokenizer tokenizer init reader
@@ -15,5 +17,10 @@ class ModuleBlock ObjectInfo{
      }
    }
    tokenizer close
+ }
+}
+class MainBlock IFunction{
+ override fn void compile int line int tokenNum ObjectInfo* env{
+
  }
 }

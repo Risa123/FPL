@@ -47,9 +47,7 @@ public class InstanceInfo extends NonTrivialTypeInfo {
     @Override
     public final void buildDeclaration(){
         complete = true;
-        for(var t:constructor.getRequiredTypes()){
-            addRequiredType(t);
-        }
+        addFunctionRequiredTypes(constructor);
         appendToDeclaration(getCname() + "* " + getToPointerName() + "(" + getCname() + " this," + getCname() + "* p);\n");
         super.buildDeclaration();
     }

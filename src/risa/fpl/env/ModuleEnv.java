@@ -171,7 +171,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public void addModuleToImport(Atom module)throws CompilerException,IOException{
 	    if(module.getValue().equals(moduleBlock.getName())){
-	        throw new CompilerException(module,"recursive dependency");
+	        throw new CompilerException(module,"cannot import current module");
         }
 	    importedModules.add(moduleBlock.getModule(module));
     }
@@ -212,7 +212,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 var t = it.next();
                 var hasAll = true;
                 for(var rt:t.getRequiredTypes()){
-                    if(rt.notIn(declared) && !rt.notIn(typesForDeclarations)){
+                    if(rt.notIn(declared) && !rt.notIn(typesForDeclarations) && t.notIn(rt.getRequiredTypes())){
                         hasAll = false;
                         break;
                     }
