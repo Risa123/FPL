@@ -53,7 +53,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            }
            var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
            var writer = Files.newBufferedWriter(path);
-           var mod = new ModuleEnv(superMod,new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
+           var mod = new ModuleEnv(superMod,new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname,null);
            var name = getName() + nameBuilder;
            var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false);
            if(argsInfo.size() != templateArgs.size()){

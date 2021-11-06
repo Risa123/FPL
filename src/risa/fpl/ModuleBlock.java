@@ -43,11 +43,11 @@ public final class ModuleBlock extends AThreePassBlock{
 		   throw e;
 	   }
    }
-   public void compile()throws IOException,CompilerException{
+   public void compile(ModuleEnv importedFrom)throws IOException,CompilerException{
        if(!compiled){
            compiled = true;
            try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
-               env = new ModuleEnv(fpl.getEnv(),this,null);
+               env = new ModuleEnv(fpl.getEnv(),this,null,importedFrom);
                if(!(name.equals("std.lang") || name.equals("std.backend"))){
                    env.addModuleToImport(new Atom(0,0,"std.lang",TokenType.ID));
                }
@@ -107,13 +107,6 @@ public final class ModuleBlock extends AThreePassBlock{
                throw ex;
            }
        }
-   }
-   public ModuleEnv getModule(Atom name)throws CompilerException,IOException{
-	   var mod = fpl.getModule(name.getValue());
-	   if(mod == null){
-		   throw new CompilerException(name,"module " + name + " not found");
-	   }
-	   return mod.env;
    }
    public String getName(){
        return name;

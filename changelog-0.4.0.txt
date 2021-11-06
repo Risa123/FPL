@@ -23,3 +23,4 @@ fix unknown type C error
 fix try-catch-finally segfault
 fix cannot be implicitly converted error in templates
 fix template unknown type C error
+fix compilation freezing

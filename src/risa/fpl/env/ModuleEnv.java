@@ -34,7 +34,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
-	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
+    private final ModuleEnv importedFrom;
+	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName,ModuleEnv importedFrom){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
 		if(generatedTemplateCName == null){//template generation
@@ -45,6 +46,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 		if(moduleBlock.isMain()){
 		    addFunction("main",new Main());
         }
+        this.importedFrom = importedFrom;
 	}
 	private void addRequiredTypes(TypeInfo type,ArrayList<TypeInfo>types){
 	    for(var t:type.getRequiredTypes()){
@@ -173,7 +175,13 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    if(module.getValue().equals(moduleBlock.getName())){
 	        throw new CompilerException(module,"cannot import current module");
         }
-	    importedModules.add(moduleBlock.getModule(module));
+        if(importedFrom == null || !module.getValue().equals(importedFrom.getModuleBlock().getName())){
+            var block = getFPL().getModule(module.getValue(),this);
+            if(block == null){
+                throw new CompilerException(module,"module " +  module + " not found");
+            }
+            importedModules.add(block.getEnv());
+        }
     }
     public boolean allDependenciesInitCalled(){
 	    for(var m:importedModules){

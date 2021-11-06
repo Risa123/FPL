@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import risa.fpl.env.ModuleEnv;
 import risa.fpl.env.ProgramEnv;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.VariantGenData;
@@ -78,7 +79,7 @@ public final class FPL{
               compileModule(name,files);
           }
     	}
-    	if(getModule(mainModule) == null){
+    	if(getModule(mainModule,null) == null){
     	    throw new CompilerException(0,0,"main module not found");
         }
     	compileModule(mainModule,files);
@@ -108,10 +109,10 @@ public final class FPL{
     	var err = Runtime.getRuntime().exec(gcc + "\\bin\\gcc -w " + ccArgs + " -o " + output + files).getErrorStream();
         errStream.print(new String(err.readAllBytes()));
     }
-    public ModuleBlock getModule(String name)throws IOException,CompilerException{
+    public ModuleBlock getModule(String name, ModuleEnv importedFrom)throws IOException,CompilerException{
     	var mod = modules.get(name);
     	if(mod != null){
-    		mod.compile();
+    		mod.compile(importedFrom);
     	}
     	return mod;
     }
@@ -125,7 +126,7 @@ public final class FPL{
         return mainModule;
     }
     private void compileModule(String name,StringBuilder files)throws IOException,CompilerException{
-        files.append(' ').append(getModule(name).getCPath());
+        files.append(' ').append(getModule(name,null).getCPath());
     }
 	public static void main(String[] args)throws IOException{
 		if(args.length != 1){
