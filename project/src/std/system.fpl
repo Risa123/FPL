@@ -2,8 +2,8 @@ use std.backend std.io.base std.io.file
 
 fn void exit int exitCode{
  native{
-    fn void _std_lang_Thread_freeEHEntries0 Thread* thread#this method is internal in std.lang
-    String* args
+    fn void _std_lang_Thread_freeEHEntries0 Thread* thread #this method is internal in std.lang
+    String* args #declared by main block
  }
  args free
  _std_lang_Thread_freeEHEntries0 currentThread

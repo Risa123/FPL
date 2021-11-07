@@ -163,7 +163,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 var name = method.getName();
                 var impl = type.getField(name,cEnv);
                 if(!(impl instanceof Function f) || f.getType() == FunctionType.ABSTRACT){
-                    throw new CompilerException(id.getLine(),id.getTokenNum(),"this class doesn't implement method " + name);
+                    throw new CompilerException(id,"this class doesn't implement method " + name);
                 }
             }
         }

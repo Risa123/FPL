@@ -10,7 +10,7 @@ class ArrayList;T{
   }
   fn void freeArray{
     array free[] len
- }
+  }
  }
  this{
    len = 0

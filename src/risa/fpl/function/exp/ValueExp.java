@@ -29,7 +29,7 @@ public class ValueExp extends AField{
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() != TokenType.END_ARGS && atom.getType() != TokenType.ARG_SEPARATOR){
 			it.next();
-			return onField(atom,writer,env,it,line, tokenNum);
+			return onField(atom,writer,env,it,line,tokenNum);
         }
         writePrev(writer);
 		writer.write(code);

@@ -7,7 +7,7 @@ use{
   risa.fpl.base
   risa.fpl.block
 }
-class FPL IFPL{
+class FPL{
  private{
    const{
      String outputFile

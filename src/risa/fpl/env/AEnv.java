@@ -22,7 +22,7 @@ public abstract class AEnv{
   private final ArrayList<Modifier>mods = new ArrayList<>();
   public IFunction getFunction(Atom atom)throws CompilerException{
 	 switch(atom.getType()){
-	 case ID:
+	  case ID:
 		 if(atom.getValue().endsWith("*")){
 			 return new Var(getType(atom));
 		 }
@@ -31,29 +31,29 @@ public abstract class AEnv{
 			 throw new CompilerException(atom,"function " + atom + " not found" );
 		 }
 		 return func;
-	 case UINT:
+	  case UINT:
 		return new ValueExp(NumberInfo.UINT,atom.getValue());
-	 case SINT:
+	  case SINT:
 		 return new ValueExp(NumberInfo.SINT,atom.getValue());
-	 case UBYTE:
+	  case UBYTE:
 		 return new ValueExp(NumberInfo.UBYTE,atom.getValue());
-	 case SBYTE:
+	  case SBYTE:
 		 return new ValueExp(NumberInfo.SBYTE,atom.getValue());
-	 case SSHORT:
+	  case SSHORT:
 		 return new ValueExp(NumberInfo.SSHORT,atom.getValue());
-	 case USHORT:
+	  case USHORT:
 		 return new ValueExp(NumberInfo.USHORT,atom.getValue());
-	 case ULONG:
+	  case ULONG:
 		 return new ValueExp(NumberInfo.ULONG,atom.getValue());
-	 case SLONG:
+	  case SLONG:
 		 return new ValueExp(NumberInfo.SLONG,atom.getValue());
-	 case FLOAT:
+	  case FLOAT:
 		 return new ValueExp(NumberInfo.FLOAT,atom.getValue());
-	 case DOUBLE:
+	  case DOUBLE:
 		 return new ValueExp(NumberInfo.DOUBLE,atom.getValue());
-	 case CHAR:
+	  case CHAR:
 		 return new ValueExp(NumberInfo.CHAR,atom.getValue());
-	 case STRING:
+	  case STRING:
 		 return new ValueExp(getFPL().getString(),"static_std_lang_String_new0(" + atom.getValue() + "," + (atom.getValue().length() - 2) + ",0)");
 	   default:
 		   throw new CompilerException(atom.getLine(),atom.getTokenNum(),"identifier or literal expected instead of " + atom.getType());

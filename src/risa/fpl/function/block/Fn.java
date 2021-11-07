@@ -147,7 +147,7 @@ public class Fn extends AFunctionBlock{
             type = FunctionType.NORMAL;
         }
         if(env.hasFunctionInCurrentEnv(id.getValue())){
-            if(env.getFunction(id.getValue()) instanceof Function ft){
+            if(env.getFunction(id) instanceof Function ft){
                 f = ft;
                 if(f.getType() != type){
                     throw new CompilerException(line,tokenNum,"all variants require same function type");

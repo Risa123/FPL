@@ -35,7 +35,7 @@ public final class BinaryOperator extends AField{
 				throw new CompilerException(exp,operandType + " operand expected instead of " + opType);
 			}
 		}else if(!(operator.equals("+") || operator.equals("-"))){
-	    	throw new CompilerException(line, tokenNum,"atom expected");
+	    	throw new CompilerException(line,tokenNum,"atom expected");
 		}else{
 	    	writer.write(operator);
 	    	writePrev(writer);

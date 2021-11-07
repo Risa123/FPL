@@ -22,10 +22,10 @@ public final class Main implements IFunction{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(!(env instanceof ModuleEnv modEnv && modEnv.isMain())){
-            throw new CompilerException(line, tokenNum,"this can only be used in main module");
+            throw new CompilerException(line,tokenNum,"this can only be used in main module");
         }
         if(modEnv.multipleMainDeclared()){
-            throw new CompilerException(line, tokenNum,"declaration of multiple main blocks is not allowed");
+            throw new CompilerException(line,tokenNum,"declaration of multiple main blocks is not allowed");
         }
         modEnv.declareMain();
         var fnEnv = new FnEnv(env,NumberInfo.INT);

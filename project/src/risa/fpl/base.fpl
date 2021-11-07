@@ -18,6 +18,3 @@ class CompilerException Exception{
    return str + message
  }
 }
-interface IFPL{
-
-}
