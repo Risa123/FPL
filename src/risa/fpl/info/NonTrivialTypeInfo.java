@@ -5,7 +5,7 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 
 public class NonTrivialTypeInfo extends TypeInfo{
-    private final StringBuilder declarationBuilder =  new StringBuilder();
+    private final StringBuilder declarationBuilder = new StringBuilder();
     protected final ModuleEnv module;
     public NonTrivialTypeInfo(ModuleEnv module,String name,String cname){
         super(name,cname);

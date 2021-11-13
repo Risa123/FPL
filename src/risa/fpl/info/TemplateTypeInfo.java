@@ -25,11 +25,11 @@ public final class TemplateTypeInfo extends InstanceInfo{
     public TemplateTypeInfo(String name,ModuleEnv module,String nameSpace){
         super(name,module,nameSpace);
     }
-    public InstanceInfo generateTypeFor(ArrayList<Object>args,AEnv env,int line,int charNum)throws CompilerException,IOException{
+    public InstanceInfo generateTypeFor(ArrayList<Object>args,AEnv env,int line,int tokenNum)throws CompilerException,IOException{
        var argsInfo = new ArrayList<TypeInfo>(args.size());
        for(var arg:args){
            if(arg instanceof TemplateArgument t){
-            arg = t.type().generateTypeFor(t.args(),env,line,charNum);
+            arg = t.type().generateTypeFor(t.args(),env,line,tokenNum);
            }
            argsInfo.add((TypeInfo)arg);
        }
@@ -58,7 +58,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false);
            if(argsInfo.size() != templateArgs.size()){
                //space to make the number separate form line:tokenNum
-               throw new CompilerException(line,charNum," " + templateArgs.size() + " arguments expected instead of " + argsInfo.size());
+               throw new CompilerException(line,tokenNum," " + templateArgs.size() + " arguments expected instead of " + argsInfo.size());
            }
            for(int i = 0;i < templateArgs.size();++i){
                var typeName = (String)templateArgs.keySet().toArray()[i];

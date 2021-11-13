@@ -11,7 +11,7 @@ public final class Tokenizer{
 	  private boolean readNext = true,forceEnd;
 	  private static final int  UBYTE_MAX = 255,USHORT_MAX = 65_535;
 	  private static final long UINT_MAX = 4_294_967_295L;
-	private Token current;
+	  private Token current;
 	  public Tokenizer(Reader reader){
 		  this.reader = reader;
 	  }
