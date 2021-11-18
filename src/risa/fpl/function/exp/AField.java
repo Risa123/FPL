@@ -6,7 +6,7 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public abstract class AField implements IField{
         return accessModifier;
     }
     public TypeInfo compileChainedCall(TypeInfo returnType,BufferedWriter writer,AEnv env,ExpIterator it,String prevCode)throws IOException,CompilerException{
-         if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == TokenType.ID){
+         if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == AtomType.ID){
            it.next();
            var field = returnType.getField(id.getValue(),env);
            if(field == null){

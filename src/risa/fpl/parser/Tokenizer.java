@@ -1,4 +1,4 @@
-package risa.fpl.tokenizer;
+package risa.fpl.parser;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -11,7 +11,7 @@ public final class Tokenizer{
 	  private boolean readNext = true,forceEnd;
 	  private static final int  UBYTE_MAX = 255,USHORT_MAX = 65_535;
 	  private static final long UINT_MAX = 4_294_967_295L;
-	  private Token current;
+	  private Atom current;
 	  public Tokenizer(Reader reader){
 		  this.reader = reader;
 	  }
@@ -24,7 +24,7 @@ public final class Tokenizer{
           }
 		  return reader.ready() || !readNext;
 	  }
-	  private Token nextPrivate()throws IOException,CompilerException{
+	  private Atom nextPrivate()throws IOException,CompilerException{
 		  read();
 		  if(c == '('){
 			  while(hasNext() && read() != ')');
@@ -59,7 +59,7 @@ public final class Tokenizer{
 			      builder.appendCodePoint(firstChar);
               }
 			  builder.append("'");
-			  return new Token(line,tokenNum,builder.toString(),TokenType.CHAR);
+			  return new Atom(line,tokenNum,builder.toString(), AtomType.CHAR);
 		  }else if(c == '+' || c == '-' || Character.isDigit(c)){
 			  var signed = false;
 			  var hex = false;
@@ -74,7 +74,7 @@ public final class Tokenizer{
                           b.appendCodePoint(c);
 						  if(!Character.isValidCodePoint(c)){
 							  forceEnd = true;
-							  return new Token(line,tokenNum,"",TokenType.NEW_LINE);
+							  return new Atom(line,tokenNum,"", AtomType.NEW_LINE);
 						  }
 						  while(hasNext() && notSeparator(read())){
 							  b.appendCodePoint(c);
@@ -82,7 +82,7 @@ public final class Tokenizer{
                       }else{
                           readNext = false;
                       }
-                      return new Token(line,tokenNum,b.toString(),TokenType.ID);
+                      return new Atom(line,tokenNum,b.toString(), AtomType.ID);
                   }
 				  signed = true;
 			  }else if(c == '0'){
@@ -98,7 +98,7 @@ public final class Tokenizer{
 			  }else{
 				  b.appendCodePoint(c);
 			  }
-			  var type = signed?TokenType.SINT:TokenType.UINT;
+			  var type = signed? AtomType.SINT: AtomType.UINT;
 			  var floatingPoint = false;
 			  var hasTypeChar = false;
 			  if(hex){
@@ -114,28 +114,28 @@ public final class Tokenizer{
 							  throw new CompilerException(line,tokenNum,"this number already has floating point");
 						  }
 						  floatingPoint = true;
-						  type = TokenType.DOUBLE;
+						  type = AtomType.DOUBLE;
 						  if(signed){
 							  throw new CompilerException(line,tokenNum,"floating point number cannot be signed");
 						  }
 						  b.append('.');
 					  }else if(c == 'F'){
-						  type = TokenType.FLOAT;
+						  type = AtomType.FLOAT;
 						  if(!floatingPoint){
 							  throw new CompilerException(line, tokenNum,"float number expected");
 						  }
 						  break;
 					  }else if(c == 'L'){
 						  hasTypeChar = true;
-						  type = signed?TokenType.SLONG:TokenType.ULONG;
+						  type = signed? AtomType.SLONG: AtomType.ULONG;
 						  break;
 					  }else if(c == 'S'){
 						  hasTypeChar = true;
-						  type = signed?TokenType.SSHORT:TokenType.USHORT;
+						  type = signed? AtomType.SSHORT: AtomType.USHORT;
 						  break;
 					  }else if(c == 'B'){
 						  hasTypeChar = true;
-						  type = signed?TokenType.SBYTE:TokenType.UBYTE;
+						  type = signed? AtomType.SBYTE: AtomType.UBYTE;
 						  break;
 					  }else{
 						  throw new CompilerException(line,tokenNum,"unexpected character " + Character.toString(c) + ",code:" + c);
@@ -150,13 +150,13 @@ public final class Tokenizer{
 			  	 return null;
 			  }
 			  if(floatingPoint){
-				  if(type == TokenType.FLOAT){
+				  if(type == AtomType.FLOAT){
 					 try {
 						 Float.parseFloat(value);
 					 }catch(NumberFormatException e){
 						 throw new CompilerException(line,tokenNum,"float number expected");
 					 }
-				  }else if(type == TokenType.DOUBLE){
+				  }else if(type == AtomType.DOUBLE){
 					  try{
 						  Double.parseDouble(value);
 					  }catch(NumberFormatException e){
@@ -164,7 +164,7 @@ public final class Tokenizer{
 					  }
 				  }
 			  }else{
-				  if(type != TokenType.ULONG){
+				  if(type != AtomType.ULONG){
 					  long n;
 					  try{
 						  if(hex){
@@ -175,17 +175,17 @@ public final class Tokenizer{
 					  }catch(NumberFormatException e){
 						  throw new CompilerException(tokenNum,line,"invalid number");
 					  }
-					  if(type == TokenType.SBYTE && (n < Byte.MIN_VALUE || n > Byte.MAX_VALUE)){
+					  if(type == AtomType.SBYTE && (n < Byte.MIN_VALUE || n > Byte.MAX_VALUE)){
 						  throw new CompilerException(line,tokenNum,"sbyte numbere expected");
-					  }else if(type == TokenType.SSHORT && (n < Short.MIN_VALUE || n > Short.MAX_VALUE)){
+					  }else if(type == AtomType.SSHORT && (n < Short.MIN_VALUE || n > Short.MAX_VALUE)){
 						  throw new CompilerException(line,tokenNum,"sshort number expected");
-					  }else if(type == TokenType.SINT && (n < Integer.MIN_VALUE || n > Integer.MAX_VALUE)){
+					  }else if(type == AtomType.SINT && (n < Integer.MIN_VALUE || n > Integer.MAX_VALUE)){
 						  throw new CompilerException(line,tokenNum,"sint number expected");
-					  }else if(type == TokenType.UBYTE &&  n > UBYTE_MAX){
+					  }else if(type == AtomType.UBYTE &&  n > UBYTE_MAX){
 						  throw new CompilerException(line,tokenNum,"ubyte number expected");
-					  }else if(type == TokenType.USHORT && n > USHORT_MAX){
+					  }else if(type == AtomType.USHORT && n > USHORT_MAX){
 						  throw new CompilerException(line,tokenNum,"ushort number expected");
-					  }else if(type == TokenType.UINT && n > UINT_MAX){
+					  }else if(type == AtomType.UINT && n > UINT_MAX){
 						  throw new CompilerException(line,tokenNum,"uint number expected");
 					  }
 				  }
@@ -193,17 +193,17 @@ public final class Tokenizer{
 			  if(hex){
 			  	 value = "0x" + value;
 			  }
-			  return new Token(line,tokenNum,value,type);
+			  return new Atom(line,tokenNum,value,type);
 		  } else if( c == '{'){
-			  return new Token(line,tokenNum,"{",TokenType.BEGIN_BLOCK);
+			  return new Atom(line,tokenNum,"{", AtomType.BEGIN_BLOCK);
 		  }else if(c == '}'){
-			  return new Token(line,tokenNum,"}",TokenType.END_BLOCK);
+			  return new Atom(line,tokenNum,"}", AtomType.END_BLOCK);
 		  }else if(c == '\n'){
-			 return new Token(line,tokenNum,"",TokenType.NEW_LINE) ;
+			 return new Atom(line,tokenNum,"", AtomType.NEW_LINE) ;
 		  }else if(c == ','){
-			  return new Token(line,tokenNum,",",TokenType.ARG_SEPARATOR);
+			  return new Atom(line,tokenNum,",", AtomType.ARG_SEPARATOR);
 		  }else if(c == ';'){
-			  return new Token(line,tokenNum,";",TokenType.END_ARGS);
+			  return new Atom(line,tokenNum,";", AtomType.END_ARGS);
 		  }else  if(c == '"'){
 			  var b = new StringBuilder("\"");
 			  while(hasNext() && read() != '"'){
@@ -223,32 +223,32 @@ public final class Tokenizer{
 			  	b.appendCodePoint(c);
 			  }
 			  b.append('"');
-			  return new Token(line,tokenNum,b.toString(),TokenType.STRING);
+			  return new Atom(line,tokenNum,b.toString(), AtomType.STRING);
 		  }else if(c == ':'){
-		      return new Token(line,tokenNum,":",TokenType.CLASS_SELECTOR);
+		      return new Atom(line,tokenNum,":", AtomType.CLASS_SELECTOR);
           } else  if(notSeparator(c)){
 			  var b = new StringBuilder();
 			  readNext = false;
 			  if(!Character.isValidCodePoint(c)){
 			      forceEnd = true;
-			      return new Token(line,tokenNum,"",TokenType.NEW_LINE);
+			      return new Atom(line,tokenNum,"", AtomType.NEW_LINE);
               }
 			  while(hasNext() && notSeparator(read())){
 				  b.appendCodePoint(c);
 			  }
-			  return new Token(line,tokenNum,b.toString(),TokenType.ID);
+			  return new Atom(line,tokenNum,b.toString(), AtomType.ID);
 		  }
 		  return null;
 	  }
-	  public Token next()throws IOException,CompilerException{
+	  public Atom next()throws IOException,CompilerException{
 	      if(current != null){
 	          var r = current;
 	          current = null;
 	          return r;
           }
-		  Token token;
-		  while((token = nextPrivate())  == null || token.type() != TokenType.NEW_LINE && (token.value().isEmpty() || token.value().isBlank()));
-		  if(token.type() != TokenType.NEW_LINE){
+		  Atom token;
+		  while((token = nextPrivate())  == null || token.getType() != AtomType.NEW_LINE && (token.getValue().isEmpty() || token.getValue().isBlank()));
+		  if(token.getType() != AtomType.NEW_LINE){
 			  tokenNum++;
 		  }
 		  return token;
@@ -272,7 +272,7 @@ public final class Tokenizer{
           }
 		  return !Character.isWhitespace(c);
 	  }
-	  public Token peek()throws IOException,CompilerException{
+	  public Atom peek()throws IOException,CompilerException{
 	      if(current == null){
 	          current = next();
           }

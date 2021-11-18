@@ -17,7 +17,7 @@ import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public class Fn extends AFunctionBlock{
 	private boolean appendSemicolon;
@@ -32,7 +32,7 @@ public class Fn extends AFunctionBlock{
         var b = new BuilderWriter();
 		var id = it.nextID();
         if(env instanceof  ModuleEnv e && e.isMain() && id.getValue().equals("main")){
-           throw new CompilerException(id,"main function can only be declared using build-in function main");
+           throw new CompilerException(id,"main function can only be declared using built-in function main");
         }
 	    String cID;
 	    if(env.hasModifier(Modifier.NATIVE)){
@@ -89,7 +89,7 @@ public class Fn extends AFunctionBlock{
             headWriter.write(')');
         }
 		var attrCode = new StringBuilder();
-        if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
+        if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
             it.next();
             var attrs = new ArrayList<String>();
             if(it.hasNext()){
@@ -117,7 +117,7 @@ public class Fn extends AFunctionBlock{
                            }
                            attrCode.append("__returns_twice__");
                        }
-                       default -> throw new CompilerException(attr,"no attribute is called " + attr);
+                       default->throw new CompilerException(attr,"no attribute is called " + attr);
                    }
                }
             }

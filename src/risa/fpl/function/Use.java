@@ -11,7 +11,7 @@ import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public final class Use implements IFunction{
 	@Override
@@ -36,7 +36,7 @@ public final class Use implements IFunction{
     private void addFromList(AExp exp,ModuleEnv env)throws CompilerException,IOException{
         for(var mod:((List)exp).getExps()){
             if(mod instanceof Atom atom){
-                if(atom.getType() != TokenType.ID){
+                if(atom.getType() != AtomType.ID){
                     throw new CompilerException(atom,"identifier expected");
                 }
                 if(atom.getValue().equals("std.lang")){

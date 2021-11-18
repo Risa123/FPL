@@ -12,7 +12,7 @@ import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -27,11 +27,10 @@ public final class Main implements IFunction{
         if(modEnv.multipleMainDeclared()){
             throw new CompilerException(line,tokenNum,"declaration of multiple main blocks is not allowed");
         }
-        modEnv.declareMain();
         var fnEnv = new FnEnv(env,NumberInfo.INT);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("args",new Variable(new PointerInfo(modEnv.getFPL().getString()),"args","args"));
-        fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",TokenType.ID)),"mainThread","mainThread"));
+        fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread", AtomType.ID)),"mainThread","mainThread"));
         writer.write(modEnv.getInitializer());
         var b = new BuilderWriter();
         b.write("_String* args;\n");
@@ -85,6 +84,7 @@ public final class Main implements IFunction{
             b.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
             b.write("free(args);\nreturn 0;\n}\n");
         }
+        modEnv.declareMain();
         modEnv.appendFunctionCode(b.getCode());
         return TypeInfo.VOID;
     }

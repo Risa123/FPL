@@ -9,7 +9,7 @@ import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public final class Constructor extends AFunctionBlock{
         }
         b.write(argsWriter.getCode() + "{\n");
         var hasParentConstructor = false;
-        if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
+        if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
             var callStart = it.next();
             var parentType = (InstanceInfo)type.getPrimaryParent();
             if(parentType == null){

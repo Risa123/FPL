@@ -9,8 +9,8 @@ import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.function.statement.InstanceVar;
 
-public class InstanceInfo extends NonTrivialTypeInfo {
-    private String attributesCode,implCode,destructorName,instanceFree,copyConstructorName;
+public class InstanceInfo extends NonTrivialTypeInfo{
+    private String attributesCode,implCode,destructorName,instanceFree = "free",copyConstructorName;
     private boolean complete;
     private InstanceVar constructor;
     private final String toPointerName;
@@ -20,7 +20,6 @@ public class InstanceInfo extends NonTrivialTypeInfo {
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
         addField("cast",new Cast(this));
-        instanceFree = "free";
         toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
     }
     public final String getClassDataType(){

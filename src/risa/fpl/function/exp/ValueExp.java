@@ -12,7 +12,7 @@ import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public class ValueExp extends AField{
     protected final TypeInfo type;
@@ -27,7 +27,7 @@ public class ValueExp extends AField{
     }
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() != TokenType.END_ARGS && atom.getType() != TokenType.ARG_SEPARATOR){
+        if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() != AtomType.END_ARGS && atom.getType() != AtomType.ARG_SEPARATOR){
 			it.next();
 			return onField(atom,writer,env,it,line,tokenNum);
         }

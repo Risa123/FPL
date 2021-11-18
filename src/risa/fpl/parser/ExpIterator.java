@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import risa.fpl.CompilerException;
-import risa.fpl.tokenizer.TokenType;
 
 public final class ExpIterator{
   private final Iterator<AExp>it;
@@ -38,7 +37,7 @@ public final class ExpIterator{
   }
   public Atom nextID()throws CompilerException{
 	  var atom = nextAtom();
-	  if(atom.getType() != TokenType.ID){
+	  if(atom.getType() != AtomType.ID){
 		  throw new CompilerException(atom,"identifier expected instead of " + atom);
 	  }
 	  return atom;
@@ -60,7 +59,7 @@ public final class ExpIterator{
 	  return peeked;
   }
   public boolean checkTemplate()throws CompilerException{
-        var result = hasNext() && peek() instanceof Atom atom && atom.getType() == TokenType.END_ARGS;
+        var result = hasNext() && peek() instanceof Atom atom && atom.getType() == AtomType.END_ARGS;
         if(result){
             next();
         }

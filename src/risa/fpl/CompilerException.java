@@ -10,6 +10,9 @@ public final class CompilerException extends Exception{
   public CompilerException(AExp exp,String msg){
 	  this(exp.getLine(),exp.getTokenNum(),msg);
   }
+  public CompilerException(String msg){
+      super(msg);
+  }
   public void setSourceFile(String sourceFile){
       if(this.sourceFile == null){
           this.sourceFile = sourceFile;

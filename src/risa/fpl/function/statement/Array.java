@@ -13,7 +13,7 @@ import risa.fpl.function.exp.Variable;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public final class Array implements IFunction{
 	@Override
@@ -27,7 +27,7 @@ public final class Array implements IFunction{
 		    writer.write("struct ");
         }
 		var lenAtom = it.nextAtom();
-		if(lenAtom.getType() == TokenType.END_ARGS){
+		if(lenAtom.getType() == AtomType.END_ARGS){
 		    type = IFunction.generateTypeFor(type,typeAtom,it,env,false);
 		    lenAtom = it.nextAtom();
         }
@@ -64,7 +64,7 @@ public final class Array implements IFunction{
 	    if(it.hasNext()){
 	    	while(it.hasNext()){
 		    	var exp = it.nextAtom();
-		        if(exp.getType() != TokenType.ARG_SEPARATOR){
+		        if(exp.getType() != AtomType.ARG_SEPARATOR){
 					if(first){
 						first = false;
 					}else{

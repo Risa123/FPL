@@ -10,7 +10,7 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public abstract class AFunctionBlock extends ABlock{
         }
         while(it.hasNext()){
             var peeked = it.peek();
-            if(peeked instanceof List || ((Atom)peeked).getValue().equals("=") || ((Atom)peeked).getType() == TokenType.CLASS_SELECTOR){
+            if(peeked instanceof List || ((Atom)peeked).getValue().equals("=") || ((Atom)peeked).getType() == AtomType.CLASS_SELECTOR){
                 break;
             }
             if(first){
@@ -39,14 +39,14 @@ public abstract class AFunctionBlock extends ABlock{
             var argTypeAtom = it.nextID();
             var argType = env.getType(argTypeAtom);
             var argName = it.nextAtom();
-            if(argName.getType() == TokenType.END_ARGS){
+            if(argName.getType() == AtomType.END_ARGS){
                 argType = IFunction.generateTypeFor(argType,argTypeAtom,it,env,false);
                 argName = it.nextID();
                 if(argName.getValue().equals("*")){
                     argType = new PointerInfo(argType);
                     argName = it.nextID();
                 }
-            }else if(argName.getType() != TokenType.ID){
+            }else if(argName.getType() != AtomType.ID){
                 throw new CompilerException(argName,"identifier or ; expected");
             }
             if(args.containsKey(argName.getValue())){

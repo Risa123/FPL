@@ -6,19 +6,18 @@ import java.io.IOException;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
-import risa.fpl.tokenizer.TokenType;
 
 public final class Atom extends AExp{
 	private final String value;
-	private final TokenType type;
-	public Atom(int line,int tokenNum,String value,TokenType type){
+	private final AtomType type;
+	public Atom(int line, int tokenNum, String value, AtomType type){
 		super(line,tokenNum);
 		this.value = value;
 		this.type = type;
 	}
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it) throws IOException,CompilerException{
-		return env.getFunction(this).compile(writer,env,it,getLine(), getTokenNum());
+		return env.getFunction(this).compile(writer,env,it,getLine(),getTokenNum());
 	}
 	@Override
 	public String toString(){
@@ -27,10 +26,10 @@ public final class Atom extends AExp{
 	public String getValue(){
 	    return value;
     }
-    public TokenType getType(){
+    public AtomType getType(){
 	    return type;
     }
     public boolean notIndexLiteral(){
-	    return type != TokenType.UINT && type != TokenType.ULONG;
+	    return type != AtomType.UINT && type != AtomType.ULONG;
     }
 }

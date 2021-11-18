@@ -18,7 +18,7 @@ import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public class Function implements IField,ICalledOnPointer{
 	private final TypeInfo self,returnType;
@@ -62,9 +62,9 @@ public class Function implements IField,ICalledOnPointer{
         }
 		while(it.hasNext() && !(it.peek() instanceof List)){
 		   var exp = it.nextAtom();
-		   if(exp.getType() == TokenType.END_ARGS){
+		   if(exp.getType() == AtomType.END_ARGS){
 			   break;
-		   }else if(exp.getType() != TokenType.ARG_SEPARATOR){
+		   }else if(exp.getType() != AtomType.ARG_SEPARATOR){
 			   var buffer = new BuilderWriter();
 			   var f = env.getFunction(exp);
                argList.add(f.compile(buffer,env,it,exp.getLine(),exp.getTokenNum()));
@@ -142,7 +142,7 @@ public class Function implements IField,ICalledOnPointer{
             b.write(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
         }
 		b.write(')');
-        if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == TokenType.ID){
+        if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == AtomType.ID){
             var id = it.nextID();
             var field = returnType.getField(id.getValue(),env);
             if(field == null){

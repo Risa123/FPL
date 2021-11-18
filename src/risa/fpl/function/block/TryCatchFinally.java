@@ -10,7 +10,7 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -33,10 +33,10 @@ public final class TryCatchFinally extends ABlock{
         var finallyEnv = new FnSubEnv(env);
         var exDataNames = new ArrayList<String>();
         if(exception == null){
-            exception = env.getType(new Atom(0,0,"Exception",TokenType.ID));
+            exception = env.getType(new Atom(0,0,"Exception", AtomType.ID));
         }
         while(it.hasNext()){
-            if(it.peek() instanceof Atom blockName && blockName.getType() == TokenType.ID){
+            if(it.peek() instanceof Atom blockName && blockName.getType() == AtomType.ID){
                 if(blockName.getValue().equals("catch")){
                     if(hasFin){
                         throw new CompilerException(blockName,"catch can only come before finally");
@@ -49,7 +49,7 @@ public final class TryCatchFinally extends ABlock{
                     if(nextExp instanceof List){
                         block = (List)nextExp;
                         exInfo = exception;
-                    }else if(nextExp instanceof Atom exType && exType.getType() == TokenType.ID){
+                    }else if(nextExp instanceof Atom exType && exType.getType() == AtomType.ID){
                         if(exType.getValue().equals("Exception")){
                             throw new CompilerException(exType,"unnecessary Exception ID");
                         }

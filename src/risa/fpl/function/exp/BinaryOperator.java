@@ -9,7 +9,7 @@ import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public final class BinaryOperator extends AField{
    private final TypeInfo returnType,operandType;
@@ -22,7 +22,7 @@ public final class BinaryOperator extends AField{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		var returnType = this.returnType;
-	    if(it.hasNext() && it.peek() instanceof Atom a && a.getType() != TokenType.END_ARGS && a.getType() != TokenType.ARG_SEPARATOR){
+	    if(it.hasNext() && it.peek() instanceof Atom a && a.getType() != AtomType.END_ARGS && a.getType() != AtomType.ARG_SEPARATOR){
 			var exp = it.next();
 			writePrev(writer);
 			writer.write(operator);

@@ -13,7 +13,7 @@ import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public abstract class AEnv{
   protected final HashMap<String,TypeInfo>types = new HashMap<>();
@@ -66,11 +66,11 @@ public abstract class AEnv{
 	  functions.put(name,value);
   }
   public TypeInfo getType(Atom atom)throws CompilerException{
-	  if(atom.getType() != TokenType.ID){
+	  if(atom.getType() != AtomType.ID){
 		  throw new CompilerException(atom,"type identifier expected");
 	  }
 	  if(atom.getValue().endsWith("*")){
-	      return new PointerInfo(getType(new Atom(atom.getLine(),atom.getTokenNum(),atom.getValue().substring(0,atom.getValue().length() - 1), TokenType.ID)));
+	      return new PointerInfo(getType(new Atom(atom.getLine(),atom.getTokenNum(),atom.getValue().substring(0,atom.getValue().length() - 1), AtomType.ID)));
       }
 	  var type = types.get(atom.getValue());
 	  if(type == null){
@@ -106,7 +106,7 @@ public abstract class AEnv{
       return accessModifier;
   }
   public IFunction getFunction(String name)throws CompilerException{
-  	return getFunction(new Atom(0,0,name,TokenType.ID));
+  	return getFunction(new Atom(0,0,name, AtomType.ID));
   }
   public abstract FPL getFPL();
 }

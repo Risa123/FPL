@@ -13,7 +13,7 @@ import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 
 public interface IFunction{
@@ -60,13 +60,13 @@ public interface IFunction{
      while(it.hasNext()){
           var exp = it.peek();
           if(exp instanceof Atom typeID){
-              if(typeID.getType() == TokenType.ID){
+              if(typeID.getType() == AtomType.ID){
                   if(list.contains(typeID)){
                       throw new CompilerException(typeID,"duplicate template argument");
                   }
                   list.add(typeID);
                   it.next();
-              }else if(typeID.getType() == TokenType.END_ARGS){
+              }else if(typeID.getType() == AtomType.END_ARGS){
                   it.next();
                   break;
               }else{
@@ -107,11 +107,11 @@ public interface IFunction{
       while(it.hasNext()){
           var exp = it.peek();
           if(exp instanceof Atom typeID){
-              if(typeID.getType() == TokenType.ID){
+              if(typeID.getType() == AtomType.ID){
                   it.next();
                   Object arg = env.getType(typeID);
                   if(arg instanceof TemplateTypeInfo t){
-                     if(it.peek() instanceof Atom a && a.getType() == TokenType.END_ARGS){
+                     if(it.peek() instanceof Atom a && a.getType() == AtomType.END_ARGS){
                          it.next();
                          arg = new TemplateArgument(t,parseTemplateGeneration(it,env,classVariable));
                      }else{
@@ -119,10 +119,10 @@ public interface IFunction{
                      }
                   }
                   args.add(arg);
-              }else if(typeID.getType() == TokenType.END_ARGS){
+              }else if(typeID.getType() == AtomType.END_ARGS){
                   it.next();
                   break;
-              }else if(typeID.getType() == TokenType.CLASS_SELECTOR){
+              }else if(typeID.getType() == AtomType.CLASS_SELECTOR){
                   if(!classVariable){
                       throw new CompilerException(typeID,"; expected");
                   }

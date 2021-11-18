@@ -16,7 +16,7 @@ import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public final class ClassBlock extends AThreePassBlock implements IFunction{
     private final boolean struct;
@@ -61,7 +61,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 break;
             }else{
                 var typeID = (Atom)exp;
-                if(typeID.getType() != TokenType.ID){
+                if(typeID.getType() != AtomType.ID){
                     throw new CompilerException(typeID,"identifier expected");
                 }
                 var type = env.getType(typeID);

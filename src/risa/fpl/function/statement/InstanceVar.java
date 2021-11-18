@@ -17,7 +17,7 @@ import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public final class InstanceVar extends Function{
    private final ClassInfo classType;
@@ -34,13 +34,13 @@ public final class InstanceVar extends Function{
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         BuilderWriter b = new BuilderWriter();
         var id = it.nextAtom();
-		if(id.getType() == TokenType.ID){
+		if(id.getType() == AtomType.ID){
             compileVariable(b,id,env,it);
-        }else if(id.getType() == TokenType.CLASS_SELECTOR){
+        }else if(id.getType() == AtomType.CLASS_SELECTOR){
 		    return compileClassSelector(it,env,writer,classType);
-        }else if(id.getType() == TokenType.END_ARGS){
+        }else if(id.getType() == AtomType.END_ARGS){
             var varType = compileVariable(b,null,env,it);
-            if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() == TokenType.CLASS_SELECTOR){
+            if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() == AtomType.CLASS_SELECTOR){
                 it.next();
                 return compileClassSelector(it,env,writer,varType.getClassInfo());
             }
@@ -54,7 +54,7 @@ public final class InstanceVar extends Function{
         InstanceInfo varType;
         if(type instanceof TemplateTypeInfo tType){
             varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env,true),env,it.getLastLine(),it.getLastCharNum());
-            if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
+            if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
                 return varType;
             }
             id = it.nextID();//identifier follows after template arguments
@@ -117,7 +117,7 @@ public final class InstanceVar extends Function{
        super.compile(writer,env,it,line,charNum);
     }
     private TypeInfo compileClassSelector(ExpIterator it,AEnv env,BufferedWriter writer,TypeInfo classType)throws CompilerException,IOException{
-        if(it.peek() instanceof Atom atom && atom.getType() == TokenType.ID){
+        if(it.peek() instanceof Atom atom && atom.getType() == AtomType.ID){
             it.next();
             var field = classType.getField(atom.getValue(),env);
             if(field == null){

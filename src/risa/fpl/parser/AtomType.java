@@ -1,6 +1,6 @@
-package risa.fpl.tokenizer;
+package risa.fpl.parser;
 
-public enum TokenType{
+public enum AtomType {
  ID,STRING,SBYTE,UBYTE,SSHORT,USHORT,SINT,UINT,SLONG,ULONG,DOUBLE,FLOAT,BEGIN_BLOCK,END_BLOCK,NEW_LINE
  ,END_ARGS,ARG_SEPARATOR,CHAR,CLASS_SELECTOR
 }

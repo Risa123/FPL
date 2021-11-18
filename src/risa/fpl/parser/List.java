@@ -8,7 +8,6 @@ import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
-import risa.fpl.tokenizer.TokenType;
 
 public final class List extends AExp{
 	private final ArrayList<AExp>exps;
@@ -32,7 +31,7 @@ public final class List extends AExp{
             	  b = new BuilderWriter();
                   ret = f.compile(b,env,it,exp.getLine(),exp.getTokenNum());
                   appendSemicolon = f.appendSemicolon() && statement;
-              }else if(atom.getType() == TokenType.ID){
+              }else if(atom.getType() == AtomType.ID){
             	 var field = ret.getField(atom.getValue(),env);
             	 if(field == null) {
             		 throw new CompilerException(atom,ret + " has no field called " + atom);

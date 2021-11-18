@@ -13,7 +13,7 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public final class InterfaceBlock implements IFunction{
                 break;
             }else{
                var typeID = (Atom)exp;
-               if(typeID.getType() != TokenType.ID){
+               if(typeID.getType() != AtomType.ID){
                    throw new CompilerException(id,"identifier expected");
                }
                var parentType = env.getType(typeID);

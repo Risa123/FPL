@@ -8,7 +8,7 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.AExp;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public final class ParenthExp extends AField{
         var notIn = true;
         while(it.hasNext()){
             var exp = it.nextAtom();
-            if(exp.getType() == TokenType.ID){
+            if(exp.getType() == AtomType.ID){
                 if(exp.getValue().equals("[")){
                     notIn = false;
                 }else if(exp.getValue().equals("]")){

@@ -9,7 +9,7 @@ import risa.fpl.info.ClassInfo;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 import java.io.BufferedWriter;
 
@@ -30,9 +30,9 @@ public final class Enum implements IFunction{
         var i = 0;
         while(it.hasNext()){
             var t = it.nextAtom();
-            if(t.getType() == TokenType.NEW_LINE){
+            if(t.getType() == AtomType.NEW_LINE){
                 break;
-            }else if(t.getType() == TokenType.ID){
+            }else if(t.getType() == AtomType.ID){
                 if(c.getField(t.getValue(),env) != null){
                     throw new CompilerException(t,"value "  + t + " is already declared");
                 }

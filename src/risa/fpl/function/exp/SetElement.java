@@ -8,7 +8,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public final class SetElement extends AField{
 	private final TypeInfo valueType;
@@ -31,7 +31,7 @@ public final class SetElement extends AField{
 	    writer.write(code);
 		writer.write("]=");
 		var valueAtom = it.nextAtom();
-		if(valueAtom.getType() == TokenType.ARG_SEPARATOR){
+		if(valueAtom.getType() == AtomType.ARG_SEPARATOR){
 			valueAtom = it.nextAtom();
 		}
 		var valueType = valueAtom.compile(writer,env,it);

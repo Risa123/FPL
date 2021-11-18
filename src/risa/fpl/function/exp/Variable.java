@@ -14,7 +14,7 @@ import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public final class Variable extends ValueExp{
 	private boolean onlyDeclared,copyCallNeeded = true;
@@ -67,7 +67,7 @@ public final class Variable extends ValueExp{
             writePrev(b);
 		    b.write(code);
 		    var ret = new PointerInfo(type);
-		    if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == TokenType.ID){
+		    if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == AtomType.ID){
 		        it.next();
 		        var field = ret.getField(id.getValue(),env);
 		        if(field == null){
@@ -103,7 +103,7 @@ public final class Variable extends ValueExp{
 	}
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=") && a.getType() == TokenType.ID){
+		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=") && a.getType() == AtomType.ID){
 		    throw new CompilerException(line,tokenNum,"variable " + id + " not defined");
         }
 		if(instanceType != null && getPrevCode() == null){

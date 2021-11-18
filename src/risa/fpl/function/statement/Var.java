@@ -13,7 +13,7 @@ import risa.fpl.function.exp.Variable;
 import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 @SuppressWarnings("ClassCanBeRecord")
 public final class Var implements IFunction{
@@ -24,10 +24,10 @@ public final class Var implements IFunction{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(type != null && it.hasNext()){
-           if(it.peek() instanceof Atom a && a.getType() == TokenType.CLASS_SELECTOR){
+           if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
                it.next();
                var c = type.getClassInfo();
-               if(it.peek() instanceof Atom a1 && a1.getType() == TokenType.ID){
+               if(it.peek() instanceof Atom a1 && a1.getType() == AtomType.ID){
                    it.next();
                    var field = c.getField(a1.getValue(),env);
                    if(field == null){
@@ -53,7 +53,7 @@ public final class Var implements IFunction{
         }
 		while(it.hasNext()){
             var id = it.nextAtom();
-            if(id.getType() == TokenType.ID){
+            if(id.getType() == AtomType.ID){
                 String cID;
                 if(env.hasModifier(Modifier.NATIVE)){
                     cID = id.getValue();
@@ -75,7 +75,7 @@ public final class Var implements IFunction{
                 var constantExp = false;
                 if(it.hasNext()){
                     var exp = it.next();
-                    if(exp instanceof Atom a && a.getType() == TokenType.END_ARGS){
+                    if(exp instanceof Atom a && a.getType() == AtomType.END_ARGS){
                         onlyDeclared = true;
                         if(env.hasModifier(Modifier.CONST) && !(env instanceof  ClassEnv)){
                             throw new CompilerException(id,"constant has to be defined");
@@ -88,7 +88,7 @@ public final class Var implements IFunction{
                             throw new CompilerException(exp,"native variables can only be declared");
                         }
                         var buffer = new BuilderWriter();
-                        if(!it.hasNext() || it.peek() instanceof Atom p && p.getType() == TokenType.END_ARGS && exp instanceof Atom a && a.getType() != TokenType.ID){
+                        if(!it.hasNext() || it.peek() instanceof Atom p && p.getType() == AtomType.END_ARGS && exp instanceof Atom a && a.getType() != AtomType.ID){
                             constantExp = true;
                         }
                         expType = exp.compile(buffer,env,it);
@@ -160,7 +160,7 @@ public final class Var implements IFunction{
                     onlyDeclared = false;
                 }
                 env.addFunction(id.getValue(),new Variable(varType,cID,onlyDeclared,id.getValue(),constant,instanceType,env.getAccessModifier()));
-            }else if(id.getType() != TokenType.END_ARGS){
+            }else if(id.getType() != AtomType.END_ARGS){
                 throw new CompilerException(id,"expected ;");
             }
 		}
