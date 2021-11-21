@@ -31,7 +31,7 @@ public final class Var implements IFunction{
                    it.next();
                    var field = c.getField(a1.getValue(),env);
                    if(field == null){
-                       throw new CompilerException(a1.getLine(),a1.getTokenNum(),c + " has no field called " + a1);
+                       throw new CompilerException(a1,c + " has no field called " + a1);
                    }
                    return field.compile(writer,env,it,a1.getLine(),a1.getTokenNum());
                }
@@ -48,7 +48,7 @@ public final class Var implements IFunction{
             }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
                 decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum()));
             }else{
-		        throw new CompilerException(line, tokenNum,"template type expected instead of " + type);
+		        throw new CompilerException(line,tokenNum,"template type expected instead of " + type);
             }
         }
 		while(it.hasNext()){

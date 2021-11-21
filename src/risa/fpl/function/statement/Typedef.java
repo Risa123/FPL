@@ -39,6 +39,9 @@ public final class Typedef implements IFunction{
         if(t == null){
             throw new CompilerException(originalType,"type " + originalType + " not found");
         }
+        if(!t.isPrimitive()){
+            throw new CompilerException(originalType,"primitive type expected");
+        }
         var b = new BuilderWriter();
         b.write(t.getCname());
         b.write(' ');

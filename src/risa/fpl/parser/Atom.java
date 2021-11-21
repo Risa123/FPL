@@ -10,7 +10,7 @@ import risa.fpl.info.TypeInfo;
 public final class Atom extends AExp{
 	private final String value;
 	private final AtomType type;
-	public Atom(int line, int tokenNum, String value, AtomType type){
+	public Atom(int line,int tokenNum,String value,AtomType type){
 		super(line,tokenNum);
 		this.value = value;
 		this.type = type;

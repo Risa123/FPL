@@ -56,7 +56,7 @@ public abstract class AEnv{
 	  case STRING:
 		 return new ValueExp(getFPL().getString(),"static_std_lang_String_new0(" + atom.getValue() + "," + (atom.getValue().length() - 2) + ",0)");
 	   default:
-		   throw new CompilerException(atom.getLine(),atom.getTokenNum(),"identifier or literal expected instead of " + atom.getType());
+		   throw new CompilerException(atom,"identifier or literal expected instead of " + atom.getType());
 	 }
   }
   public boolean hasFunctionInCurrentEnv(String name){
@@ -79,7 +79,7 @@ public abstract class AEnv{
 	  return type;
   }
   public final boolean hasTypeInCurrentEnv(String name){
-      return types.containsKey(name.replace("*","")); //remove pointer declarations
+      return types.containsKey(name.replace("*",""));//remove pointer declarations
   }
   public final void addType(String name,TypeInfo type){
 	  addType(name,type,true);
@@ -104,9 +104,6 @@ public abstract class AEnv{
   }
   public final AccessModifier getAccessModifier(){
       return accessModifier;
-  }
-  public IFunction getFunction(String name)throws CompilerException{
-  	return getFunction(new Atom(0,0,name, AtomType.ID));
   }
   public abstract FPL getFPL();
 }

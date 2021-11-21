@@ -18,7 +18,7 @@ public final class List extends AExp{
 		this.statement = statement;
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator) throws CompilerException,IOException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator)throws CompilerException,IOException{
 	   TypeInfo ret = null;//has to be null see line 27
 	   var it = new ExpIterator(exps,getLine(),getTokenNum());
 	   var appendSemicolon = false;
@@ -27,7 +27,7 @@ public final class List extends AExp{
 		   var exp = it.next();
 		   if(exp instanceof Atom atom){
               if(ret == null){
-            	  var f =  env.getFunction(atom);
+            	  var f = env.getFunction(atom);
             	  b = new BuilderWriter();
                   ret = f.compile(b,env,it,exp.getLine(),exp.getTokenNum());
                   appendSemicolon = f.appendSemicolon() && statement;

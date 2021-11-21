@@ -11,7 +11,7 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
 public class TypeInfo{
-  public static final TypeInfo VOID = new TypeInfo("void","void",true);
+  public static final TypeInfo VOID = new TypeInfo("void","void");
   public static final TypeInfo OBJECT = new TypeInfo("object",""){
       @Override
       public void setClassInfo(ClassInfo info){
@@ -19,8 +19,8 @@ public class TypeInfo{
           super.setClassInfo(info);
       }
   };
-  public static final TypeInfo BOOL = new TypeInfo("bool","char",true);
-  public static final TypeInfo CHAR = new TypeInfo("char","char",true);
+  public static final TypeInfo BOOL = new TypeInfo("bool","char");
+  public static final TypeInfo CHAR = new TypeInfo("char","char");
   public static final TypeInfo NIL = new TypeInfo("nil","");
   static{
 	  CHAR.addField("cast",new Cast(CHAR));
@@ -41,18 +41,13 @@ public class TypeInfo{
       OBJECT.addField("!=",new BinaryOperator(BOOL,OBJECT,"&!="));
   }
   private final String name,cname;
-  private final boolean primitive;
   protected final HashMap<String,IField>fields = new HashMap<>();
   private ClassInfo classInfo;
   protected final ArrayList<TypeInfo>parents = new ArrayList<>(),requiredTypes = new ArrayList<>();
   private TypeInfo primaryParent;
-  public TypeInfo(String name,String cname,boolean primitive){
+  public TypeInfo(String name,String cname){
 	  this.name = name;
 	  this.cname = cname;
-	  this.primitive = primitive;
-  }
-  public TypeInfo(String name,String cname){
-      this(name,cname,false);
   }
   @Override
   public String toString(){
@@ -117,8 +112,8 @@ public class TypeInfo{
         }
         return true;
     }
-  public final boolean isPrimitive(){
-      return primitive;
+  public boolean isPrimitive(){
+      return true;
   }
   public final void addParent(TypeInfo parent){
       parents.add(parent);

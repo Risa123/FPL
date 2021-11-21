@@ -35,4 +35,8 @@ public class NonTrivialTypeInfo extends TypeInfo{
     public  String getDeclaration(){
         return declarationBuilder.toString();
     }
+    @Override
+    public boolean isPrimitive(){
+        return false;
+    }
 }

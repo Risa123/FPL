@@ -40,7 +40,7 @@ public final class NumberInfo extends TypeInfo{
     private final int size;
     private final boolean floatingPoint;
 	public NumberInfo(String name,String cname,int size,boolean floatingPoint){
-		super(name, cname,true);
+		super(name,cname);
 		this.size = size;
 		this.floatingPoint = floatingPoint;
 		addField("getObjectSize",new UnaryOperator(MEMORY,"sizeof ",false));

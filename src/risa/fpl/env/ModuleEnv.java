@@ -19,13 +19,13 @@ import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
-	private String destructorCall,declarationCode;
+	private String destructorCall,declarationCode = "";//prevent NPE
 	private boolean getRequestFromOutSide,initCalled,destructorCalled;
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	private int mainDeclared;
@@ -34,8 +34,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
-    private final ModuleEnv importedFrom;
-	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName,ModuleEnv importedFrom){
+	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
 		super(superEnv);
 		this.moduleBlock = moduleBlock;
 		if(generatedTemplateCName == null){//template generation
@@ -46,7 +45,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
 		if(moduleBlock.isMain()){
 		    addFunction("main",new Main());
         }
-        this.importedFrom = importedFrom;
 	}
 	private void addRequiredTypes(TypeInfo type,ArrayList<TypeInfo>types){
 	    for(var t:type.getRequiredTypes()){
@@ -99,12 +97,12 @@ public final class ModuleEnv extends ANameSpacedEnv{
 			   return mod.getFunctionFromModule(name);
             }
 		}
-        if(name.getType() == TokenType.ID && name.getValue().contains(".")){
+        if(name.getType() == AtomType.ID && name.getValue().contains(".")){
             var tmp = name.getValue().split("\\.");
             var modName = String.join(".",Arrays.copyOf(tmp,tmp.length - 1));
             for(var mod:importedModules){
                 if(mod.moduleBlock.getName().equals(modName)){
-                    return mod.getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1],TokenType.ID));
+                    return mod.getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1], AtomType.ID));
                 }
             }
             throw new CompilerException(name,"module " + modName + " not found");
@@ -171,17 +169,15 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public void appendVariableDeclaration(String code){
 	    variableDeclarations.append(code);
     }
-    public void addModuleToImport(Atom module)throws CompilerException,IOException{
+    public void addModuleToImport(Atom module)throws CompilerException{
 	    if(module.getValue().equals(moduleBlock.getName())){
 	        throw new CompilerException(module,"cannot import current module");
         }
-        if(importedFrom == null || !module.getValue().equals(importedFrom.getModuleBlock().getName())){
-            var block = getFPL().getModule(module.getValue(),this);
-            if(block == null){
-                throw new CompilerException(module,"module " +  module + " not found");
-            }
-            importedModules.add(block.getEnv());
+        var block = getFPL().getModule(module.getValue());
+        if(block == null){
+            throw new CompilerException(module,"module " +  module + " not found");
         }
+        importedModules.add(block.getEnv());
     }
     public boolean allDependenciesInitCalled(){
 	    for(var m:importedModules){
@@ -323,5 +319,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public ModuleBlock getModuleBlock(){
         return moduleBlock;
+    }
+    public IFunction getFunctionFromModule(String name)throws CompilerException{
+        return functions.get(name);
     }
 }

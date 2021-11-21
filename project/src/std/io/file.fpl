@@ -1,7 +1,4 @@
-use{
- std.io.base
- std.backend
-}
+use std.io.base std.backend
 private const{
  [] char 2 READ $r,$\0
  [] char 2 WRITE $w,$\0

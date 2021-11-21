@@ -72,7 +72,7 @@ public final class ClassInfo extends TypeInfo{
         addField("alloc[]",new Alloc(instance,true));
     }
     public ClassInfo(String name,String dataName){
-        super(name + " class","",false);
+        super(name + " class","");
         this.dataName = dataName;
     }
     public ClassInfo(String name){

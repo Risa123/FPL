@@ -8,7 +8,7 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
 	private final TypeInfo type;
 	private int functionPointerDepth;
 	public PointerInfo(TypeInfo type){
-	    super(type.getName() + "*",type.getCname() + "*",true);
+	    super(type.getName() + "*",type.getCname() + "*");
         this.type = type;
         if(type != TypeInfo.VOID){
             addField("+", new BinaryOperator(this,NumberInfo.MEMORY, "+"));

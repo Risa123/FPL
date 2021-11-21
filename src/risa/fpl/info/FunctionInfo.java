@@ -7,7 +7,7 @@ import risa.fpl.function.exp.PointerSize;
 public final class FunctionInfo extends TypeInfo implements IPointerInfo{
     private final Function function;
     public FunctionInfo(Function function){
-        super(function.getName(),getFunctionPointerDeclaration(function,function.getPointerVariant().cname()),true);
+        super(function.getName(),getFunctionPointerDeclaration(function,function.getPointerVariant().cname()));
         this.function = function;
         addField("drf",new FunctionDereference(function));
         addField("getObjectSize",PointerSize.INSTANCE);

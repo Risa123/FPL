@@ -49,7 +49,7 @@ public final class Return implements IFunction{
 		if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null){//null is always false
            expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ")";
 		}
-		writer.write("return " +  expCode);
+		writer.write("return " + expCode);
 		return TypeInfo.VOID;
 	}
 }

@@ -11,6 +11,8 @@ throw method now ends the function so no return error doesn't happen
 instance variables now have to be explicitly initialized
 struct is now a variant of class
 added methods clear,getSize and isEmpty to Map
+precise error messages in build.properties
+fix typedef can only use primitive types check added
 fix pointer to instance  not implicitly convertible to interface it implements
 fix recursion made possible
 fix instance free C error

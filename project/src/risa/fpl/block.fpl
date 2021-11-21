@@ -4,16 +4,17 @@ use{
  risa.fpl.tokenizer
  risa.fpl.object
  risa.fpl.env
+ risa.fpl.main
 }
 class ModuleBlock ObjectInfo{
  private ModuleEnv modEnv init
- this FPL fpl String srcDir String fplPath{
+ this FPL* fpl String srcDir String fplPath{
    FileReader reader init srcDir + fplPath
    Tokenizer tokenizer init reader
    while tokenizer hasNext{
      var token tokenizer next
      if token getType; == TokenType:ID{
-       
+
      }
    }
    tokenizer close

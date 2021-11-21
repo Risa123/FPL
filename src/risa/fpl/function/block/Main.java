@@ -30,7 +30,7 @@ public final class Main implements IFunction{
         var fnEnv = new FnEnv(env,NumberInfo.INT);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("args",new Variable(new PointerInfo(modEnv.getFPL().getString()),"args","args"));
-        fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread", AtomType.ID)),"mainThread","mainThread"));
+        fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",AtomType.ID)),"mainThread","mainThread"));
         writer.write(modEnv.getInitializer());
         var b = new BuilderWriter();
         b.write("_String* args;\n");

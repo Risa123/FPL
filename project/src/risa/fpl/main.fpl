@@ -38,7 +38,7 @@ class FPL{
        if isDirectory path{
          compileDirectory srcDir,fplPath
        }if isFile path{
-        ModuleBlock block init this,srcDir,fplPath
+        #ModuleBlock block init this,srcDir,fplPath
        }
      }
      stream close
@@ -97,13 +97,16 @@ class FPL{
  }
 }
 main{
+ (
  if argc != 2{
    stderr writeString "project directory expected"
    return 2 #1 is reserved for exceptions
  }
  try{
-    FPL:new args get 1
+   FPL:new args get 1
  }catch CompilerException{
-   stdout writeString ex getMessage
+   stderr writeString ex getMessage
+   return 3
  }
+ )
 }

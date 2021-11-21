@@ -1,13 +1,11 @@
 use std.collection
 
 class ObjectInfo{
- Map;String Field;fields
+ private const Map;String Field;fields
  fn Field getField String name{
    return fields get name
  }
- fn void addField String name AccessModifier accessModifier IFunction func{
-  fields put name,Field:new accessModifier,func
- }
+ fn void addField String name AccessModifier accessModifier IFunction func = fields put name,Field:new accessModifier,func
 }
 class Field{
   private const{

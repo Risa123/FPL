@@ -8,7 +8,7 @@ import risa.fpl.function.TemplateArgument;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +21,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
     private ArrayList<InterfaceInfo>interfaces;
     private LinkedHashMap<String,TypeInfo>templateArgs;
     private final ArrayList<InstanceInfo>generatedTypes = new ArrayList<>();
-    private ArrayList<TypeInfo> typesForDeclaration;
+    private final ArrayList<TypeInfo>typesForDeclaration = new ArrayList<>();//initialized here to prevent NPE
     public TemplateTypeInfo(String name,ModuleEnv module,String nameSpace){
         super(name,module,nameSpace);
     }
@@ -53,7 +53,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            }
            var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
            var writer = Files.newBufferedWriter(path);
-           var mod = new ModuleEnv(superMod,new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname,null);
+           var mod = new ModuleEnv(superMod,new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
            var name = getName() + nameBuilder;
            var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false);
            if(argsInfo.size() != templateArgs.size()){
@@ -69,7 +69,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                }
            }
            mod.importModules();
-           new ClassBlock(false).compileClassBlock(writer,cEnv,mod,new Atom(0,0, name,TokenType.ID),block,interfaces,TemplateStatus.GENERATING);
+           new ClassBlock(false).compileClassBlock(writer,cEnv,mod,new Atom(0,0, name, AtomType.ID),block,interfaces,TemplateStatus.GENERATING);
            type = cEnv.getInstanceType();
            Files.delete(path);
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
@@ -98,7 +98,8 @@ public final class TemplateTypeInfo extends InstanceInfo{
         this.templateArgs = templateArgs;
     }
     public void setTypesForDeclaration(ArrayList<TypeInfo>types){
-        typesForDeclaration = new ArrayList<>(types);
+        typesForDeclaration.clear();
+        typesForDeclaration.addAll(types);
     }
     @Override
     public String getDeclaration(){

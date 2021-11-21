@@ -10,64 +10,69 @@ import java.util.ArrayList;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.AThreePassBlock;
+import risa.fpl.function.block.ExpressionInfo;
 import risa.fpl.function.exp.Function;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 import risa.fpl.parser.Parser;
-import risa.fpl.tokenizer.TokenType;
+import risa.fpl.parser.AtomType;
 
 public final class ModuleBlock extends AThreePassBlock{
    private final String cPath,name,sourceFile;
    private boolean compiled;
-   private final List exps;
-   private ModuleEnv env;
+   private final ModuleEnv env;
    private final FPL fpl;
    private final ArrayList<ClassEnv>classEnvList = new ArrayList<>();
+   private CompilerException lastEx;
+   private final ArrayList<ExpressionInfo>expInfos = new ArrayList<>();
    public ModuleBlock(Path sourceFile,Path srcDir,FPL fpl)throws IOException,CompilerException{
        var subPath = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount());
        this.sourceFile = subPath.toString();
 	   cPath = fpl.getOutputDirectory() + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
 	   this.fpl = fpl;
-	   var name = new StringBuilder();
-	   for(int i = 0; i < subPath.getNameCount() - 1;i++){
-	       name.append(subPath.getName(i)).append('.');
+       var name = new StringBuilder();
+       for(int i = 0; i < subPath.getNameCount() - 1;i++){
+           name.append(subPath.getName(i)).append('.');
        }
-	   name.append(subPath.getFileName().toString().split("\\.")[0]);
-	   this.name = name.toString();
-	   try(var parser = new Parser(Files.newBufferedReader(sourceFile))){
+       name.append(subPath.getFileName().toString().split("\\.")[0]);
+       this.name = name.toString();
+       env = new ModuleEnv(fpl.getEnv(),this,null);
+       List exps;
+       try(var parser = new Parser(Files.newBufferedReader(sourceFile))){
 		   exps = parser.parse();
 	   }catch(CompilerException e){
 		   e.setSourceFile(this.sourceFile);
 		   throw e;
 	   }
+       for(var exp:exps.getExps()){
+           expInfos.add(new ExpressionInfo(exp));
+       }
    }
-   public void compile(ModuleEnv importedFrom)throws IOException,CompilerException{
-       if(!compiled){
-           compiled = true;
-           try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
-               env = new ModuleEnv(fpl.getEnv(),this,null,importedFrom);
-               if(!(name.equals("std.lang") || name.equals("std.backend"))){
-                   env.addModuleToImport(new Atom(0,0,"std.lang",TokenType.ID));
+   public void compile()throws IOException,CompilerException{
+       try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
+           if(!(name.equals("std.lang") || name.equals("std.backend"))){
+               env.addModuleToImport(new Atom(0,0,"std.lang", AtomType.ID));
+           }
+           var b = new BuilderWriter();
+           compile(b,env,expInfos);
+           if(!env.isMainDeclared() && isMain()){
+               throw new CompilerException("declaration of main expected");
+           }
+           env.importModules();
+           env.declareTypes(writer);
+           var tmp = new StringBuilder();
+           for(var line:b.getCode().lines().toList()){
+               if(!line.equals(";")){
+                   tmp.append(line).append("\n");
                }
-               var b = new BuilderWriter();
-               compile(b,env,exps);
-               if(!env.isMainDeclared() && isMain()){
-                   throw new CompilerException(1,1,"declaration of main expected");
-               }
-               env.importModules();
-               env.declareTypes(writer);
-               var tmp = new StringBuilder();
-               for(var line:b.getCode().lines().toList()){
-                   if(!line.equals(";")){
-                       tmp.append(line).append("\n");
-                   }
-               }
-               writer.write(tmp.toString());
-               writer.write(env.getVariableDeclarations());
-               writer.write(env.getFunctionDeclarations());
-               writer.write(env.getFunctionCode());
+           }
+           writer.write(tmp.toString());
+           writer.write(env.getVariableDeclarations());
+           writer.write(env.getFunctionDeclarations());
+           writer.write(env.getFunctionCode());
+           if(!compiled){
                if(name.equals("std.lang")){
                    makeMethod("toString","boolToString",TypeInfo.BOOL);
                    makeMethod("isDigit",TypeInfo.CHAR);
@@ -96,17 +101,18 @@ public final class ModuleBlock extends AThreePassBlock{
                    makeMethod("toString","integerToString",NumberInfo.USHORT,false);
                    makeMethod("toString","integerToString",NumberInfo.SSHORT);
                }else if(name.equals("std.backend")){
-                   fpl.setFreeArray((Function)env.getFunction("free[]"));
+                   fpl.setFreeArray((Function)env.getFunctionFromModule("free[]"));
                }
-               if(!isMain()){
-                   writer.write(env.getInitializer());
-                   writer.write(env.getDestructor());
-               }
-           }catch(CompilerException ex){
-               ex.setSourceFile(sourceFile);
-               throw ex;
            }
+           if(!isMain()){
+               writer.write(env.getInitializer());
+               writer.write(env.getDestructor());
+           }
+       }catch(CompilerException ex){
+           ex.setSourceFile(sourceFile);
+           throw ex;
        }
+       compiled = true;
    }
    public String getName(){
        return name;
@@ -122,7 +128,7 @@ public final class ModuleBlock extends AThreePassBlock{
       if(remove){
           func = env.getAndMakeInaccessible(oldName);
       }else{
-          func = (Function)env.getFunction(oldName);
+          func = (Function)env.getFunctionFromModule(oldName);
       }
       if(func == null){
           throw new RuntimeException("internal error: function " + name + " not found");
@@ -143,5 +149,11 @@ public final class ModuleBlock extends AThreePassBlock{
    }
    public ArrayList<ClassEnv>getClassEnvList(){
        return classEnvList;
+   }
+   public void setLastEx(CompilerException ex){
+       lastEx = ex;
+   }
+   public CompilerException getLastEx(){
+       return lastEx;
    }
 }
