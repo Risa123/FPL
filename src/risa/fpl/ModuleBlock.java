@@ -26,7 +26,7 @@ public final class ModuleBlock extends AThreePassBlock{
    private final FPL fpl;
    private final ArrayList<ClassEnv>classEnvList = new ArrayList<>();
    private CompilerException lastEx;
-   private final ArrayList<ExpressionInfo>expInfos = new ArrayList<>();
+   private final ArrayList<ExpressionInfo>expInfos;
    public ModuleBlock(Path sourceFile,Path srcDir,FPL fpl)throws IOException,CompilerException{
        var subPath = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount());
        this.sourceFile = subPath.toString();
@@ -46,9 +46,7 @@ public final class ModuleBlock extends AThreePassBlock{
 		   e.setSourceFile(this.sourceFile);
 		   throw e;
 	   }
-       for(var exp:exps.getExps()){
-           expInfos.add(new ExpressionInfo(exp));
-       }
+       expInfos = createInfoList(exps);
    }
    public void compile()throws IOException,CompilerException{
        try(var writer = Files.newBufferedWriter(Paths.get(cPath))){

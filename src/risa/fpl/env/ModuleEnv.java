@@ -241,10 +241,10 @@ public final class ModuleEnv extends ANameSpacedEnv{
         declarationCode = b.getCode();
     }
     @Override
-    public void addType(String name,TypeInfo type,boolean declaration){
-	    super.addType(name,type,declaration);
+    public void addType(TypeInfo type,boolean declaration){
+	    super.addType(type,declaration);
         addTypesForDeclaration(type);
-	    if(nameSpace.equals("_std_lang") && name.equals("String")){
+	    if(nameSpace.equals("_std_lang") && type.getName().equals("String")){
 	        moduleBlock.setString(type);
         }
     }

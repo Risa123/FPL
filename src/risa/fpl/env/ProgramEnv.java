@@ -36,24 +36,25 @@ public final class ProgramEnv extends AEnv{
       addFunction("alias",new Alias());
       addFunction("enum",new Enum());
       addFunction("[",new ParenthExp());
-      addType("void",TypeInfo.VOID,false);
-	  addType("byte",NumberInfo.BYTE);
-	  addType("sbyte",NumberInfo.SBYTE);
-	  addType("ubyte",NumberInfo.UBYTE);
-	  addType("ushort",NumberInfo.USHORT);
-	  addType("sshort",NumberInfo.SSHORT);
-	  addType("short",NumberInfo.SHORT);
-	  addType("int",NumberInfo.INT);
-	  addType("uint",NumberInfo.UINT);
-	  addType("sint",NumberInfo.SINT);
-	  addType("long",NumberInfo.LONG);
-	  addType("ulong",NumberInfo.ULONG);
-	  addType("slong",NumberInfo.SLONG);
-	  addType("bool",TypeInfo.BOOL);
-	  addType("float",NumberInfo.FLOAT);
-	  addType("double",NumberInfo.DOUBLE);
-	  addType("char",TypeInfo.CHAR);
-	  addType("memory",NumberInfo.MEMORY);
+      addType(TypeInfo.VOID,false);
+	  addType(NumberInfo.BYTE);
+	  addType(NumberInfo.SBYTE);
+	  addType(NumberInfo.UBYTE);
+	  addType(NumberInfo.USHORT);
+	  addType(NumberInfo.SSHORT);
+	  addType(NumberInfo.SHORT);
+	  addType(NumberInfo.INT);
+	  addType(NumberInfo.UINT);
+	  addType(NumberInfo.SINT);
+	  addType(NumberInfo.LONG);
+	  addType(NumberInfo.ULONG);
+	  addType(NumberInfo.SLONG);
+	  addType(TypeInfo.BOOL);
+	  addType(NumberInfo.FLOAT);
+	  addType(NumberInfo.DOUBLE);
+	  addType(TypeInfo.CHAR);
+	  addType(NumberInfo.MEMORY);
+      addType(NumberInfo.NUMBER);
   }
   @Override
   public FPL getFPL(){

@@ -122,10 +122,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         var attributes = new BuilderWriter();
         ArrayList<ExpressionInfo>infos;
         if(cEnv.getBlock() == null){
-            infos = new ArrayList<>(block.getExps().size());
-            for (var exp:block.getExps()) {
-                infos.add(new ExpressionInfo(exp));
-            }
+            infos = createInfoList(block);
             cEnv.setBlock(infos);
         }else{
             infos = cEnv.getBlock();

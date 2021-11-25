@@ -91,7 +91,7 @@ public interface IFunction{
          argType.setClassInfo(cls);
          cls.setPrimaryParent(ClassInfo.OBJECT);
          args.put(arg.getValue(),argType);
-         env.addType(arg.getValue(),argType);
+         env.addType(argType);
      }
      if(args.isEmpty()){
          throw new CompilerException(lastLine,lastChar,"more than one argument expected");

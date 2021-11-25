@@ -42,7 +42,7 @@ public final class Enum implements IFunction{
                 throw new CompilerException(t,"identifier expected");
             }
         }
-        env.addType(id,type);
+        env.addType(type);
         return TypeInfo.VOID;
     }
 }

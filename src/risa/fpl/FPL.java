@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import risa.fpl.env.ProgramEnv;
-import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.VariantGenData;
 import risa.fpl.info.TemplateCompData;
@@ -72,7 +71,7 @@ public final class FPL{
         }
     	Files.createDirectory(path);
         var list = new ArrayList<>(modules.values());
-    	for(var i = 0; i < 4 && !list.isEmpty(); ++i){
+    	for(var i = 0; i < 4 && !list.isEmpty(); ++i){//four passes needed
             var it = list.iterator();
             while(it.hasNext()){
                 var mod = it.next();

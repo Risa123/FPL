@@ -21,7 +21,7 @@ import java.io.IOException;
 public final class InterfaceBlock implements IFunction{
     @Override
     public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        if(!(env instanceof ModuleEnv)){
+        if(!(env instanceof ModuleEnv mod)){
             throw new CompilerException(line,tokenNum,"interface can only be declared on module level");
         }
         var id = it.nextID();
@@ -30,7 +30,7 @@ public final class InterfaceBlock implements IFunction{
             throw new CompilerException(id,"this type " + idV + " is already declared");
         }
         var cID = IFunction.toCId(idV);
-        var iEnv = new InterfaceEnv(env,idV);
+        var iEnv = new InterfaceEnv(mod,idV);
         var type = iEnv.getType();
         List block = null;
         while(it.hasNext()){
@@ -74,7 +74,7 @@ public final class InterfaceBlock implements IFunction{
         b.write(implName + "* impl;\n}" + cID + ";\n");
         type.appendToDeclaration(b.getCode());
         type.buildDeclaration();
-        env.addType(idV,type);
+        env.addType(type);
         return TypeInfo.VOID;
     }
 }

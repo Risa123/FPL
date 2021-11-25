@@ -81,13 +81,13 @@ public abstract class AEnv{
   public final boolean hasTypeInCurrentEnv(String name){
       return types.containsKey(name.replace("*",""));//remove pointer declarations
   }
-  public final void addType(String name,TypeInfo type){
-	  addType(name,type,true);
+  public final void addType(TypeInfo type){
+	  addType(type,true);
   }
-  public void addType(String name,TypeInfo type,boolean declaration){
-      types.put(name,type);
+  public void addType(TypeInfo type,boolean declaration){
+      types.put(type.getName(),type);
       if(declaration){
-          addFunction(name,new Var(type));
+          addFunction(type.getName(),new Var(type));
       }
   }
   public boolean hasModifier(Modifier mod){

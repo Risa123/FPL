@@ -1,14 +1,19 @@
 package risa.fpl.env;
 
 import risa.fpl.function.IFunction;
+import risa.fpl.function.block.ExpressionInfo;
 import risa.fpl.function.exp.Function;
 import risa.fpl.info.InstanceInfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class ANameSpacedEnv extends SubEnv{
     private final StringBuilder initializer = new StringBuilder();
     private String initializerCall;
     private final StringBuilder functionCode = new StringBuilder(),functionDeclarations = new StringBuilder();
     protected final StringBuilder destructor = new StringBuilder();
+    private final HashMap<Integer,ArrayList<ExpressionInfo>>modifierBlocks = new HashMap<>();
     public ANameSpacedEnv(AEnv superEnv){
         super(superEnv);
     }
@@ -53,6 +58,12 @@ public abstract class ANameSpacedEnv extends SubEnv{
     }
     public final String getInitializerCode(){
         return initializer.toString();
+    }
+    public final void addModifierBlock(int line,ArrayList<ExpressionInfo> infos){
+        modifierBlocks.put(line,infos);
+    }
+    public final ArrayList<ExpressionInfo>getModifierBlock(int line){
+        return modifierBlocks.get(line);
     }
     public abstract void addTemplateInstance(InstanceInfo type);
 }

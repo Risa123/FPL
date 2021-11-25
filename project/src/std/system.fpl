@@ -18,7 +18,7 @@ fn int execute String cmd{
   }
   return exitCode
 }
-private{
+private const{
  FileWriter fileStderr init stderr
  FileWriter fileStdout init stdout
  FileReader fileStdin init stdin

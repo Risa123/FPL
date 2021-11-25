@@ -48,7 +48,7 @@ public final class Typedef implements IFunction{
         b.write(IFunction.toCId(type.getValue()));
         b.write(after);
         writer.write(b.getCode());
-        env.addType(type.getValue(),new CustomTypeInfo(type.getValue(),t,b.getCode()));
+        env.addType(new CustomTypeInfo(type.getValue(),t,b.getCode()));
         return TypeInfo.VOID;
     }
 }

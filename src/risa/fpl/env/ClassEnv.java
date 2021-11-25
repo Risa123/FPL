@@ -35,8 +35,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private static final Destructor DESTRUCTOR = new Destructor();
 	private static final Constructor CONSTRUCTOR = new Constructor();
 	private static final CopyConstructor COPY_CONSTRUCTOR = new CopyConstructor();
-	public ClassEnv(ModuleEnv superEnv,String id,TemplateStatus templateStatus,boolean struct){
-		super(superEnv);
+	public ClassEnv(ModuleEnv module,String id,TemplateStatus templateStatus,boolean struct){
+		super(module);
 		super.addFunction("this",CONSTRUCTOR);
 		super.addFunction("protected",PROTECTED);
 		if(!struct){
@@ -48,25 +48,25 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("=this",COPY_CONSTRUCTOR);
 		var cname = IFunction.toCId(id);
 		if(templateStatus == TemplateStatus.GENERATING){
-		    nameSpace = superEnv.getNameSpace();
+		    nameSpace = module.getNameSpace();
         }else{
-            nameSpace = superEnv.getNameSpace() + cname;
+            nameSpace = module.getNameSpace() + cname;
         }
         dataType = cname + "_data_type";
         dataName = nameSpace + "_data";
         classType = new ClassInfo(id,dataName);
         this.struct = struct;
         if(templateStatus == TemplateStatus.TEMPLATE){
-            instanceType = new TemplateTypeInfo(id,superEnv,nameSpace);
+            instanceType = new TemplateTypeInfo(id,module,nameSpace);
         }else{
-            instanceType = new InstanceInfo(id,superEnv,nameSpace);
+            instanceType = new InstanceInfo(id,module,nameSpace);
         }
         classType.addField("alloc",new Function("alloc",new PointerInfo(instanceType),AccessModifier.PUBLIC));
         classType.addField("new",new Function("new",instanceType,AccessModifier.PUBLIC));
         instanceType.setClassInfo(classType);
         //checking if not generating from template to prevent generated type from displacing the template
         if(templateStatus != TemplateStatus.GENERATING){
-            superEnv.addType(id,instanceType);
+            module.addType(instanceType);
         }
         instanceType.setConstructor(new InstanceVar(instanceType,classType));
         if(!struct){
@@ -307,5 +307,13 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public ArrayList<ExpressionInfo>getBlock(){
         return block;
+    }
+
+    /**
+     *only used in @see TemplateTypeInfo
+     */
+    public void addType(String name,TypeInfo type){
+        types.put(name,type);
+        addFunction(name,new Var(type));
     }
 }

@@ -9,8 +9,8 @@ import risa.fpl.parser.Atom;
 
 public final class InterfaceEnv extends SubEnv{
     private final InterfaceInfo type;
-    public InterfaceEnv(AEnv superEnv,String id){
-        super(superEnv);
+    public InterfaceEnv(ModuleEnv module,String id){
+        super(module);
         addModifier(Modifier.ABSTRACT);
         type = new InterfaceInfo((ModuleEnv)superEnv,id);
     }

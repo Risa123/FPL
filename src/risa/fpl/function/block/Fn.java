@@ -113,7 +113,7 @@ public class Fn extends AFunctionBlock{
                        }
                        case "returnsTwice"->{
                            if(attrs.contains("noReturn")){
-                               throw new CompilerException(attr, "returnsTwice is mutually exclusive with noReturn");
+                               throw new CompilerException(attr,"returnsTwice is mutually exclusive with noReturn");
                            }
                            attrCode.append("__returns_twice__");
                        }
@@ -171,12 +171,12 @@ public class Fn extends AFunctionBlock{
             variant = f.addVariant(argsArray,cID,implName);
             p = new FunctionInfo(f);
             fnEnv.addFunction("&" + id,new FunctionReference(p));
-            fnEnv.addType(id.getValue(),p,false);
+            fnEnv.addType(p,false);
         }
         fnEnv.addFunction(id.getValue(),f);
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
-		        throw new CompilerException(line, tokenNum,"abstract methods can only be declared");
+		        throw new CompilerException(line,tokenNum,"abstract methods can only be declared");
             }
             var codeExp = it.next();
             if(codeExp instanceof Atom a){
@@ -242,7 +242,7 @@ public class Fn extends AFunctionBlock{
                     throw new CompilerException(line,tokenNum,"this method doesn't have signature of one it overrides");
                 }
             }else if(parentField != null){
-                throw new CompilerException(line, tokenNum,"override is required");
+                throw new CompilerException(line,tokenNum,"override is required");
             }
             if((env.hasModifier(Modifier.OVERRIDE) || env.hasModifier(Modifier.VIRTUAL)) && templateArgs == null){
                 String methodImplName;
@@ -284,7 +284,7 @@ public class Fn extends AFunctionBlock{
         }
         if(templateArgs == null){
             env.addFunction("&" + id,new FunctionReference(p));
-            env.addType(id.getValue(),p,false);
+            env.addType(p,false);
         }
         if(type == FunctionType.NATIVE && env instanceof FnSubEnv){
             appendSemicolon = false;

@@ -13,11 +13,7 @@ import java.util.ArrayList;
 public abstract class AThreePassBlock{
     public static final int MAX_PASSES = 3;//three passes necessary in some cases
     protected final void compile(BufferedWriter writer,AEnv env,List block)throws CompilerException,IOException{
-        var infos = new ArrayList<ExpressionInfo>(block.getExps().size());
-        for(var exp:block.getExps()){
-            infos.add(new ExpressionInfo(exp));
-        }
-        compile(writer,env,infos);
+        compile(writer,env,createInfoList(block));
     }
     protected final void compile(BufferedWriter writer,AEnv env,ArrayList<ExpressionInfo>infos)throws CompilerException,IOException{
         for(int i = 0; i < MAX_PASSES && !infos.isEmpty();++i){
@@ -51,5 +47,12 @@ public abstract class AThreePassBlock{
             }
             throw new CompilerException(infos.get(0).getExp(),b.toString());
         }
+    }
+    protected final ArrayList<ExpressionInfo>createInfoList(List from){
+        var list = new ArrayList<ExpressionInfo>(from.getExps().size());
+        for(var exp:from.getExps()){
+            list.add(new ExpressionInfo(exp));
+        }
+        return list;
     }
 }

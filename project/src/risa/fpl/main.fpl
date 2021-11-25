@@ -84,12 +84,12 @@ class FPL{
   }
   tokenizer close
   if noMainModule{
-    CompilerException ex init 0,0,"no main module"
+    CompilerException ex init "no main module"
     ex setFile "build.bs"
     ex throw
   }
   if noOutputFile{
-    CompilerException ex init 0,0,"no output file"
+    CompilerException ex init "no output file"
     ex setFile "build.bs"
     ex throw
   }

@@ -26,7 +26,7 @@ public final class CompileTimeIf implements IFunction{
             case "isInstance"->env.getType(it.nextID()) instanceof InstanceInfo;
             case "isPrimitive"->env.getType(it.nextID()).isPrimitive();
             case "arch"->env.getFPL().isOnArchitecture(it.nextID());
-            default->throw new CompilerException(conditionAtom, "there is no condition called " + condition);
+            default->throw new CompilerException(conditionAtom,"there is no condition called " + condition);
         };
         if(invert){
             isTrue = !isTrue;

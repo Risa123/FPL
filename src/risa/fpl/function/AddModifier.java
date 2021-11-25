@@ -20,13 +20,19 @@ public class AddModifier extends AThreePassBlock implements IFunction{
 	   this.mod = mod;
    }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         addMod(env);
 	    try{
 	    	var exp = it.next();
 	 	    if(exp instanceof List list){
-	 	      if(env instanceof ANameSpacedEnv){
-                  compile(writer,env,list);
+	 	      if(env instanceof ANameSpacedEnv e){
+                 var infos = e.getModifierBlock(line);
+				 if(infos == null){
+					 infos = createInfoList(list);
+				 }else{
+                    e.addModifierBlock(line,infos);
+				 }
+				 compile(writer,env,infos);
               }else{
 	 	          exp.compile(writer,env,it);
               }

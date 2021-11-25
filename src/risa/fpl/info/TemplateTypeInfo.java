@@ -79,7 +79,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                    ((FnSubEnv)env).addTemplateInstance(type);
                }
            }
-           mod.addType(name,type);
+           mod.addType(type);
            writer.write(cEnv.getDataDefinition());
            writer.write(mod.getFunctionCode());
            generatedTypes.add(type);
