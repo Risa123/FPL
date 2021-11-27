@@ -308,11 +308,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public ArrayList<ExpressionInfo>getBlock(){
         return block;
     }
-
-    /**
-     *only used in @see TemplateTypeInfo
-     */
-    public void addType(String name,TypeInfo type){
+    public void setTypeForTemplateArgument(String name,TypeInfo type){
         types.put(name,type);
         addFunction(name,new Var(type));
     }

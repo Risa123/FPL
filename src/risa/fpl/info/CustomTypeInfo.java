@@ -25,4 +25,8 @@ public final class CustomTypeInfo extends TypeInfo{
     public String getDeclaration(){
         return declaration;
     }
+    @Override
+    public boolean isPrimitive(){
+        return false;
+    }
 }

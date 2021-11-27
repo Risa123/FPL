@@ -63,7 +63,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            for(int i = 0;i < templateArgs.size();++i){
                var typeName = (String)templateArgs.keySet().toArray()[i];
                var t = argsInfo.get(i);
-               cEnv.addType(typeName,t);
+               cEnv.setTypeForTemplateArgument(typeName,t);
                if(t instanceof InstanceInfo instance){
                    cEnv.addFunction(typeName,instance.getConstructor());
                }

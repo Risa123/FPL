@@ -54,7 +54,7 @@ public final class ProgramEnv extends AEnv{
 	  addType(NumberInfo.DOUBLE);
 	  addType(TypeInfo.CHAR);
 	  addType(NumberInfo.MEMORY);
-      addType(NumberInfo.NUMBER);
+      addType(NumberInfo.NUMBER,false);
   }
   @Override
   public FPL getFPL(){

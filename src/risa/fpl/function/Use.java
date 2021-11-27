@@ -1,7 +1,6 @@
 package risa.fpl.function;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
@@ -15,7 +14,7 @@ import risa.fpl.parser.AtomType;
 
 public final class Use implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
 		if(!(env instanceof ModuleEnv e)){
 			throw new CompilerException(line,tokenNum,"can only be used on module level");
 		}
@@ -33,7 +32,7 @@ public final class Use implements IFunction{
 		}
 		return TypeInfo.VOID;
 	}
-    private void addFromList(AExp exp,ModuleEnv env)throws CompilerException,IOException{
+    private void addFromList(AExp exp,ModuleEnv env)throws CompilerException{
         for(var mod:((List)exp).getExps()){
             if(mod instanceof Atom atom){
                 if(atom.getType() != AtomType.ID){

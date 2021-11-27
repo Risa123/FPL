@@ -320,7 +320,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public ModuleBlock getModuleBlock(){
         return moduleBlock;
     }
-    public IFunction getFunctionFromModule(String name)throws CompilerException{
+    public IFunction getFunctionFromModule(String name){
         return functions.get(name);
     }
 }
