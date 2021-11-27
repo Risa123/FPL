@@ -28,20 +28,6 @@ public final class FPL{
     public FPL(String project)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
-        var requiredKeys = Arrays.asList("gcc","mainModule","outputFile");
-        var optionalKeys = Arrays.asList("ccArgs","flag");
-        var allowedKeys = new ArrayList<>(requiredKeys);
-        allowedKeys.addAll(optionalKeys);
-        for(var key:requiredKeys){
-            if(!build.containsKey(key)){
-                throwBuildFileError("no property " + key);
-            }
-        }
-        for(var key:allowedKeys){
-            if(!allowedKeys.contains(key)){
-                throwBuildFileError("property " + key + " not allowed");
-            }
-        }
     	gcc = build.getProperty("gcc");
     	output = build.getProperty("outputFile");
     	ccArgs = build.getProperty("ccArgs","");
@@ -101,6 +87,7 @@ public final class FPL{
             throw ex;
         }
     	for(var mod:modules.values()){
+            mod.writeToFile();
     	    for(var file:mod.getEnv().getInstanceFiles()){
     	        files.append(' ').append(outputDirectory).append('/').append(file);
             }

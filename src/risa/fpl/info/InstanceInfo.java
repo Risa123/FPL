@@ -1,12 +1,10 @@
 package risa.fpl.info;
 
+import risa.fpl.env.ClassEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.exp.Cast;
-import risa.fpl.function.exp.GetObjectInfo;
-import risa.fpl.function.exp.ValueExp;
-import risa.fpl.function.exp.Variable;
+import risa.fpl.function.exp.*;
 import risa.fpl.function.statement.InstanceVar;
 
 public class InstanceInfo extends NonTrivialTypeInfo{
@@ -15,6 +13,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     private InstanceVar constructor;
     private final String toPointerName;
     private String methodDeclarations = "";
+    private ClassEnv cEnv;
     public InstanceInfo(String name,ModuleEnv module,String nameSpace){
         super(module,name,IFunction.toCId(name));
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
@@ -24,9 +23,6 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     }
     public final String getClassDataType(){
         return getCname() + "_data_type*";
-    }
-    public final String getAttributesCode(){
-        return attributesCode;
     }
     public final void setAttributesCode(String attributesCode){
         this.attributesCode = attributesCode;
@@ -46,8 +42,50 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     @Override
     public final void buildDeclaration(){
         complete = true;
+        appendToDeclaration("typedef struct " + getCname() + "{\n");
+        if(!cEnv.isStruct()){
+            appendToDeclaration("void* objectData;\n");
+        }
+        if(getPrimaryParent() instanceof InstanceInfo i){
+            appendToDeclaration(i.attributesCode);
+        }
+        appendToDeclaration(attributesCode);
+        appendToDeclaration("}" + getCname() + ";\n");
+        var b = new StringBuilder();
+        setImplCode(cEnv.getImplCode());
+        var primaryParent = (InstanceInfo)getPrimaryParent();
+        appendToDeclaration("typedef struct " + cEnv.getDataType());
+        appendToDeclaration(cEnv.getDataType() + "{\nunsigned long size;\n");
+        if(primaryParent != null){
+            appendToDeclaration(primaryParent.getImplCode());
+        }
+        appendToDeclaration(cEnv.getImplCode() + '}' + cEnv.getDataType() + ";\n");
+        appendToDeclaration("extern " + cEnv.getDataDefinition());
         addFunctionRequiredTypes(constructor);
         appendToDeclaration(getCname() + "* " + getToPointerName() + "(" + getCname() + " this," + getCname() + "* p);\n");
+        for(var field:getClassInfo().getFields().values()){
+            if(field instanceof Function f){
+                cEnv.appendFunctionDeclaration(f);
+            }
+        }
+        for(var field:getFields().values()){
+            if(field instanceof Function f){
+                if(f.getAccessModifier() != AccessModifier.PRIVATE){
+                    cEnv.appendFunctionDeclaration(f);
+                }
+            }
+        }
+        if(!(this instanceof TemplateTypeInfo)){
+            setMethodDeclarations(cEnv.getFunctionDeclarations());
+        }
+        if(copyConstructorName != null){
+            appendToDeclaration(getCname() + " " + copyConstructorName + "AndReturn(" + getCname() + " original);\n");
+        }
+        for(var p:parents){
+            if(p instanceof InterfaceInfo i){
+                appendToDeclaration(i.getCname() + " " + getConversionMethod(i) + "(" + getCname() + "*);\n");
+            }
+        }
         super.buildDeclaration();
     }
     @Override
@@ -97,5 +135,8 @@ public class InstanceInfo extends NonTrivialTypeInfo{
             return i.isException();
         }
         return false;
+    }
+    public final void setClassEnv(ClassEnv cEnv){
+        this.cEnv = cEnv;
     }
 }

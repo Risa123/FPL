@@ -112,13 +112,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         var type = cEnv.getInstanceType();
         var parentType = type.getPrimaryParent();
         var cID = IFunction.toCId(id.getValue());
-        b.write("typedef struct "+ cID + "{\n");
-        if(!struct){
-            b.write("void* objectData;\n");
-        }
-        if(parentType instanceof InstanceInfo i){
-            b.write(i.getAttributesCode());//null happens
-        }
         var attributes = new BuilderWriter();
         ArrayList<ExpressionInfo>infos;
         if(cEnv.getBlock() == null){
@@ -146,7 +139,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             }
         }
         type.setAttributesCode(attributes.getCode());
-        b.write(attributes.getCode());
         //parent type doesn't have implicit constructor
         if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
             for(var v:i.getConstructor().getVariants()){
@@ -155,7 +147,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                }
             }
         }
-        b.write('}' + cID + ";\n" + cEnv.getDataDeclaration());
         if(!cEnv.isAbstract()){
             for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
                 var name = method.getName();
@@ -174,23 +165,17 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             cEnv.getSuperEnv().addFunction(type.getName(),constructor);
             cEnv.compileNewAndAlloc(internalCode,new TypeInfo[0],constructor);
         }
-        type.appendToDeclaration(b.getCode() + "extern " + cEnv.getDataDefinition());
-        cEnv.appendDeclarations();
         if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){
             modEnv.addFunction(id.getValue(),constructor);
         }
         for(var i:interfaces){
             internalCode.write("static " + i.getImplName() + " " + cID + i.getCname() + "_impl;\n");
             internalCode.write(i.getCname() + ' ');
-            var callBuilder = new StringBuilder(INTERNAL_METHOD_PREFIX);
-            callBuilder.append(cEnv.getNameSpace()).append("_as").append(i.getCname());
-            var asCName = callBuilder.toString();
-            internalCode.write(asCName + '(' + type.getCname() + "* this){\n");
+            internalCode.write(type.getConversionMethod(i) + '(' + type.getCname() + "* this){\n");
             internalCode.write(i.getCname());
             internalCode.write(" tmp;\ntmp.instance=this;\ntmp.impl=&");
             internalCode.write(cEnv.getImplOf(i));
             internalCode.write(";\nreturn tmp;\n}\n");
-            type.appendToDeclaration(i.getCname() + " " + callBuilder + "(" + type.getCname() + "*);\n");
             var parent = type.getPrimaryParent();
             if(!cEnv.isAbstract() && parent != null){
                 for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
@@ -220,11 +205,9 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             type.setCopyConstructorName(copyName);
         }
         if(copyName != null){
-            var header = type.getCname() + " " + copyName + "AndReturn(" + type.getCname() + " original)";
-            internalCode.write(header + "{\n" + type.getCname() + " instance;\n");
+            internalCode.write(type.getCname() + " " + copyName + "AndReturn(" + type.getCname() + " original){\n" + type.getCname() + " instance;\n");
             internalCode.write(copyName + "(&instance,&original);\n");
             internalCode.write("return instance;\n}\n");
-            type.appendToDeclaration(header + ";\n");
         }
         cEnv.appendFunctionCode(internalCode.getCode());
         if(templateStatus != TemplateStatus.GENERATING){
@@ -240,7 +223,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             modEnv.appendFunctionCode(cEnv.getFunctionCode());
             modEnv.appendFunctionCode(cEnv.getInitializer());
             modEnv.appendToInitializer(cEnv.getInitializerCall());
-            type.buildDeclaration();
         }
     }
 }

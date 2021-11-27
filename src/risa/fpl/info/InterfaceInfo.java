@@ -4,9 +4,9 @@ import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Cast;
 
-public final class InterfaceInfo extends NonTrivialTypeInfo {
+public final class InterfaceInfo extends NonTrivialTypeInfo{
     private final String implName;
-    public InterfaceInfo(ModuleEnv module, String name){
+    public InterfaceInfo(ModuleEnv module,String name){
         super(module,name,IFunction.toCId(name));
         addField("cast",new Cast(this));
         implName = "I" + getCname() + "_impl";

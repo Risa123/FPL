@@ -49,27 +49,15 @@ public final class ModuleBlock extends AThreePassBlock{
        expInfos = createInfoList(exps);
    }
    public void compile()throws IOException,CompilerException{
-       try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
+       try{
            if(!(name.equals("std.lang") || name.equals("std.backend"))){
                env.addModuleToImport(new Atom(0,0,"std.lang", AtomType.ID));
            }
-           var b = new BuilderWriter();
-           compile(b,env,expInfos);
+           compile(new BuilderWriter(),env,expInfos);
            if(!env.isMainDeclared() && isMain()){
                throw new CompilerException("declaration of main expected");
            }
            env.importModules();
-           env.declareTypes(writer);
-           var tmp = new StringBuilder();
-           for(var line:b.getCode().lines().toList()){
-               if(!line.equals(";")){
-                   tmp.append(line).append("\n");
-               }
-           }
-           writer.write(tmp.toString());
-           writer.write(env.getVariableDeclarations());
-           writer.write(env.getFunctionDeclarations());
-           writer.write(env.getFunctionCode());
            if(!compiled){
                if(name.equals("std.lang")){
                    makeMethod("toString","boolToString",TypeInfo.BOOL);
@@ -102,15 +90,23 @@ public final class ModuleBlock extends AThreePassBlock{
                    fpl.setFreeArray((Function)env.getFunctionFromModule("free[]"));
                }
            }
-           if(!isMain()){
-               writer.write(env.getInitializer());
-               writer.write(env.getDestructor());
-           }
        }catch(CompilerException ex){
            ex.setSourceFile(sourceFile);
            throw ex;
        }
        compiled = true;
+   }
+   public void writeToFile()throws IOException{
+       try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
+           env.declareTypes(writer);
+           writer.write(env.getVariableDeclarations());
+           writer.write(env.getFunctionDeclarations());
+           writer.write(env.getFunctionCode());
+           if(!isMain()){
+               writer.write(env.getInitializer());
+               writer.write(env.getDestructor());
+           }
+       }
    }
    public String getName(){
        return name;

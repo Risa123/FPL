@@ -16,6 +16,7 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.function.statement.InstanceVar;
 import risa.fpl.info.InstanceInfo;
+import risa.fpl.info.NonTrivialTypeInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -208,6 +209,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
         for(var type:types.values()){
             if(type instanceof TemplateTypeInfo t){
                 t.setTypesForDeclaration(typesForDeclarations);
+            }else if(type instanceof NonTrivialTypeInfo t){
+                t.buildDeclaration();
             }
         }
         while(!typesForDeclarations.isEmpty()){
@@ -322,5 +325,12 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public IFunction getFunctionFromModule(String name){
         return functions.get(name);
+    }
+    public void buildDeclarations(){
+        for(var type:types.values()){
+            if(type instanceof NonTrivialTypeInfo t){
+                t.buildDeclaration();
+            }
+        }
     }
 }

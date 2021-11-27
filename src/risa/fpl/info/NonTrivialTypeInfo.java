@@ -19,9 +19,6 @@ public class NonTrivialTypeInfo extends TypeInfo{
                 addFunctionRequiredTypes(f);
             }
         }
-        for(var parent:parents){
-            addRequiredType(parent);
-        }
     }
     protected final void addFunctionRequiredTypes(Function f){
         for(var t:f.getRequiredTypes()){
@@ -38,5 +35,10 @@ public class NonTrivialTypeInfo extends TypeInfo{
     @Override
     public boolean isPrimitive(){
         return false;
+    }
+    @Override
+    public void addParent(TypeInfo parent){
+        super.addParent(parent);
+        addRequiredType(parent);
     }
 }

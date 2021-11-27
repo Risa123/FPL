@@ -60,6 +60,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             instanceType = new TemplateTypeInfo(id,module,nameSpace);
         }else{
             instanceType = new InstanceInfo(id,module,nameSpace);
+            instanceType.setClassEnv(this);
         }
         classType.addField("alloc",new Function("alloc",new PointerInfo(instanceType),AccessModifier.PUBLIC));
         classType.addField("new",new Function("new",instanceType,AccessModifier.PUBLIC));
@@ -157,23 +158,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public void addTemplateInstance(InstanceInfo type){
         ((ANameSpacedEnv)superEnv).addTemplateInstance(type);
     }
-    public void appendDeclarations(){
-        for(var field:classType.getFields().values()){
-            if(field instanceof Function f){
-              appendFunctionDeclaration(f);
-            }
-        }
-        for(var field:instanceType.getFields().values()){
-            if(field instanceof Function f){
-                if(f.getAccessModifier() != AccessModifier.PRIVATE){
-                    appendFunctionDeclaration(f);
-                }
-            }
-        }
-        if(!(instanceType instanceof TemplateTypeInfo)){
-            instanceType.setMethodDeclarations(getFunctionDeclarations());
-        }
-    }
     @Override
     public IFunction getFunction(Atom name)throws CompilerException{
 	    var field = instanceType.getField(name.getValue(),this);
@@ -184,20 +168,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public boolean isAbstract(){
 	    return superEnv.hasModifier(Modifier.ABSTRACT);
-    }
-    public String getDataDeclaration(){
-        if(struct){
-            return "";
-        }
-        var b = new StringBuilder("typedef struct ");
-        instanceType.setImplCode(implBuilder.toString());
-        var primaryParent = (InstanceInfo)instanceType.getPrimaryParent();
-        b.append(dataType).append("{\nunsigned long size;\n");
-        if(primaryParent != null){
-            b.append(primaryParent.getImplCode());
-        }
-        b.append(implBuilder).append('}').append(dataType).append(";\n");
-        return b.toString();
     }
     public String getImplOf(InterfaceInfo i){
 	    return instanceType.getCname() + i.getCname() + "_impl";
@@ -311,5 +281,14 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public void setTypeForTemplateArgument(String name,TypeInfo type){
         types.put(name,type);
         addFunction(name,new Var(type));
+    }
+    public boolean isStruct(){
+        return struct;
+    }
+    public String getDataType(){
+        return dataType;
+    }
+    public String getImplCode(){
+        return implBuilder.toString();
     }
 }

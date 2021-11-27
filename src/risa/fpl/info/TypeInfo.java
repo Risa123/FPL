@@ -115,7 +115,7 @@ public class TypeInfo{
   public boolean isPrimitive(){
       return true;
   }
-  public final void addParent(TypeInfo parent){
+  public void addParent(TypeInfo parent){
       parents.add(parent);
   }
   public final ArrayList<TypeInfo>getRequiredTypes(){
