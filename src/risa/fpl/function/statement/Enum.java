@@ -1,7 +1,7 @@
 package risa.fpl.function.statement;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.BinaryOperator;
 import risa.fpl.function.exp.ValueExp;
@@ -15,7 +15,7 @@ import java.io.BufferedWriter;
 
 public final class Enum implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         var a = it.nextID();
         var id = a.getValue();
         if(env.hasFunctionInCurrentEnv(id)){

@@ -2,7 +2,7 @@ package risa.fpl.function.block;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.info.InstanceInfo;
@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public final class Destructor extends ABlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(!(env instanceof ClassEnv cEnv)){
             throw new CompilerException(line,tokenNum,"can only be declared in class block");
         }

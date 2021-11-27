@@ -1,7 +1,7 @@
 package risa.fpl.function.exp;
 
 import risa.fpl.BuilderWriter;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.IClassOwnedEnv;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
@@ -22,7 +22,7 @@ public final class GetObjectInfo extends AField implements ICalledOnPointer{
         this.self = self;
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var prev = new BuilderWriter();
         prev.write("((" + self.getClassDataType() + ")");
         var calledOnThis = getPrevCode() == null && self.getClassInfo() == ((IClassOwnedEnv)env).getClassType();

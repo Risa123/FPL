@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -20,7 +20,7 @@ public final class BinaryOperator extends AField{
 	   this.operator = operator;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		var returnType = this.returnType;
 	    if(it.hasNext() && it.peek() instanceof Atom a && a.getType() != AtomType.END_ARGS && a.getType() != AtomType.ARG_SEPARATOR){
 			var exp = it.next();

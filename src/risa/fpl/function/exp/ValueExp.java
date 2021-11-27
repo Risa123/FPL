@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.InstanceInfo;
@@ -26,7 +25,7 @@ public class ValueExp extends AField{
         this(type,code,AccessModifier.PUBLIC);
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() != AtomType.END_ARGS && atom.getType() != AtomType.ARG_SEPARATOR){
 			it.next();
 			return onField(atom,writer,env,it,line,tokenNum);
@@ -35,7 +34,7 @@ public class ValueExp extends AField{
 		writer.write(code);
 		return type;
 	}
-	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
+	protected TypeInfo onField(Atom atom,BufferedWriter writer,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
 		var field = type.getField(atom.getValue(),env);
 		if(field == null){
 			throw new CompilerException(atom,type + " has no field called " + atom);
@@ -57,7 +56,7 @@ public class ValueExp extends AField{
         }
 		var code = this.code;
 		if(!(this instanceof Variable) && field instanceof Function f && type instanceof InstanceInfo i){
-			code = i.getToPointerName() + "(" + code + ",&"+ ((SubEnv)env).getToPointerVarName(i) + ")";
+			code = i.getToPointerName() + "(" + code + ",&"+ env.getToPointerVarName(i) + ")";
 			f.calledOnReturnedInstance();
 		}
 		field.setPrevCode(prefix + code + selector);

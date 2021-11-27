@@ -2,6 +2,7 @@ package risa.fpl.env;
 
 import risa.fpl.CompilerException;
 import risa.fpl.FPL;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
@@ -9,10 +10,13 @@ import risa.fpl.parser.Atom;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class SubEnv extends AEnv{
   protected final AEnv superEnv;
   private int toPointerVarID;
+  private AccessModifier accessModifier = AccessModifier.PUBLIC;
+  private final ArrayList<Modifier>modifiers = new ArrayList<>();
   private final StringBuilder toPointerVars = new StringBuilder(),destructorCalls = new StringBuilder();
   public SubEnv(AEnv superEnv){
 	  this.superEnv = superEnv;
@@ -61,5 +65,20 @@ public class SubEnv extends AEnv{
  }
  public final int getToPointerVarID(){
       return toPointerVarID;
+ }
+ public final void setAccessModifier(AccessModifier accessModifier){
+      this.accessModifier = accessModifier;
+ }
+ public final AccessModifier getAccessModifier(){
+      return accessModifier;
+ }
+ public final boolean hasModifier(Modifier modifier){
+      return modifiers.contains(modifier);
+ }
+ public final void removeModifier(Modifier modifier){
+      modifiers.remove(modifier);
+ }
+ public final void addModifier(Modifier modifier){
+      modifiers.add(modifier);
  }
 }

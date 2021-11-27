@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
 import risa.fpl.function.IFunction;
@@ -17,7 +17,7 @@ import risa.fpl.parser.AtomType;
 
 public final class Array implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		if(env.hasModifier(Modifier.CONST)){
 			writer.write("const ");
 		}

@@ -2,7 +2,7 @@ package risa.fpl.function.block;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public final class Main implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(!(env instanceof ModuleEnv modEnv && modEnv.isMain())){
             throw new CompilerException(line,tokenNum,"this can only be used in main module");
         }

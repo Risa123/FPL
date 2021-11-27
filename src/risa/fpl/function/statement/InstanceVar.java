@@ -31,7 +31,7 @@ public final class InstanceVar extends Function{
       return INTERNAL_METHOD_PREFIX + nameSpace + "_init";
    }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         BuilderWriter b = new BuilderWriter();
         var id = it.nextAtom();
 		if(id.getType() == AtomType.ID){
@@ -50,7 +50,7 @@ public final class InstanceVar extends Function{
         writer.write(b.getCode());
 		return TypeInfo.VOID;
 	}
-	private TypeInfo compileVariable(BufferedWriter writer,Atom id,AEnv env,ExpIterator it)throws IOException,CompilerException{
+	private TypeInfo compileVariable(BufferedWriter writer,Atom id,SubEnv env,ExpIterator it)throws IOException,CompilerException{
         InstanceInfo varType;
         if(type instanceof TemplateTypeInfo tType){
             varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env,true),env,it.getLastLine(),it.getLastCharNum());
@@ -109,14 +109,14 @@ public final class InstanceVar extends Function{
         ((SubEnv)env).addInstanceVariable(varType,cID);
         return null;
     }
-	public void compileAsParentConstructor(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public void compileAsParentConstructor(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
        calledOnPointer();
        super.compile(writer,env,it,line,charNum);
     }
-    private void superCompile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+    private void superCompile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
        super.compile(writer,env,it,line,charNum);
     }
-    private TypeInfo compileClassSelector(ExpIterator it,AEnv env,BufferedWriter writer,TypeInfo classType)throws CompilerException,IOException{
+    private TypeInfo compileClassSelector(ExpIterator it,SubEnv env,BufferedWriter writer,TypeInfo classType)throws CompilerException,IOException{
         if(it.peek() instanceof Atom atom && atom.getType() == AtomType.ID){
             it.next();
             var field = classType.getField(atom.getValue(),env);

@@ -11,8 +11,8 @@ public final class InterfaceEnv extends SubEnv{
     private final InterfaceInfo type;
     public InterfaceEnv(ModuleEnv module,String id){
         super(module);
+        type = new InterfaceInfo(module,id);
         addModifier(Modifier.ABSTRACT);
-        type = new InterfaceInfo((ModuleEnv)superEnv,id);
     }
     @Override
     public IFunction getFunction(Atom atom)throws CompilerException{

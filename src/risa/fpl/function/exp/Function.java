@@ -51,7 +51,7 @@ public class Function implements IField,ICalledOnPointer{
         return accessModifier;
     }
     @Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var b = new BuilderWriter();
 		var argList = new ArrayList<TypeInfo>();
 		var returnedData = new ArrayList<ReturnedData>();

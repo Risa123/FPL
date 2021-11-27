@@ -2,7 +2,7 @@ package risa.fpl.function.block;
 
 import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 
@@ -12,10 +12,10 @@ import java.util.ArrayList;
 
 public abstract class AThreePassBlock{
     public static final int MAX_PASSES = 3;//three passes necessary in some cases
-    protected final void compile(BufferedWriter writer,AEnv env,List block)throws CompilerException,IOException{
+    protected final void compile(BufferedWriter writer,SubEnv env,List block)throws CompilerException,IOException{
         compile(writer,env,createInfoList(block));
     }
-    protected final void compile(BufferedWriter writer,AEnv env,ArrayList<ExpressionInfo>infos)throws CompilerException,IOException{
+    protected final void compile(BufferedWriter writer,SubEnv env,ArrayList<ExpressionInfo>infos)throws CompilerException,IOException{
         for(int i = 0; i < MAX_PASSES && !infos.isEmpty();++i){
             var it = infos.iterator();
             while(it.hasNext()){

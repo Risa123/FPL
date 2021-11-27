@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
 
 public final class Atom extends AExp{
@@ -16,7 +16,7 @@ public final class Atom extends AExp{
 		this.type = type;
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it) throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it) throws IOException,CompilerException{
 		return env.getFunction(this).compile(writer,env,it,getLine(),getTokenNum());
 	}
 	@Override

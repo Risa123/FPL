@@ -57,7 +57,6 @@ public final class ModuleBlock extends AThreePassBlock{
            if(!env.isMainDeclared() && isMain()){
                throw new CompilerException("declaration of main expected");
            }
-           env.importModules();
            if(!compiled){
                if(name.equals("std.lang")){
                    makeMethod("toString","boolToString",TypeInfo.BOOL);
@@ -98,6 +97,7 @@ public final class ModuleBlock extends AThreePassBlock{
    }
    public void writeToFile()throws IOException{
        try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
+           env.importModules();
            env.declareTypes(writer);
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
@@ -117,7 +117,7 @@ public final class ModuleBlock extends AThreePassBlock{
    public boolean isMain(){
        return fpl.getMainModule().equals(name);
    }
-   private void makeMethod(String name,String oldName,TypeInfo ofType,boolean remove)throws CompilerException{
+   private void makeMethod(String name,String oldName,TypeInfo ofType,boolean remove){
       Function func;
       if(remove){
           func = env.getAndMakeInaccessible(oldName);

@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.ConstructorEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.InstanceInfo;
@@ -32,7 +32,7 @@ public final class Variable extends ValueExp{
        this(type,code,false,id,false,null,AccessModifier.PUBLIC);
     }
 	@Override
-	protected TypeInfo onField(Atom atom,BufferedWriter writer,AEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
+	protected TypeInfo onField(Atom atom,BufferedWriter writer,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
 		copyCallNeeded = false;
 	    var value = atom.getValue();
 		if(value.equals("=")){
@@ -102,7 +102,7 @@ public final class Variable extends ValueExp{
 		return super.onField(atom,writer,env,it,line,charNum);
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=") && a.getType() == AtomType.ID){
 		    throw new CompilerException(line,tokenNum,"variable " + id + " not defined");
         }
@@ -122,7 +122,7 @@ public final class Variable extends ValueExp{
 		copyCallNeeded = true;
 		return ret;
 	}
-	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,AEnv env) throws IOException,CompilerException{
+	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,SubEnv env) throws IOException,CompilerException{
             switch(operator){
                 case "+=","-=","/=","*=" ->{
                     writePrev(writer);
@@ -168,12 +168,12 @@ public final class Variable extends ValueExp{
             }
 	    return null;
     }
-    private void process(String operator,BufferedWriter writer,ExpIterator it,AEnv env)throws IOException,CompilerException{
+    private void process(String operator,BufferedWriter writer,ExpIterator it,SubEnv env)throws IOException,CompilerException{
 	    writer.write(code);
         writer.write(operator);
         execute(it,writer,env,operator);
     }
-    private void execute(ExpIterator it,BufferedWriter writer,AEnv env,String operator)throws CompilerException,IOException{
+    private void execute(ExpIterator it,BufferedWriter writer,SubEnv env,String operator)throws CompilerException,IOException{
 	    var exp = it.next();
 	    var ret = exp.compile(writer,env,it);
 	    var t = type;

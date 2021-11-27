@@ -22,7 +22,7 @@ public final class Var implements IFunction{
     	this.type = type;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(type != null && it.hasNext()){
            if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
                it.next();

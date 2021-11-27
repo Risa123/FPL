@@ -22,7 +22,7 @@ import risa.fpl.parser.AtomType;
 public class Fn extends AFunctionBlock{
 	private boolean appendSemicolon;
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		var returnType = env.getType(it.nextID());
         var fnEnv = new FnEnv(env,returnType);
         LinkedHashMap<String,TypeInfo> templateArgs = null;
@@ -263,7 +263,7 @@ public class Fn extends AFunctionBlock{
                 tmp.write(headWriter.getCode());
                 fnEnv.compileToPointerVars(tmp);
                 tmp.write(b.getCode());
-                cEnv.addMethod(f,argsArray,tmp.getCode());
+                cEnv.addMethod(f,tmp.getCode());
             }else if(env instanceof InterfaceEnv){
                 writer.write(p.getPointerVariableDeclaration(variant.cname()));
             }else if(env instanceof ModuleEnv e){

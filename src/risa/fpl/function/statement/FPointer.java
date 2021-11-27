@@ -2,7 +2,7 @@ package risa.fpl.function.statement;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.block.AFunctionBlock;
@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public final class FPointer extends AFunctionBlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var returnType = env.getType(it.nextID());
         var id = it.nextID();
         var cID = IFunction.toCId(id.getValue());

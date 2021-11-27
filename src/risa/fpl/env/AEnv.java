@@ -1,11 +1,9 @@
 package risa.fpl.env;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import risa.fpl.CompilerException;
 import risa.fpl.FPL;
-import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.statement.Var;
@@ -18,8 +16,6 @@ import risa.fpl.parser.AtomType;
 public abstract class AEnv{
   protected final HashMap<String,TypeInfo>types = new HashMap<>();
   protected final HashMap<String,IFunction>functions = new HashMap<>();
-  protected AccessModifier accessModifier = AccessModifier.PUBLIC;
-  private final ArrayList<Modifier>mods = new ArrayList<>();
   public IFunction getFunction(Atom atom)throws CompilerException{
 	 switch(atom.getType()){
 	  case ID:
@@ -89,21 +85,6 @@ public abstract class AEnv{
       if(declaration){
           addFunction(type.getName(),new Var(type));
       }
-  }
-  public boolean hasModifier(Modifier mod){
-	 return mods.contains(mod);
-  }
-  public void addModifier(Modifier mod){
-	  mods.add(mod);
-  }
-  public void removeModifier(Modifier mod){
-	  mods.remove(mod);
-  }
-  public final void setAccessModifier(AccessModifier mod){
-      accessModifier = mod;
-  }
-  public final AccessModifier getAccessModifier(){
-      return accessModifier;
   }
   public abstract FPL getFPL();
 }

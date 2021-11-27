@@ -4,9 +4,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
 import risa.fpl.env.ANameSpacedEnv;
 import risa.fpl.env.Modifier;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -20,8 +20,8 @@ public class AddModifier extends AThreePassBlock implements IFunction{
 	   this.mod = mod;
    }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        addMod(env);
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+        addModifier(env);
 	    try{
 	    	var exp = it.next();
 	 	    if(exp instanceof List list){
@@ -42,20 +42,20 @@ public class AddModifier extends AThreePassBlock implements IFunction{
 	 	        appendSemicolon = f.appendSemicolon();
 	 	    }
 	    }catch(CompilerException ex){
-	        removeMod(env);
+	        removeModifier(env);
 	    	throw ex;
 	    }
-	    removeMod(env);
+	    removeModifier(env);
 		return TypeInfo.VOID;
 	}
 	@Override
 	public boolean appendSemicolon(){
 		return appendSemicolon;
 	}
-	public void addMod(AEnv env){
+	public void addModifier(SubEnv env){
         env.addModifier((Modifier)mod);
     }
-    public void removeMod(AEnv env){
+    public void removeModifier(SubEnv env){
        env.removeModifier((Modifier)mod);
     }
 }

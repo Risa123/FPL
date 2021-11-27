@@ -1,7 +1,7 @@
 package risa.fpl.function.exp;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.info.FunctionInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
@@ -16,7 +16,7 @@ public final class FunctionReference extends ValueExp{
         this.info = info;
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(info.getFunction().notFunctionPointer()){
             throw new CompilerException(line,tokenNum,"this function has more than one variant so it can't be a function pointer");
         }

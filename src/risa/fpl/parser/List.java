@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
 
 public final class List extends AExp{
@@ -18,7 +18,7 @@ public final class List extends AExp{
 		this.statement = statement;
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator superIterator)throws CompilerException,IOException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator superIterator)throws CompilerException,IOException{
 	   TypeInfo ret = null;//has to be null see line 27
 	   var it = new ExpIterator(exps,getLine(),getTokenNum());
 	   var appendSemicolon = false;

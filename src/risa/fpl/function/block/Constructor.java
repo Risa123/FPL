@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public final class Constructor extends AFunctionBlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var cEnv = (ClassEnv)env;
         var modEnv = (ModuleEnv)cEnv.getSuperEnv();
         if(modEnv.notClassConstructorOnLine(line)){
@@ -63,7 +63,7 @@ public final class Constructor extends AFunctionBlock{
         b.write("}\n");
         if(!(type instanceof TemplateTypeInfo)){
             cEnv.compileNewAndAlloc(b,args,constructor);
-            cEnv.addMethod(constructor,args,b.getCode());
+            cEnv.addMethod(constructor,b.getCode());
         }
         for(var field:type.getFields().values()){
             if(field instanceof Variable v && v.getType().isPrimitive() && v.isConstant() && !v.getId().equals("getClass") && !fnEnv.getDefinedConstFields().contains(v.getId())){

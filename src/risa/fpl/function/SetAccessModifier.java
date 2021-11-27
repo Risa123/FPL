@@ -1,17 +1,17 @@
 package risa.fpl.function;
 
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 
 public final class SetAccessModifier extends AddModifier{
     public SetAccessModifier(AccessModifier mod){
         super(mod);
     }
     @Override
-    public void removeMod(AEnv env){
+    public void removeModifier(SubEnv env){
         env.setAccessModifier(AccessModifier.PUBLIC);
     }
     @Override
-    public void addMod(AEnv env){
+    public void addModifier(SubEnv env){
         env.setAccessModifier((AccessModifier)mod);
     }
 }

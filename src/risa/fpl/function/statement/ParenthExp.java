@@ -2,7 +2,7 @@ package risa.fpl.function.statement;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.exp.AField;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.AExp;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public final class ParenthExp extends AField{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var list = new ArrayList<AExp>();
         var notIn = true;
         while(it.hasNext()){

@@ -3,7 +3,7 @@ package risa.fpl.function;
 import java.io.BufferedWriter;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.AExp;
@@ -14,7 +14,7 @@ import risa.fpl.parser.AtomType;
 
 public final class Use implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
 		if(!(env instanceof ModuleEnv e)){
 			throw new CompilerException(line,tokenNum,"can only be used on module level");
 		}

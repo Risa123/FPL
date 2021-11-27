@@ -2,7 +2,7 @@ package risa.fpl.function.block;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.InterfaceEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public final class InterfaceBlock implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         if(!(env instanceof ModuleEnv mod)){
             throw new CompilerException(line,tokenNum,"interface can only be declared on module level");
         }

@@ -1,7 +1,7 @@
 package risa.fpl.function.block;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
@@ -16,7 +16,7 @@ public class CompileTimeIfBlock extends AThreePassBlock implements IFunction{
         this.list = list;
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         compile(writer,env,list);
         return TypeInfo.VOID;
     }

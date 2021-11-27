@@ -22,7 +22,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final String nameSpace,dataType,dataName;
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
-	private final StringBuilder implBuilder = new StringBuilder();
 	private final StringBuilder implCopyConstructorCode = new StringBuilder();
 	private final StringBuilder defaultCopyConstructorCode = new StringBuilder();
     private final boolean struct;
@@ -120,20 +119,12 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         return "void " + header + instanceType.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
     }
-    public void addMethod(Function method,TypeInfo[] args,String code){
+    public void addMethod(Function method,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
               appendFunctionCode("static ");
          }
          if(method.getType() != FunctionType.ABSTRACT){
              appendFunctionCode(code);
-         }
-         if(method.isVirtual()){
-         	 var parent = instanceType.getPrimaryParent();
-         	 if(parent != null && parent.getField(method.getName(),this) instanceof Function){
-         	 	return;
-			 }
-         	 var v = method.getVariant(args);
-             implBuilder.append(new FunctionInfo(method).getPointerVariableDeclaration(v.implName())).append(";\n");
          }
     }
     @Override
@@ -167,7 +158,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    return super.getFunction(name);
     }
     public boolean isAbstract(){
-	    return superEnv.hasModifier(Modifier.ABSTRACT);
+	    return ((SubEnv)superEnv).hasModifier(Modifier.ABSTRACT);
     }
     public String getImplOf(InterfaceInfo i){
 	    return instanceType.getCname() + i.getCname() + "_impl";
@@ -287,8 +278,5 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public String getDataType(){
         return dataType;
-    }
-    public String getImplCode(){
-        return implBuilder.toString();
     }
 }

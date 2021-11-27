@@ -7,8 +7,10 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 import risa.fpl.function.statement.InstanceVar;
 
+import java.util.HashMap;
+
 public class InstanceInfo extends NonTrivialTypeInfo{
-    private String attributesCode,implCode,destructorName,instanceFree = "free",copyConstructorName;
+    private String attributesCode,destructorName,instanceFree = "free",copyConstructorName;
     private boolean complete;
     private InstanceVar constructor;
     private final String toPointerName;
@@ -26,12 +28,6 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     }
     public final void setAttributesCode(String attributesCode){
         this.attributesCode = attributesCode;
-    }
-    public final String getImplCode(){
-        return implCode;
-    }
-    public final void setImplCode(String implCode){
-        this.implCode = implCode;
     }
     public final ModuleEnv getModule(){
         return module;
@@ -52,14 +48,21 @@ public class InstanceInfo extends NonTrivialTypeInfo{
         appendToDeclaration(attributesCode);
         appendToDeclaration("}" + getCname() + ";\n");
         var b = new StringBuilder();
-        setImplCode(cEnv.getImplCode());
-        var primaryParent = (InstanceInfo)getPrimaryParent();
-        appendToDeclaration("typedef struct " + cEnv.getDataType());
-        appendToDeclaration(cEnv.getDataType() + "{\nunsigned long size;\n");
-        if(primaryParent != null){
-            appendToDeclaration(primaryParent.getImplCode());
+        var methods = new HashMap<String,Function>();
+        for(var method:getMethodsOfType(FunctionType.VIRTUAL)){
+            methods.put(method.getName(),method);
         }
-        appendToDeclaration(cEnv.getImplCode() + '}' + cEnv.getDataType() + ";\n");
+        for(var method:getMethodsOfType(FunctionType.ABSTRACT)){
+            methods.put(method.getName(),method);
+        }
+        for(var method:methods.values()){
+           for(var v:method.getVariants()){
+               b.append(new FunctionInfo(method).getPointerVariableDeclaration(v.implName())).append(";\n");
+           }
+        }
+        appendToDeclaration("typedef struct " + cEnv.getDataType());
+        appendToDeclaration(cEnv.getDataType() + "{\nunsigned long size;\n" + b.toString());
+        appendToDeclaration('}' + cEnv.getDataType() + ";\n");
         appendToDeclaration("extern " + cEnv.getDataDefinition());
         addFunctionRequiredTypes(constructor);
         appendToDeclaration(getCname() + "* " + getToPointerName() + "(" + getCname() + " this," + getCname() + "* p);\n");

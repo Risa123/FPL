@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnSubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InstanceInfo;
@@ -17,7 +17,7 @@ import risa.fpl.parser.List;
 
 public final class Return implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		var subEnv = (FnSubEnv)env;
 		var expCode = "";
 		TypeInfo returnType = null;

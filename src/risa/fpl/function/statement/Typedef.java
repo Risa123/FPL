@@ -2,7 +2,7 @@ package risa.fpl.function.statement;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.CustomTypeInfo;
 import risa.fpl.info.TypeInfo;
@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public final class Typedef implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         writer.write("typedef ");
         var type = it.nextID();
         if(env.hasTypeInCurrentEnv(type.getValue()) && env.getType(type) instanceof CustomTypeInfo t && t.isPrimitive()){

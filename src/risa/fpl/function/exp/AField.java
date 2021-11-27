@@ -1,7 +1,7 @@
 package risa.fpl.function.exp;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -43,7 +43,7 @@ public abstract class AField implements IField{
     public AccessModifier getAccessModifier(){
         return accessModifier;
     }
-    public TypeInfo compileChainedCall(TypeInfo returnType,BufferedWriter writer,AEnv env,ExpIterator it,String prevCode)throws IOException,CompilerException{
+    public TypeInfo compileChainedCall(TypeInfo returnType,BufferedWriter writer,SubEnv env,ExpIterator it,String prevCode)throws IOException,CompilerException{
          if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == AtomType.ID){
            it.next();
            var field = returnType.getField(id.getValue(),env);

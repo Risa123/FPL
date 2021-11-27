@@ -34,7 +34,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         return env;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum) throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum) throws IOException,CompilerException{
 		if(!(env instanceof ModuleEnv modEnv)){
 		    throw new CompilerException(line,tokenNum,"can only be used on module level");
         }
@@ -160,7 +160,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         var constructor = type.getConstructor();
         if(constructor.getVariants().size() == 0){
             constructor.addVariant(new TypeInfo[0],cEnv.getNameSpace());
-            cEnv.addMethod(constructor,new TypeInfo[0],cEnv.getImplicitConstructor());
+            cEnv.addMethod(constructor,cEnv.getImplicitConstructor());
             type.setConstructor(constructor);
             cEnv.getSuperEnv().addFunction(type.getName(),constructor);
             cEnv.compileNewAndAlloc(internalCode,new TypeInfo[0],constructor);

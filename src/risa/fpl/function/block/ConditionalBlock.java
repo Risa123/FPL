@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnSubEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.AExp;
@@ -20,7 +20,7 @@ public final class ConditionalBlock extends ABlock{
     	this.code = code;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		writer.write(code);
 		writer.write('(');
 		var list = new ArrayList<AExp>();

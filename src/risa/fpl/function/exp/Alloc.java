@@ -1,7 +1,7 @@
 package risa.fpl.function.exp;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
@@ -19,7 +19,7 @@ public final class Alloc extends AField{
         this.array = array;
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         writer.write("((");
         writer.write(p.getCname());
         var notOneByteType = !(type == TypeInfo.CHAR || type == TypeInfo.BOOL || type instanceof NumberInfo n && n.getSize() == 1);

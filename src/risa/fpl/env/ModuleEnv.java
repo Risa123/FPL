@@ -131,7 +131,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
 	@Override
 	public String getNameSpace(IFunction caller){
-	    if(!hasModifier(Modifier.NATIVE) && accessModifier == AccessModifier.PRIVATE){
+	    if(!hasModifier(Modifier.NATIVE) && getAccessModifier() == AccessModifier.PRIVATE){
 	        return "";
         }
 		return nameSpace;
@@ -325,12 +325,5 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public IFunction getFunctionFromModule(String name){
         return functions.get(name);
-    }
-    public void buildDeclarations(){
-        for(var type:types.values()){
-            if(type instanceof NonTrivialTypeInfo t){
-                t.buildDeclaration();
-            }
-        }
     }
 }

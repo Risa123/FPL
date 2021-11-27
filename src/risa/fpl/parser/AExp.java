@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
 
 public abstract class AExp{
@@ -19,5 +19,5 @@ public abstract class AExp{
  public final int getTokenNum(){
      return tokenNum;
  }
- public abstract TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it)throws IOException,CompilerException;
+ public abstract TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it)throws IOException,CompilerException;
 }

@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
@@ -48,7 +49,7 @@ public interface IFunction{
 	  }
 	  return b.toString();
   }
-  TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException;
+  TypeInfo compile(BufferedWriter writer,SubEnv env, ExpIterator it, int line, int tokenNum)throws IOException,CompilerException;
   default boolean appendSemicolon(){
 	  return true;
   }

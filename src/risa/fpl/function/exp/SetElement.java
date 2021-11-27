@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
@@ -17,7 +17,7 @@ public final class SetElement extends AField{
 	}
 	@Override
 	public TypeInfo
-	compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
 		writePrev(writer);
 		writer.write('[');
 		int beginChar = 0;

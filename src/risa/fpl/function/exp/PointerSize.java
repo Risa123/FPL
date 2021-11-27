@@ -1,6 +1,6 @@
 package risa.fpl.function.exp;
 
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
@@ -12,7 +12,7 @@ public final class PointerSize extends AField{
     public static final PointerSize INSTANCE = new PointerSize();
     private PointerSize(){}
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException{
         writer.write(Integer.toString(NumberInfo.MEMORY.getSize()));
         return NumberInfo.MEMORY;
     }

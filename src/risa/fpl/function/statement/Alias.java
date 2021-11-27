@@ -1,7 +1,7 @@
 package risa.fpl.function.statement;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.info.TypeInfo;
@@ -11,7 +11,7 @@ import java.io.BufferedWriter;
 
 public final class Alias implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int tokenNum)throws CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env, ExpIterator it,int line,int tokenNum)throws CompilerException{
         var id = it.nextID();
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);

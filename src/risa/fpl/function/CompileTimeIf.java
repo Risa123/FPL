@@ -1,7 +1,7 @@
 package risa.fpl.function;
 
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.block.CompileTimeIfBlock;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public final class CompileTimeIf implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,AEnv env, ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env, ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var conditionAtom = it.nextID();
         var condition = conditionAtom.getValue();
         var invert = false;

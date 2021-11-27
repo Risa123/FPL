@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
-import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.NumberInfo;
@@ -19,7 +19,7 @@ public final class Cast extends AField{
     	this.self = self;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,AEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var typeAtom = it.nextID();
 	    var type = env.getType(typeAtom);
 	    var prev = new BuilderWriter();
