@@ -16,7 +16,6 @@ import risa.fpl.parser.AtomType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public final class Main implements IFunction{
     @Override
@@ -31,69 +30,20 @@ public final class Main implements IFunction{
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("args",new Variable(new PointerInfo(modEnv.getFPL().getString()),"args","args"));
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",AtomType.ID)),"mainThread","mainThread"));
-        writer.write(modEnv.getInitializer());
         var b = new BuilderWriter();
-        b.write("_String* args;\n");
-        b.write("int main(int argc,char** argv){\n");
-        var modules = new ArrayList<ModuleEnv>();
-        addDependencies(modEnv,modules);
-        while(!modules.isEmpty()){
-            var iterator = modules.iterator();
-            while(iterator.hasNext()){
-                var e = iterator.next();
-                if(e.allDependenciesInitCalled()){
-                    e.initCalled();
-                    if(modEnv == e){
-                        b.write(e.getInitializerCode());
-                    }else{
-                        b.write(e.getInitializerCall());
-                    }
-                    iterator.remove();
-                }
-            }
-        }
-        b.write("_Thread mainThread;\n");
-        b.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
-        b.write("_std_lang_currentThread = &mainThread;\n");
-        b.write("args = malloc(argc * sizeof(_String));\n");
-        b.write("for(int i = 0;i < argc;++i){\n");
-        b.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n");
-        b.write("}\n");
+        b.write(modEnv.getInitializer());
         var tmp = new BuilderWriter();
         it.nextList().compile(tmp,fnEnv,it);
         fnEnv.compileToPointerVars(b);
         b.write(tmp.getCode());
         fnEnv.compileDestructorCalls(b);
-        var modules1 = new ArrayList<ModuleEnv>();
-        addDependencies(modEnv,modules1);
-        while(!modules1.isEmpty()){
-            var iterator = modules1.iterator();
-            while(iterator.hasNext()){
-                var e = iterator.next();
-                if(e.allDependenciesDestructorCalled()){
-                    if(!e.isMain()){
-                        e.destructorCalled();
-                        b.write(e.getDestructorCall());
-                    }
-                    iterator.remove();
-                }
-            }
-        }
         b.write(modEnv.getDestructor());
         if(fnEnv.isReturnNotUsed()){
             b.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
             b.write("free(args);\nreturn 0;\n}\n");
         }
         modEnv.declareMain();
-        modEnv.appendFunctionCode(b.getCode());
+        modEnv.getModuleBlock().setMainFunctionCode(b.getCode());
         return TypeInfo.VOID;
-    }
-    private void addDependencies(ModuleEnv env,ArrayList<ModuleEnv>modules){
-       if(!modules.contains(env)){
-           modules.add(env);
-           for(var mod:env.getImportedModules()){
-               addDependencies(mod,modules);
-           }
-       }
     }
 }

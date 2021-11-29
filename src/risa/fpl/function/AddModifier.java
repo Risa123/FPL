@@ -29,8 +29,7 @@ public class AddModifier extends AThreePassBlock implements IFunction{
                  var infos = e.getModifierBlock(line);
 				 if(infos == null){
 					 infos = createInfoList(list);
-				 }else{
-                    e.addModifierBlock(line,infos);
+					 e.addModifierBlock(line,infos);
 				 }
 				 compile(writer,env,infos);
               }else{

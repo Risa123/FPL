@@ -99,6 +99,12 @@ public final class FPL{
             ex.setSourceFile("");
             throw ex;
         }
+        for(var mod:modules.values()){
+            mod.getEnv().buildDeclarations();
+        }
+        for(var data:templateCompData){
+            data.module().buildDeclarations();
+        }
     	for(var mod:modules.values()){
             mod.writeToFile();
     	    for(var file:mod.getEnv().getInstanceFiles()){

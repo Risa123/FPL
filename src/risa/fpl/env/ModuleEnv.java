@@ -206,13 +206,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public void declareTypes(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
         var b = new BuilderWriter();
-        for(var type:types.values()){
-            if(type instanceof TemplateTypeInfo t){
-                t.setTypesForDeclaration(typesForDeclarations);
-            }else if(type instanceof NonTrivialTypeInfo t){
-                t.buildDeclaration();
-            }
-        }
         while(!typesForDeclarations.isEmpty()){
             var it = typesForDeclarations.iterator();
             while(it.hasNext()){
@@ -325,5 +318,14 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public IFunction getFunctionFromModule(String name){
         return functions.get(name);
+    }
+    public void buildDeclarations(){
+        for(var type:types.values()){
+            if(type instanceof TemplateTypeInfo t){
+                t.setTypesForDeclaration(typesForDeclarations);
+            }else if(type instanceof NonTrivialTypeInfo t){
+                t.buildDeclaration();
+            }
+        }
     }
 }

@@ -20,7 +20,7 @@ public abstract class ANameSpacedEnv extends SubEnv{
     public final void appendToInitializer(String code){
         initializer.append(code);
     }
-    protected final String getInitializer(String name){
+    protected String getInitializer(String name){
         if(initializer.isEmpty()){
             initializerCall = "";
         }else{

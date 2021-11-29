@@ -27,6 +27,7 @@ public final class ModuleBlock extends AThreePassBlock{
    private final ArrayList<ClassEnv>classEnvList = new ArrayList<>();
    private CompilerException lastEx;
    private final ArrayList<ExpressionInfo>expInfos;
+   private String mainFunctionCode;
    public ModuleBlock(Path sourceFile,Path srcDir,FPL fpl)throws IOException,CompilerException{
        var subPath = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount());
        this.sourceFile = subPath.toString();
@@ -102,11 +103,36 @@ public final class ModuleBlock extends AThreePassBlock{
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
            writer.write(env.getFunctionCode());
-           if(!isMain()){
+           if(isMain()){
+               var modules = new ArrayList<ModuleBlock>();
+               addDependencies(modules);
+               for(var i = modules.size() - 1;i > 0;--i){
+                  // writer.write(modules.get(i).getEnv().getInitializerCall());
+               }
+               writer.write("_String* args;\n");
+               writer.write("int main(int argc,char** argv){\n");
+
+               writer.write("_Thread mainThread;\n");
+               writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
+               writer.write("_std_lang_currentThread = &mainThread;\n");
+               writer.write("args = malloc(argc * sizeof(_String));\n");
+               writer.write("for(int i = 0;i < argc;++i){\n");
+               writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n");
+               writer.write("}\n");
+               writer.write(mainFunctionCode);
+           }else{
                writer.write(env.getInitializer());
                writer.write(env.getDestructor());
            }
        }
+   }
+   private void addDependencies(ArrayList<ModuleBlock>modules){
+     if(!modules.contains(this)){
+        modules.add(this);
+        for(var mod:env.getImportedModules()){
+            mod.getModuleBlock().addDependencies(modules);
+        }
+     }
    }
    public String getName(){
        return name;
@@ -149,5 +175,8 @@ public final class ModuleBlock extends AThreePassBlock{
    }
    public CompilerException getLastEx(){
        return lastEx;
+   }
+   public void setMainFunctionCode(String code){
+       mainFunctionCode = code;
    }
 }
