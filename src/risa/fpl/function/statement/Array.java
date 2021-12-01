@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
+import risa.fpl.env.ModuleEnv;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
@@ -18,22 +19,23 @@ import risa.fpl.parser.AtomType;
 public final class Array implements IFunction{
 	@Override
 	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+		var b = new BuilderWriter();
 		if(env.hasModifier(Modifier.CONST)){
-			writer.write("const ");
+			b.write("const ");
 		}
 		var typeAtom = it.nextID();
 		var type = env.getType(typeAtom);
 		if(env instanceof ClassEnv e && e.getInstanceType() == type){
-		    writer.write("struct ");
+		    b.write("struct ");
         }
 		var lenAtom = it.nextAtom();
 		if(lenAtom.getType() == AtomType.END_ARGS){
 		    type = IFunction.generateTypeFor(type,typeAtom,it,env,false);
 		    lenAtom = it.nextAtom();
         }
-        writer.write(type.getCname());
+        b.write(type.getCname());
 	    if(lenAtom.notIndexLiteral()){
-	    	throw new CompilerException(line, tokenNum,"array length expected instead of " + lenAtom);
+	    	throw new CompilerException(lenAtom,"array length expected instead of " + lenAtom);
 	    }
 	    var id = it.nextID();
 	    String cID;
@@ -45,13 +47,9 @@ public final class Array implements IFunction{
 	    }else{
 	    	cID = IFunction.toCId(id.getValue());
 	    }
-	    writer.write(' ');
-	    writer.write(cID);
-	    writer.write('[');
-	    writer.write(lenAtom.getValue());
-	    writer.write(']');
+	    b.write(' ' + cID + '[' + lenAtom.getValue() + ']');
 	    if(it.hasNext()){
-	    	writer.write("={");
+	    	b.write("={");
 	    }
 	    int count = 0;
 	    var first = true;
@@ -80,11 +78,16 @@ public final class Array implements IFunction{
 				}
 		    }
 		    var len = Long.parseLong(lenAtom.getValue());
-		    writer.write('}');
+		    b.write("};\n");
 		    if(count > len){
-		    	throw new CompilerException(line, tokenNum,"can only have " + len +  " elements");
+		    	throw new CompilerException(line,tokenNum,"can only have " + len +  " elements");
 		    }
 	    }
+		if(env instanceof ModuleEnv e){
+			e.appendVariableDeclaration(b.getCode());
+		}else{
+			writer.write(b.getCode());
+		}
 		return TypeInfo.VOID;
 	}
 }

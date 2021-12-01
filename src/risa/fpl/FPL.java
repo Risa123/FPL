@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import risa.fpl.env.ProgramEnv;
 import risa.fpl.function.exp.Function;
@@ -48,7 +47,7 @@ public final class FPL{
         mainModule = build.getProperty("mainModule");
         Collections.addAll(flags,build.getProperty("flags","").split(","));
         srcDir = Paths.get(project + "/src");
-        for(var p:Files.walk(srcDir).collect(Collectors.toList())){
+        for(var p:Files.walk(srcDir).toList()){
             if(p.toString().endsWith(".fpl")){
                 var mod = new ModuleBlock(p,srcDir,this);
                 modules.put(mod.getName(),mod);
@@ -64,7 +63,7 @@ public final class FPL{
     public void compile()throws IOException,CompilerException{
     	var path = Paths.get(outputDirectory);
         if(Files.exists(path)){
-            for(var p:Files.walk(path).sorted(Comparator.reverseOrder()).collect(Collectors.toList())){
+            for(var p:Files.walk(path).sorted(Comparator.reverseOrder()).toList()){
                 Files.delete(p);
             }
         }
@@ -121,7 +120,7 @@ public final class FPL{
                     mod.addTypesForDeclaration(type);
                 }
                 mod.updateTypesForDeclaration();
-    	        mod.declareTypes(w);
+    	        mod.declare(w);
                 w.write(tData.code());
             }
         }

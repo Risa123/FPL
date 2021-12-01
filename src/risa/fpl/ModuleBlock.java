@@ -99,7 +99,7 @@ public final class ModuleBlock extends AThreePassBlock{
    public void writeToFile()throws IOException{
        try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
            env.importModules();
-           env.declareTypes(writer);
+           env.declare(writer);
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
            writer.write(env.getFunctionCode());
@@ -107,12 +107,6 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write("_String* args;\n");
                writer.write("static void onExit();\n");
                writer.write("int main(int argc,char** argv){\n");
-               writer.write("_Thread mainThread;\n");
-               writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
-               writer.write("_std_lang_currentThread = &mainThread;\n");
-               writer.write("args = malloc(argc * sizeof(_String));\n");
-               writer.write("for(int i = 0;i < argc;++i){\n");
-               writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n}\n");
                var modules = new ArrayList<ModuleEnv>();
                addImportedModules(modules);
                var it = modules.iterator();
@@ -125,6 +119,12 @@ public final class ModuleBlock extends AThreePassBlock{
                    }
                }
                writer.write(env.getInitializerCode());
+               writer.write("_Thread mainThread;\n");
+               writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
+               writer.write("_std_lang_currentThread = &mainThread;\n");
+               writer.write("args = malloc(argc * sizeof(_String));\n");
+               writer.write("for(int i = 0;i < argc;++i){\n");
+               writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n}\n");
                writer.write(mainFunctionCode);
                writer.write("}\n");
                writer.write("static void onExit(){\n");
@@ -169,10 +169,10 @@ public final class ModuleBlock extends AThreePassBlock{
        }
        ofType.addField(name,func.makeMethod(ofType,name));
    }
-   private void makeMethod(String name,TypeInfo ofType)throws CompilerException{
+   private void makeMethod(String name,TypeInfo ofType){
        makeMethod(name,name,ofType,true);
    }
-   private void makeMethod(String name,String oldName,TypeInfo ofType)throws CompilerException{
+   private void makeMethod(String name,String oldName,TypeInfo ofType){
        makeMethod(name,oldName,ofType,true);
    }
    public ModuleEnv getEnv(){

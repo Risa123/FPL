@@ -151,7 +151,7 @@ public class Function implements IField,ICalledOnPointer{
             field.setPrevCode(b.getCode());
             if(field instanceof Function f && returnType instanceof InstanceInfo i){
                f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
-               var c = i.getToPointerName() + "(" + f.getPrevCode() + ",&" + ((SubEnv)env).getToPointerVarName(i);
+               var c = i.getToPointerName() + "(" + f.getPrevCode() + ",&" + env.getToPointerVarName(i);
                f.setPrevCode(c);
                 return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
             }

@@ -47,7 +47,11 @@ public final class InstanceVar extends Function{
         }else{
 		    throw new CompilerException(id,"variable identifier or : expected");
         }
-        writer.write(b.getCode());
+        if(env instanceof ModuleEnv e){
+            e.appendVariableDeclaration(b.getCode());
+        }else{
+            writer.write(b.getCode());
+        }
 		return TypeInfo.VOID;
 	}
 	private TypeInfo compileVariable(BufferedWriter writer,Atom id,SubEnv env,ExpIterator it)throws IOException,CompilerException{
@@ -106,7 +110,7 @@ public final class InstanceVar extends Function{
             instanceType = e.getInstanceType();
         }
         env.addFunction(id.getValue(),new Variable(varType,cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
-        ((SubEnv)env).addInstanceVariable(varType,cID);
+        env.addInstanceVariable(varType,cID);
         return null;
     }
 	public void compileAsParentConstructor(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{

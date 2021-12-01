@@ -61,7 +61,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
            }
         }
         appendToDeclaration("typedef struct " + cEnv.getDataType());
-        appendToDeclaration(cEnv.getDataType() + "{\nunsigned long size;\n" + b.toString());
+        appendToDeclaration(cEnv.getDataType() + "{\nunsigned long size;\n" + b);
         appendToDeclaration('}' + cEnv.getDataType() + ";\n");
         appendToDeclaration("extern " + cEnv.getDataDefinition());
         addFunctionRequiredTypes(constructor);

@@ -192,7 +192,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public boolean multipleMainDeclared(){
 	    return mainDeclared == AThreePassBlock.MAX_PASSES;
     }
-    public void declareTypes(BufferedWriter writer)throws IOException{
+    public void declare(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
         var b = new BuilderWriter();
         while(!typesForDeclarations.isEmpty()){
