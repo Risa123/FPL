@@ -12,9 +12,6 @@ import java.util.ArrayList;
 
 public abstract class AThreePassBlock{
     public static final int MAX_PASSES = 3;//three passes necessary in some cases
-    protected final void compile(BufferedWriter writer,SubEnv env,List block)throws CompilerException,IOException{
-        compile(writer,env,createInfoList(block));
-    }
     protected final void compile(BufferedWriter writer,SubEnv env,ArrayList<ExpressionInfo>infos)throws CompilerException,IOException{
         for(int i = 0; i < MAX_PASSES && !infos.isEmpty();++i){
             var it = infos.iterator();

@@ -106,11 +106,14 @@ public final class FPL{
             data.module().buildDeclarations();
         }
     	for(var mod:modules.values()){
-            mod.writeToFile();
-    	    for(var file:mod.getEnv().getInstanceFiles()){
-    	        files.append(' ').append(outputDirectory).append('/').append(file);
+            for(var file:mod.getEnv().getInstanceFiles()){
+                files.append(' ').append(outputDirectory).append('/').append(file);
             }
+           if(!mod.isMain()){
+               mod.writeToFile();
+           }
         }
+        getModule(mainModule).writeToFile();
     	for(var tData:templateCompData){
     	    try(var w = Files.newBufferedWriter(tData.path())){
                 var mod = tData.module();

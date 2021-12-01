@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public final class CompileTimeIf implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env, ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var conditionAtom = it.nextID();
         var condition = conditionAtom.getValue();
         var invert = false;

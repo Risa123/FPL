@@ -103,36 +103,50 @@ public final class ModuleBlock extends AThreePassBlock{
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
            writer.write(env.getFunctionCode());
-           if(isMain()){
-               var modules = new ArrayList<ModuleBlock>();
-               addDependencies(modules);
-               for(var i = modules.size() - 1;i > 0;--i){
-                  // writer.write(modules.get(i).getEnv().getInitializerCall());
-               }
+           if(isMain()){//main module is written as last
                writer.write("_String* args;\n");
+               writer.write("static void onExit();\n");
                writer.write("int main(int argc,char** argv){\n");
-
                writer.write("_Thread mainThread;\n");
                writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
                writer.write("_std_lang_currentThread = &mainThread;\n");
                writer.write("args = malloc(argc * sizeof(_String));\n");
                writer.write("for(int i = 0;i < argc;++i){\n");
-               writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n");
-               writer.write("}\n");
+               writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n}\n");
+               var modules = new ArrayList<ModuleEnv>();
+               addImportedModules(modules);
+               var it = modules.iterator();
+               var declared = new ArrayList<ModuleEnv>();
+               while(it.hasNext()){
+                   var mod = it.next();
+                   if(declared.containsAll(mod.getImportedModules())){
+                       declared.add(mod);
+                       it.remove();
+                   }
+               }
+               writer.write(env.getInitializerCode());
                writer.write(mainFunctionCode);
+               writer.write("}\n");
+               writer.write("static void onExit(){\n");
+               writer.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
+               writer.write("free(args);\n");
+               for(var mod:modules){
+                   writer.write(mod.getDestructorCall());
+               }
+               writer.write("}\n");
            }else{
                writer.write(env.getInitializer());
                writer.write(env.getDestructor());
            }
        }
    }
-   private void addDependencies(ArrayList<ModuleBlock>modules){
-     if(!modules.contains(this)){
-        modules.add(this);
-        for(var mod:env.getImportedModules()){
-            mod.getModuleBlock().addDependencies(modules);
-        }
-     }
+   private void addImportedModules(ArrayList<ModuleEnv>result){
+       if(!result.contains(env)){
+           result.add(env);
+           for(var mod:env.getImportedModules()){
+               mod.getModuleBlock().addImportedModules(result);
+           }
+       }
    }
    public String getName(){
        return name;

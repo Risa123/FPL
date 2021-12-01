@@ -26,10 +26,10 @@ public class AddModifier extends AThreePassBlock implements IFunction{
 	    	var exp = it.next();
 	 	    if(exp instanceof List list){
 	 	      if(env instanceof ANameSpacedEnv e){
-                 var infos = e.getModifierBlock(line);
+                 var infos = e.getModifierBlockInfos(line);
 				 if(infos == null){
 					 infos = createInfoList(list);
-					 e.addModifierBlock(line,infos);
+					 e.addModifierBlockInfos(line,infos);
 				 }
 				 compile(writer,env,infos);
               }else{

@@ -27,7 +27,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ModuleBlock moduleBlock;
 	private final String nameSpace;
 	private String destructorCall,declarationCode = "";//prevent NPE
-	private boolean getRequestFromOutSide,initCalled,destructorCalled;
+	private boolean getRequestFromOutSide;
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	private int mainDeclared;
 	private final ArrayList<TypeInfo>typesForDeclarations = new ArrayList<>();
@@ -152,9 +152,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public boolean isMain(){
 	    return moduleBlock.isMain();
     }
-    public void initCalled(){
-	    initCalled = true;
-    }
     @Override
     public ModuleEnv getModule(){
 	    return this;
@@ -180,16 +177,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
         importedModules.add(block.getEnv());
     }
-    public boolean allDependenciesInitCalled(){
-	    for(var m:importedModules){
-	        if(!m.initCalled){
-	            return false;
-            }
-        }
-	    return true;
-    }
     public ArrayList<ModuleEnv>getImportedModules(){
-	    return importedModules;
+        return importedModules;
     }
     public ArrayList<String>getInstanceFiles(){
 	    return instanceFiles;
@@ -266,17 +255,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public String getDestructorCall(){
         return destructorCall;
-    }
-    public void destructorCalled(){
-	    destructorCalled = true;
-    }
-    public boolean allDependenciesDestructorCalled(){
-        for(var m:importedModules){
-            if(!m.destructorCalled){
-                return false;
-            }
-        }
-        return true;
     }
     /**
      * Add line where constructor is declared on list.

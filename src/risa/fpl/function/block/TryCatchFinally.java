@@ -21,7 +21,7 @@ public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var postEntry = new BuilderWriter();
-        postEntry.write("if(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context){\n");
+        postEntry.write("if(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context)){\n");
         var tryEnv = new FnSubEnv(env);
         var tmp = new BuilderWriter();
         it.nextList().compile(tmp,tryEnv,it);

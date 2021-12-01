@@ -13,7 +13,8 @@ public abstract class ANameSpacedEnv extends SubEnv{
     private String initializerCall;
     private final StringBuilder functionCode = new StringBuilder(),functionDeclarations = new StringBuilder();
     protected final StringBuilder destructor = new StringBuilder();
-    private final HashMap<Integer,ArrayList<ExpressionInfo>>modifierBlocks = new HashMap<>();
+    private final HashMap<Integer,ArrayList<ExpressionInfo>>modifierBlockInfos = new HashMap<>();
+    private final HashMap<Integer,ArrayList<ExpressionInfo>>compileIfBlockInfos = new HashMap<>();
     public ANameSpacedEnv(AEnv superEnv){
         super(superEnv);
     }
@@ -59,11 +60,17 @@ public abstract class ANameSpacedEnv extends SubEnv{
     public final String getInitializerCode(){
         return initializer.toString();
     }
-    public final void addModifierBlock(int line,ArrayList<ExpressionInfo> infos){
-        modifierBlocks.put(line,infos);
+    public final void addModifierBlockInfos(int line, ArrayList<ExpressionInfo> infos){
+        modifierBlockInfos.put(line,infos);
     }
-    public final ArrayList<ExpressionInfo>getModifierBlock(int line){
-        return modifierBlocks.get(line);
+    public final ArrayList<ExpressionInfo>getModifierBlockInfos(int line){
+        return modifierBlockInfos.get(line);
+    }
+    public final void addCompileIfBlockInfos(int line, ArrayList<ExpressionInfo> block){
+        compileIfBlockInfos.put(line,block);
+    }
+    public final ArrayList<ExpressionInfo>getCompileBlockInfos(int line){
+        return compileIfBlockInfos.get(line);
     }
     public abstract void addTemplateInstance(InstanceInfo type);
 }

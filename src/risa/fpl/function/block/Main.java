@@ -39,8 +39,7 @@ public final class Main implements IFunction{
         fnEnv.compileDestructorCalls(b);
         b.write(modEnv.getDestructor());
         if(fnEnv.isReturnNotUsed()){
-            b.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
-            b.write("free(args);\nreturn 0;\n}\n");
+           b.write("onExit();\nreturn 0;\n");
         }
         modEnv.declareMain();
         modEnv.getModuleBlock().setMainFunctionCode(b.getCode());
