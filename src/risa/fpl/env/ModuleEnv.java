@@ -46,37 +46,10 @@ public final class ModuleEnv extends ANameSpacedEnv{
 		if(moduleBlock.isMain()){
 		    addFunction("main",new Main());
         }
-	}
-	private void addRequiredTypes(TypeInfo type,ArrayList<TypeInfo>types){
-	    for(var t:type.getRequiredTypes()){
-	       if(t.notIn(types)){
-               types.add(t);
-               addRequiredTypes(t,types);
-           }
-        }
-    }
-	public void importModules(){
-	    if(superEnv instanceof ModuleEnv mod){
-	        for(var m:mod.importedModules){
-	            if(!importedModules.contains(m)){
-	                importedModules.add(m);
-                }
-            }
-        }
-	    for(var mod:importedModules){
-	        for(var type:mod.types.values()){
-	            if(type.notIn(typesForDeclarations) && !type.isPrimitive()){
-	                typesForDeclarations.add(type);
-	                addRequiredTypes(type,typesForDeclarations);
-                }
-            }
-        }
-		for(var mod:importedModules){
-            for(var func:mod.functions.values()){
-                if(func instanceof Function f  && !(func instanceof InstanceVar)  && f.getAccessModifier() != AccessModifier.PRIVATE){
-                    importDeclarations.append(f.getDeclaration());
-                }else if(func instanceof Variable v){
-                    importDeclarations.append(v.getExternDeclaration());
+        if(superEnv instanceof ModuleEnv mod){
+            for(var m:mod.importedModules){
+                if(!importedModules.contains(m)){
+                    importedModules.add(m);
                 }
             }
         }
@@ -142,9 +115,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     @Override
     public void addTemplateInstance(InstanceInfo type){
-      if(!type.isPrimitive() && type.notIn(typesForDeclarations)){
-         addTypesForDeclaration(type);
-      }
+        addTypesForDeclaration(type);
     }
     public void requestFromOutSide(){
 	    getRequestFromOutSide = true;
@@ -195,6 +166,20 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public void declare(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
         var b = new BuilderWriter();
+        for(var mod:importedModules){
+            for(var type:mod.types.values()){
+                addTypesForDeclaration(type);
+            }
+        }
+        for(var mod:importedModules){
+            for(var func:mod.functions.values()){
+                if(func instanceof Function f  && !(func instanceof InstanceVar)  && f.getAccessModifier() != AccessModifier.PRIVATE){
+                    importDeclarations.append(f.getDeclaration());
+                }else if(func instanceof Variable v){
+                    importDeclarations.append(v.getExternDeclaration());
+                }
+            }
+        }
         while(!typesForDeclarations.isEmpty()){
             var it = typesForDeclarations.iterator();
             while(it.hasNext()){

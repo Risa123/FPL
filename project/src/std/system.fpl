@@ -1,12 +1,8 @@
 use std.backend std.io.base std.io.file
 
 fn void exit int exitCode{
- native{
-    fn void _std_lang_Thread_freeEHEntries0 Thread* thread #this method is internal in std.lang
-    String* args #declared by main block
- }
- args free
- _std_lang_Thread_freeEHEntries0 currentThread
+ native fn void onExit #declared by main block
+ onExit
  std.backend.exit exitCode
 }
 fn int execute String cmd{

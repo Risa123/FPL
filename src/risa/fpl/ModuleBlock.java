@@ -98,14 +98,13 @@ public final class ModuleBlock extends AThreePassBlock{
    }
    public void writeToFile()throws IOException{
        try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
-           env.importModules();
            env.declare(writer);
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
            writer.write(env.getFunctionCode());
            if(isMain()){//main module is written as last
                writer.write("_String* args;\n");
-               writer.write("static void onExit();\n");
+               writer.write("void onExit();\n");
                writer.write("int main(int argc,char** argv){\n");
                var modules = new ArrayList<ModuleEnv>();
                addImportedModules(modules);
@@ -127,13 +126,13 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n}\n");
                writer.write(mainFunctionCode);
                writer.write("}\n");
-               writer.write("static void onExit(){\n");
+               writer.write("void onExit(){\n");
                writer.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
                writer.write("free(args);\n");
-               for(var mod:modules){
+               for(var mod:declared){
                    writer.write(mod.getDestructorCall());
                }
-               writer.write("}\n");
+               writer.write("}");
            }else{
                writer.write(env.getInitializer());
                writer.write(env.getDestructor());

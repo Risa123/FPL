@@ -108,7 +108,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		return TypeInfo.VOID;
 	}
 	public void compileClassBlock(BufferedWriter writer,ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException,IOException{
-        var b = new BuilderWriter();
         var type = cEnv.getInstanceType();
         var parentType = type.getPrimaryParent();
         var cID = IFunction.toCId(id.getValue());
