@@ -9,8 +9,10 @@ public final class CustomTypeInfo extends TypeInfo{
     private final String declaration;
     public CustomTypeInfo(String name,TypeInfo original,String declaration){
         super(name,IFunction.toCId(name));
+        while(original instanceof CustomTypeInfo t){
+            original = t.original;
+        }
         this.original = original;
-        addRequiredType(original);
         this.declaration = "typedef " + declaration + ";\n";
     }
     @Override

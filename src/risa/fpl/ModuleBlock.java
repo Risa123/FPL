@@ -13,6 +13,7 @@ import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.block.ExpressionInfo;
 import risa.fpl.function.exp.Function;
 import risa.fpl.info.NumberInfo;
+import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
@@ -99,6 +100,11 @@ public final class ModuleBlock extends AThreePassBlock{
    public void writeToFile()throws IOException{
        try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
            env.declare(writer);
+           for(var env:classEnvList){
+              if(!(env.getInstanceType() instanceof TemplateTypeInfo)){
+                  writer.write(env.getDataDefinition());
+              }
+           }
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
            writer.write(env.getFunctionCode());

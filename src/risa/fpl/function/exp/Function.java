@@ -331,7 +331,7 @@ public class Function implements IField,ICalledOnPointer{
     public final void addTemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,LinkedHashMap<String,TypeInfo>args,AEnv env){
         templateVariants.add(new TemplateVariant(templateArgs,code,args,env));
     }
-    public final Function makeMethodFromTemplate(TypeInfo self,TypeInfo[]args,AEnv env){
+    public final Function makeMethodFromTemplate(TypeInfo self,TypeInfo[]args,SubEnv env){
         var f = new Function(name,returnType,FunctionType.NORMAL,self,accessModifier);
         var array = new TypeInfo[args.length + 1];
         array[0] = self;
@@ -371,8 +371,8 @@ public class Function implements IField,ICalledOnPointer{
         }
         return null;
     }
-    private void addVariantFromTemplate(TemplateVariant variant,AEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
-        var mod = ((SubEnv)env).getModule();
+    private void addVariantFromTemplate(TemplateVariant variant,SubEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
+        var mod = env.getModule();
         var cname = mod.getNameSpace() + IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
         var file =  cname + ".c";
         var path = Paths.get(env.getFPL().getOutputDirectory() + "/" + file);
@@ -445,7 +445,13 @@ public class Function implements IField,ICalledOnPointer{
            writer.write("){\n");
            variant.code.compile(writer,fnEnv,null);
            writer.write('}');
-           mod.getFPL().addFunctionVariantGenerationData(new VariantGenData(writer.getCode(),path,mod));
+           var selfType = self;
+           if(selfType instanceof PointerInfo p){
+               selfType = p.getType();
+           }
+           if(!(selfType instanceof InstanceInfo i && !i.isGeneratedInsideTemplate())){
+               mod.getFPL().addFunctionVariantGenerationData(new VariantGenData(writer.getCode(),path,mod));
+           }
        }catch(IOException e){
            throw new UncheckedIOException(e);
        }catch(CompilerException e){

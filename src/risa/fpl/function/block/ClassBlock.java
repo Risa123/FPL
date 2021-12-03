@@ -209,9 +209,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             internalCode.write("return instance;\n}\n");
         }
         cEnv.appendFunctionCode(internalCode.getCode());
-        if(templateStatus != TemplateStatus.GENERATING){
-            writer.write(cEnv.getDataDefinition());
-        }
         if(templateStatus != TemplateStatus.TEMPLATE){
             modEnv.appendFunctionDeclaration(cEnv.getFunctionDeclarations());
             modEnv.appendFunctionCode(cEnv.getDestructor());

@@ -9,25 +9,3 @@ class Random{
     return  seed / 65536 % bound;cast uint
   }
 }
-fn double sin double x{
- var i 1
- var cur x
- double acc 1;fact 1;pow x
- while abs acc; > 0.00000001; && i < 100{
-   fact *= [ 2 * i ] * [ 2 * i + 1 ]
-   pow *=  x * x * -1
-   acc = pow / fact
-   cur += acc
-   i ++
- }
- return cur
-}
-private fn double abs double x{
-  if x >= 0{
-    return x
-  }
-  return x -
-}
-fn double cos double x = sin x + 90
-fn double tan double x = sin x; / cos x
-fn double cotan double x = 1 / tan x

@@ -85,8 +85,11 @@ public final class TemplateTypeInfo extends InstanceInfo{
            if(mod.getInitializerCall() != null){
                getModule().appendToInitializer(mod.getInitializerCall());
            }
+           //prevent declaration of template in a template
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
                mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + mod.getFunctionCode(),typesForDeclaration));
+           }else{
+               type.generatedInsideTemplate();
            }
        }
        return type;

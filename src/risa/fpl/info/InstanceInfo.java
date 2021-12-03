@@ -16,6 +16,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     private final String toPointerName;
     private String methodDeclarations = "";
     private ClassEnv cEnv;
+    private boolean generatedInsideTemplate;
     public InstanceInfo(String name,ModuleEnv module,String nameSpace){
         super(module,name,IFunction.toCId(name));
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
@@ -61,7 +62,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
            }
         }
         appendToDeclaration("typedef struct " + cEnv.getDataType());
-        appendToDeclaration(cEnv.getDataType() + "{\nunsigned long size;\n" + b);
+        appendToDeclaration("{\nunsigned long size;\n" + b);
         appendToDeclaration('}' + cEnv.getDataType() + ";\n");
         appendToDeclaration("extern " + cEnv.getDataDefinition());
         addFunctionRequiredTypes(constructor);
@@ -89,7 +90,6 @@ public class InstanceInfo extends NonTrivialTypeInfo{
                 appendToDeclaration(i.getCname() + " " + getConversionMethod(i) + "(" + getCname() + "*);\n");
             }
         }
-        super.buildDeclaration();
     }
     @Override
     public final void setClassInfo(ClassInfo info){
@@ -138,6 +138,12 @@ public class InstanceInfo extends NonTrivialTypeInfo{
             return i.isException();
         }
         return false;
+    }
+    public final void generatedInsideTemplate(){
+        generatedInsideTemplate = true;
+    }
+    public final boolean isGeneratedInsideTemplate(){
+        return generatedInsideTemplate;
     }
     public final void setClassEnv(ClassEnv cEnv){
         this.cEnv = cEnv;

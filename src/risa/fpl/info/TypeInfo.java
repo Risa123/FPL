@@ -53,7 +53,7 @@ public class TypeInfo{
   public String toString(){
 	  return name;
   }
-  public final void addField(String name,IField value){
+  public void addField(String name,IField value){
 	  fields.put(name,value);
   }
   //returns null if field cannot be accessed from Env from
