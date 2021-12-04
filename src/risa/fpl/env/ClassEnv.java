@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implicitConstructor = new StringBuilder();
-	private final String nameSpace,dataType,dataName;
+	private final String nameSpace,dataType;
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implCopyConstructorCode = new StringBuilder();
@@ -52,8 +52,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             nameSpace = module.getNameSpace() + cname;
         }
         dataType = cname + "_data_type";
-        dataName = nameSpace + "_data";
-        classType = new ClassInfo(id,dataName);
+        classType = new ClassInfo(id,nameSpace + "_data");
         this.struct = struct;
         if(templateStatus == TemplateStatus.TEMPLATE){
             instanceType = new TemplateTypeInfo(id,module,nameSpace);
@@ -70,7 +69,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         instanceType.setConstructor(new InstanceVar(instanceType,classType));
         if(!struct){
-            appendToInitializer(dataName + ".size=sizeof(" + cname +");\n");
+            appendToInitializer(classType.getDataName() + ".size=sizeof(" + cname +");\n");
         }
 	}
 	@Override
@@ -108,7 +107,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             additionalCode += primaryParent.getConstructor().getVariant(new TypeInfo[0]).cname() + "((" + primaryParent.getCname() + "*)this);\n";
         }
 	    if(!isAbstract() && !struct){
-	        additionalCode += "this->objectData=&" + dataName + ";\n";
+	        additionalCode += "this->objectData=&" + classType.getDataName() + ";\n";
 	     }
 		return additionalCode + implicitConstructor;
 	}
@@ -167,7 +166,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         if(struct){
             return "";
         }
-        return dataType + ' ' + dataName + ";\n";
+        return dataType + ' ' + classType.getDataName() + ";\n";
     }
     public void parentConstructorCalled(){
 	    parentConstructorCalled = true;
@@ -175,14 +174,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public boolean isParentConstructorCalled(){
 	    return parentConstructorCalled;
     }
-    public String getDataName(){
-	    return dataName;
-    }
     public void setPrimaryParent(InstanceInfo parent){
         instanceType.setPrimaryParent(parent);
         for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
            for(var v:method.getVariants()){
-               appendToInitializer(getDataName() + "." + v.implName() +"=" + v.cname() + ";\n");
+               appendToInitializer(classType.getDataName() + "." + v.implName() +"=" + v.cname() + ";\n");
            }
         }
     }

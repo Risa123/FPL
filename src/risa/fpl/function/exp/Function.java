@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
@@ -74,22 +75,18 @@ public class Function implements IField,ICalledOnPointer{
 		var array = new TypeInfo[argList.size()];
 		argList.toArray(array);
 		if(!hasVariant(array)){
-		    throw new CompilerException(line, tokenNum,"function has no variant with arguments " + Arrays.toString(array));
+		    throw new CompilerException(line,tokenNum,"function has no variant with arguments " + Arrays.toString(array));
         }
 		var variant = getVariant(array);
         if(isVirtual()){
             if(self instanceof InstanceInfo i){
                 b.write("((" + i.getClassDataType() + ")");
             }
-            if(getPrevCode() == null){
-                b.write("this");
-            }else{
-                b.write(getPrevCode());
-            }
+            b.write(Objects.requireNonNullElse(prevCode,"this"));
             if(self instanceof InterfaceInfo){
                 b.write(".impl->");
             }else{
-                if(callStatus == CALLED_ON_POINTER || getPrevCode() == null){
+                if(callStatus == CALLED_ON_POINTER || prevCode == null){
                     b.write("->");
                 }else{
                     b.write('.');
@@ -151,9 +148,8 @@ public class Function implements IField,ICalledOnPointer{
             field.setPrevCode(b.getCode());
             if(field instanceof Function f && returnType instanceof InstanceInfo i){
                f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
-               var c = i.getToPointerName() + "(" + f.getPrevCode() + ",&" + env.getToPointerVarName(i);
-               f.setPrevCode(c);
-                return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
+               f.prevCode = i.getToPointerName() + "(" + f.prevCode + ",&" + env.getToPointerVarName(i);
+               return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
             }
             return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
         }

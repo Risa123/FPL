@@ -7,6 +7,11 @@ class String{
     char* p
     uint len
     bool allocated
+    fn void checkIndex uint len uint index{
+       if index >= len{
+           Exception:new "index out of bounds:" + integerToString index;;;throw
+        }
+     }
   }
   this char* p uint len bool allocated{
     this len = len
@@ -19,13 +24,11 @@ class String{
     }
   }
   fn void set uint index char c{
-    native fn void _std_lang_checkStringIndex0 uint len uint index
-    _std_lang_checkStringIndex0 len,index
+    checkIndex len,index
     p set index,c
   }
   fn char get uint index{
-    native fn void _std_lang_checkStringIndex0 uint len uint index
-    _std_lang_checkStringIndex0 len,index
+    checkIndex len,index
     return p get index
   }
   fn bool == String str{
@@ -89,11 +92,6 @@ fn void print String str{
    puts cstr
    cstr free
 }
-fn void checkStringIndex uint len uint index{
-    if index >= len{
-       Exception:new "index out of bounds:" + integerToString index;;;throw
-    }
- }
 struct EHEntry{
    EHEntry* prev
    Context context

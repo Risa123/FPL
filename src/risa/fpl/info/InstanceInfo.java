@@ -73,10 +73,8 @@ public class InstanceInfo extends NonTrivialTypeInfo{
             }
         }
         for(var field:getFields().values()){
-            if(field instanceof Function f){
-                if(f.getAccessModifier() != AccessModifier.PRIVATE){
-                    cEnv.appendFunctionDeclaration(f);
-                }
+            if(field instanceof Function f && f.getAccessModifier() != AccessModifier.PRIVATE){
+                cEnv.appendFunctionDeclaration(f);
             }
         }
         if(!(this instanceof TemplateTypeInfo)){

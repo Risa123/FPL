@@ -41,7 +41,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         var id = it.nextID();
 		var idV = id.getValue();
 		if(env.hasTypeInCurrentEnv(idV) && !(env.getType(id) instanceof InstanceInfo i && !i.isComplete())){
-		    throw new CompilerException(id,"type " + idV +  " is already declared");
+		    throw new CompilerException(id,"type " + idV + " is already declared");
         }
 		InstanceInfo primaryParent = null;
 		List block = null;
@@ -97,17 +97,13 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         if(block == null){
             throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
-        BufferedWriter cWriter;
-		if(templateArgs == null){
-           cWriter = writer;
-        }else{
-		    cWriter = new BuilderWriter();
+		if(templateArgs != null){
             ((TemplateTypeInfo)type).setDataForGeneration(block,interfaces,templateArgs);
         }
-        compileClassBlock(cWriter,cEnv,modEnv,id,block,interfaces,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
+        compileClassBlock(cEnv,modEnv,id,block,interfaces,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
 		return TypeInfo.VOID;
 	}
-	public void compileClassBlock(BufferedWriter writer,ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException,IOException{
+	public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException,IOException{
         var type = cEnv.getInstanceType();
         var parentType = type.getPrimaryParent();
         var cID = IFunction.toCId(id.getValue());
@@ -160,8 +156,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         if(constructor.getVariants().size() == 0){
             constructor.addVariant(new TypeInfo[0],cEnv.getNameSpace());
             cEnv.addMethod(constructor,cEnv.getImplicitConstructor());
-            type.setConstructor(constructor);
-            cEnv.getSuperEnv().addFunction(type.getName(),constructor);
             cEnv.compileNewAndAlloc(internalCode,new TypeInfo[0],constructor);
         }
         if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){
@@ -179,7 +173,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             if(!cEnv.isAbstract() && parent != null){
                 for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
                     for(var v:method.getVariants()){
-                        cEnv.appendToInitializer(cEnv.getDataName() + "." + v.implName() + "=&" + v.cname() + ";\n");
+                        cEnv.appendToInitializer(cEnv.getClassType().getDataName() + "." + v.implName() + "=&" + v.cname() + ";\n");
                     }
                 }
                 for(var method:i.getMethodsOfType(FunctionType.ABSTRACT)){

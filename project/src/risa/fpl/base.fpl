@@ -1,6 +1,16 @@
 
 class CompilerException Exception{
- private String file
+ private{
+   String file
+   fn String createMessage String message int line int tokenNum{
+      var zero line toString
+      var first zero + ":"
+      var tokenNumStr tokenNum toString
+      var second first + tokenNumStr
+      var third second + " "
+      return third + message
+    }
+ }
  this String message:message
  this int line int tokenNum String message:createMessage message,line,tokenNum
  fn void setFile String file{
@@ -9,13 +19,5 @@ class CompilerException Exception{
  override fn String getMessage{
    var str file + ":"
    return str + message
- }
- private fn String createMessage String message int line int tokenNum{
-   var zero line toString
-   var first zero + ":"
-   var tokenNumStr tokenNum toString
-   var second first + tokenNumStr
-   var third second + " "
-   return third + message
  }
 }
