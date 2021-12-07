@@ -56,10 +56,8 @@ public class Function implements IField,ICalledOnPointer{
         var b = new BuilderWriter();
 		var argList = new ArrayList<TypeInfo>();
 		var returnedData = new ArrayList<ReturnedData>();
-		if(self instanceof InstanceInfo i && i.isException() && name.equals("throw")){
-           if(env instanceof FnSubEnv subEnv){
-               subEnv.getReturnType();//to prevent no return error
-           }
+		if(self instanceof InstanceInfo i && i.isException() && name.equals("throw") && env instanceof FnSubEnv subEnv){
+            subEnv.getReturnType();//to prevent no return error
         }
 		while(it.hasNext() && !(it.peek() instanceof List)){
 		   var exp = it.nextAtom();
@@ -72,8 +70,7 @@ public class Function implements IField,ICalledOnPointer{
                returnedData.add(new ReturnedData(buffer.getCode(),!(f instanceof  Function)));
 		   }
 		}
-		var array = new TypeInfo[argList.size()];
-		argList.toArray(array);
+		var array = argList.toArray(new TypeInfo[0]);
 		if(!hasVariant(array)){
 		    throw new CompilerException(line,tokenNum,"function has no variant with arguments " + Arrays.toString(array));
         }
@@ -160,7 +157,6 @@ public class Function implements IField,ICalledOnPointer{
     public final void setPrevCode(String code){
         prevCode = code;
     }
-    @Override
     public final void writePrev(BufferedWriter writer)throws IOException{
         if(prevCode == null){
            if(self != null){
@@ -171,7 +167,6 @@ public class Function implements IField,ICalledOnPointer{
             prevCode = null;
         }
     }
-    @Override
     public final String getPrevCode(){
         return prevCode;
     }
@@ -445,7 +440,7 @@ public class Function implements IField,ICalledOnPointer{
            if(selfType instanceof PointerInfo p){
                selfType = p.getType();
            }
-           if(!(selfType instanceof InstanceInfo i && !i.isGeneratedInsideTemplate())){
+           if(!(selfType instanceof InstanceInfo i) || i.canWriteTemplateFunctionVariants()){
                mod.getFPL().addFunctionVariantGenerationData(new VariantGenData(writer.getCode(),path,mod));
            }
        }catch(IOException e){

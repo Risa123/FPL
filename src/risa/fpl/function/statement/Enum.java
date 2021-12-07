@@ -24,7 +24,7 @@ public final class Enum implements IFunction{
         var type = new TypeInfo(id,"unsigned char");
         type.addField("==",new BinaryOperator(TypeInfo.BOOL,type,"=="));
         type.addField("!=",new BinaryOperator(TypeInfo.BOOL,type,"!="));
-        type.addField("id",new ValueExp(NumberInfo.UBYTE,""));
+        type.addField("ordinal",new ValueExp(NumberInfo.UBYTE,""));
         var c = new ClassInfo(id);
         type.setClassInfo(c);
         var i = 0;

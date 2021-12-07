@@ -24,14 +24,12 @@ public abstract class AField implements IField{
     public void setPrevCode(String code){
         prevCode = code;
     }
-    @Override
     public void writePrev(BufferedWriter writer)throws IOException{
         if(prevCode != null){
             writer.write(prevCode);
             prevCode = null;
         }
     }
-    @Override
     public String getPrevCode(){
         return prevCode;
     }

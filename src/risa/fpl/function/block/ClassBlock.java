@@ -133,6 +133,16 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                }
             }
         }
+        if(cEnv.hasOnlyImplicitConstructor()){
+            cEnv.appendFunctionCode(cEnv.getImplicitConstructor());
+            var nameSpace = cEnv.getNameSpace();
+            cEnv.appendFunctionCode(cID + " static" + nameSpace + "_new0(){\n");
+            cEnv.appendFunctionCode(cID + " inst;\n" + INTERNAL_METHOD_PREFIX + nameSpace + "_init0(&inst);\n");
+            cEnv.appendFunctionCode("return inst;\n}\n");
+            cEnv.appendFunctionCode(cID + "* static" + nameSpace + "_alloc0(){\n");
+            cEnv.appendFunctionCode(cID + " * p = malloc(sizeof(" + cID + "));\n");
+            cEnv.appendFunctionCode(INTERNAL_METHOD_PREFIX + nameSpace + "_init0(p);\nreturn p;\n}\n");
+        }
         type.setAttributesCode(attributes.getCode());
         //parent type doesn't have implicit constructor
         if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
@@ -153,11 +163,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }
         var internalCode = new BuilderWriter();
         var constructor = type.getConstructor();
-        if(constructor.getVariants().size() == 0){
-            constructor.addVariant(new TypeInfo[0],cEnv.getNameSpace());
-            cEnv.addMethod(constructor,cEnv.getImplicitConstructor());
-            cEnv.compileNewAndAlloc(internalCode,new TypeInfo[0],constructor);
-        }
         if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){
             modEnv.addFunction(id.getValue(),constructor);
         }

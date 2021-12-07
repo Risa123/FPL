@@ -12,7 +12,7 @@ import risa.fpl.parser.AtomType;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -51,11 +51,15 @@ public final class TemplateTypeInfo extends InstanceInfo{
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
                superMod.addInstanceFile(file);
            }
-           var path = Paths.get(superMod.getFPL().getOutputDirectory() + "/" + file);
+           var path = Path.of(superMod.getFPL().getOutputDirectory() + "/" + file);
            var writer = Files.newBufferedWriter(path);
            var mod = new ModuleEnv(superMod,new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
            var name = getName() + nameBuilder;
            var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false);
+           type = cEnv.getInstanceType();
+           if(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo){
+               type.disableWriteTemplateFunctionVariants();
+           }
            if(argsInfo.size() != templateArgs.size()){
                //space to make the number separate form line:tokenNum
                throw new CompilerException(line,tokenNum," " + templateArgs.size() + " arguments expected instead of " + argsInfo.size());
@@ -69,7 +73,6 @@ public final class TemplateTypeInfo extends InstanceInfo{
                }
            }
            new ClassBlock(false).compileClassBlock(cEnv,mod,new Atom(0,0, name, AtomType.ID),block,interfaces,TemplateStatus.GENERATING);
-           type = cEnv.getInstanceType();
            Files.delete(path);
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
                if(env instanceof ANameSpacedEnv e){
@@ -88,8 +91,6 @@ public final class TemplateTypeInfo extends InstanceInfo{
            //prevent declaration of template in a template
            if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
                mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + mod.getFunctionCode(),typesForDeclaration));
-           }else{
-               type.generatedInsideTemplate();
            }
        }
        return type;

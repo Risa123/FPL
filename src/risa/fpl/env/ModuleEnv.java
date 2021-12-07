@@ -76,7 +76,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             var modName = String.join(".",Arrays.copyOf(tmp,tmp.length - 1));
             for(var mod:importedModules){
                 if(mod.moduleBlock.getName().equals(modName)){
-                    return mod.getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1], AtomType.ID));
+                    return mod.getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1],AtomType.ID));
                 }
             }
             throw new CompilerException(name,"module " + modName + " not found");

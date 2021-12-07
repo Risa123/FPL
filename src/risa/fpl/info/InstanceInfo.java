@@ -16,7 +16,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     private final String toPointerName;
     private String methodDeclarations = "";
     private ClassEnv cEnv;
-    private boolean generatedInsideTemplate;
+    private boolean writeTemplateFunctionVariants = true;
     public InstanceInfo(String name,ModuleEnv module,String nameSpace){
         super(module,name,IFunction.toCId(name));
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
@@ -100,7 +100,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     public final String getInstanceFree(){
         return instanceFree;
     }
-    public void setDestructorName(String prefix){
+    public final void setDestructorName(String prefix){
         destructorName = prefix + "_destructor";
         instanceFree = prefix + "_free";
     }
@@ -137,13 +137,13 @@ public class InstanceInfo extends NonTrivialTypeInfo{
         }
         return false;
     }
-    public final void generatedInsideTemplate(){
-        generatedInsideTemplate = true;
-    }
-    public final boolean isGeneratedInsideTemplate(){
-        return generatedInsideTemplate;
-    }
     public final void setClassEnv(ClassEnv cEnv){
         this.cEnv = cEnv;
+    }
+    public boolean canWriteTemplateFunctionVariants(){
+        return writeTemplateFunctionVariants;
+    }
+    public void disableWriteTemplateFunctionVariants(){
+        writeTemplateFunctionVariants = false;
     }
 }

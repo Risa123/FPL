@@ -3,7 +3,6 @@ package risa.fpl;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 import risa.fpl.env.ProgramEnv;
@@ -26,7 +25,7 @@ public final class FPL{
     private final StringBuilder files = new StringBuilder();
     public FPL(String project)throws IOException,CompilerException{
         var build = new Properties();
-        build.load(Files.newInputStream(Paths.get(project + "/build.properties")));
+        build.load(Files.newInputStream(Path.of(project + "/build.properties")));
     	gcc = build.getProperty("gcc");
         var requiredKeys = Arrays.asList("gcc","mainModule","outputFile");
         for(var key:requiredKeys){
@@ -46,7 +45,7 @@ public final class FPL{
     	outputDirectory = project + "/output";
         mainModule = build.getProperty("mainModule");
         Collections.addAll(flags,build.getProperty("flags","").split(","));
-        srcDir = Paths.get(project + "/src");
+        srcDir = Path.of(project + "/src");
         for(var p:Files.walk(srcDir).toList()){
             if(p.toString().endsWith(".fpl")){
                 var mod = new ModuleBlock(p,srcDir,this);
@@ -61,7 +60,7 @@ public final class FPL{
       throw ex;
     }
     public void compile()throws IOException,CompilerException{
-    	var path = Paths.get(outputDirectory);
+    	var path = Path.of(outputDirectory);
         if(Files.exists(path)){
             for(var p:Files.walk(path).sorted(Comparator.reverseOrder()).toList()){
                 Files.delete(p);
@@ -189,6 +188,9 @@ public final class FPL{
         if(!functionVariantGenerationData.contains(data)){
             functionVariantGenerationData.add(data);
         }
+    }
+    public Collection<ModuleBlock>getModules(){
+        return modules.values();
     }
     public void addTemplateCompData(TemplateCompData data){
         templateCompData.add(data);

@@ -34,10 +34,10 @@ public final class Constructor extends AFunctionBlock{
         if(constructor.hasVariant(args) && modEnv.notClassConstructorOnLine(line)){
             throw new CompilerException(line,tokenNum,"this class already has constructor with arguments " + Arrays.toString(args));
         }
-        b.write(Integer.toString(variantNum));
-        if(!(type instanceof TemplateTypeInfo) && !constructor.hasVariant(args)){
-            constructor.addVariant(args,cEnv.getNameSpace());
+        if(cEnv.hasOnlyImplicitConstructor()){
+            variantNum--;
         }
+        b.write(Integer.toString(variantNum));
         b.write(argsWriter.getCode() + "{\n");
         var hasParentConstructor = false;
         if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
@@ -59,8 +59,7 @@ public final class Constructor extends AFunctionBlock{
         }
         b.write("}\n");
         if(!(type instanceof TemplateTypeInfo)){
-            cEnv.compileNewAndAlloc(b,args,constructor);
-            cEnv.addMethod(constructor,b.getCode());
+            cEnv.addConstructor(b.getCode(),args);
         }
         for(var field:type.getFields().values()){
             if(field instanceof Variable v && v.getType().isPrimitive() && v.isConstant() && !v.getId().equals("getClass") && !fnEnv.getDefinedConstFields().contains(v.getId())){

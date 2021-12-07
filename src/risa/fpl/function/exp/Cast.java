@@ -52,7 +52,7 @@ public final class Cast extends AField{
 	            writePrev(prev);
 	            return compileChainedCall(type,writer,env,it,prev.getCode());
             }
-	        throw new CompilerException(line, tokenNum,"cannot cast " + self + " to " + type);
+	        throw new CompilerException(line,tokenNum,"cannot cast " + self + " to " + type);
         }
 		return compileChainedCall(type,writer,env,it,prev.getCode());
 	}

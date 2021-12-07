@@ -108,21 +108,11 @@ public final class ModuleBlock extends AThreePassBlock{
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
            writer.write(env.getFunctionCode());
+
            if(isMain()){//main module is written as last
                writer.write("_String* args;\n");
                writer.write("void onExit();\n");
                writer.write("int main(int argc,char** argv){\n");
-               var modules = new ArrayList<ModuleEnv>();
-               addImportedModules(modules);
-               var it = modules.iterator();
-               var declared = new ArrayList<ModuleEnv>();
-               while(it.hasNext()){
-                   var mod = it.next();
-                   if(declared.containsAll(mod.getImportedModules())){
-                       declared.add(mod);
-                       it.remove();
-                   }
-               }
                writer.write(env.getInitializerCode());
                writer.write("_Thread mainThread;\n");
                writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
@@ -133,23 +123,15 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write(mainFunctionCode);
                writer.write("}\n");
                writer.write("void onExit(){\n");
+               for(var mod:fpl.getModules()){
+                   writer.write(mod.getEnv().getDestructorCall());
+               }
                writer.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
                writer.write("free(args);\n");
-               for(var mod:declared){
-                   writer.write(mod.getDestructorCall());
-               }
                writer.write("}");
            }else{
                writer.write(env.getInitializer());
                writer.write(env.getDestructor());
-           }
-       }
-   }
-   private void addImportedModules(ArrayList<ModuleEnv>result){
-       if(!result.contains(env)){
-           result.add(env);
-           for(var mod:env.getImportedModules()){
-               mod.getModuleBlock().addImportedModules(result);
            }
        }
    }
