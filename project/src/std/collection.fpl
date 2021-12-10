@@ -8,9 +8,6 @@ class ArrayList;T{
       Exception:new "index out of bounds:" + index toString;;;throw
     }
   }
-  fn void freeArray{
-    array free[] len
-  }
  }
  this{
    len = 0
@@ -38,7 +35,7 @@ class ArrayList;T{
  fn void clear{
   len = 0
   if array != nil{
-    freeArray
+    array free[] len
     array = nil
   }
  }
@@ -47,7 +44,7 @@ class ArrayList;T{
  fn T* getArray = array
  -this{
    if array != nil{
-     freeArray
+     array free[] len
    }
  }
 }

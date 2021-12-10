@@ -326,9 +326,7 @@ public class Function implements IField,ICalledOnPointer{
         var f = new Function(name,returnType,FunctionType.NORMAL,self,accessModifier);
         var array = new TypeInfo[args.length + 1];
         array[0] = self;
-        for(int i = 1,j = 0;i < array.length;++i,++j){
-            array[i] = args[j];
-        }
+        System.arraycopy(args,0,array,1,args.length);
         var v = getTemplateVariant(array);
         if(v == null){
             throw new IllegalStateException("internal error:template not found " + Arrays.toString(args));

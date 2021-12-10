@@ -224,7 +224,6 @@ public class Fn extends AFunctionBlock{
             }
 			appendSemicolon = true;
 		}
-        var array = args.values().toArray(new TypeInfo[0]);
         if(self != null){
             IField parentField = null;
             var parents = self.getParents();

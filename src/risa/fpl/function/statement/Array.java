@@ -66,14 +66,14 @@ public final class Array implements IFunction{
 					if(first){
 						first = false;
 					}else{
-						writer.write(',');
+						b.write(',');
 					}
 					var buffer = new BuilderWriter();
 					var expType = exp.compile(buffer,env,it);
 					if(!expType.equals(type)){
 						throw new CompilerException(exp,type + " expected instead of " + expType);
 					}
-					writer.write(expType.ensureCast(type,buffer.getCode()));
+					b.write(expType.ensureCast(type,buffer.getCode()));
 					count++;
 				}
 		    }

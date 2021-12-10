@@ -148,9 +148,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
         importedModules.add(block.getEnv());
     }
-    public ArrayList<ModuleEnv>getImportedModules(){
-        return importedModules;
-    }
     public ArrayList<String>getInstanceFiles(){
 	    return instanceFiles;
     }

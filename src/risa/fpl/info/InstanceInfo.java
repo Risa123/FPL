@@ -7,7 +7,6 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 import risa.fpl.function.statement.InstanceVar;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InstanceInfo extends NonTrivialTypeInfo{
