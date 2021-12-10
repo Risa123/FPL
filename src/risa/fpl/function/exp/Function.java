@@ -77,7 +77,7 @@ public class Function implements IField,ICalledOnPointer{
 		var variant = getVariant(array);
         if(isVirtual()){
             if(self instanceof InstanceInfo i){
-                b.write("((" + i.getClassDataType() + ")");
+                b.write("((" + i.getClassDataType() + "*)");
             }
             b.write(Objects.requireNonNullElse(prevCode,"this"));
             if(self instanceof InterfaceInfo){

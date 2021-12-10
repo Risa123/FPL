@@ -108,12 +108,16 @@ public final class ModuleBlock extends AThreePassBlock{
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
            writer.write(env.getFunctionCode());
-
            if(isMain()){//main module is written as last
                writer.write("_String* args;\n");
                writer.write("void onExit();\n");
                writer.write("int main(int argc,char** argv){\n");
                writer.write(env.getInitializerCode());
+               for(var mod:fpl.getModules()){
+                   if(!mod.isMain()){
+                       writer.write(mod.env.getInitializerCall());
+                   }
+               }
                writer.write("_Thread mainThread;\n");
                writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
                writer.write("_std_lang_currentThread = &mainThread;\n");

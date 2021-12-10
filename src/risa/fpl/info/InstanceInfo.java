@@ -7,11 +7,11 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.*;
 import risa.fpl.function.statement.InstanceVar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InstanceInfo extends NonTrivialTypeInfo{
     private String attributesCode,destructorName,instanceFree = "free",copyConstructorName;
-    private boolean complete;
     private InstanceVar constructor;
     private final String toPointerName;
     private String methodDeclarations = "";
@@ -25,7 +25,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
         toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
     }
     public final String getClassDataType(){
-        return getCname() + "_data_type*";
+        return getCname() + "_data_type";
     }
     public final void setAttributesCode(String attributesCode){
         this.attributesCode = attributesCode;
@@ -33,12 +33,8 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     public final ModuleEnv getModule(){
         return module;
     }
-    public final boolean isComplete(){
-        return complete;
-    }
     @Override
     public final void buildDeclaration(){
-        complete = true;
         appendToDeclaration("typedef struct " + getCname() + "{\n");
         if(!cEnv.isStruct()){
             appendToDeclaration("void* objectData;\n");
@@ -61,10 +57,10 @@ public class InstanceInfo extends NonTrivialTypeInfo{
                b.append(new FunctionInfo(method).getPointerVariableDeclaration(v.implName())).append(";\n");
            }
         }
-        appendToDeclaration("typedef struct " + cEnv.getDataType());
+        appendToDeclaration("typedef struct " + getClassDataType());
         appendToDeclaration("{\nunsigned long size;\n" + b);
-        appendToDeclaration('}' + cEnv.getDataType() + ";\n");
-        appendToDeclaration("extern " + cEnv.getDataDefinition());
+        appendToDeclaration('}' + getClassDataType() + ";\n");
+        appendToDeclaration("extern " + getClassDataType() + " " + getClassInfo().getDataName() + ";\n");
         addFunctionRequiredTypes(constructor);
         appendToDeclaration(getCname() + "* " + getToPointerName() + "(" + getCname() + " this," + getCname() + "* p);\n");
         for(var field:getClassInfo().getFields().values()){

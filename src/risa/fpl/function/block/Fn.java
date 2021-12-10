@@ -244,17 +244,6 @@ public class Fn extends AFunctionBlock{
             }else if(parentField != null){
                 throw new CompilerException(line,tokenNum,"override is required");
             }
-            if((env.hasModifier(Modifier.OVERRIDE) || env.hasModifier(Modifier.VIRTUAL)) && templateArgs == null){
-                String methodImplName;
-                if(env.hasModifier(Modifier.VIRTUAL)){
-                    methodImplName = variant.implName();
-                }else{
-                    methodImplName = ((Function)parentField).getVariant(array).implName();
-                }
-                var cEnv = (ClassEnv)env;//override can only appear in ClassEnv
-                cEnv.appendToInitializer(cEnv.getClassType().getDataName() + "." + methodImplName + "=&");
-                cEnv.appendToInitializer(variant.cname() + ";\n");
-            }
         }
         if(templateArgs == null){
             if(env instanceof ClassEnv cEnv){

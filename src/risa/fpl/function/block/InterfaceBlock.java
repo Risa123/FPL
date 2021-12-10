@@ -53,23 +53,21 @@ public final class InterfaceBlock implements IFunction{
         if(block == null){
             throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
-        var b = new BuilderWriter();
+        block.compile(new BuilderWriter(),iEnv,it);
         var implName = type.getImplName();
+        var b = new BuilderWriter();
         b.write("typedef struct ");
         b.write(implName);
         b.write("{\n");
-        for(var parent:type.getParents()){
-            for(var method:parent.getMethodsOfType(FunctionType.ABSTRACT)){
-                var p = new FunctionInfo(method);
-                for(var v:method.getVariants()){
-                    b.write(p.getPointerVariableDeclaration(v.cname()));
-                    b.write(";\n");
-                }
+        for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
+            var p = new FunctionInfo(method);
+            for(var v:method.getVariants()){
+                b.write(p.getPointerVariableDeclaration(v.cname()));
+                b.write(";\n");
             }
         }
-        block.compile(b,iEnv,it);
         b.write('}' + implName + ";\n");
-        b.write("typedef struct "  + cID + "{\n");
+        b.write("typedef struct " + cID + "{\n");
         b.write("void* instance;\n");
         b.write(implName + "* impl;\n}" + cID + ";\n");
         type.appendToDeclaration(b.getCode());

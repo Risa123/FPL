@@ -40,7 +40,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }
         var id = it.nextID();
 		var idV = id.getValue();
-		if(env.hasTypeInCurrentEnv(idV) && !(env.getType(id) instanceof InstanceInfo i && !i.isComplete())){
+		if(env.hasTypeInCurrentEnv(idV) && !(env.getType(id) instanceof InstanceInfo i)){
 		    throw new CompilerException(id,"type " + idV + " is already declared");
         }
 		InstanceInfo primaryParent = null;
@@ -167,30 +167,26 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             modEnv.addFunction(id.getValue(),constructor);
         }
         for(var i:interfaces){
-            internalCode.write("static " + i.getImplName() + " " + cID + i.getCname() + "_impl;\n");
+            internalCode.write("static " + i.getImplName() + " " + cID + i.getCname() + "_impl={");
+            var first = true;
+            for(var method:i.getMethodsOfType(FunctionType.ABSTRACT)){
+                var inThisClass = (Function)type.getField(method.getName(),cEnv);
+                for(var v:method.getVariants()){
+                    if(first){
+                        first = false;
+                    }else{
+                        internalCode.write(',');
+                    }
+                    internalCode.write(inThisClass.getVariant(v.args()).cname());
+                }
+            }
+            internalCode.write("};\n");
             internalCode.write(i.getCname() + ' ');
             internalCode.write(type.getConversionMethod(i) + '(' + type.getCname() + "* this){\n");
             internalCode.write(i.getCname());
             internalCode.write(" tmp;\ntmp.instance=this;\ntmp.impl=&");
             internalCode.write(cEnv.getImplOf(i));
             internalCode.write(";\nreturn tmp;\n}\n");
-            var parent = type.getPrimaryParent();
-            if(!cEnv.isAbstract() && parent != null){
-                for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
-                    for(var v:method.getVariants()){
-                        cEnv.appendToInitializer(cEnv.getClassType().getDataName() + "." + v.implName() + "=&" + v.cname() + ";\n");
-                    }
-                }
-                for(var method:i.getMethodsOfType(FunctionType.ABSTRACT)){
-                  for(var v:method.getVariants()){
-                      var impl =(Function)type.getField(method.getName(),cEnv);
-                      for(var v1:impl.getVariants()){
-                          cEnv.appendToInitializer(cEnv.getImplOf(i) + "." +  v.cname());
-                          cEnv.appendToInitializer("=&"  + v1.cname() + ";\n");
-                      }
-                  }
-                }
-            }
         }
         internalCode.write(type.getCname() + "* " + type.getToPointerName() + "(");
         internalCode.write(type.getCname() + " this," + type.getCname() + "* p){\n*p = this;\n");

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implicitConstructor = new StringBuilder();
-	private final String nameSpace,dataType;
+	private final String nameSpace;
 	private final ClassInfo classType;
 	private final InstanceInfo instanceType;
 	private final StringBuilder implCopyConstructorCode = new StringBuilder();
@@ -52,7 +52,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }else{
             nameSpace = module.getNameSpace() + cname;
         }
-        dataType = cname + "_data_type";
         classType = new ClassInfo(id,nameSpace + "_data");
         this.struct = struct;
         if(templateStatus == TemplateStatus.TEMPLATE){
@@ -80,9 +79,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         constructor.getVariants().add(new FunctionVariant(new TypeInfo[0],name,name));
         var writer = new BuilderWriter();
         appendFunctionCode(writer.getCode());
-        if(!struct){
-            appendToInitializer(classType.getDataName() + ".size=sizeof(" + cname +");\n");
-        }
 	}
 	@Override
 	public void addFunction(String name,IFunction value){
@@ -134,9 +130,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
               appendFunctionCode("static ");
          }
-         if(method.getType() != FunctionType.ABSTRACT){
-             appendFunctionCode(code);
-         }
+        appendFunctionCode(code);
     }
     public void addConstructor(String code,TypeInfo[]args){
         appendFunctionCode(code);
@@ -192,7 +186,17 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         if(struct){
             return "";
         }
-        return dataType + ' ' + classType.getDataName() + ";\n";
+        var b = new StringBuilder(instanceType.getClassDataType());
+        b.append(' ').append(classType.getDataName()).append("={sizeof(").append(instanceType.getCname()).append(')');
+        if(!isAbstract()){
+          for(var method:instanceType.getMethodsOfType(FunctionType.VIRTUAL)){
+              for(var v:method.getVariants()){
+                  b.append(',').append(v.cname());
+              }
+          }
+        }
+        b.append("};\n");
+        return b.toString();
     }
     public void parentConstructorCalled(){
 	    parentConstructorCalled = true;
@@ -202,11 +206,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public void setPrimaryParent(InstanceInfo parent){
         instanceType.setPrimaryParent(parent);
-        for(var method:parent.getMethodsOfType(FunctionType.VIRTUAL)){
-           for(var v:method.getVariants()){
-               appendToInitializer(classType.getDataName() + "." + v.implName() +"=" + v.cname() + ";\n");
-           }
-        }
     }
     public void destructorDeclared(){
 	    destructorDeclared = true;
@@ -297,9 +296,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public boolean isStruct(){
         return struct;
-    }
-    public String getDataType(){
-        return dataType;
     }
     public boolean hasOnlyImplicitConstructor(){
         return onlyImplicitConstructor;
