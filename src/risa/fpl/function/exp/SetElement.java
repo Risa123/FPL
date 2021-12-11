@@ -28,8 +28,7 @@ public final class SetElement extends AField{
 	    	throw new CompilerException(indexExp,"integer number expected");
 	    }
 	    var code = tmpWriter.getCode();
-	    writer.write(code);
-		writer.write("]=");
+	    writer.write(code + "]=");
 		var valueAtom = it.nextAtom();
 		if(valueAtom.getType() == AtomType.ARG_SEPARATOR){
 			valueAtom = it.nextAtom();

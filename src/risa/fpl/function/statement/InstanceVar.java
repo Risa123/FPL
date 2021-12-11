@@ -10,6 +10,7 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
+import risa.fpl.function.exp.FunctionVariant;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
@@ -22,7 +23,7 @@ import risa.fpl.parser.AtomType;
 public final class InstanceVar extends Function{
    private final ClassInfo classType;
    private final InstanceInfo type;
-   public InstanceVar(InstanceInfo type, ClassInfo classType){
+   public InstanceVar(InstanceInfo type,ClassInfo classType){
        super("constructor",TypeInfo.VOID,FunctionType.NORMAL,type,AccessModifier.PUBLIC);
 	   this.type = type;
 	   this.classType = classType;
@@ -131,7 +132,7 @@ public final class InstanceVar extends Function{
         }
         return classType;
     }
-    public void addVariant(TypeInfo[]args,String nameSpace){
-       addVariant(args,makeCName(nameSpace),makeCName(nameSpace));
+    public FunctionVariant addVariant(TypeInfo[]args,String nameSpace){
+       return addVariant(args,makeCName(nameSpace),makeCName(nameSpace));
     }
 }

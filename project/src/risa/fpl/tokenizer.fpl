@@ -28,10 +28,10 @@ class Tokenizer{
     char c
     bool readNext true
     const{
-       DataReader* reader
+       DataReader reader
        ArrayList;Token; tokens init
     }
-    fn void token int line int tokenNum String value TokenType type{
+    fn void token String value TokenType type{
      tokens add Token:new line,tokenNum,value,type
      if type == TokenType:NEW_LINE{
        this line ++
@@ -49,11 +49,11 @@ class Tokenizer{
       return c
     }
     fn bool ready = reader ready; || readNext !
-    fn void valueToken int line int tokenNum ArrayList;char;* b TokenType type{
+    fn void valueToken ArrayList;char;* b TokenType type{
       var p char:alloc[] b getSize
       memoryCopy b getArray;cast byte*,p cast byte*,b getSize
       String id init p,b getSize;cast uint,true
-      token tokenNum,line,id,type
+      token id,type
     }
     fn void prepare{
       if tokens getSize; == i{
@@ -93,14 +93,14 @@ class Tokenizer{
                }
                b add $'
                b add $\0
-               valueToken line,tokenNum,b ref,TokenType:CHAR_LIT
+               valueToken b ref,TokenType:CHAR_LIT
              }if c == $\n{
-               token line,tokenNum,"\n",TokenType:NEW_LINE
+               token "\n",TokenType:NEW_LINE
                break
              }if c == ${{
-               token line,tokenNum,"{",TokenType:BEGIN_BLOCK
+               token "{",TokenType:BEGIN_BLOCK
              }if c == $}{
-               token line,tokenNum,"}",TokenType:END_BLOCK
+               token "}",TokenType:END_BLOCK
              }if c == $"{
               ArrayList;char; b init
               b add $"
@@ -118,7 +118,7 @@ class Tokenizer{
                 b add c
               }
               b add $"
-              valueToken line,tokenNum,b ref,TokenType:STRING
+              valueToken b ref,TokenType:STRING
              }if c isWhitespace;!{
                ArrayList;char; b init
                b add c
@@ -130,7 +130,7 @@ class Tokenizer{
                  }
                  b add c
                }
-               valueToken line,tokenNum,b ref,TokenType:ID
+               valueToken b ref,TokenType:ID
              }
             }
          }
@@ -138,7 +138,7 @@ class Tokenizer{
     fn bool isSeparator = c isWhitespace; ||  c == ${; || c == $}; || c == $; #char ;
  }
  this Readable readable{
-    reader = DataReader:alloc readable
+    reader = DataReader:new readable
  }
  fn Token next{
     var token peek
@@ -165,8 +165,5 @@ class Tokenizer{
      CompilerException:new id getLine;,id getTokenNum;,"identifier expected instead of " + id getValue;;;throw
    }
    return id
- }
- -this{
-   reader free
  }
 }

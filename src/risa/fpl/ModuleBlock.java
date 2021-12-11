@@ -108,6 +108,11 @@ public final class ModuleBlock extends AThreePassBlock{
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
            writer.write(env.getFunctionCode());
+           for(var env:classEnvList){
+               if(!(env.getInstanceType() instanceof TemplateTypeInfo)){
+                   writer.write(env.getConstructorCode());
+               }
+           }
            if(isMain()){//main module is written as last
                writer.write("_String* args;\n");
                writer.write("void onExit();\n");
