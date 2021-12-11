@@ -1,10 +1,8 @@
 <component name="ArtifactManager">
-  <artifact type="jpackage" name="FPL">
+  <artifact type="jar" name="FPL">
     <output-path>$PROJECT_DIR$/bin/artifacts/FPL</output-path>
-    <root id="root">
-      <element id="archive" name="FPL.jar">
-        <element id="module-output" name="FPL"/>
-      </element>
+    <root id="archive" name="FPL.jar">
+      <element id="module-output" name="FPL" />
     </root>
   </artifact>
 </component>

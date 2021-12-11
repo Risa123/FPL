@@ -18,7 +18,7 @@ public final class NumberInfo extends TypeInfo{
                 size = 4;
                 type = "unsigned int";
             }
-            default -> throw new IllegalStateException("unsupported architecture");
+            default->throw new IllegalStateException("unsupported architecture");
         }
 	    MEMORY = new NumberInfo("memory",type,size);
     }

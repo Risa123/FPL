@@ -56,7 +56,7 @@ public final class FPL{
     }
     private void throwBuildFileError(String msg)throws CompilerException{
       var ex = new CompilerException(msg);
-      ex.setSourceFile("build.bs");
+      ex.setSourceFile("build.properties");
       throw ex;
     }
     public void compile()throws IOException,CompilerException{
