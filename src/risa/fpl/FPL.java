@@ -26,7 +26,6 @@ public final class FPL{
     public FPL(String project)throws IOException,CompilerException{
         var build = new Properties();
         build.load(Files.newInputStream(Path.of(project + "/build.properties")));
-    	gcc = build.getProperty("gcc");
         var requiredKeys = Arrays.asList("gcc","mainModule","outputFile");
         for(var key:requiredKeys){
             if(!build.containsKey(key)){
@@ -40,6 +39,7 @@ public final class FPL{
                 throwBuildFileError("no property " + key + " allowed");
             }
         }
+        gcc = build.getProperty("gcc");
     	output = build.getProperty("outputFile");
     	ccArgs = build.getProperty("ccArgs","");
     	outputDirectory = project + "/output";
