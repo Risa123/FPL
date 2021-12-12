@@ -49,7 +49,7 @@ public class Fn extends AFunctionBlock{
 	    }
         TypeInfo self = null;
         if(env instanceof  ClassEnv cEnv){
-            self = cEnv.getInstanceType();
+            self = cEnv.getInstanceInfo();
         }else if(env instanceof InterfaceEnv e){
             self = e.getType();
         }

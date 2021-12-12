@@ -25,7 +25,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
     }
     private ClassEnv getEnv(ModuleEnv modEnv,String id,TemplateStatus templateStatus){
         for(var classEnv:modEnv.getModuleBlock().getClassEnvList()){
-            if(classEnv.getInstanceType().getName().equals(id)){
+            if(classEnv.getInstanceInfo().getName().equals(id)){
                 return classEnv;
             }
         }
@@ -54,7 +54,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }else{
 		    cEnv = getEnv(modEnv,idV,TemplateStatus.INSTANCE);
         }
-        var type = cEnv.getInstanceType();
+        var type = cEnv.getInstanceInfo();
         while(it.hasNext()){
             var exp = it.next();
             if(exp instanceof List l){
@@ -104,7 +104,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		return TypeInfo.VOID;
 	}
 	public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException,IOException{
-        var type = cEnv.getInstanceType();
+        var type = cEnv.getInstanceInfo();
         var parentType = type.getPrimaryParent();
         var cID = IFunction.toCId(id.getValue());
         var attributes = new BuilderWriter();

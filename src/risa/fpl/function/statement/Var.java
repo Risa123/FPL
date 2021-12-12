@@ -105,7 +105,7 @@ public final class Var implements IFunction{
                 }
                 TypeInfo instanceType = null;
                 if(env instanceof ClassEnv e){
-                    instanceType = e.getInstanceType();
+                    instanceType = e.getInstanceInfo();
                 }
                 if(env instanceof ANameSpacedEnv){
                     onlyDeclared = false;

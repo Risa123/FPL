@@ -23,7 +23,7 @@ public final class Constructor extends AFunctionBlock{
         if(modEnv.notClassConstructorOnLine(line)){
             modEnv.addClassConstructorLine(line);
         }
-        var type = cEnv.getInstanceType();
+        var type = cEnv.getInstanceInfo();
         var constructor = type.getConstructor();
         var fnEnv = new ConstructorEnv(env);
         var b = new BuilderWriter();

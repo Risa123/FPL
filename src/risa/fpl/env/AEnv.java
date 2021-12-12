@@ -7,6 +7,7 @@ import risa.fpl.FPL;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.statement.Var;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
@@ -83,7 +84,11 @@ public abstract class AEnv{
   public void addType(TypeInfo type,boolean declaration){
       types.put(type.getName(),type);
       if(declaration){
-          addFunction(type.getName(),new Var(type));
+         if(type instanceof InstanceInfo i){
+			 addFunction(type.getName(),i.getConstructor());
+		 }else{
+			 addFunction(type.getName(),new Var(type));
+		 }
       }
   }
   public abstract FPL getFPL();

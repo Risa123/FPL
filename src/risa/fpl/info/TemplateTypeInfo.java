@@ -48,7 +48,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            var superMod = getModule();
            var cname = IFunction.createTemplateTypeCname(getCname(),argsInfo.toArray(new TypeInfo[0]));
            var file = superMod.getNameSpace() + cname  + ".c";
-           if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
+           if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
                superMod.addInstanceFile(file);
            }
            var path = Path.of(superMod.getFPL().getOutputDirectory() + "/" + file);
@@ -56,8 +56,8 @@ public final class TemplateTypeInfo extends InstanceInfo{
            var mod = new ModuleEnv(superMod,new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
            var name = getName() + nameBuilder;
            var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false);
-           type = cEnv.getInstanceType();
-           if(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo){
+           type = cEnv.getInstanceInfo();
+           if(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo){
                type.disableWriteTemplateFunctionVariants();
            }
            if(argsInfo.size() != templateArgs.size()){
@@ -74,7 +74,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            }
            new ClassBlock(false).compileClassBlock(cEnv,mod,new Atom(0,0, name, AtomType.ID),block,interfaces,TemplateStatus.GENERATING);
            Files.delete(path);
-           if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
+           if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(type);
                }else{
@@ -89,7 +89,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                getModule().appendToInitializer(mod.getInitializerCall());
            }
            //prevent declaration of template in a template
-           if(!(env instanceof IClassOwnedEnv e && e.getClassType() != null && e.getClassType().getInstanceType() instanceof TemplateTypeInfo)){
+           if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
                mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + mod.getFunctionCode() + cEnv.getConstructorCode(),typesForDeclaration));
            }
        }

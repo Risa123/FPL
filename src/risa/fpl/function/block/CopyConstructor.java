@@ -25,7 +25,7 @@ public final class CopyConstructor extends ABlock{
         }
         var b = new BuilderWriter();
         b.write("void ");
-        var type = cEnv.getInstanceType();
+        var type = cEnv.getInstanceInfo();
         var copyName = INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_copy";
         type.setCopyConstructorName(copyName);
         b.write(copyName);
@@ -34,7 +34,7 @@ public final class CopyConstructor extends ABlock{
         if(parent != null){
             b.write(parent.getDestructorName() + "(this,o);\n");
         }
-        b.write("this->objectData=&" + type.getClassInfo().getDataName() + ";\n");
+        b.write("this->objectData=&" + type.getDataName() + ";\n");
         var fnEnv = new FnEnv(env,TypeInfo.VOID);
         fnEnv.addFunction("o",new Variable(new PointerInfo(type),"o","o"));
         fnEnv.addFunction("this",new Variable(new PointerInfo(type),"this","this"));

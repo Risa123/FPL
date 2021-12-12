@@ -108,7 +108,7 @@ public final class InstanceVar extends Function{
         }
         TypeInfo instanceType = null;
         if(env instanceof ClassEnv e){
-            instanceType = e.getInstanceType();
+            instanceType = e.getInstanceInfo();
         }
         env.addFunction(id.getValue(),new Variable(varType,cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
         env.addInstanceVariable(varType,cID);

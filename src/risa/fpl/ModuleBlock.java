@@ -101,7 +101,7 @@ public final class ModuleBlock extends AThreePassBlock{
        try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
            env.declare(writer);
            for(var env:classEnvList){
-              if(!(env.getInstanceType() instanceof TemplateTypeInfo)){
+              if(!(env.getInstanceInfo() instanceof TemplateTypeInfo)){
                   writer.write(env.getDataDefinition());
               }
            }
@@ -109,7 +109,7 @@ public final class ModuleBlock extends AThreePassBlock{
            writer.write(env.getFunctionDeclarations());
            writer.write(env.getFunctionCode());
            for(var env:classEnvList){
-               if(!(env.getInstanceType() instanceof TemplateTypeInfo)){
+               if(!(env.getInstanceInfo() instanceof TemplateTypeInfo)){
                    writer.write(env.getConstructorCode());
                }
            }

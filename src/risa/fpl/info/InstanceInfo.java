@@ -11,17 +11,23 @@ import java.util.HashMap;
 
 public class InstanceInfo extends NonTrivialTypeInfo{
     private String attributesCode,destructorName,instanceFree = "free",copyConstructorName;
-    private InstanceVar constructor;
-    private final String toPointerName;
+    private final InstanceVar constructor;
+    private final String toPointerName,dataName;
     private String methodDeclarations = "";
     private ClassEnv cEnv;
     private boolean writeTemplateFunctionVariants = true;
     public InstanceInfo(String name,ModuleEnv module,String nameSpace){
         super(module,name,IFunction.toCId(name));
+        toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
+        dataName = nameSpace + "_data";
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
         addField("cast",new Cast(this));
-        toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
+        var classInfo = new ClassInfo(name);
+        setClassInfo(classInfo);
+        constructor = new InstanceVar(this,classInfo);
+        classInfo.addField("alloc",new Function("alloc",new PointerInfo(this),AccessModifier.PUBLIC));
+        classInfo.addField("new",new Function("new",this,AccessModifier.PUBLIC));
     }
     public final String getClassDataType(){
         return getCname() + "_data_type";
@@ -59,7 +65,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
         appendToDeclaration("typedef struct " + getClassDataType());
         appendToDeclaration("{\nunsigned long size;\n" + b);
         appendToDeclaration('}' + getClassDataType() + ";\n");
-        appendToDeclaration("extern " + getClassDataType() + " " + getClassInfo().getDataName() + ";\n");
+        appendToDeclaration("extern " + getClassDataType() + " " + dataName + ";\n");
         addFunctionRequiredTypes(constructor);
         appendToDeclaration(getCname() + "* " + getToPointerName() + "(" + getCname() + " this," + getCname() + "* p);\n");
         for(var field:getClassInfo().getFields().values()){
@@ -102,10 +108,6 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     public final InstanceVar getConstructor(){
         return constructor;
     }
-    public final void setConstructor(InstanceVar constructor){
-        this.constructor = constructor;
-        addFunctionRequiredTypes(constructor);
-    }
     public final String getCopyConstructorName(){
         return copyConstructorName;
     }
@@ -135,10 +137,13 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     public final void setClassEnv(ClassEnv cEnv){
         this.cEnv = cEnv;
     }
-    public boolean canWriteTemplateFunctionVariants(){
+    public final boolean canWriteTemplateFunctionVariants(){
         return writeTemplateFunctionVariants;
     }
-    public void disableWriteTemplateFunctionVariants(){
+    public final void disableWriteTemplateFunctionVariants(){
         writeTemplateFunctionVariants = false;
+    }
+    public final String getDataName(){
+        return dataName;
     }
 }

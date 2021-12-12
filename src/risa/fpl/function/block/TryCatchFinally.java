@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public final class TryCatchFinally extends ABlock{
-    private static TypeInfo exception;
+    private static InstanceInfo exception;
     @Override
     public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
         var postEntry = new BuilderWriter();
@@ -33,7 +33,7 @@ public final class TryCatchFinally extends ABlock{
         var finallyEnv = new FnSubEnv(env);
         var exDataNames = new ArrayList<String>();
         if(exception == null){
-            exception = env.getType(new Atom(0,0,"Exception", AtomType.ID));
+            exception = (InstanceInfo)env.getType(new Atom(0,0,"Exception", AtomType.ID));
         }
         while(it.hasNext()){
             if(it.peek() instanceof Atom blockName && blockName.getType() == AtomType.ID){
@@ -45,7 +45,7 @@ public final class TryCatchFinally extends ABlock{
                     List block;
                     postEntry.write("else");
                     var nextExp = it.next();
-                    TypeInfo exInfo;
+                    InstanceInfo exInfo;
                     if(nextExp instanceof List){
                         block = (List)nextExp;
                         exInfo = exception;
@@ -54,14 +54,14 @@ public final class TryCatchFinally extends ABlock{
                             throw new CompilerException(exType,"unnecessary Exception ID");
                         }
                         postEntry.write(" if(_std_lang_currentThread->_exception->objectData==&");
-                        exInfo = env.getType(exType);
-                        postEntry.write(exInfo.getClassInfo().getDataName() + ")");
+                        exInfo = (InstanceInfo)env.getType(exType);
+                        postEntry.write(exInfo.getDataName() + ")");
                         block = it.nextList();
-                        exDataNames.add(exInfo.getClassInfo().getDataName());
+                        exDataNames.add(exInfo.getDataName());
                     }else{
                         throw new CompilerException(nextExp,"exception type or block expected");
                     }
-                    if(!(exInfo instanceof InstanceInfo i) || !i.isException()){
+                    if(!exInfo.isException()){
                         throw new CompilerException(nextExp,"invalid exception");
                     }
                     postEntry.write("{\n");
@@ -96,7 +96,7 @@ public final class TryCatchFinally extends ABlock{
         finallyEnv.compileDestructorCalls(postEntry);
         postEntry.write("}\n");
         if(exDataNames.isEmpty()){
-            exDataNames.add(exception.getClassInfo().getDataName());
+            exDataNames.add(exception.getDataName());
         }
         writer.write("{\nvoid* types[" + exDataNames.size() + "] = {");
         var first = true;

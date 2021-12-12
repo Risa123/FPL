@@ -25,8 +25,7 @@ public final class ClassInfo extends TypeInfo{
     public static final ClassInfo MEMORY = new ClassInfo("memory");
     public static final ClassInfo POINTER = new ClassInfo("pointer");
     public static final ClassInfo FUNCTION = new ClassInfo("function");
-    private TypeInfo instanceType;
-    private final String dataName;
+    private TypeInfo instanceInfo;
     static{
         TypeInfo.CHAR.setClassInfo(CHAR);
         TypeInfo.BOOL.setClassInfo(BOOL);
@@ -46,45 +45,38 @@ public final class ClassInfo extends TypeInfo{
         NumberInfo.FLOAT.setClassInfo(FLOAT);
         NumberInfo.DOUBLE.setClassInfo(DOUBLE);
         NumberInfo.MEMORY.setClassInfo(MEMORY);
-        CHAR.addMethods(NumberInfo.CHAR);
-        BOOL.addMethods(TypeInfo.BOOL);
-        UBYTE.addMethods(NumberInfo.UBYTE);
-        SBYTE.addMethods(NumberInfo.SBYTE);
-        BYTE.addMethods(NumberInfo.BYTE);
-        SHORT.addMethods(NumberInfo.SHORT);
-        SSHORT.addMethods(NumberInfo.SSHORT);
-        USHORT.addMethods(NumberInfo.USHORT);
-        UINT.addMethods(NumberInfo.UINT);
-        SINT.addMethods(NumberInfo.SINT);
-        INT.addMethods(NumberInfo.INT);
-        ULONG.addMethods(NumberInfo.ULONG);
-        SLONG.addMethods(NumberInfo.SLONG);
-        LONG.addMethods(NumberInfo.LONG);
-        FLOAT.addMethods(NumberInfo.FLOAT);
-        DOUBLE.addMethods(NumberInfo.DOUBLE);
-        OBJECT.addMethods(TypeInfo.OBJECT);
+        CHAR.addMethods();
+        BOOL.addMethods();
+        UBYTE.addMethods();
+        SBYTE.addMethods();
+        BYTE.addMethods();
+        SHORT.addMethods();
+        SSHORT.addMethods();
+        USHORT.addMethods();
+        UINT.addMethods();
+        SINT.addMethods();
+        INT.addMethods();
+        ULONG.addMethods();
+        SLONG.addMethods();
+        LONG.addMethods();
+        FLOAT.addMethods();
+        DOUBLE.addMethods();
+        OBJECT.addMethods();
         POINTER.addField("getInstanceSize",PointerSize.INSTANCE);
         FUNCTION.addField("getInstanceSize",PointerSize.INSTANCE);
     }
-    private void addMethods(TypeInfo instance){
-        addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + instance.getCname() + ")"));
-        addField("alloc",new Alloc(instance,false));
-        addField("alloc[]",new Alloc(instance,true));
-    }
-    public ClassInfo(String name,String dataName){
-        super(name + " class","");
-        this.dataName = dataName;
+    private void addMethods(){
+        addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + instanceInfo.getCname() + ")"));
+        addField("alloc",new Alloc(instanceInfo,false));
+        addField("alloc[]",new Alloc(instanceInfo,true));
     }
     public ClassInfo(String name){
-        this(name,"");
+        super(name + " class","");
     }
-    public TypeInfo getInstanceType(){
-        return instanceType;
+    public TypeInfo getInstanceInfo(){
+        return instanceInfo;
     }
-    public void setInstanceType(TypeInfo type){
-        instanceType = type;
-    }
-    public String getDataName(){
-        return dataName;
+    public void setInstanceInfo(TypeInfo type){
+        instanceInfo = type;
     }
 }

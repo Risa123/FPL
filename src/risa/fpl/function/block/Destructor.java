@@ -23,7 +23,7 @@ public final class Destructor extends ABlock{
         }
         var b = new BuilderWriter();
         b.write("void ");
-        var type = cEnv.getInstanceType();
+        var type = cEnv.getInstanceInfo();
         type.setDestructorName(INTERNAL_METHOD_PREFIX + cEnv.getNameSpace());
         b.write(type.getDestructorName() + "(" + type.getCname() + "* this){\n");
         var parent = (InstanceInfo)type.getPrimaryParent();

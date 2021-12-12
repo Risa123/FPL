@@ -25,7 +25,7 @@ public final class Array implements IFunction{
 		}
 		var typeAtom = it.nextID();
 		var type = env.getType(typeAtom);
-		if(env instanceof ClassEnv e && e.getInstanceType() == type){
+		if(env instanceof ClassEnv e && e.getInstanceInfo() == type){
 		    b.write("struct ");
         }
 		var lenAtom = it.nextAtom();
@@ -55,7 +55,7 @@ public final class Array implements IFunction{
 	    var first = true;
 	    TypeInfo instanceType = null;
 	    if(env instanceof ClassEnv e){
-	        instanceType = e.getInstanceType();
+	        instanceType = e.getInstanceInfo();
         }
 	    var v = new Variable(new PointerInfo(type),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
 	    env.addFunction(id.getValue(),v);

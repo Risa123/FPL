@@ -14,12 +14,12 @@ abstract class FileHandler Closeable{
    protected{
      const void* handle
      fn void checkError{
-          var num fileError handle
-          if num != 0{
-            var msg getErrorMessage num
-            IOException:new String:new msg,getCStringLen msg;,false;;throw
-          }
+        var num fileError handle
+        if num != 0{
+          var msg getErrorMessage num
+          IOException:new String:new msg,getCStringLen msg;,false;;throw
         }
+      }
    }
    this String name char* mode{
       var cname name toCString
@@ -57,7 +57,7 @@ class FileReader FileHandler Readable{
 }
 class DirectoryStream{
   private{
-    void* handle
+    const void* handle
     DirectoryEntry* last
   }
   this String name{
