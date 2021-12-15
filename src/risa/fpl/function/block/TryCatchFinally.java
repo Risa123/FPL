@@ -54,7 +54,11 @@ public final class TryCatchFinally extends ABlock{
                             throw new CompilerException(exType,"unnecessary Exception ID");
                         }
                         postEntry.write(" if(_std_lang_currentThread->_exception->objectData==&");
-                        exInfo = (InstanceInfo)env.getType(exType);
+                        if(env.getType(exType) instanceof InstanceInfo i){
+                            exInfo = i;
+                        }else{
+                            throw new CompilerException(exType,"instance type expected");
+                        }
                         postEntry.write(exInfo.getDataName() + ")");
                         block = it.nextList();
                         exDataNames.add(exInfo.getDataName());

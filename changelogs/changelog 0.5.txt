@@ -1,2 +1,2 @@
-
+improved error messages
 fix instance type variable declaration

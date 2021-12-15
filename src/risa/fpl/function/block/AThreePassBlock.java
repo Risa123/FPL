@@ -39,7 +39,6 @@ public abstract class AThreePassBlock{
             }
             b.append(':');
             for(var info:infos){
-                info.getLastEx().setSourceFile("");
                 b.append('\n').append(info.getLastEx().getMessage());
             }
             throw new CompilerException(infos.get(0).getExp(),b.toString());

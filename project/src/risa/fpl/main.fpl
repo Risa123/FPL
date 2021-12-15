@@ -30,9 +30,10 @@ class FPL{
    }
    fn void compileDirectory String srcDir String directory{
      var fullPath srcDir + "/"; + directory
-     DirectoryStream stream init srcDir
+     DirectoryStream stream init fullPath
      while stream ready{
        var name stream read
+       print name
        var path fullPath + name
        var fplPath directory + "/"; + name
        if isDirectory path{

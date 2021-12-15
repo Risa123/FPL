@@ -1,6 +1,9 @@
 /bin/
-std.zip
 project/output
 FPLC.exe
 /FPL.zip
 /FPL/
+/tdm-gcc-src-10.3.0-tdm64-1.zip
+/FPL-other.zip
+/FPL-windows.zip
+/gcc/

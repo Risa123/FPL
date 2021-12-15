@@ -20,6 +20,9 @@ public final class CompilerException extends Exception{
   }
   @Override
   public String getMessage(){
+      if(sourceFile == null){
+          return super.getMessage();
+      }
 	  return sourceFile + ":" + super.getMessage();
   }
 }

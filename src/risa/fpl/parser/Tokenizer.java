@@ -27,8 +27,10 @@ public final class Tokenizer{
 	  private Atom nextPrivate()throws IOException,CompilerException{
 		  read();
 		  if(c == '('){
+			  //noinspection StatementWithEmptyBody
 			  while(hasNext() && read() != ')');
 		  }else if(c == '#'){
+			  //noinspection StatementWithEmptyBody
 			  while(hasNext() && read() != '\n');
 			  readNext = c != '\n';
 		  }else if(c == '$'){
@@ -247,6 +249,7 @@ public final class Tokenizer{
 	          return r;
           }
 		  Atom token;
+		  //noinspection StatementWithEmptyBody
 		  while((token = nextPrivate())  == null || token.getType() != AtomType.NEW_LINE && (token.getValue().isEmpty() || token.getValue().isBlank()));
 		  if(token.getType() != AtomType.NEW_LINE){
 			  tokenNum++;

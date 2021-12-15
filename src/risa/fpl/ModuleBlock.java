@@ -16,7 +16,6 @@ import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
-import risa.fpl.parser.List;
 import risa.fpl.parser.Parser;
 import risa.fpl.parser.AtomType;
 
@@ -41,14 +40,13 @@ public final class ModuleBlock extends AThreePassBlock{
        name.append(subPath.getFileName().toString().split("\\.")[0]);
        this.name = name.toString();
        env = new ModuleEnv(fpl.getEnv(),this,null);
-       List exps;
        try(var parser = new Parser(Files.newBufferedReader(sourceFile))){
-		   exps = parser.parse();
+		   var exps = parser.parse();
+           expInfos = createInfoList(exps);
 	   }catch(CompilerException e){
 		   e.setSourceFile(this.sourceFile);
 		   throw e;
 	   }
-       expInfos = createInfoList(exps);
    }
    public void compile()throws IOException,CompilerException{
        try{

@@ -1,7 +1,9 @@
 use std.io.base std.backend
-private const{
- [] char 2 READ $r,$\0
- [] char 2 WRITE $w,$\0
+private{
+ const{
+  [] char 2 READ $r,$\0
+  [] char 2 WRITE $w,$\0
+ }
  fn int getCStringLen char* str{
    var len 0
    while str get len; != $\0{
@@ -58,7 +60,7 @@ class FileReader FileHandler Readable{
 class DirectoryStream{
   private{
     const void* handle
-    DirectoryEntry* last
+    DirectoryEntry* last nil
   }
   this String name{
     var cstr name toCString
@@ -68,7 +70,6 @@ class DirectoryStream{
       var msg getErrNoMessage
       IOException:new String:new msg,getCStringLen msg;,false; + " "; + name;;throw
     }
-    last = nil
   }
   fn String read{
     var entry last
@@ -79,10 +80,18 @@ class DirectoryStream{
         IOException:new "no more files";throw
       }
     }
-    return String:new entry name,entry nameLength,false
+    var i 0
+    var name char:alloc[] entry nameLength
+    while i < entry nameLength{
+      name set i,entry name get i
+      i ++
+    }
+    return String:new name,entry nameLength,true
   }
   fn bool ready{
-    last = directoryRead handle
+    if last == nil{
+     last = directoryRead handle
+    }
     return last != nil
   }
   fn long tell = directoryTell handle

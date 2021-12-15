@@ -23,9 +23,13 @@ public final class FPL{
 	private final ArrayList<VariantGenData>functionVariantGenerationData = new ArrayList<>();
 	private final ArrayList<TemplateCompData>templateCompData = new ArrayList<>();
     private final StringBuilder files = new StringBuilder();
-    public FPL(String project)throws IOException,CompilerException{
+    public FPL(String project)throws CompilerException{
         var build = new Properties();
-        build.load(Files.newInputStream(Path.of(project + "/build.properties")));
+        try{
+            build.load(Files.newInputStream(Path.of(project + "/build.properties")));
+        }catch(IOException ex){
+            throw new CompilerException(ex.getMessage());
+        }
         var requiredKeys = Arrays.asList("gcc","mainModule","outputFile");
         for(var key:requiredKeys){
             if(!build.containsKey(key)){
@@ -46,12 +50,16 @@ public final class FPL{
         mainModule = build.getProperty("mainModule");
         Collections.addAll(flags,build.getProperty("flags","").split(","));
         srcDir = Path.of(project + "/src");
-        for(var p:Files.walk(srcDir).toList()){
-            if(p.toString().endsWith(".fpl")){
-                var mod = new ModuleBlock(p,srcDir,this);
-                modules.put(mod.getName(),mod);
-                files.append(' ').append(mod.getCPath());
+        try{
+            for(var p:Files.walk(srcDir).toList()){
+                if(p.toString().endsWith(".fpl")){
+                    var mod = new ModuleBlock(p,srcDir,this);
+                    modules.put(mod.getName(),mod);
+                    files.append(' ').append(mod.getCPath());
+                }
             }
+        }catch(IOException ex){
+            throw new CompilerException(ex.getMessage());
         }
     }
     private void throwBuildFileError(String msg)throws CompilerException{
@@ -88,14 +96,10 @@ public final class FPL{
                     b.append('\n').append(ex.getMessage());
                 }
             }
-            var ex = new CompilerException(b.toString());
-            ex.setSourceFile("");
-            throw ex;
+            throw new CompilerException(b.toString());
         }
     	if(!modules.containsKey(mainModule)){
-    	    var ex = new CompilerException("main module not found");
-            ex.setSourceFile("");
-            throw ex;
+            throw new CompilerException("main module not found");
         }
         for(var mod:modules.values()){
             mod.getEnv().buildDeclarations();

@@ -6,6 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/project/output" />
       <excludeFolder url="file://$MODULE_DIR$/FPL" />
+      <excludeFolder url="file://$MODULE_DIR$/TDM-GCC-64" />
+      <excludeFolder url="file://$MODULE_DIR$/gcc" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
