@@ -8,6 +8,9 @@
       <excludeFolder url="file://$MODULE_DIR$/FPL" />
       <excludeFolder url="file://$MODULE_DIR$/TDM-GCC-64" />
       <excludeFolder url="file://$MODULE_DIR$/gcc" />
+      <excludeFolder url="file://$MODULE_DIR$/FPL-other" />
+      <excludeFolder url="file://$MODULE_DIR$/FPL-windows" />
+      <excludeFolder url="file://$MODULE_DIR$/FPL-windows/gcc" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
