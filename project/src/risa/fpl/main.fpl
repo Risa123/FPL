@@ -99,7 +99,7 @@ class FPL{
 }
 main{
  if argc != 2{
-   stderr writeString "project directory expected"
+   stderr writeString "<project directory> expected"
    return 2 #1 is reserved for exceptions
  }
  try{

@@ -68,15 +68,12 @@ fn void contextRestore Context context{
   native fn void __builtin_longjmp Context context int value
   return __builtin_longjmp context,1
 }
-fn DirectoryEntry* directoryRead void* dir{
-  var entry readdir dir
-  if entry != nil; && entry nameLength == 1; && [ entry name get 0; == $.]{
-    entry = readdir dir
-  }
-  if entry != nil; && entry nameLength == 2; && [ entry name get 0; == $.] && [ entry name get 1; == $.]{
-    entry = readdir dir
-  }
-  return entry
+fn void* directoryOpen char* name{
+  var dir opendir name
+  #skip . and .. entries
+  readdir dir
+  readdir dir
+  return dir
 }
 fn void;T; free[] T* this memory len{
  var i 0L
@@ -87,7 +84,7 @@ fn void;T; free[] T* this memory len{
  free this cast void*
 }
 fn void free[] void* p memory len = free p
-alias directoryOpen opendir
+alias directoryRead readdir
 alias directoryClose closedir
 alias directoryTell telldir
 alias directorySeek seekdir

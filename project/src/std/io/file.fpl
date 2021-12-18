@@ -11,6 +11,12 @@ private{
    }
    return len
  }
+ fn void checkErrNo int num String path{
+    if num == -1{
+       var msg getErrNoMessage
+       IOException:new String:new msg,getCStringLen msg;,false; + " "; + path;;throw
+     }
+ }
 }
 abstract class FileHandler Closeable{
    protected{
@@ -103,12 +109,6 @@ class DirectoryStream{
       IOException:new String:new msg,getCStringLen msg;,false;;throw
     }
   }
-}
-private fn void checkErrNo int num String path{
-   if num == -1{
-      var msg getErrNoMessage
-      IOException:new String:new msg,getCStringLen msg;,false; + " "; + path;;throw
-    }
 }
 fn bool isDirectory String path{
   FileStatus status
