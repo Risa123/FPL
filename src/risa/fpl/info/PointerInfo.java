@@ -4,7 +4,7 @@ import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
-public final class PointerInfo extends TypeInfo implements IPointerInfo{
+public class PointerInfo extends TypeInfo implements IPointerInfo{
 	private final TypeInfo type;
 	private int functionPointerDepth;
 	public PointerInfo(TypeInfo type){
@@ -54,13 +54,13 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
         setClassInfo(ClassInfo.POINTER);
 	}
 	@Override
-	public boolean equals(Object o){
+	public final boolean equals(Object o){
 		if(o instanceof PointerInfo p){
 			return type.equals(p.type);
 		}else return o == NIL;
     }
     @Override
-    public IField getField(String name,AEnv from){
+    public final IField getField(String name,AEnv from){
 	    var field = super.getField(name,from);
 	    if(field == null){
 	        field = type.getField(name,from);
@@ -68,29 +68,29 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
 	    return field;
     }
     @Override
-    public String ensureCast(TypeInfo to,String expCode){
+    public final String ensureCast(TypeInfo to,String expCode){
         return type.ensureCast(to,expCode,true);
     }
     @Override
-    public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
+    public final String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
 	    return type.ensureCast(to,expCode,comesFromPointer);
     }
     @Override
-    public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,boolean returnedByFunction){
+    public final String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,boolean returnedByFunction){
 	    return type.ensureCast(to,expCode,comesFromPointer,returnedByFunction);
     }
-    public TypeInfo getType(){
+    public final TypeInfo getType(){
 	    return type;
     }
     @Override
-    public String getPointerVariableDeclaration(String cID){
+    public final String getPointerVariableDeclaration(String cID){
 	    if(type instanceof IPointerInfo p){
 	        return p.getPointerVariableDeclaration("*" + cID);
         }
 	    return getCname() + " " + cID;
     }
     @Override
-    public FunctionInfo getFunctionPointer(){
+    public final FunctionInfo getFunctionPointer(){
 	    var t = type;
 	    for(;;){
 	        if(t instanceof FunctionInfo info){
@@ -105,7 +105,7 @@ public final class PointerInfo extends TypeInfo implements IPointerInfo{
         return null;
     }
     @Override
-    public int getFunctionPointerDepth(){
+    public final int getFunctionPointerDepth(){
 	    return functionPointerDepth;
     }
     @Override

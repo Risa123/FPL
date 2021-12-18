@@ -25,7 +25,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
         addField("cast",new Cast(this));
         var classInfo = new ClassInfo(name);
         setClassInfo(classInfo);
-        constructor = new InstanceVar(this,classInfo);
+        constructor = new InstanceVar(this);
         classInfo.addField("alloc",new Function("alloc",new PointerInfo(this),AccessModifier.PUBLIC));
         classInfo.addField("new",new Function("new",this,AccessModifier.PUBLIC));
     }

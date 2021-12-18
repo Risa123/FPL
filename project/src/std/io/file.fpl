@@ -87,12 +87,13 @@ class DirectoryStream{
       }
     }
     var i 0
-    var name char:alloc[] entry nameLength
-    while i < entry nameLength{
+    var nameLen getCStringLen entry name
+    var name char:alloc[] nameLen
+    while i < nameLen{
       name set i,entry name get i
       i ++
     }
-    return String:new name,entry nameLength,true
+    return String:new name,nameLen,true
   }
   fn bool ready{
     if last == nil{

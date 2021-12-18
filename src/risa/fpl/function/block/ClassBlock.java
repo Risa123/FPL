@@ -129,7 +129,19 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                    if(v.getType() instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
                        attributes.write("struct ");
                    }
-                   attributes.write(v.getType().getCname() + " " + v.getCname() + ";\n");
+                   attributes.write(v.getType().getCname() + " " + v.getCname());
+                   if(v.getType() instanceof ArrayInfo i){
+                       String code;
+                       attributes.write("[");
+                       if(i.isLengthUnsignedLong()){
+                           code = Long.toUnsignedString(i.getLength());
+                       }else{
+                           code = Long.toString(i.getLength());
+                       }
+                       attributes.write(code);
+                       attributes.write("]");
+                   }
+                   attributes.write(";\n");
                }
             }
         }

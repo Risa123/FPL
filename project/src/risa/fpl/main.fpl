@@ -33,13 +33,11 @@ class FPL{
      DirectoryStream stream init fullPath
      while stream ready{
        var name stream read
-       print name
        var path fullPath + name
-       var fplPath directory + "/"; + name
        if isDirectory path{
-        compileDirectory srcDir,fplPath
+        compileDirectory srcDir,path
        }if isFile path{
-        ModuleBlock block init this,srcDir,fplPath
+        ModuleBlock block init this,srcDir,path
        }
      }
      stream close

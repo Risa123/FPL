@@ -21,12 +21,10 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
 
 public final class InstanceVar extends Function{
-   private final ClassInfo classType;
    private final InstanceInfo type;
-   public InstanceVar(InstanceInfo type,ClassInfo classType){
+   public InstanceVar(InstanceInfo type){
        super("constructor",TypeInfo.VOID,FunctionType.NORMAL,type,AccessModifier.PUBLIC);
 	   this.type = type;
-	   this.classType = classType;
    }
    private String makeCName(String nameSpace){
       return INTERNAL_METHOD_PREFIX + nameSpace + "_init";
@@ -38,7 +36,7 @@ public final class InstanceVar extends Function{
 		if(id.getType() == AtomType.ID){
             compileVariable(b,id,env,it);
         }else if(id.getType() == AtomType.CLASS_SELECTOR){
-		    return compileClassSelector(it,env,writer,classType);
+		    return compileClassSelector(it,env,writer,type.getClassInfo());
         }else if(id.getType() == AtomType.END_ARGS){
             var varType = compileVariable(b,null,env,it);
             if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() == AtomType.CLASS_SELECTOR){
@@ -100,7 +98,7 @@ public final class InstanceVar extends Function{
                 }else if(env instanceof ModuleEnv e){
                     e.appendToInitializer(b.getCode() + ";\n");
                 }else{
-                    writer.write(b.getCode());
+                    writer.write(b.getCode() + ";\n");
                 }
             }else{
                 throw new CompilerException(id,"init(constructor arguments) or nothing expected");
@@ -128,11 +126,17 @@ public final class InstanceVar extends Function{
             if(field == null){
                 throw new CompilerException(atom,classType + " has no field called " + atom);
             }
-            return field.compile(writer,env,it,atom.getLine(),atom.getTokenNum());
+            var ret = field.compile(writer,env,it,atom.getLine(),atom.getTokenNum());
+            writer.write(";\n");
+            return ret;
         }
         return classType;
     }
     public FunctionVariant addVariant(TypeInfo[]args,String nameSpace){
        return addVariant(args,makeCName(nameSpace),makeCName(nameSpace));
+    }
+    @Override
+    public boolean appendSemicolon(){
+        return false;
     }
 }

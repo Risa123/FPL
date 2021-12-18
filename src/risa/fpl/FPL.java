@@ -13,7 +13,7 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
 public final class FPL{
-	private final String gcc,output,outputDirectory,mainModule,ccArgs;
+	private final String output,outputDirectory,mainModule,ccArgs;
 	private final ProgramEnv env = new ProgramEnv(this);
 	private final HashMap<String,ModuleBlock>modules = new HashMap<>();
 	private final ArrayList<String>flags = new ArrayList<>();
@@ -30,7 +30,7 @@ public final class FPL{
         }catch(IOException ex){
             throw new CompilerException(ex.getMessage());
         }
-        var requiredKeys = Arrays.asList("gcc","mainModule","outputFile");
+        var requiredKeys = Arrays.asList("mainModule","outputFile");
         for(var key:requiredKeys){
             if(!build.containsKey(key)){
                 throwBuildFileError("no property " + key);
@@ -43,7 +43,6 @@ public final class FPL{
                 throwBuildFileError("no property " + key + " allowed");
             }
         }
-        gcc = build.getProperty("gcc");
     	output = build.getProperty("outputFile");
     	ccArgs = build.getProperty("ccArgs","");
     	outputDirectory = project + "/output";
@@ -134,7 +133,7 @@ public final class FPL{
     	        w.write(data.code());
             }
         }
-    	var err = Runtime.getRuntime().exec(gcc + "\\bin\\gcc -w " + ccArgs + " -o " + output + files).getErrorStream();
+    	var err = Runtime.getRuntime().exec("gcc\\bin\\gcc -w " + ccArgs + " -o " + output + files).getErrorStream();
         System.err.print(new String(err.readAllBytes()));
     }
     public ModuleBlock getModule(String name){

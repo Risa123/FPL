@@ -11,6 +11,7 @@ import risa.fpl.env.ClassEnv;
 import risa.fpl.env.Modifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.ArrayInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
@@ -57,7 +58,13 @@ public final class Array implements IFunction{
 	    if(env instanceof ClassEnv e){
 	        instanceType = e.getInstanceInfo();
         }
-	    var v = new Variable(new PointerInfo(type),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
+		long len;
+		if(lenAtom.getType() == AtomType.ULONG){
+            len = Long.parseUnsignedLong(lenAtom.getValue());
+		}else{
+			len = Long.parseLong(lenAtom.getValue());
+		}
+	    var v = new Variable(new ArrayInfo(type,len,lenAtom.getType() == AtomType.ULONG),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
 	    env.addFunction(id.getValue(),v);
 	    if(it.hasNext()){
 	    	while(it.hasNext()){
@@ -77,10 +84,9 @@ public final class Array implements IFunction{
 					count++;
 				}
 		    }
-		    var len = Long.parseLong(lenAtom.getValue());
 		    b.write("};\n");
 		    if(count > len){
-		    	throw new CompilerException(line,tokenNum,"can only have " + len +  " elements");
+		    	throw new CompilerException(line,tokenNum,"can only have " + len + " elements");
 		    }
 	    }
 		if(env instanceof ModuleEnv e){

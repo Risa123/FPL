@@ -19,6 +19,8 @@ private const{
  FileWriter fileStdout init stdout
  FileReader fileStdin init stdin
 }
-DataWriter stderr init fileStderr
-DataWriter stdout init fileStdout
-DataReader stdin init fileStdin
+const{
+ DataWriter stderr init fileStderr
+ DataWriter stdout init fileStdout
+ DataReader stdin init fileStdin
+}

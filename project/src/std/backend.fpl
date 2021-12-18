@@ -93,7 +93,7 @@ alias fileError ferror
 alias FS_status stat
 fn char* getErrorMessage int errnum = strerror errnum
 fn char* getErrNoMessage = getErrorMessage _errno; drf
-private var S_IFDIR 16895;S_IFREG 33206
-fn bool FS_isDirectory FileStatus* status = status mode == S_IFDIR
-fn bool FS_isFile FileStatus* status = status mode  == S_IFREG
+private var S_IFDIR 0x4000;S_IFREG 0x8000;S_IFMT 0xF000
+fn bool FS_isDirectory FileStatus* status = [ status mode & S_IFMT ] == S_IFDIR
+fn bool FS_isFile FileStatus* status = [ status mode & S_IFMT ] == S_IFREG
 fn memory FS_getSize FileStatus* status = status size
