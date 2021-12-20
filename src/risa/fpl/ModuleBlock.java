@@ -105,6 +105,7 @@ public final class ModuleBlock extends AThreePassBlock{
            }
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
+           writer.write("void free(void*);\n");
            writer.write(env.getFunctionCode());
            for(var env:classEnvList){
                if(!(env.getInstanceInfo() instanceof TemplateTypeInfo)){
@@ -124,8 +125,10 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write("_Thread mainThread;\n");
                writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
                writer.write("_std_lang_currentThread = &mainThread;\n");
+               writer.write("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
                writer.write("args = malloc(argc * sizeof(_String));\n");
                writer.write("for(int i = 0;i < argc;++i){\n");
+               writer.write(NumberInfo.MEMORY.getCname() + " strlen(const char*);\n");
                writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n}\n");
                writer.write(mainFunctionCode);
                writer.write("}\n");
@@ -134,8 +137,7 @@ public final class ModuleBlock extends AThreePassBlock{
                    writer.write(mod.getEnv().getDestructorCall());
                }
                writer.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
-               writer.write("free(args);\n");
-               writer.write("}");
+               writer.write("free(args);\n}");
            }else{
                writer.write(env.getInitializer());
                writer.write(env.getDestructor());

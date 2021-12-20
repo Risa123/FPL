@@ -130,10 +130,11 @@ public final class FPL{
     	    files.append(' ').append(data.path());
     	    try(var w = Files.newBufferedWriter(data.path())){
     	        w.write(data.module().getDeclarationCode());
+                w.write("void free(void*);\n");
     	        w.write(data.code());
             }
         }
-    	var err = Runtime.getRuntime().exec("gcc\\bin\\gcc -w " + ccArgs + " -o " + output + files).getErrorStream();
+    	var err = Runtime.getRuntime().exec("gcc\\bin\\gcc " + ccArgs + " -o " + output + files).getErrorStream();
         System.err.print(new String(err.readAllBytes()));
     }
     public ModuleBlock getModule(String name){

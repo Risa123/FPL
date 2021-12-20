@@ -186,7 +186,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         if(!isAbstract()){
           for(var method: instanceInfo.getMethodsOfType(FunctionType.VIRTUAL)){
               for(var v:method.getVariants()){
-                  b.append(',').append(v.cname());
+                  b.append(",(void*)").append(v.cname());
               }
           }
         }
@@ -247,8 +247,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         var compiledArgs = b.toString();
         writer.write(compiledArgs + "){\n");
-        writer.write(cname + "* p=malloc(sizeof(");
-        writer.write(cname + "));\n");
+        writer.write("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
+        writer.write(cname + "* p=malloc(sizeof(" + cname + "));\n");
         writer.write(constructorCall(constructorName,"p",args));
         writer.write("return p;\n}\n");
         var newName = "static" + nameSpace + "_new";
@@ -301,7 +301,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public String getConstructorCode(){
         var b = new StringBuilder();
         for(var data:constructors){
-            b.append(data.cname()).append('(').append(instanceInfo.getCname()).append("* this");
+            b.append("void ").append(data.cname()).append('(').append(instanceInfo.getCname()).append("* this");
             b.append(data.argsCode()).append("){\n");
             b.append(getImplicitConstructorCode());
             b.append(data.code()).append("}\n");

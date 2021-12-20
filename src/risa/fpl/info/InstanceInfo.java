@@ -78,11 +78,19 @@ public class InstanceInfo extends NonTrivialTypeInfo{
                 cEnv.appendFunctionDeclaration(f);
             }
         }
+        if(cEnv.hasOnlyImplicitConstructor()){
+            cEnv.appendFunctionDeclaration("void " + IFunction.INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_init0(" + getCname() + "*);\n");
+        }
+        cEnv.appendFunctionDeclaration(constructor);
         if(!(this instanceof TemplateTypeInfo)){
             setMethodDeclarations(cEnv.getFunctionDeclarations());
         }
         if(copyConstructorName != null){
+            appendToDeclaration("void " + copyConstructorName + "(" + getCname() + "*," + getCname() + "*);\n");
             appendToDeclaration(getCname() + " " + copyConstructorName + "AndReturn(" + getCname() + " original);\n");
+        }
+        if(destructorName != null){
+            appendToDeclaration("void " + destructorName + "(" + getCname() + "*);\n");
         }
         for(var p:parents){
             if(p instanceof InterfaceInfo i){

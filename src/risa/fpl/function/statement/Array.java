@@ -12,7 +12,6 @@ import risa.fpl.env.Modifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.ArrayInfo;
-import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;

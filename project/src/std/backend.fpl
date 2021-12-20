@@ -13,7 +13,7 @@ struct FileStatus{
 }
 native{
  fn int puts char* str
- fn int putchar char c
+ fn int putchar int c
  fn void* malloc memory size
  fn void free void* p
  fn void exit int exitCode:noReturn

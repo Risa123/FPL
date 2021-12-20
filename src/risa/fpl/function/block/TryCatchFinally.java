@@ -70,7 +70,7 @@ public final class TryCatchFinally extends ABlock{
                     }
                     postEntry.write("{\n");
                     postEntry.write(exInfo.getCname());
-                    postEntry.write(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,&ex);\n");
+                    postEntry.write(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,(_Exception*)&ex);\n");
                     var blockEnv = new FnSubEnv(env);
                     blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
                     var tmp1 = new BuilderWriter();

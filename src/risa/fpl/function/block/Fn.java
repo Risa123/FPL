@@ -268,6 +268,9 @@ public class Fn extends AFunctionBlock{
                 writer.write(attrCode.toString());
                 fnEnv.compileToPointerVars(writer);
                 writer.write(b.getCode());
+                if(type == FunctionType.NATIVE && !id.getValue().equals("__builtin_longjmp")){//builtin functions cannot have declaration with extern
+                    writer.write(f.getDeclaration());
+                }
             }
         }
         if(templateArgs == null){

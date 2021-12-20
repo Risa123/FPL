@@ -30,7 +30,7 @@ public class PointerInfo extends TypeInfo implements IPointerInfo{
         addField("<",new BinaryOperator(TypeInfo.BOOL,this,"<"));
         addField(">=",new BinaryOperator(TypeInfo.BOOL,this,">="));
         addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
-        addField("cast", new Cast(this));
+        addField("cast",new Cast(this));
         addField("getObjectSize",PointerSize.INSTANCE);
         var cName = "free";
         if(type instanceof InstanceInfo i){

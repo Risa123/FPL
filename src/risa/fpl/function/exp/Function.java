@@ -100,6 +100,9 @@ public class Function implements IField,ICalledOnPointer{
 		var first = self == null;
 		var ref = false;
 		if(self != null){
+            if(!self.isPrimitive()){
+                b.write('(' + self.getCname() + "*)");
+            }
 		    if(callStatus == CALLED_ON_POINTER){
 		      callStatus = NO_STATUS;
             }else if(!(self instanceof InterfaceInfo) && prevCode != null /*to prevent &this when calling method on implicit this*/){
@@ -285,7 +288,7 @@ public class Function implements IField,ICalledOnPointer{
         var list = new ArrayList<TypeInfo>();
         list.add(returnType);
         for(var v:variants){
-            list.addAll(Arrays.stream(v.args()).toList());
+            list.addAll(Arrays.asList(v.args()));
         }
         return list;
     }

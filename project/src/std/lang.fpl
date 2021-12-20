@@ -1,7 +1,7 @@
 (#this module is imported automatically)
 use std.backend
 
-fn void print char c = putchar c
+fn void print char c = putchar c cast int
 class String{
   private{
     char* p

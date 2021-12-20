@@ -14,13 +14,13 @@ fn int execute String cmd{
   }
   return exitCode
 }
-private const{
- FileWriter fileStderr init stderr
- FileWriter fileStdout init stdout
- FileReader fileStdin init stdin
-}
 const{
  DataWriter stderr init fileStderr
  DataWriter stdout init fileStdout
  DataReader stdin init fileStdin
+ private{
+  FileWriter fileStderr init stderr
+  FileWriter fileStdout init stdout
+  FileReader fileStdin init stdin
+ }
 }

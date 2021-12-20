@@ -12,7 +12,6 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.function.exp.FunctionVariant;
 import risa.fpl.function.exp.Variable;
-import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;

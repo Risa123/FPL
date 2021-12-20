@@ -152,6 +152,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             cEnv.appendFunctionCode(cID + " inst;\n" + INTERNAL_METHOD_PREFIX + nameSpace + "_init0(&inst);\n");
             cEnv.appendFunctionCode("return inst;\n}\n");
             cEnv.appendFunctionCode(cID + "* static" + nameSpace + "_alloc0(){\n");
+            cEnv.appendFunctionCode("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
             cEnv.appendFunctionCode(cID + " * p = malloc(sizeof(" + cID + "));\n");
             cEnv.appendFunctionCode(INTERNAL_METHOD_PREFIX + nameSpace + "_init0(p);\nreturn p;\n}\n");
         }
@@ -189,16 +190,16 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                     }else{
                         internalCode.write(',');
                     }
-                    internalCode.write(inThisClass.getVariant(v.args()).cname());
+                    internalCode.write("(void*)" + inThisClass.getVariant(v.args()).cname());
                 }
             }
             internalCode.write("};\n");
             internalCode.write(i.getCname() + ' ');
             internalCode.write(type.getConversionMethod(i) + '(' + type.getCname() + "* this){\n");
             internalCode.write(i.getCname());
-            internalCode.write(" tmp;\ntmp.instance=this;\ntmp.impl=&");
+            internalCode.write(" tmp={this,&");
             internalCode.write(cEnv.getImplOf(i));
-            internalCode.write(";\nreturn tmp;\n}\n");
+            internalCode.write("};\nreturn tmp;\n}\n");
         }
         internalCode.write(type.getCname() + "* " + type.getToPointerName() + "(");
         internalCode.write(type.getCname() + " this," + type.getCname() + "* p){\n*p = this;\n");
@@ -206,7 +207,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         var copyName = type.getCopyConstructorName();
         if(copyName == null && !cEnv.getImplicitCopyConstructorCode().isEmpty()){
             copyName = INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_copy";
-            internalCode.write(copyName + "(" + type.getCname() + "* this," + type.getCname() + "* o){\n");
+            internalCode.write("void " + copyName + "(" + type.getCname() + "* this," + type.getCname() + "* o){\n");
             internalCode.write(cEnv.getImplicitCopyConstructorCode() + cEnv.getDefaultCopyConstructorCode() + "}\n");
             type.setCopyConstructorName(copyName);
         }
@@ -221,6 +222,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             modEnv.appendFunctionCode(cEnv.getDestructor());
             if(type.getDestructorName() != null){
                 cEnv.appendFunctionCode("void " + type.getInstanceFree() + "(" + type.getCname() + "* this){\n");
+                cEnv.appendFunctionCode("void free(void*);\n");
                 cEnv.appendFunctionCode(type.getDestructorName() + "(this);\nfree(this);\n}\n");
             }
             modEnv.appendFunctionCode(cEnv.getFunctionCode());
