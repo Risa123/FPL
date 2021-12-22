@@ -52,8 +52,9 @@ public final class TemplateTypeInfo extends InstanceInfo{
                superMod.addInstanceFile(file);
            }
            var path = Path.of(superMod.getFPL().getOutputDirectory() + "/" + file);
-           var writer = Files.newBufferedWriter(path);
+           Files.createFile(path);//created for module block so it does not throw exception
            var mod = new ModuleEnv(superMod,new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
+           Files.delete(path);
            var name = getName() + nameBuilder;
            var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false);
            type = cEnv.getInstanceInfo();
@@ -73,7 +74,6 @@ public final class TemplateTypeInfo extends InstanceInfo{
                }
            }
            new ClassBlock(false).compileClassBlock(cEnv,mod,new Atom(0,0, name, AtomType.ID),block,interfaces,TemplateStatus.GENERATING);
-           Files.delete(path);
            if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(type);
@@ -82,15 +82,13 @@ public final class TemplateTypeInfo extends InstanceInfo{
                }
            }
            mod.addType(type);
-           writer.write(cEnv.getDataDefinition());
-           writer.write(mod.getFunctionCode());
            generatedTypes.add(type);
            if(mod.getInitializerCall() != null){
                getModule().appendToInitializer(mod.getInitializerCall());
            }
            //prevent declaration of template in a template
            if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
-               mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + mod.getFunctionCode() + cEnv.getConstructorCode(),typesForDeclaration));
+               mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + cEnv.getConstructorCode(),typesForDeclaration));
            }
        }
        return type;

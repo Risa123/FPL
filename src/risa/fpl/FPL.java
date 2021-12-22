@@ -123,6 +123,8 @@ public final class FPL{
                 }
                 mod.updateTypesForDeclaration();
     	        mod.declare(w);
+                w.write(mod.getFunctionDeclarations());
+                w.write(mod.getFunctionCode());
                 w.write(tData.code());
             }
         }

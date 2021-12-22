@@ -69,8 +69,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_new0",prefix + "_new0"));
         var name = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0";
         instanceInfo.getConstructor().getVariants().add(new FunctionVariant(new TypeInfo[0],name,name));
-        var writer = new BuilderWriter();
-        appendFunctionCode(writer.getCode());
 	}
 	@Override
 	public void addFunction(String name,IFunction value){
@@ -112,9 +110,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		return additionalCode + implicitConstructor;
 	}
 	public String getImplicitConstructor(){
-        var header = IFunction.INTERNAL_METHOD_PREFIX +  nameSpace  + "_init0(";
+        var header = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0(";
         if(struct){
-            return "#define " + header + "this) //struct without implicit constructor\n";
+            return "#define " + header + "this) //placeholder\n";//structs have no implicit constructor
         }
         return "void " + header + instanceInfo.getCname() + "* this){\n" + getImplicitConstructorCode() + "}\n";
     }
@@ -150,7 +148,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     @Override
     public String getNameSpace(IFunction caller){
-	    if(caller instanceof Var || caller instanceof Function f && f.getAccessModifier() == AccessModifier.PRIVATE) {
+	    if(caller instanceof Var || caller instanceof Function f && f.getAccessModifier() == AccessModifier.PRIVATE){
             return "";
         }
 	    return nameSpace;
@@ -260,8 +258,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         writer.write("return inst;\n}\n");
     }
     private String constructorCall(String constructorName,String self,TypeInfo[]args){
-        var b = new StringBuilder();
-        b.append(constructorName).append("(").append(self);
+        var b = new StringBuilder(constructorName);
+        b.append("(").append(self);
         for(int i = 0; i < args.length;++i){
             b.append(",a").append(i);
         }

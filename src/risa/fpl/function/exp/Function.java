@@ -202,7 +202,7 @@ public class Function implements IField,ICalledOnPointer{
         }
         return false;
     }
-    public final Function makeMethod(TypeInfo ofType, String newName){
+    public final Function makeMethod(TypeInfo ofType,String newName){
         var variant = getPointerVariant();
         var args = new TypeInfo[variant.args().length - 1];
         if(args.length > 0){
@@ -213,7 +213,7 @@ public class Function implements IField,ICalledOnPointer{
         return f;
     }
     public final Function changeAccessModifier(AccessModifier accessModifier){
-        var f = new Function(getName(),returnType,type,self,accessModifier);
+        var f = new Function(name,returnType,type,self,accessModifier);
         f.variants.addAll(variants);
         f.declaration.append(declaration);
         return f;
@@ -325,7 +325,7 @@ public class Function implements IField,ICalledOnPointer{
     public final void addTemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,LinkedHashMap<String,TypeInfo>args,AEnv env){
         templateVariants.add(new TemplateVariant(templateArgs,code,args,env));
     }
-    public final Function makeMethodFromTemplate(TypeInfo self,TypeInfo[]args,SubEnv env){
+    public final Function makeMethodFromTemplate(TypeInfo self,TypeInfo[]args,ModuleEnv module){
         var f = new Function(name,returnType,FunctionType.NORMAL,self,accessModifier);
         var array = new TypeInfo[args.length + 1];
         array[0] = self;
@@ -334,7 +334,7 @@ public class Function implements IField,ICalledOnPointer{
         if(v == null){
             throw new IllegalStateException("internal error:template not found " + Arrays.toString(args));
         }
-        f.addVariantFromTemplate(v,env,array,true);
+        f.addVariantFromTemplate(v,module,array,true);
         return f;
     }
     private TemplateVariant getTemplateVariant(TypeInfo[]args){
@@ -369,7 +369,7 @@ public class Function implements IField,ICalledOnPointer{
         var file =  cname + ".c";
         var path = Paths.get(env.getFPL().getOutputDirectory() + "/" + file);
         var writer = new BuilderWriter();
-       try{
+        try{
            var fnEnv = new FnEnv(variant.superEnv,returnType);
            var len = variant.args.size();
            if(asMethod){
@@ -397,7 +397,6 @@ public class Function implements IField,ICalledOnPointer{
                    for(int i = 0;i < pointerDepth;++i){
                        type = new PointerInfo(type);
                    }
-
                }
                if(asMethod){
                    if(first){
@@ -412,7 +411,7 @@ public class Function implements IField,ICalledOnPointer{
                }
                fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
            }
-           var v  = addVariant(args,cname,cname);
+           var v = addVariant(args,cname,cname);
            writer.write(returnType.getCname() + " " + v.cname() + '(');
            var firstArg = true;
            if(self != null){

@@ -40,7 +40,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }
         var id = it.nextID();
 		var idV = id.getValue();
-		if(env.hasTypeInCurrentEnv(idV) && !(env.getType(id) instanceof InstanceInfo i)){
+		if(env.hasTypeInCurrentEnv(idV) && !(env.getType(id) instanceof InstanceInfo)){
 		    throw new CompilerException(id,"type " + idV + " is already declared");
         }
 		InstanceInfo primaryParent = null;

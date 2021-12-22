@@ -113,16 +113,16 @@ class DirectoryStream{
 }
 fn bool isDirectory String path{
   FileStatus status
-  checkErrNo FS_status path toCString;,status ref;,path
-  return FS_isDirectory status ref
+  checkErrNo fileStatus path toCString;,status ref;,path
+  return std.backend.isDirectory status ref
 }
 fn bool isFile String path{
  FileStatus status
- checkErrNo FS_status path toCString;,status ref;,path
- return FS_isFile status ref
+ checkErrNo fileStatus path toCString;,status ref;,path
+ return std.backend.isFile status ref
 }
 fn memory getSize String path{
  FileStatus status
- checkErrNo FS_status path toCString;,status ref;,path
- return FS_getSize status ref
+ checkErrNo fileStatus path toCString;,status ref;,path
+ return getFileSize status ref
 }
