@@ -263,7 +263,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         for(int i = 0; i < args.length;++i){
             b.append(",a").append(i);
         }
-        return  b.append(");\n").toString();
+        return b.append(");\n").toString();
     }
     public String getInitializer(){
 	    return getInitializer("cinit");

@@ -56,14 +56,11 @@ public final class InterfaceBlock implements IFunction{
         block.compile(new BuilderWriter(),iEnv,it);
         var implName = type.getImplName();
         var b = new BuilderWriter();
-        b.write("typedef struct ");
-        b.write(implName);
-        b.write("{\n");
+        b.write("typedef struct " + implName + "{\n");
         for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
             var p = new FunctionInfo(method);
             for(var v:method.getVariants()){
-                b.write(p.getPointerVariableDeclaration(v.cname()));
-                b.write(";\n");
+                b.write(p.getPointerVariableDeclaration(v.cname()) + ";\n");
             }
         }
         b.write('}' + implName + ";\n");

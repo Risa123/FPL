@@ -132,7 +132,7 @@ public final class FPL{
     	    files.append(' ').append(data.path());
     	    try(var w = Files.newBufferedWriter(data.path())){
     	        w.write(data.module().getDeclarationCode());
-                w.write("void free(void*);\n");
+                w.write(data.module().getFunctionDeclarations());
     	        w.write(data.code());
             }
         }

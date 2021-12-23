@@ -105,7 +105,6 @@ public final class ModuleBlock extends AThreePassBlock{
            }
            writer.write(env.getVariableDeclarations());
            writer.write(env.getFunctionDeclarations());
-           writer.write("void free(void*);\n");
            writer.write(env.getFunctionCode());
            for(var env:classEnvList){
                if(!(env.getInstanceInfo() instanceof TemplateTypeInfo)){

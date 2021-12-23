@@ -366,8 +366,7 @@ public class Function implements IField,ICalledOnPointer{
     private void addVariantFromTemplate(TemplateVariant variant,SubEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
         var mod = env.getModule();
         var cname = mod.getNameSpace() + IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
-        var file =  cname + ".c";
-        var path = Paths.get(env.getFPL().getOutputDirectory() + "/" + file);
+        var path = Paths.get(env.getFPL().getOutputDirectory() + "/" + cname + ".c");
         var writer = new BuilderWriter();
         try{
            var fnEnv = new FnEnv(variant.superEnv,returnType);
@@ -429,7 +428,7 @@ public class Function implements IField,ICalledOnPointer{
                }
                var typeName = type.getName();
                if(variant.templateArgs.containsKey(typeName)){
-                  type = variant.templateArgs().get(typeName);
+                  type = variant.templateArgs.get(typeName);
                }
                writer.write(type.getCname() + " " + IFunction.toCId(arg.getKey()));
            }

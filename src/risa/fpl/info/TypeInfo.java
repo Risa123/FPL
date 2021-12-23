@@ -12,7 +12,7 @@ import risa.fpl.function.exp.*;
 
 public class TypeInfo{
   public static final TypeInfo VOID = new TypeInfo("void","void");
-  public static final TypeInfo OBJECT = new TypeInfo("object",""){
+  public static final TypeInfo OBJECT = new TypeInfo("object",null){
       @Override
       public void setClassInfo(ClassInfo info){
           addField("getObjectSize",new ValueExp(NumberInfo.MEMORY,null));
@@ -21,7 +21,7 @@ public class TypeInfo{
   };
   public static final TypeInfo BOOL = new TypeInfo("bool","char");
   public static final TypeInfo CHAR = new TypeInfo("char","char");
-  public static final TypeInfo NIL = new TypeInfo("nil","");
+  public static final TypeInfo NIL = new TypeInfo("nil",null);
   static{
 	  CHAR.addField("cast",new Cast(CHAR));
 	  CHAR.addField("==",new BinaryOperator(BOOL,CHAR,"=="));

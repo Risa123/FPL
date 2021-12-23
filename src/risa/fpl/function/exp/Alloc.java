@@ -25,9 +25,7 @@ public final class Alloc extends AField{
         var notOneByteType = !(type == TypeInfo.CHAR || type == TypeInfo.BOOL || type instanceof NumberInfo n && n.getSize() == 1);
         writer.write(")_std_lang_malloc0(");
         if(notOneByteType){
-            writer.write("sizeof(");
-            writer.write(type.getCname());
-            writer.write(')');
+            writer.write("sizeof(" + type.getCname() +')');
         }
         if(array){
             if(notOneByteType){

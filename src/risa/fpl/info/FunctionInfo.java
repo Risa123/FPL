@@ -47,10 +47,11 @@ public final class FunctionInfo extends TypeInfo implements IPointerInfo{
             }else{
                 b.append(',');
             }
-            if(arg instanceof PointerInfo p && p.getType() instanceof NonTrivialTypeInfo){
-                b.append("struct ");
+            if(arg instanceof PointerInfo p && p.getType() instanceof NonTrivialTypeInfo && self instanceof InterfaceInfo){
+                b.append("void*");
+            }else{
+                b.append(arg.getCname());
             }
-            b.append(arg.getCname());
         }
         return b.append(")").toString();
     }

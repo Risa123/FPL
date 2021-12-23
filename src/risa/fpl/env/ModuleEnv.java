@@ -15,10 +15,7 @@ import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.function.statement.InstanceVar;
-import risa.fpl.info.InstanceInfo;
-import risa.fpl.info.NonTrivialTypeInfo;
-import risa.fpl.info.TemplateTypeInfo;
-import risa.fpl.info.TypeInfo;
+import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.AtomType;
 
@@ -53,6 +50,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
             }
         }
+        appendFunctionDeclaration("void free(void*);\n");
+        appendFunctionDeclaration("void _std_backend_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET0(void*," + NumberInfo.MEMORY.getCname() + ");\n");
 	}
 	@Override
 	public TypeInfo getType(Atom name)throws CompilerException{

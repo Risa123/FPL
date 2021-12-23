@@ -11,21 +11,21 @@ public class PointerInfo extends TypeInfo implements IPointerInfo{
 	    super(type.getName() + "*",type.getCname() + "*");
         this.type = type;
         if(type != TypeInfo.VOID){
-            addField("+",new BinaryOperator(this,NumberInfo.MEMORY, "+"));
-            addField("-",new BinaryOperator(this,NumberInfo.MEMORY, "-"));
-            addField("*",new BinaryOperator(this,NumberInfo.MEMORY, "*"));
-            addField("/",new BinaryOperator(this,NumberInfo.MEMORY, "/"));
-            addField("%",new BinaryOperator(this,NumberInfo.MEMORY, "%"));
+            addField("+",new BinaryOperator(this,NumberInfo.MEMORY,"+"));
+            addField("-",new BinaryOperator(this,NumberInfo.MEMORY,"-"));
+            addField("*",new BinaryOperator(this,NumberInfo.MEMORY,"*"));
+            addField("/",new BinaryOperator(this,NumberInfo.MEMORY,"/"));
+            addField("%",new BinaryOperator(this,NumberInfo.MEMORY,"%"));
             addField("get",new GetElement(type));
             addField("set",new SetElement(type));
             if(type instanceof FunctionInfo f){
                addField("drf",new FunctionDereference(f.getFunction()));
             }else{
-              addField("drf",new Dereference(type));
+               addField("drf",new Dereference(type));
             }
         }
-        addField("==",new BinaryOperator(BOOL,this, "=="));
-        addField("!=",new BinaryOperator(BOOL,this, "!="));
+        addField("==",new BinaryOperator(BOOL,this,"=="));
+        addField("!=",new BinaryOperator(BOOL,this,"!="));
         addField(">",new BinaryOperator(TypeInfo.BOOL,this,">"));
         addField("<",new BinaryOperator(TypeInfo.BOOL,this,"<"));
         addField(">=",new BinaryOperator(TypeInfo.BOOL,this,">="));
