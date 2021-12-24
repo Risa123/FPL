@@ -22,7 +22,7 @@ native{
     fn memory fwrite void* p memory size memory nmen void* file
     fn bool feof void* file
     fn int system char* cmd
-    fn void* fopen char* path char* mode
+    fn void* fopen char* path char* const mode
     fn memory fread void* p memory size memory msize void* file
     fn void fclose void* file
     fn int fflush void* file

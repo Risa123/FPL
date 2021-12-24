@@ -53,6 +53,9 @@ public final class Var implements IFunction{
         }
 		while(it.hasNext()){
             var id = it.nextAtom();
+            if(env instanceof ClassEnv e && !e.getVariableFieldDeclarationOrder().contains(id.getValue()) && !id.getValue().equals(";")){
+                e.getVariableFieldDeclarationOrder().add(id.getValue());
+            }
             if(id.getType() == AtomType.ID){
                 String cID;
                 if(env.hasModifier(Modifier.NATIVE)){

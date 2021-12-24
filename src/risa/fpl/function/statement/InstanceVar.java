@@ -33,6 +33,9 @@ public final class InstanceVar extends Function{
         BuilderWriter b = new BuilderWriter();
         var id = it.nextAtom();
 		if(id.getType() == AtomType.ID){
+            if(env instanceof ClassEnv e){
+                e.getVariableFieldDeclarationOrder().add(id.getValue());
+            }
             compileVariable(b,id,env,it);
         }else if(id.getType() == AtomType.CLASS_SELECTOR){
 		    return compileClassSelector(it,env,writer,type.getClassInfo());
@@ -60,6 +63,9 @@ public final class InstanceVar extends Function{
                 return varType;
             }
             id = it.nextID();//identifier follows after template arguments
+            if(env instanceof ClassEnv e){
+                e.getVariableFieldDeclarationOrder().add(id.getValue());
+            }
         }else{
           varType = type;
         }

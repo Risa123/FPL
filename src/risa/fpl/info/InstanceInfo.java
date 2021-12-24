@@ -97,6 +97,9 @@ public class InstanceInfo extends NonTrivialTypeInfo{
                 appendToDeclaration(i.getCname() + " " + getConversionMethod(i) + "(" + getCname() + "*);\n");
             }
         }
+        appendToDeclaration("void " + module.getNameSpace());
+        appendToDeclaration("_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET" + getCname() + "ASTERISK");
+        appendToDeclaration(NumberInfo.MEMORY.getCname().replace(' ','_') +"0("+ getCname() + "*," + NumberInfo.MEMORY.getCname() + ");\n");
     }
     @Override
     public final void setClassInfo(ClassInfo info){

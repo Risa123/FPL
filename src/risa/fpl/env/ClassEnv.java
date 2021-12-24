@@ -14,7 +14,6 @@ import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
@@ -35,6 +34,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private static final CopyConstructor COPY_CONSTRUCTOR = new CopyConstructor();
     private boolean onlyImplicitConstructor = true;
     private final ArrayList<ConstructorData>constructors = new ArrayList<>();
+    private final ArrayList<String>variableFieldDeclarationOrder = new ArrayList<>();
 	public ClassEnv(ModuleEnv module,String id,TemplateStatus templateStatus,boolean struct){
 		super(module);
 		super.addFunction("this",CONSTRUCTOR);
@@ -122,7 +122,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
          }
         appendFunctionCode(code);
     }
-    public void addConstructor(String code,HashMap<String,TypeInfo>args,TypeInfo[]argsArray){
+    public void addConstructor(String code,String argsCode,TypeInfo[]argsArray){
         var constructor = instanceInfo.getConstructor();
         if(onlyImplicitConstructor){
             onlyImplicitConstructor = false;
@@ -130,11 +130,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().clear();
             ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().clear();
         }
-        var argsCode = new StringBuilder();
-        for(var entry:args.entrySet()){
-            argsCode.append(',').append(entry.getValue().getCname()).append(' ').append(IFunction.toCId(entry.getKey()));
-        }
-        constructors.add(new ConstructorData(code,constructor.addVariant(argsArray,nameSpace).cname(),argsCode.toString()));
+        constructors.add(new ConstructorData(code,constructor.addVariant(argsArray,nameSpace).cname(),argsCode));
         var b = new BuilderWriter();
         compileNewAndAlloc(b,argsArray);
         appendFunctionCode(b.getCode());
@@ -299,12 +295,15 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public String getConstructorCode(){
         var b = new StringBuilder();
         for(var data:constructors){
-            b.append("void ").append(data.cname()).append('(').append(instanceInfo.getCname()).append("* this");
-            b.append(data.argsCode()).append("){\n");
+            b.append("void ").append(data.cname());
+            b.append(data.argsCode()).append("{\n");
             b.append(getImplicitConstructorCode());
             b.append(data.code()).append("}\n");
         }
         return b.toString();
+    }
+    public ArrayList<String>getVariableFieldDeclarationOrder(){
+        return variableFieldDeclarationOrder;
     }
     private record ConstructorData(String code,String cname,String argsCode){}
 }

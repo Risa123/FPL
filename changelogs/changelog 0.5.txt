@@ -1,7 +1,9 @@
 improved error messages
 gcc is now expected to be in directory with FPL.exe/FPL.jar in gcc directory
 gcc property removed
+added const for pointer arguments
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
 fix std.io.file.DirectoryStream.read
+fix problems caused by class and struct fields not being compiled in order of declaration

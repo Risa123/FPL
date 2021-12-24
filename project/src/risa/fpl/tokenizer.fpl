@@ -21,6 +21,7 @@ class Token{
   fn int getTokenNum = tokenNum
   fn String getValue = value
   fn TokenType getType = type
+  fn String toString = value
 }
 class Tokenizer{
  private{

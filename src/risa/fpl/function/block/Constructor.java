@@ -27,7 +27,8 @@ public final class Constructor extends AFunctionBlock{
         var constructor = type.getConstructor();
         var fnEnv = new ConstructorEnv(env);
         var b = new BuilderWriter();
-        var args = parseArguments(new BuilderWriter(),it,fnEnv,type);
+        var argsCode = new BuilderWriter();
+        var args = parseArguments(argsCode,it,fnEnv,type);
         var argsArray = args.values().toArray(new TypeInfo[0]);
         if(constructor.hasVariant(argsArray) && modEnv.notClassConstructorOnLine(line)){
             throw new CompilerException(line,tokenNum,"this class already has constructor with arguments " + Arrays.toString(argsArray));
@@ -50,7 +51,7 @@ public final class Constructor extends AFunctionBlock{
             throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
         if(!(type instanceof TemplateTypeInfo)){
-            cEnv.addConstructor(b.getCode(),args,argsArray);
+            cEnv.addConstructor(b.getCode(),argsCode.getCode(),argsArray);
         }
         for(var field:type.getFields().values()){
             if(field instanceof Variable v && v.getType().isPrimitive() && v.isConstant() && !v.getId().equals("getClass") && !fnEnv.getDefinedConstFields().contains(v.getId())){

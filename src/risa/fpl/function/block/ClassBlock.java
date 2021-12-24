@@ -115,34 +115,27 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }else{
             infos = cEnv.getBlock();
         }
-        try{
-            compile(new BuilderWriter(),cEnv,infos);
-        }catch(CompilerException ex){
-            ex.setSourceFile("");
-            throw ex;
-        }
-        for(var field:type.getFields().values()){
-            if(field instanceof Variable v && !v.getCname().equals("objectData")){
-               if(v.getType() instanceof FunctionInfo f){
-                   attributes.write(f.getPointerVariableDeclaration(v.getCname()) + ";\n");
-               }else{
-                   if(v.getType() instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
-                       attributes.write("struct ");
-                   }
-                   attributes.write(v.getType().getCname() + " " + v.getCname());
-                   if(v.getType() instanceof ArrayInfo i){
-                       String code;
-                       attributes.write("[");
-                       if(i.isLengthUnsignedLong()){
-                           code = Long.toUnsignedString(i.getLength());
-                       }else{
-                           code = Long.toString(i.getLength());
-                       }
-                       attributes.write(code);
-                       attributes.write("]");
-                   }
-                   attributes.write(";\n");
-               }
+        compile(new BuilderWriter(),cEnv,infos);
+        for(var name:cEnv.getVariableFieldDeclarationOrder()){
+            var v = (Variable)type.getField(name,cEnv);
+            if(v.getType() instanceof FunctionInfo f){
+                attributes.write(f.getPointerVariableDeclaration(v.getCname()) + ";\n");
+            }else{
+                if(v.getType() instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
+                    attributes.write("struct ");
+                }
+                attributes.write(v.getType().getCname() + " " + v.getCname());
+                if(v.getType() instanceof ArrayInfo i){
+                    String code;
+                    attributes.write("[");
+                    if(i.isLengthUnsignedLong()){
+                        code = Long.toUnsignedString(i.getLength());
+                    }else{
+                        code = Long.toString(i.getLength());
+                    }
+                    attributes.write(code + "]");
+                }
+                attributes.write(";\n");
             }
         }
         if(cEnv.hasOnlyImplicitConstructor()){

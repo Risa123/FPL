@@ -62,8 +62,7 @@ public class Fn extends AFunctionBlock{
             fPointer = p.getFunctionPointer();
         }
         if(fPointer != null){
-            headWriter.write(fPointer.getFunction().getReturnType().getCname());
-            headWriter.write('(');
+            headWriter.write(fPointer.getFunction().getReturnType().getCname() + '(');
             headWriter.write("*".repeat(((IPointerInfo)returnType).getFunctionPointerDepth() + 1));
         }else{
             headWriter.write(returnType.getCname());

@@ -124,12 +124,12 @@ public final class Variable extends ValueExp{
 	}
 	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,SubEnv env) throws IOException,CompilerException{
             switch(operator){
-                case "+=","-=","/=","*=" ->{
+                case "+=","-=","/=","*="->{
                     writePrev(writer);
                     process(operator,writer,it,env);
                     return TypeInfo.VOID;
                 }
-                case "++","--","p+","p-" ->{
+                case "++","--","p+","p-"->{
                     writePrev(writer);
                     writer.write(code);
                     if(operator.equals("p+")){

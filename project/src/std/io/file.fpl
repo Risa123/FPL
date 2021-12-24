@@ -29,7 +29,7 @@ abstract class FileHandler Closeable{
         }
       }
    }
-   this String name char* mode{
+   this String name char* const mode{
       var cname name toCString
       handle = fileOpen cname,mode
       cname free

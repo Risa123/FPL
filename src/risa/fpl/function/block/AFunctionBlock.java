@@ -2,6 +2,7 @@ package risa.fpl.function.block;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.FnEnv;
+import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.IPointerInfo;
@@ -39,6 +40,7 @@ public abstract class AFunctionBlock extends ABlock{
             var argTypeAtom = it.nextID();
             var argType = env.getType(argTypeAtom);
             var argName = it.nextAtom();
+            var constant = false;
             if(argName.getType() == AtomType.END_ARGS){
                 argType = IFunction.generateTypeFor(argType,argTypeAtom,it,env,false);
                 argName = it.nextID();
@@ -48,20 +50,26 @@ public abstract class AFunctionBlock extends ABlock{
                 }
             }else if(argName.getType() != AtomType.ID){
                 throw new CompilerException(argName,"identifier or ; expected");
+            }else if(argName.getValue().equals("const")){
+                argName = it.nextID();
+                constant = true;
             }
             if(args.containsKey(argName.getValue())){
                 throw new CompilerException(argName,"there is already argument called " + argName);
             }
             args.put(argName.getValue(),argType);
             var argNameCID = IFunction.toCId(argName.getValue());
+            if(constant && argType instanceof PointerInfo p){
+                writer.write("const ");
+                p.makeConstant();
+            }
             if(argType instanceof IPointerInfo p){
                 writer.write(p.getPointerVariableDeclaration(argNameCID));
             }else{
-                writer.write(argType.getCname());
-                writer.write(' ');
-                writer.write(argNameCID);
+                writer.write(argType.getCname() + ' ' + argNameCID);
             }
-            env.addFunction(argName.getValue(),new Variable(argType,IFunction.toCId(argName.getValue()),argName.getValue()));
+            var v = new Variable(argType,IFunction.toCId(argName.getValue()),false,argName.getValue(),constant,null,AccessModifier.PUBLIC);
+            env.addFunction(argName.getValue(),v);
         }
         writer.write(')');
         return args;

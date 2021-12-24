@@ -38,6 +38,9 @@ public final class Array implements IFunction{
 	    	throw new CompilerException(lenAtom,"array length expected instead of " + lenAtom);
 	    }
 	    var id = it.nextID();
+		if(env instanceof ClassEnv e){
+			e.getVariableFieldDeclarationOrder().add(id.getValue());
+		}
 	    String cID;
 	    if(env.hasModifier(Modifier.NATIVE)){
 	    	cID = id.getValue();

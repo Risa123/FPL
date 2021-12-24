@@ -6,7 +6,6 @@ assignment variable method calls = method if possible
 free removed from std.lang
 free[] added to pointers
 template functions added
-Map finished in std.collection
 throw method now ends the function so no return error doesn't happen
 instance variables now have to be explicitly initialized
 struct is now a variant of class

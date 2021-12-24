@@ -7,6 +7,7 @@ import risa.fpl.function.exp.*;
 public class PointerInfo extends TypeInfo implements IPointerInfo{
 	private final TypeInfo type;
 	private int functionPointerDepth;
+    private boolean constant;
 	public PointerInfo(TypeInfo type){
 	    super(type.getName() + "*",type.getCname() + "*");
         this.type = type;
@@ -122,6 +123,9 @@ public class PointerInfo extends TypeInfo implements IPointerInfo{
 	            break;
             }
         }
-	    return super.getCname();
+	    return (constant?"const ":"") + super.getCname();
+    }
+    public final void makeConstant(){
+        constant = true;
     }
 }
