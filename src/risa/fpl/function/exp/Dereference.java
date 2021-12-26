@@ -5,9 +5,6 @@ import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public final class Dereference extends AField{
     private final TypeInfo type;
     public Dereference(TypeInfo type){

@@ -18,7 +18,7 @@ public class AddModifier extends AThreePassBlock implements IFunction{
    }
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
-        addModifier(env);
+        addModifier(env,line,tokenNum);
 	    try{
 	    	var exp = it.next();
 	 	    if(exp instanceof List list){
@@ -48,10 +48,13 @@ public class AddModifier extends AThreePassBlock implements IFunction{
 	public boolean appendSemicolon(){
 		return appendSemicolon;
 	}
-	public void addModifier(SubEnv env){
+	protected void addModifier(SubEnv env,int line,int tokenNum)throws CompilerException{
+	    if(env.hasModifier((Modifier)mod)){
+			throw new CompilerException(line,tokenNum,"duplicate modifier " + mod.toString().toLowerCase());
+		}
         env.addModifier((Modifier)mod);
     }
-    public void removeModifier(SubEnv env){
+    protected void removeModifier(SubEnv env){
        env.removeModifier((Modifier)mod);
     }
 }

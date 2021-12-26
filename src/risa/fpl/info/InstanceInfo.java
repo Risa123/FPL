@@ -23,11 +23,9 @@ public class InstanceInfo extends NonTrivialTypeInfo{
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
         addField("cast",new Cast(this));
-        var classInfo = new ClassInfo(name);
-        setClassInfo(classInfo);
         constructor = new InstanceVar(this);
-        classInfo.addField("alloc",new Function("alloc",new PointerInfo(this),AccessModifier.PUBLIC));
-        classInfo.addField("new",new Function("new",this,AccessModifier.PUBLIC));
+        getClassInfo().addField("alloc",new Function("alloc",new PointerInfo(this),AccessModifier.PUBLIC));
+        getClassInfo().addField("new",new Function("new",this,AccessModifier.PUBLIC));
     }
     public final String getClassDataType(){
         return getCname() + "_data_type";

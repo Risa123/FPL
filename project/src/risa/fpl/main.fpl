@@ -37,7 +37,7 @@ class FPL{
        if isDirectory path{
         compileDirectory srcDir,path
        }if isFile path{
-        ModuleBlock block init this,srcDir,path
+        ModuleBlock block init this,path
        }
      }
      stream close
@@ -94,6 +94,7 @@ class FPL{
   }
   compileDirectory project + "/src";,""
  }
+ fn String getMainModule = mainModule
 }
 main{
  if argc != 2{
@@ -105,5 +106,8 @@ main{
  }catch CompilerException{
    stderr writeString ex getMessage
    return 3
+ }catch IOException{
+   stderr writeString ex getMessage
+   return 4
  }
 }

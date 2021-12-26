@@ -8,9 +8,6 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public class CompileTimeIfBlock extends AThreePassBlock implements IFunction{
     private final List list;
     public CompileTimeIfBlock(List list){

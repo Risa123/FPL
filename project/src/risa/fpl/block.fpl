@@ -9,18 +9,23 @@ use{
 }
 class ModuleBlock ObjectInfo{
  private ModuleEnv modEnv init
- this FPL* fpl String srcDir String fplPath{
+ this FPL* fpl String fplPath{
    FileReader reader init fplPath
    Tokenizer tokenizer init reader
-   while tokenizer hasNext{
-     var token tokenizer next
-     if token getType; == TokenType:ID{
-       try{
-         getField token getValue
-       }catch NoElementException{
-         CompilerException:new "function " + token getValue; + " found";;;throw
-       }
-     }
+   try{
+      while tokenizer hasNext{
+          var token tokenizer next
+          if token getType; == TokenType:ID{
+            try{
+              getField token getValue
+            }catch NoElementException{
+              CompilerException:new "function " + token getValue;; + " not found";;throw
+            }
+          }
+      }
+   }catch CompilerException{
+     ex setFile fplPath
+     ex throw
    }
    tokenizer close
  }

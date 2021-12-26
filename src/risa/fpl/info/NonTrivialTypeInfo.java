@@ -11,6 +11,7 @@ public abstract class NonTrivialTypeInfo extends TypeInfo{
     public NonTrivialTypeInfo(ModuleEnv module,String name,String cname){
         super(name,cname);
         this.module = module;
+        setClassInfo(new ClassInfo(name));
     }
     public void buildDeclaration(){}
     protected final void addFunctionRequiredTypes(Function f){

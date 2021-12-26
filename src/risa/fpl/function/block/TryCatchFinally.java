@@ -17,7 +17,8 @@ public final class TryCatchFinally extends ABlock{
     private static InstanceInfo exception;
     @Override
     public TypeInfo compile(StringBuilder  builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
-        var postEntry = new StringBuilder("if(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context)){\n");
+        var postEntry = new StringBuilder("{\nchar exceptionCaught = 0;\n");
+        postEntry.append("if(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context)){\n");
         var tryEnv = new FnSubEnv(env);
         var tmp = new StringBuilder();
         it.nextList().compile(tmp,tryEnv,it);
@@ -63,7 +64,8 @@ public final class TryCatchFinally extends ABlock{
                     if(!exInfo.isException()){
                         throw new CompilerException(nextExp,"invalid exception");
                     }
-                    postEntry.append("{\n");
+                    postEntry.append("{\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\n");
+                    postEntry.append("exceptionCaught = 1;\n");
                     postEntry.append(exInfo.getCname());
                     postEntry.append(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,(_Exception*)&ex);\n");
                     var blockEnv = new FnSubEnv(env);
@@ -89,7 +91,7 @@ public final class TryCatchFinally extends ABlock{
                 break;
             }
         }
-        postEntry.append("{\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\n");
+        postEntry.append("if(!exceptionCaught){\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\n}\n");
         finallyEnv.compileToPointerVars(postEntry);
         postEntry.append(finallyCode);
         finallyEnv.compileDestructorCalls(postEntry);
@@ -97,15 +99,15 @@ public final class TryCatchFinally extends ABlock{
         if(exDataNames.isEmpty()){
             exDataNames.add(exception.getDataName());
         }
-        builder.append("{\nvoid* types[").append(exDataNames.size()).append("] = {");
+        builder.append("{\nvoid* types[").append(exDataNames.size()).append("]={");
         var first = true;
         for(var name:exDataNames){
-            builder.append("&").append(name);
             if(first){
                 first = false;
             }else{
                 builder.append(',');
             }
+            builder.append("&").append(name);
         }
         builder.append("};\n_std_lang_Thread_addEHEntry0(_std_lang_currentThread,types,").append(exDataNames.size()).append(");\n}\n");
         builder.append(postEntry);

@@ -14,9 +14,6 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.parser.AtomType;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public final class InterfaceBlock implements IFunction{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{

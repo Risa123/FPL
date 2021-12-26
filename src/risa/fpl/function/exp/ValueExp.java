@@ -1,8 +1,5 @@
 package risa.fpl.function.exp;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
