@@ -1,6 +1,5 @@
 package risa.fpl.function.block;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnSubEnv;
@@ -12,22 +11,18 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.parser.AtomType;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public final class TryCatchFinally extends ABlock{
     private static InstanceInfo exception;
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        var postEntry = new BuilderWriter();
-        postEntry.write("if(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context)){\n");
+    public TypeInfo compile(StringBuilder  builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        var postEntry = new StringBuilder("if(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context)){\n");
         var tryEnv = new FnSubEnv(env);
-        var tmp = new BuilderWriter();
+        var tmp = new StringBuilder();
         it.nextList().compile(tmp,tryEnv,it);
-        tryEnv.compileToPointerVars(writer);
-        postEntry.write(tmp.getCode());
-        postEntry.write("}\n");
+        tryEnv.compileToPointerVars(builder);
+        postEntry.append(tmp).append("}\n");
         var hasFin = false;
         var finallyCode = "";
         var finallyEnv = new FnSubEnv(env);
@@ -43,7 +38,7 @@ public final class TryCatchFinally extends ABlock{
                     }
                     it.next();
                     List block;
-                    postEntry.write("else");
+                    postEntry.append("else");
                     var nextExp = it.next();
                     InstanceInfo exInfo;
                     if(nextExp instanceof List){
@@ -53,13 +48,13 @@ public final class TryCatchFinally extends ABlock{
                         if(exType.getValue().equals("Exception")){
                             throw new CompilerException(exType,"unnecessary Exception ID");
                         }
-                        postEntry.write(" if(_std_lang_currentThread->_exception->objectData==&");
+                        postEntry.append(" if(_std_lang_currentThread->_exception->objectData==&");
                         if(env.getType(exType) instanceof InstanceInfo i){
                             exInfo = i;
                         }else{
                             throw new CompilerException(exType,"instance type expected");
                         }
-                        postEntry.write(exInfo.getDataName() + ")");
+                        postEntry.append(exInfo.getDataName()).append(")");
                         block = it.nextList();
                         exDataNames.add(exInfo.getDataName());
                     }else{
@@ -68,25 +63,25 @@ public final class TryCatchFinally extends ABlock{
                     if(!exInfo.isException()){
                         throw new CompilerException(nextExp,"invalid exception");
                     }
-                    postEntry.write("{\n");
-                    postEntry.write(exInfo.getCname());
-                    postEntry.write(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,(_Exception*)&ex);\n");
+                    postEntry.append("{\n");
+                    postEntry.append(exInfo.getCname());
+                    postEntry.append(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,(_Exception*)&ex);\n");
                     var blockEnv = new FnSubEnv(env);
                     blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
-                    var tmp1 = new BuilderWriter();
+                    var tmp1 = new StringBuilder();
                     block.compile(tmp1,blockEnv,it);
-                    blockEnv.compileToPointerVars(writer);
-                    postEntry.write(tmp1.getCode());
-                    postEntry.write("}\n");
+                    blockEnv.compileToPointerVars(builder);
+                    postEntry.append(tmp1);
+                    postEntry.append("}\n");
                 }else if(blockName.getValue().equals("finally")){
                     if(hasFin){
                         throw new CompilerException(blockName,"multiple declarations of finally");
                     }
                     hasFin = true;
                     it.next();
-                    var b = new BuilderWriter();
+                    var b = new StringBuilder();
                     it.nextList().compile(b,finallyEnv,it);
-                    finallyCode = b.getCode();
+                    finallyCode = b.toString();
                 }else{
                     break;
                 }
@@ -94,26 +89,26 @@ public final class TryCatchFinally extends ABlock{
                 break;
             }
         }
-        postEntry.write("{\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\n");
+        postEntry.append("{\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\n");
         finallyEnv.compileToPointerVars(postEntry);
-        postEntry.write(finallyCode);
+        postEntry.append(finallyCode);
         finallyEnv.compileDestructorCalls(postEntry);
-        postEntry.write("}\n");
+        postEntry.append("}\n");
         if(exDataNames.isEmpty()){
             exDataNames.add(exception.getDataName());
         }
-        writer.write("{\nvoid* types[" + exDataNames.size() + "] = {");
+        builder.append("{\nvoid* types[").append(exDataNames.size()).append("] = {");
         var first = true;
         for(var name:exDataNames){
-            writer.write("&" + name);
+            builder.append("&").append(name);
             if(first){
                 first = false;
             }else{
-                writer.write(',');
+                builder.append(',');
             }
         }
-        writer.write("};\n_std_lang_Thread_addEHEntry0(_std_lang_currentThread,types," + exDataNames.size() + ");\n}\n");
-        writer.write(postEntry.getCode());
+        builder.append("};\n_std_lang_Thread_addEHEntry0(_std_lang_currentThread,types,").append(exDataNames.size()).append(");\n}\n");
+        builder.append(postEntry);
         return TypeInfo.VOID;
     }
 }

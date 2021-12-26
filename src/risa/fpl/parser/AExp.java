@@ -1,8 +1,5 @@
 package risa.fpl.parser;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
@@ -19,5 +16,5 @@ public abstract class AExp{
  public final int getTokenNum(){
      return tokenNum;
  }
- public abstract TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it)throws IOException,CompilerException;
+ public abstract TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it)throws CompilerException;
 }

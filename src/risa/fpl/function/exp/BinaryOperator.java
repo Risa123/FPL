@@ -1,8 +1,5 @@
 package risa.fpl.function.exp;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.info.NumberInfo;
@@ -20,13 +17,13 @@ public final class BinaryOperator extends AField{
 	   this.operator = operator;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
 		var returnType = this.returnType;
 	    if(it.hasNext() && it.peek() instanceof Atom a && a.getType() != AtomType.END_ARGS && a.getType() != AtomType.ARG_SEPARATOR){
 			var exp = it.next();
-			writePrev(writer);
-			writer.write(operator);
-			var opType = exp.compile(writer,env,it);
+			writePrev(builder);
+			builder.append(operator);
+			var opType = exp.compile(builder,env,it);
 			if(returnType instanceof NumberInfo && opType instanceof NumberInfo on){
 				if(on.isFloatingPoint()){
 					returnType = on;
@@ -37,13 +34,13 @@ public final class BinaryOperator extends AField{
 		}else if(!(operator.equals("+") || operator.equals("-"))){
 	    	throw new CompilerException(line,tokenNum,"atom expected");
 		}else{
-	    	writer.write(operator);
-	    	writePrev(writer);
+	    	builder.append(operator);
+	    	writePrev(builder);
 		}
 	    var prevCode = getPrevCode();
 	    if(prevCode == null){
 	        prevCode = "";
         }
-		return compileChainedCall(returnType,writer,env,it,prevCode);
+		return compileChainedCall(returnType,builder,env,it,prevCode);
 	}
 }

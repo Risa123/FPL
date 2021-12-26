@@ -1,8 +1,5 @@
 package risa.fpl.parser;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
@@ -16,8 +13,8 @@ public final class Atom extends AExp{
 		this.type = type;
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it) throws IOException,CompilerException{
-		return env.getFunction(this).compile(writer,env,it,getLine(),getTokenNum());
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it) throws CompilerException{
+		return env.getFunction(this).compile(builder,env,it,getLine(),getTokenNum());
 	}
 	@Override
 	public String toString(){

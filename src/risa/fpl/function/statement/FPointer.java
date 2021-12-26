@@ -1,6 +1,5 @@
 package risa.fpl.function.statement;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnEnv;
@@ -12,16 +11,13 @@ import risa.fpl.info.FunctionInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public final class FPointer extends AFunctionBlock{
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         var returnType = env.getType(it.nextID());
         var id = it.nextID();
         var cID = IFunction.toCId(id.getValue());
-        var args = parseArguments(new BuilderWriter(),it,new FnEnv(env,returnType),null);
+        var args = parseArguments(new StringBuilder(),it,new FnEnv(env,returnType),null);
         var f = new Function(id.getValue(),returnType,FunctionType.NORMAL,null,env.getAccessModifier(),"");
         f.addVariant(args.values().toArray(new TypeInfo[0]),cID,cID);
         env.addType(new FunctionInfo(f));

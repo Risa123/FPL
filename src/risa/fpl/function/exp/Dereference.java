@@ -1,6 +1,5 @@
 package risa.fpl.function.exp;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
@@ -15,11 +14,11 @@ public final class Dereference extends AField{
         this.type = type;
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        var prev = new BuilderWriter();
-        prev.write("(*");
+    public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        var prev = new StringBuilder();
+        prev.append("(*");
         writePrev(prev);
-        prev.write(')');
-        return compileChainedCall(type,writer,env,it,prev.getCode());
+        prev.append(')');
+        return compileChainedCall(type,builder,env,it,prev.toString());
     }
 }

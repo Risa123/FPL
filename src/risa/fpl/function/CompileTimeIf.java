@@ -8,12 +8,9 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public final class CompileTimeIf implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         var conditionAtom = it.nextID();
         var condition = conditionAtom.getValue();
         var invert = false;
@@ -34,9 +31,9 @@ public final class CompileTimeIf implements IFunction{
         var exp = it.next();
         if(isTrue){
            if(exp instanceof List list){
-               new CompileTimeIfBlock(list).compile(writer,env,it,line,tokenNum);
+               new CompileTimeIfBlock(list).compile(builder,env,it,line,tokenNum);
            }else{
-               exp.compile(writer,env,it);
+               exp.compile(builder,env,it);
            }
         }
         return TypeInfo.VOID;

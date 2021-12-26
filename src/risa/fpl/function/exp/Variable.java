@@ -1,9 +1,5 @@
 package risa.fpl.function.exp;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.ConstructorEnv;
@@ -32,7 +28,7 @@ public final class Variable extends ValueExp{
        this(type,code,false,id,false,null,AccessModifier.PUBLIC);
     }
 	@Override
-	protected TypeInfo onField(Atom atom,BufferedWriter writer,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
+	protected TypeInfo onField(Atom atom,StringBuilder builder,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
 		copyCallNeeded = false;
 	    var value = atom.getValue();
 		if(value.equals("=")){
@@ -41,20 +37,20 @@ public final class Variable extends ValueExp{
 			}
 		    var assignmentOperator = false;
 		    if(type instanceof InstanceInfo && type.getField("=",env) instanceof Function f){
-		    	writer.write(f.getPointerVariant().cname() + "(&");
+		    	builder.append(f.getPointerVariant().cname()).append("(&");
 		    	assignmentOperator = true;
 			}
-			writePrev(writer);
-			writer.write(code);
+			writePrev(builder);
+			builder.append(code);
 			if(assignmentOperator){
-				writer.write(',');
+				builder.append(',');
 			}else{
-				writer.write('=');
+				builder.append('=');
 			}
 			onlyDeclared = false;
-			execute(it,writer,env,"");//not drf equals
+			execute(it,builder,env,"");//not drf equals
 			if(assignmentOperator){
-				writer.write(')');
+				builder.append(')');
 			}
 			copyCallNeeded = false;
 			if(env instanceof ConstructorEnv e && constant){
@@ -62,10 +58,10 @@ public final class Variable extends ValueExp{
 			}
 		    return TypeInfo.VOID;
 		}else if(value.equals("ref")){
-		    var b = new BuilderWriter();
-            b.write('&');
+		    var b = new StringBuilder();
+            b.append('&');
             writePrev(b);
-		    b.write(code);
+		    b.append(code);
 		    var ret = new PointerInfo(type);
 		    if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == AtomType.ID){
 		        it.next();
@@ -73,18 +69,18 @@ public final class Variable extends ValueExp{
 		        if(field == null){
 		            throw new CompilerException(id,ret + " has no field called " + id);
                 }
-		        var code = b.getCode();
+		        var code = b.toString();
 		        if(field instanceof Function){
 		        	code = code.substring(1);
 				}
 		        field.setPrevCode(code);
-		        return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
+		        return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
             }
-		    writer.write(b.getCode());
+		    builder.append(b);
 			return ret;
 		}else if(type instanceof PointerInfo){
 		    TypeInfo t;
-           if((t = processOperator(value,writer,it,env)) != null){
+           if((t = processOperator(value,builder,it,env)) != null){
                return t;
            }
         }else if(type instanceof NumberInfo){
@@ -95,87 +91,86 @@ public final class Variable extends ValueExp{
 				e.getDefinedConstFields().add(id);
 			}
 			TypeInfo t;
-			if((t = processOperator(value,writer,it,env)) != null){
+			if((t = processOperator(value,builder,it,env)) != null){
 			    return t;
             }
 		}
-		return super.onField(atom,writer,env,it,line,charNum);
+		return super.onField(atom,builder,env,it,line,charNum);
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
 		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=") && a.getType() == AtomType.ID){
 		    throw new CompilerException(line,tokenNum,"variable " + id + " not defined");
         }
 		if(instanceType != null && getPrevCode() == null){
 		    setPrevCode("((" + instanceType.getCname() + "*)this)->");
         }
-		var b = new BuilderWriter();
+		var b = new StringBuilder();
 		var ret = super.compile(b,env,it,line,tokenNum);
 		copyCallNeeded = copyCallNeeded && type instanceof InstanceInfo i && i.getCopyConstructorName() != null;
 		if(copyCallNeeded){
-			writer.write(((InstanceInfo)type).getCopyConstructorName() + "AndReturn(");
+			builder.append(((InstanceInfo)type).getCopyConstructorName()).append("AndReturn(");
 		}
-		writer.write(b.getCode());
+		builder.append(b);
 		if(copyCallNeeded){
-			writer.write(')');
+			builder.append(')');
 		}
 		copyCallNeeded = true;
 		return ret;
 	}
-	private TypeInfo processOperator(String operator,BufferedWriter writer,ExpIterator it,SubEnv env) throws IOException,CompilerException{
+	private TypeInfo processOperator(String operator,StringBuilder builder,ExpIterator it,SubEnv env)throws CompilerException{
             switch(operator){
                 case "+=","-=","/=","*="->{
-                    writePrev(writer);
-                    process(operator,writer,it,env);
+                    writePrev(builder);
+                    process(operator,builder,it,env);
                     return TypeInfo.VOID;
                 }
                 case "++","--","p+","p-"->{
-                    writePrev(writer);
-                    writer.write(code);
+                    writePrev(builder);
+					builder.append(code);
                     if(operator.equals("p+")){
                         operator = "++";
                     }else if(operator.equals("p-")){
                         operator = "--";
                     }
-                    writer.write(operator);
+                    builder.append(operator);
                     return type;
                 }
             }
             if(operator.equals("%=") && (type instanceof NumberInfo n && !n.isFloatingPoint() || type instanceof PointerInfo)){
-                process(operator,writer,it,env);
+                process(operator,builder,it,env);
                 return TypeInfo.VOID;
             }else if(type instanceof PointerInfo p && operator.equals("drf=")){
                 if(p.getType() instanceof InstanceInfo i && i.getCopyConstructorName() != null){
-                	writer.write(i.getCopyConstructorName() + "(");
-					writePrev(writer);
-					writer.write(code + ",&");
+                	builder.append(i.getCopyConstructorName()).append("(");
+					writePrev(builder);
+					builder.append(code).append(",&");
 					var exp = it.nextAtom();
 					var func = env.getFunction(exp);
 					if(func instanceof Variable v){
 						v.copyCallNeeded = false;
 					}
-					var ret  = func.compile(writer,env,it,exp.getLine(),exp.getTokenNum());
+					var ret  = func.compile(builder,env,it,exp.getLine(),exp.getTokenNum());
 					if(!i.equals(ret)){
 						throw new CompilerException(exp,"expression expected to return " + i + " instead of " + ret);
 					}
-					writer.write(");\n");
+					builder.append(");\n");
 				}else{
-					writer.write('*');
-					writePrev(writer);
-					process("=",writer,it,env);
+					builder.append('*');
+					writePrev(builder);
+					process("=",builder,it,env);
 				}
                 return TypeInfo.VOID;
             }
 	    return null;
     }
-    private void process(String operator,BufferedWriter writer,ExpIterator it,SubEnv env)throws IOException,CompilerException{
-	    writer.write(code);
-        writer.write(operator);
-        execute(it,writer,env,operator);
+    private void process(String operator,StringBuilder builder,ExpIterator it,SubEnv env)throws CompilerException{
+	    builder.append(code).append(operator);
+        execute(it,builder,env,operator);
     }
-    private void execute(ExpIterator it,BufferedWriter writer,SubEnv env,String operator)throws CompilerException,IOException{
+    private void execute(ExpIterator it,StringBuilder builder,SubEnv env,String operator)throws CompilerException{
 	    var exp = it.next();
-	    var ret = exp.compile(writer,env,it);
+	    var ret = exp.compile(builder,env,it);
 	    var t = type;
 	    if(operator.equals("=") && type instanceof PointerInfo p){
 	        t = p.getType();

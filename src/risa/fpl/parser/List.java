@@ -1,10 +1,7 @@
 package risa.fpl.parser;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
@@ -18,17 +15,17 @@ public final class List extends AExp{
 		this.statement = statement;
 	}
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator superIterator)throws CompilerException,IOException{
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator superIterator)throws CompilerException{
 	   TypeInfo ret = null;//has to be null see line 27
 	   var it = new ExpIterator(exps,getLine(),getTokenNum());
 	   var appendSemicolon = false;
-	   BuilderWriter b = null;
+	   StringBuilder b = null;
 	   while(it.hasNext()){
 		   var exp = it.next();
 		   if(exp instanceof Atom atom){
               if(ret == null){
             	  var f = env.getFunction(atom);
-            	  b = new BuilderWriter();
+            	  b = new StringBuilder();
                   ret = f.compile(b,env,it,exp.getLine(),exp.getTokenNum());
                   appendSemicolon = f.appendSemicolon() && statement;
               }else if(atom.getType() == AtomType.ID){
@@ -36,19 +33,19 @@ public final class List extends AExp{
             	 if(field == null) {
             		 throw new CompilerException(atom,ret + " has no field called " + atom);
             	 }
-            	 field.setPrevCode(b.getCode());
-            	 b = new BuilderWriter();
+            	 field.setPrevCode(b.toString());
+            	 b = new StringBuilder();
             	 ret = field.compile(b,env,it,atom.getLine(),atom.getTokenNum());
               }
 		   }else if(exp instanceof List){
-			   exp.compile(writer,env,it);
+			   exp.compile(builder,env,it);
 		   }
 	   }
 	   if(b != null){
-           writer.write(b.getCode());
+           builder.append(b);
        }
 	   if(appendSemicolon){
-	   	 writer.write(";\n");
+	   	 builder.append(";\n");
 	   }
 	   return ret;
 	}

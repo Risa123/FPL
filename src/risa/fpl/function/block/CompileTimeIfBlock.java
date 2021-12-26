@@ -17,16 +17,16 @@ public class CompileTimeIfBlock extends AThreePassBlock implements IFunction{
         this.list = list;
     }
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         if(env instanceof ANameSpacedEnv e){
            var infos = e.getCompileBlockInfos(line);
            if(infos == null){
                infos = createInfoList(list);
                e.addCompileIfBlockInfos(line,infos);
            }
-           compile(writer,env,infos);
+           compile(builder,env,infos);
         }else{
-            list.compile(writer,env,it);
+            list.compile(builder,env,it);
         }
         return TypeInfo.VOID;
     }

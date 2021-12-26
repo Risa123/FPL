@@ -1,6 +1,5 @@
 package risa.fpl.function.block;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.InterfaceEnv;
@@ -20,7 +19,7 @@ import java.io.IOException;
 
 public final class InterfaceBlock implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+    public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         if(!(env instanceof ModuleEnv mod)){
             throw new CompilerException(line,tokenNum,"interface can only be declared on module level");
         }
@@ -53,21 +52,21 @@ public final class InterfaceBlock implements IFunction{
         if(block == null){
             throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
-        block.compile(new BuilderWriter(),iEnv,it);
+        block.compile(new StringBuilder(),iEnv,it);
         var implName = type.getImplName();
-        var b = new BuilderWriter();
-        b.write("typedef struct " + implName + "{\n");
+        var b = new StringBuilder("typedef struct ");
+        b.append(implName).append("{\n");
         for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
             var p = new FunctionInfo(method);
             for(var v:method.getVariants()){
-                b.write(p.getPointerVariableDeclaration(v.cname()) + ";\n");
+                b.append(p.getPointerVariableDeclaration(v.cname())).append(";\n");
             }
         }
-        b.write('}' + implName + ";\n");
-        b.write("typedef struct " + cID + "{\n");
-        b.write("void* instance;\n");
-        b.write(implName + "* impl;\n}" + cID + ";\n");
-        type.appendToDeclaration(b.getCode());
+        b.append('}').append(implName).append(";\n");
+        b.append("typedef struct ").append(cID).append("{\n");
+        b.append("void* instance;\n");
+        b.append(implName).append("* impl;\n}").append(cID).append(";\n");
+        type.appendToDeclaration(b.toString());
         type.buildDeclaration();
         env.addType(type);
         return TypeInfo.VOID;

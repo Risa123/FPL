@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.ModuleBlock;
 import risa.fpl.function.AccessModifier;
@@ -161,7 +160,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public void declare(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
-        var b = new BuilderWriter();
+        var b = new StringBuilder();
         for(var mod:importedModules){
             for(var type:mod.types.values()){
                 addTypesForDeclaration(type);
@@ -189,22 +188,22 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
                 if(hasAll){
                     declared.add(t);
-                    b.write(t.getDeclaration());
+                    b.append(t.getDeclaration());
                     it.remove();
                 }
             }
         }
         for(var type:declared){
             if(type instanceof InstanceInfo i){
-                b.write(i.getMethodDeclarations());
+                b.append(i.getMethodDeclarations());
             }
         }
         if(superEnv instanceof ModuleEnv mod){
             importDeclarations.append(mod.importDeclarations);
         }
-        b.write(importDeclarations.toString());
-        writer.write(b.getCode());
-        declarationCode = b.getCode();
+        b.append(importDeclarations);
+        writer.write(b.toString());
+        declarationCode = b.toString();
     }
     @Override
     public void addType(TypeInfo type,boolean declaration){

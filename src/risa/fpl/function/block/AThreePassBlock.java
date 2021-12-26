@@ -6,21 +6,19 @@ import risa.fpl.env.SubEnv;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.List;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class AThreePassBlock{
     public static final int MAX_PASSES = 3;//three passes necessary in some cases
-    protected final void compile(BufferedWriter writer,SubEnv env,ArrayList<ExpressionInfo>infos)throws CompilerException,IOException{
+    protected final void compile(StringBuilder builder,SubEnv env,ArrayList<ExpressionInfo>infos)throws CompilerException{
         for(int i = 0; i < MAX_PASSES && !infos.isEmpty();++i){
             var it = infos.iterator();
             while(it.hasNext()){
                 var info = it.next();
                 try{
-                    info.getExp().compile(info.getWriter(),env,null);
+                    info.getExp().compile(info.getBuilder(),env,null);
                     it.remove();
-                    writer.write(info.getWriter().getCode());
+                    builder.append(info.getBuilder());
                 }catch(CompilerException e){
                     var exps = ((List)info.getExp()).getExps();
                     if(!exps.isEmpty() && exps.get(0) instanceof Atom a && a.getValue().equals("use") && this instanceof ModuleBlock){

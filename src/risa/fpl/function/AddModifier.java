@@ -1,8 +1,5 @@
 package risa.fpl.function;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 import risa.fpl.CompilerException;
 import risa.fpl.env.ANameSpacedEnv;
 import risa.fpl.env.Modifier;
@@ -20,7 +17,7 @@ public class AddModifier extends AThreePassBlock implements IFunction{
 	   this.mod = mod;
    }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         addModifier(env);
 	    try{
 	    	var exp = it.next();
@@ -31,13 +28,13 @@ public class AddModifier extends AThreePassBlock implements IFunction{
 					 infos = createInfoList(list);
 					 e.addModifierBlockInfos(line,infos);
 				 }
-				 compile(writer,env,infos);
+				 compile(builder,env,infos);
               }else{
-	 	          exp.compile(writer,env,it);
+	 	          exp.compile(builder,env,it);
               }
 	 	    }else{
 	 	    	var f = env.getFunction((Atom)exp);
-	 	        f.compile(writer,env,it,exp.getLine(),exp.getTokenNum());
+	 	        f.compile(builder,env,it,exp.getLine(),exp.getTokenNum());
 	 	        appendSemicolon = f.appendSemicolon();
 	 	    }
 	    }catch(CompilerException ex){

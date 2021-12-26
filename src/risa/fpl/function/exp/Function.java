@@ -1,15 +1,11 @@
 package risa.fpl.function.exp;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.AccessModifier;
@@ -52,8 +48,8 @@ public class Function implements IField,ICalledOnPointer{
         return accessModifier;
     }
     @Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        var b = new BuilderWriter();
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        var b = new StringBuilder();
 		var argList = new ArrayList<TypeInfo>();
 		var returnedData = new ArrayList<ReturnedData>();
 		if(self instanceof InstanceInfo i && i.isException() && name.equals("throw") && env instanceof FnSubEnv subEnv){
@@ -64,10 +60,10 @@ public class Function implements IField,ICalledOnPointer{
 		   if(exp.getType() == AtomType.END_ARGS){
 			   break;
 		   }else if(exp.getType() != AtomType.ARG_SEPARATOR){
-			   var buffer = new BuilderWriter();
+			   var buffer = new StringBuilder();
 			   var f = env.getFunction(exp);
                argList.add(f.compile(buffer,env,it,exp.getLine(),exp.getTokenNum()));
-               returnedData.add(new ReturnedData(buffer.getCode(),!(f instanceof  Function)));
+               returnedData.add(new ReturnedData(buffer.toString(),!(f instanceof  Function)));
 		   }
 		}
 		var array = argList.toArray(new TypeInfo[0]);
@@ -77,31 +73,31 @@ public class Function implements IField,ICalledOnPointer{
 		var variant = getVariant(array);
         if(isVirtual()){
             if(self instanceof InstanceInfo i){
-                b.write("((" + i.getClassDataType() + "*)");
+                b.append("((").append(i.getClassDataType()).append("*)");
             }
-            b.write(Objects.requireNonNullElse(prevCode,"this"));
+            b.append(Objects.requireNonNullElse(prevCode,"this"));
             if(self instanceof InterfaceInfo){
-                b.write(".impl->");
+                b.append(".impl->");
             }else{
                 if(callStatus == CALLED_ON_POINTER || prevCode == null){
-                    b.write("->");
+                    b.append("->");
                 }else{
-                    b.write('.');
+                    b.append('.');
                 }
-                b.write("objectData)->");
+                b.append("objectData)->");
             }
         }
         if(asFunctionPointer){
             asFunctionPointer = false;
         }else{
-            b.write(variant.implName());
+            b.append(variant.implName());
         }
-        b.write('(');
+        b.append('(');
 		var first = self == null;
 		var ref = false;
 		if(self != null){
             if(!self.isPrimitive()){
-                b.write('(' + self.getCname() + "*)");
+                b.append('(').append(self.getCname()).append("*)");
             }
 		    if(callStatus == CALLED_ON_POINTER){
 		      callStatus = NO_STATUS;
@@ -113,60 +109,60 @@ public class Function implements IField,ICalledOnPointer{
                      }
                    }else{
                        ref = true;
-                       b.write("(&");
+                       b.append("(&");
                    }
                }
             }
             writePrev(b);
 		    if(ref){
-                b.write(')');
+                b.append(')');
             }
 		    if(callStatus == CALLED_ON_INSTANCE_R_BY_FUNC){
-		        b.write(')');
+		        b.append(')');
 		        callStatus = NO_STATUS;
             }
             if(self instanceof InterfaceInfo){
-                b.write(".instance");
+                b.append(".instance");
             }
         }
         for(int i = 0;i < array.length;++i){
             if(first){
                 first = false;
             }else{
-                b.write(',');
+                b.append(',');
             }
             var comesFromPointer = array[i] instanceof PointerInfo;
-            b.write(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
+            b.append(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
         }
-		b.write(')');
+		b.append(')');
         if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == AtomType.ID){
             var id = it.nextID();
             var field = returnType.getField(id.getValue(),env);
             if(field == null){
                 throw new CompilerException(id,returnType + " has no field called " + id);
             }
-            field.setPrevCode(b.getCode());
+            field.setPrevCode(b.toString());
             if(field instanceof Function f && returnType instanceof InstanceInfo i){
                f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
                f.prevCode = i.getToPointerName() + "(" + f.prevCode + ",&" + env.getToPointerVarName(i);
-               return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
+               return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
             }
-            return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
+            return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
         }
-        writer.write(b.getCode());
+        builder.append(b);
 		return returnType;
 	}
     @Override
     public final void setPrevCode(String code){
         prevCode = code;
     }
-    public final void writePrev(BufferedWriter writer)throws IOException{
+    public final void writePrev(StringBuilder builder){
         if(prevCode == null){
            if(self != null){
-               writer.write("this");
+               builder.append("this");
            }
         }else{
-            writer.write(prevCode);
+            builder.append(prevCode);
             prevCode = null;
         }
     }
@@ -366,8 +362,8 @@ public class Function implements IField,ICalledOnPointer{
     private void addVariantFromTemplate(TemplateVariant variant,SubEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
         var mod = env.getModule();
         var cname = mod.getNameSpace() + IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
-        var path = Paths.get(env.getFPL().getOutputDirectory() + "/" + cname + ".c");
-        var writer = new BuilderWriter();
+        var path = Path.of(env.getFPL().getOutputDirectory() + "/" + cname + ".c");
+        var builder = new StringBuilder();
         try{
            var fnEnv = new FnEnv(variant.superEnv,returnType);
            var len = variant.args.size();
@@ -411,16 +407,16 @@ public class Function implements IField,ICalledOnPointer{
                fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
            }
            var v = addVariant(args,cname,cname);
-           writer.write(returnType.getCname() + " " + v.cname() + '(');
+           builder.append(returnType.getCname()).append(" ").append(v.cname()).append('(');
            var firstArg = true;
            if(self != null){
-               writer.write(self.getCname());
+               builder.append(self.getCname());
            }
            for(var arg:variant.args.entrySet()){
                if(firstArg){
                    firstArg = false;
                }else{
-                   writer.write(',');
+                   builder.append(',');
                }
                var type = arg.getValue();
                while(type instanceof PointerInfo p){
@@ -430,20 +426,18 @@ public class Function implements IField,ICalledOnPointer{
                if(variant.templateArgs.containsKey(typeName)){
                   type = variant.templateArgs.get(typeName);
                }
-               writer.write(type.getCname() + " " + IFunction.toCId(arg.getKey()));
+               builder.append(type.getCname()).append(" ").append(IFunction.toCId(arg.getKey()));
            }
-           writer.write("){\n");
-           variant.code.compile(writer,fnEnv,null);
-           writer.write('}');
+           builder.append("){\n");
+           variant.code.compile(builder,fnEnv,null);
+           builder.append('}');
            var selfType = self;
            if(selfType instanceof PointerInfo p){
                selfType = p.getType();
            }
            if(!(selfType instanceof InstanceInfo i) || i.canWriteTemplateFunctionVariants()){
-               mod.getFPL().addFunctionVariantGenerationData(new VariantGenData(writer.getCode(),path,mod));
+               mod.getFPL().addFunctionVariantGenerationData(new VariantGenData(builder.toString(),path,mod));
            }
-       }catch(IOException e){
-           throw new UncheckedIOException(e);
        }catch(CompilerException e){
            throw new RuntimeException(e);
        }

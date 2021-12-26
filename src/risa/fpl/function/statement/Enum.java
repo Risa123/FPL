@@ -11,11 +11,9 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
 
-import java.io.BufferedWriter;
-
 public final class Enum implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+    public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         var a = it.nextID();
         var id = a.getValue();
         if(env.hasFunctionInCurrentEnv(id)){

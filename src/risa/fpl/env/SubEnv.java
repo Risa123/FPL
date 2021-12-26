@@ -8,8 +8,6 @@ import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class SubEnv extends AEnv{
@@ -48,8 +46,8 @@ public class SubEnv extends AEnv{
          destructorCalls.append(destructor).append("(&").append(cname).append(");\n");
      }
  }
- public final void compileDestructorCalls(BufferedWriter writer)throws IOException{
-      writer.write(destructorCalls.toString());
+ public final void compileDestructorCalls(StringBuilder builder){
+      builder.append(destructorCalls);
  }
  public final String getToPointerVarName(InstanceInfo type){
       var name = "c" + toPointerVarID++;
@@ -60,8 +58,8 @@ public class SubEnv extends AEnv{
       }
       return name;
  }
- public final void compileToPointerVars(BufferedWriter writer)throws IOException{
-      writer.write(toPointerVars.toString());
+ public final void compileToPointerVars(StringBuilder builder){
+      builder.append(toPointerVars);
  }
  public final int getToPointerVarID(){
       return toPointerVarID;

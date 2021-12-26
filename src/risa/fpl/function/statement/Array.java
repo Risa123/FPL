@@ -1,9 +1,6 @@
 package risa.fpl.function.statement;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.env.SubEnv;
@@ -18,22 +15,22 @@ import risa.fpl.parser.AtomType;
 
 public final class Array implements IFunction{
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-		var b = new BuilderWriter();
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+		var b = new StringBuilder();
 		if(env.hasModifier(Modifier.CONST)){
-			b.write("const ");
+			b.append("const ");
 		}
 		var typeAtom = it.nextID();
 		var type = env.getType(typeAtom);
 		if(env instanceof ClassEnv e && e.getInstanceInfo() == type){
-		    b.write("struct ");
+		    b.append("struct ");
         }
 		var lenAtom = it.nextAtom();
 		if(lenAtom.getType() == AtomType.END_ARGS){
 		    type = IFunction.generateTypeFor(type,typeAtom,it,env,false);
 		    lenAtom = it.nextAtom();
         }
-        b.write(type.getCname());
+        b.append(type.getCname());
 	    if(lenAtom.notIndexLiteral()){
 	    	throw new CompilerException(lenAtom,"array length expected instead of " + lenAtom);
 	    }
@@ -50,9 +47,9 @@ public final class Array implements IFunction{
 	    }else{
 	    	cID = IFunction.toCId(id.getValue());
 	    }
-	    b.write(' ' + cID + '[' + lenAtom.getValue() + ']');
+	    b.append(' ').append(cID).append('[').append(lenAtom.getValue()).append(']');
 	    if(it.hasNext()){
-	    	b.write("={");
+	    	b.append("={");
 	    }
 	    int count = 0;
 	    var first = true;
@@ -75,26 +72,26 @@ public final class Array implements IFunction{
 					if(first){
 						first = false;
 					}else{
-						b.write(',');
+						b.append(',');
 					}
-					var buffer = new BuilderWriter();
+					var buffer = new StringBuilder();
 					var expType = exp.compile(buffer,env,it);
 					if(!expType.equals(type)){
 						throw new CompilerException(exp,type + " expected instead of " + expType);
 					}
-					b.write(expType.ensureCast(type,buffer.getCode()));
+					b.append(expType.ensureCast(type,buffer.toString()));
 					count++;
 				}
 		    }
-		    b.write("};\n");
+		    b.append("};\n");
 		    if(count > len){
 		    	throw new CompilerException(line,tokenNum,"can only have " + len + " elements");
 		    }
 	    }
 		if(env instanceof ModuleEnv e){
-			e.appendVariableDeclaration(b.getCode());
+			e.appendVariableDeclaration(b.toString());
 		}else{
-			writer.write(b.getCode());
+			builder.append(b);
 		}
 		return TypeInfo.VOID;
 	}

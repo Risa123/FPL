@@ -1,10 +1,9 @@
 package risa.fpl.function.statement;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.AccessModifier;
@@ -22,7 +21,7 @@ public final class Var implements IFunction{
     	this.type = type;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(StringBuilder  builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         if(type != null && it.hasNext()){
            if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
                it.next();
@@ -33,7 +32,7 @@ public final class Var implements IFunction{
                    if(field == null){
                        throw new CompilerException(a1,c + " has no field called " + a1);
                    }
-                   return field.compile(writer,env,it,a1.getLine(),a1.getTokenNum());
+                   return field.compile(builder,env,it,a1.getLine(),a1.getTokenNum());
                }
                return c;
            }
@@ -42,14 +41,18 @@ public final class Var implements IFunction{
             throw new CompilerException(line,tokenNum,"native variables can only be declared in modules");
 		}
 		var decType = type;
-		if(it.checkTemplate()){
-		    if(type instanceof TemplateTypeInfo tType){
-		        decType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum());
-            }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
-                decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum()));
-            }else{
-		        throw new CompilerException(line,tokenNum,"template type expected instead of " + type);
+		try{
+            if(it.checkTemplate()){
+                if(type instanceof TemplateTypeInfo tType){
+                    decType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum());
+                }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
+                    decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum()));
+                }else{
+                    throw new CompilerException(line,tokenNum,"template type expected instead of " + type);
+                }
             }
+        }catch(IOException e){
+            throw new UncheckedIOException(e);
         }
 		while(it.hasNext()){
             var id = it.nextAtom();
@@ -90,12 +93,12 @@ public final class Var implements IFunction{
                         if(env.hasModifier(Modifier.NATIVE)){
                             throw new CompilerException(exp,"native variables can only be declared");
                         }
-                        var buffer = new BuilderWriter();
+                        var buffer = new StringBuilder();
                         if(!it.hasNext() || it.peek() instanceof Atom p && p.getType() == AtomType.END_ARGS && exp instanceof Atom a && a.getType() != AtomType.ID){
                             constantExp = true;
                         }
                         expType = exp.compile(buffer,env,it);
-                        expCode = buffer.getCode();
+                        expCode = buffer.toString();
                     }
                 }else{
                     if(env.hasModifier(Modifier.CONST) && !(env instanceof ClassEnv)){
@@ -138,7 +141,7 @@ public final class Var implements IFunction{
                         mod.appendVariableDeclaration(";\n");
                     }
                 }else{
-                    writer.write(declaration);
+                    builder.append(declaration);
                 }
                 if(expType != null){
                     expCode = expType.ensureCast(this.type,expCode);
@@ -151,12 +154,11 @@ public final class Var implements IFunction{
                     }else if(env instanceof ClassEnv e){
                         e.appendToImplicitConstructor("this->" + cID + "=" + expCode + ";\n");
                     }else{
-                        writer.write('=');
-                        writer.write(expCode);
+                        builder.append('=').append(expCode);
                     }
                 }
                 if(it.hasNext()){
-                    writer.write(";\n");
+                    builder.append(";\n");
                 }
                 var constant = env.hasModifier(Modifier.CONST);
                 if(env.hasModifier(Modifier.NATIVE)){

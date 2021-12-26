@@ -1,12 +1,9 @@
 package risa.fpl.function.block;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.AccessModifier;
@@ -22,14 +19,14 @@ import risa.fpl.parser.AtomType;
 public class Fn extends AFunctionBlock{
 	private boolean appendSemicolon;
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
 		var returnType = env.getType(it.nextID());
         var fnEnv = new FnEnv(env,returnType);
         LinkedHashMap<String,TypeInfo> templateArgs = null;
         if(it.checkTemplate()){
             templateArgs = IFunction.parseTemplateArguments(it,fnEnv);
         }
-        var b = new BuilderWriter();
+        var b = new StringBuilder();
 		var id = it.nextID();
         if(env instanceof  ModuleEnv e && e.isMain() && id.getValue().equals("main")){
            throw new CompilerException(id,"main function can only be declared using built-in function main");
@@ -53,39 +50,39 @@ public class Fn extends AFunctionBlock{
         }else if(env instanceof InterfaceEnv e){
             self = e.getType();
         }
-        var headWriter = new BuilderWriter();
+        var headBuilder = new StringBuilder();
         if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
-            headWriter.write("static ");
+            headBuilder.append("static ");
         }
         FunctionInfo fPointer = null;
         if(returnType instanceof IPointerInfo p){
             fPointer = p.getFunctionPointer();
         }
         if(fPointer != null){
-            headWriter.write(fPointer.getFunction().getReturnType().getCname() + '(');
-            headWriter.write("*".repeat(((IPointerInfo)returnType).getFunctionPointerDepth() + 1));
+            headBuilder.append(fPointer.getFunction().getReturnType().getCname()).append('(');
+            headBuilder.append("*".repeat(((IPointerInfo)returnType).getFunctionPointerDepth() + 1));
         }else{
-            headWriter.write(returnType.getCname());
+            headBuilder.append(returnType.getCname());
         }
-        headWriter.write(' ' + cID);
+        headBuilder.append(' ').append(cID);
         if(!env.hasModifier(Modifier.NATIVE)){
            if(env.hasFunctionInCurrentEnv(id.getValue()) && env.getFunction(id) instanceof  Function f){
-               headWriter.write(Integer.toString(f.getVariants().size()));
+               headBuilder.append(f.getVariants().size());
            }else{
-               headWriter.write('0');
+               headBuilder.append('0');
            }
         }
-		var args = parseArguments(headWriter,it,fnEnv,self);
+		var args = parseArguments(headBuilder,it,fnEnv,self);
         if(fPointer != null){
-            headWriter.write(")(");
+            headBuilder.append(")(");
             for(var arg:args.entrySet()){
                 if(arg.getValue() instanceof IPointerInfo p){
-                    headWriter.write(p.getPointerVariableDeclaration(arg.getKey()));
+                    headBuilder.append(p.getPointerVariableDeclaration(arg.getKey()));
                 }else{
-                    headWriter.write(arg.getValue().getCname() + " " + arg.getKey());
+                    headBuilder.append(arg.getValue().getCname()).append(" ").append(arg.getKey());
                 }
             }
-            headWriter.write(')');
+            headBuilder.append(')');
         }
 		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
@@ -192,23 +189,23 @@ public class Fn extends AFunctionBlock{
             if(templateArgs != null){
                 f.addTemplateVariant(templateArgs,codeExp,args,env);
             }
-            headWriter.write("{\n");
+            headBuilder.append("{\n");
             for(var arg:args.entrySet()){
                 if(arg.getValue() instanceof InstanceInfo i){
                     fnEnv.addInstanceVariable(i,IFunction.toCId(arg.getKey()));
                 }
             }
 			if(oneLine && returnType != TypeInfo.VOID){
-			    b.write("return ");
+			    b.append("return ");
             }
-			var code = new BuilderWriter();
+			var code = new StringBuilder();
 			var fReturnType = codeExp.compile(code,fnEnv,it);
 			if(oneLine && fnEnv.getReturnType() != TypeInfo.VOID && !fReturnType.equals(fnEnv.getReturnType())){
 			    throw new CompilerException(codeExp,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
             }
-			b.write(code.getCode());
+			b.append(code);
 		    if(oneLine){
-                b.write(";\n");
+                b.append(";\n");
             }
             if(returnType == TypeInfo.VOID){
                 fnEnv.compileDestructorCalls(b);
@@ -216,7 +213,7 @@ public class Fn extends AFunctionBlock{
 			if(fnEnv.isReturnNotUsed() && returnType != TypeInfo.VOID){
 				throw new CompilerException(codeExp,"there is no return in this function and this function doesn't return void");
 			}
-            b.write("}\n");
+            b.append("}\n");
 		}else{
 		    if(!(env.hasModifier(Modifier.ABSTRACT) || env.hasModifier(Modifier.NATIVE))){
 		        throw new CompilerException(line,tokenNum,"block required");
@@ -245,30 +242,30 @@ public class Fn extends AFunctionBlock{
         }
         if(templateArgs == null){
             if(env instanceof ClassEnv cEnv){
-                var tmp = new BuilderWriter();
-                tmp.write(attrCode.toString());
-                tmp.write(headWriter.getCode());
+                var tmp = new StringBuilder();
+                tmp.append(attrCode);
+                tmp.append(headBuilder);
                 fnEnv.compileToPointerVars(tmp);
-                tmp.write(b.getCode());
-                cEnv.addMethod(f,tmp.getCode());
+                tmp.append(b);
+                cEnv.addMethod(f,tmp.toString());
             }else if(env instanceof InterfaceEnv){
-                writer.write(p.getPointerVariableDeclaration(variant.cname()));
+                builder.append(p.getPointerVariableDeclaration(variant.cname()));
             }else if(env instanceof ModuleEnv e){
                 if(f.getType() != FunctionType.NATIVE){
-                    var tmp = new BuilderWriter();
-                    tmp.write(attrCode.toString());
-                    tmp.write(headWriter.getCode());
+                    var tmp = new StringBuilder();
+                    tmp.append(attrCode);
+                    tmp.append(headBuilder);
                     fnEnv.compileToPointerVars(tmp);
-                    tmp.write(b.getCode());
-                    e.appendFunctionCode(tmp.getCode());
+                    tmp.append(b);
+                    e.appendFunctionCode(tmp.toString());
                 }
                 e.appendFunctionDeclaration(f);
             }else{
-                writer.write(attrCode.toString());
-                fnEnv.compileToPointerVars(writer);
-                writer.write(b.getCode());
+                builder.append(attrCode);
+                fnEnv.compileToPointerVars(builder);
+                builder.append(b);
                 if(type == FunctionType.NATIVE && !id.getValue().equals("__builtin_longjmp")){//builtin functions cannot have declaration with extern
-                    writer.write(f.getDeclaration());
+                    builder.append(f.getDeclaration());
                 }
             }
         }

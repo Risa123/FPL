@@ -13,18 +13,15 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.parser.AtomType;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 
 public abstract class AFunctionBlock extends ABlock{
- protected final LinkedHashMap<String,TypeInfo>parseArguments(BufferedWriter writer,ExpIterator it,FnEnv env,TypeInfo owner)throws CompilerException,IOException{
-        writer.write('(');
+ protected final LinkedHashMap<String,TypeInfo>parseArguments(StringBuilder builder,ExpIterator it,FnEnv env,TypeInfo owner)throws CompilerException{
+        builder.append('(');
         var args = new LinkedHashMap<String,TypeInfo>();
         var first = owner == null;
         if(!first){
-            writer.write(owner.getCname());
-            writer.write("* this");
+            builder.append(owner.getCname()).append("* this");
             env.addFunction("this",new Variable(new PointerInfo(owner),"this","this"));
         }
         while(it.hasNext()){
@@ -35,7 +32,7 @@ public abstract class AFunctionBlock extends ABlock{
             if(first){
                 first = false;
             }else{
-                writer.write(',');
+                builder.append(',');
             }
             var argTypeAtom = it.nextID();
             var argType = env.getType(argTypeAtom);
@@ -60,18 +57,18 @@ public abstract class AFunctionBlock extends ABlock{
             args.put(argName.getValue(),argType);
             var argNameCID = IFunction.toCId(argName.getValue());
             if(constant && argType instanceof PointerInfo p){
-                writer.write("const ");
+                builder.append("const ");
                 p.makeConstant();
             }
             if(argType instanceof IPointerInfo p){
-                writer.write(p.getPointerVariableDeclaration(argNameCID));
+                builder.append(p.getPointerVariableDeclaration(argNameCID));
             }else{
-                writer.write(argType.getCname() + ' ' + argNameCID);
+                builder.append(argType.getCname()).append(' ').append(argNameCID);
             }
             var v = new Variable(argType,IFunction.toCId(argName.getValue()),false,argName.getValue(),constant,null,AccessModifier.PUBLIC);
             env.addFunction(argName.getValue(),v);
         }
-        writer.write(')');
+        builder.append(')');
         return args;
     }
 }

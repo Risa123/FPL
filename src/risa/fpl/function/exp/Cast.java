@@ -1,9 +1,7 @@
 package risa.fpl.function.exp;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
@@ -19,10 +17,10 @@ public final class Cast extends AField{
     	this.self = self;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         var typeAtom = it.nextID();
 	    var type = env.getType(typeAtom);
-	    var prev = new BuilderWriter();
+	    var prev = new StringBuilder();
 	    if(it.checkTemplate()){
             type = IFunction.generateTypeFor(type,typeAtom,it,env,false);
         }
@@ -32,7 +30,7 @@ public final class Cast extends AField{
 	        CCast(prev,"char");
         }else if(!type.isPrimitive() && self instanceof InterfaceInfo && type.getParents().contains(self)){
           CCast(prev,type.getCname());
-          prev.write(".instance");
+          prev.append(".instance");
         }else if(type instanceof InterfaceInfo){
 	        throw new CompilerException(line, tokenNum,"cannot cast to interface");
         }else{
@@ -45,23 +43,23 @@ public final class Cast extends AField{
 	            npType = p.getType();
             }
 	        if(npTarget.getParents().contains(npType)){
-	            prev.write("(" + type.getCname() + ")");
+	            prev.append("(").append(type.getCname()).append(")");
 	            if(!(self instanceof PointerInfo)){
-	                prev.write('&');
+	                prev.append('&');
                 }
 	            writePrev(prev);
-	            return compileChainedCall(type,writer,env,it,prev.getCode());
+	            return compileChainedCall(type,builder,env,it,prev.toString());
             }
 	        throw new CompilerException(line,tokenNum,"cannot cast " + self + " to " + type);
         }
-		return compileChainedCall(type,writer,env,it,prev.getCode());
+		return compileChainedCall(type,builder,env,it,prev.toString());
 	}
     private boolean isCharOrNumber(TypeInfo type){
         return type == TypeInfo.CHAR || type instanceof NumberInfo n && !n.isFloatingPoint();
     }
-    private void CCast(BufferedWriter writer,String ctype)throws IOException{
-        writer.write("((" + ctype + ")");
-        writePrev(writer);
-        writer.write(')');
+    private void CCast(StringBuilder builder,String ctype){
+		builder.append("((").append(ctype).append(")");
+        writePrev(builder);
+        builder.append(')');
     }
 }

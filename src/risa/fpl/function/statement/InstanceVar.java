@@ -2,8 +2,8 @@ package risa.fpl.function.statement;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.AccessModifier;
@@ -29,8 +29,8 @@ public final class InstanceVar extends Function{
       return INTERNAL_METHOD_PREFIX + nameSpace + "_init";
    }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        BuilderWriter b = new BuilderWriter();
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        var b = new StringBuilder();
         var id = it.nextAtom();
 		if(id.getType() == AtomType.ID){
             if(env instanceof ClassEnv e){
@@ -38,27 +38,31 @@ public final class InstanceVar extends Function{
             }
             compileVariable(b,id,env,it);
         }else if(id.getType() == AtomType.CLASS_SELECTOR){
-		    return compileClassSelector(it,env,writer,type.getClassInfo());
+		    return compileClassSelector(it,env,builder,type.getClassInfo());
         }else if(id.getType() == AtomType.END_ARGS){
             var varType = compileVariable(b,null,env,it);
             if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() == AtomType.CLASS_SELECTOR){
                 it.next();
-                return compileClassSelector(it,env,writer,varType.getClassInfo());
+                return compileClassSelector(it,env,builder,varType.getClassInfo());
             }
         }else{
 		    throw new CompilerException(id,"variable identifier or : expected");
         }
         if(env instanceof ModuleEnv e){
-            e.appendVariableDeclaration(b.getCode());
+            e.appendVariableDeclaration(b.toString());
         }else{
-            writer.write(b.getCode());
+            builder.append(b);
         }
 		return TypeInfo.VOID;
 	}
-	private TypeInfo compileVariable(BufferedWriter writer,Atom id,SubEnv env,ExpIterator it)throws IOException,CompilerException{
+	private TypeInfo compileVariable(StringBuilder builder,Atom id,SubEnv env,ExpIterator it)throws CompilerException{
         InstanceInfo varType;
         if(type instanceof TemplateTypeInfo tType){
-            varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env,true),env,it.getLastLine(),it.getLastCharNum());
+            try{
+                varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env,true),env,it.getLastLine(),it.getLastCharNum());
+            }catch(IOException e){
+                throw new UncheckedIOException(e);
+            }
             if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
                 return varType;
             }
@@ -80,11 +84,11 @@ public final class InstanceVar extends Function{
             typeCname += "*";
         }
         var cID = IFunction.toCId(id.getValue());
-        writer.write(typeCname + ' ' + cID + ";\n");
+        builder.append(typeCname).append(' ').append(cID).append(";\n");
         if(it.hasNext()){
             if(it.peek() instanceof Atom a && a.getValue().equals("init")){
                 it.next();
-                var b = new BuilderWriter();
+                var b = new StringBuilder();
                 if(notPointer){
                     if(env instanceof ClassEnv){
                         setPrevCode("this->" + cID);
@@ -99,11 +103,11 @@ public final class InstanceVar extends Function{
                     }
                 }
                 if(env instanceof ClassEnv e){
-                    e.appendToImplicitConstructor(b.getCode() + ";\n");
+                    e.appendToImplicitConstructor(b + ";\n");
                 }else if(env instanceof ModuleEnv e){
-                    e.appendToInitializer(b.getCode() + ";\n");
+                    e.appendToInitializer(b + ";\n");
                 }else{
-                    writer.write(b.getCode() + ";\n");
+                    builder.append(b).append(";\n");
                 }
             }else{
                 throw new CompilerException(id,"init(constructor arguments) or nothing expected");
@@ -117,22 +121,22 @@ public final class InstanceVar extends Function{
         env.addInstanceVariable(varType,cID);
         return null;
     }
-	public void compileAsParentConstructor(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
+	public void compileAsParentConstructor(StringBuilder builder,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
        calledOnPointer();
-       super.compile(writer,env,it,line,charNum);
+       super.compile(builder,env,it,line,charNum);
     }
-    private void superCompile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int charNum)throws IOException,CompilerException{
-       super.compile(writer,env,it,line,charNum);
+    private void superCompile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
+       super.compile(builder,env,it,line,charNum);
     }
-    private TypeInfo compileClassSelector(ExpIterator it,SubEnv env,BufferedWriter writer,TypeInfo classType)throws CompilerException,IOException{
+    private TypeInfo compileClassSelector(ExpIterator it,SubEnv env,StringBuilder builder,TypeInfo classType)throws CompilerException{
         if(it.peek() instanceof Atom atom && atom.getType() == AtomType.ID){
             it.next();
             var field = classType.getField(atom.getValue(),env);
             if(field == null){
                 throw new CompilerException(atom,classType + " has no field called " + atom);
             }
-            var ret = field.compile(writer,env,it,atom.getLine(),atom.getTokenNum());
-            writer.write(";\n");
+            var ret = field.compile(builder,env,it,atom.getLine(),atom.getTokenNum());
+            builder.append(";\n");
             return ret;
         }
         return classType;

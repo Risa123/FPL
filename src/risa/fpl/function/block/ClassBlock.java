@@ -1,11 +1,8 @@
 package risa.fpl.function.block;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
@@ -34,7 +31,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         return env;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum) throws IOException,CompilerException{
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
 		if(!(env instanceof ModuleEnv modEnv)){
 		    throw new CompilerException(line,tokenNum,"can only be used on module level");
         }
@@ -103,11 +100,11 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         compileClassBlock(cEnv,modEnv,id,block,interfaces,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
 		return TypeInfo.VOID;
 	}
-	public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException,IOException{
+	public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException{
         var type = cEnv.getInstanceInfo();
         var parentType = type.getPrimaryParent();
         var cID = IFunction.toCId(id.getValue());
-        var attributes = new BuilderWriter();
+        var attributes = new StringBuilder();
         ArrayList<ExpressionInfo>infos;
         if(cEnv.getBlock() == null){
             infos = createInfoList(block);
@@ -115,27 +112,27 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }else{
             infos = cEnv.getBlock();
         }
-        compile(new BuilderWriter(),cEnv,infos);
+        compile(new StringBuilder(),cEnv,infos);
         for(var name:cEnv.getVariableFieldDeclarationOrder()){
             var v = (Variable)type.getField(name,cEnv);
             if(v.getType() instanceof FunctionInfo f){
-                attributes.write(f.getPointerVariableDeclaration(v.getCname()) + ";\n");
+                attributes.append(f.getPointerVariableDeclaration(v.getCname())).append(";\n");
             }else{
                 if(v.getType() instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
-                    attributes.write("struct ");
+                    attributes.append("struct ");
                 }
-                attributes.write(v.getType().getCname() + " " + v.getCname());
+                attributes.append(v.getType().getCname()).append(" ").append(v.getCname());
                 if(v.getType() instanceof ArrayInfo i){
                     String code;
-                    attributes.write("[");
+                    attributes.append("[");
                     if(i.isLengthUnsignedLong()){
                         code = Long.toUnsignedString(i.getLength());
                     }else{
                         code = Long.toString(i.getLength());
                     }
-                    attributes.write(code + "]");
+                    attributes.append(code).append("]");
                 }
-                attributes.write(";\n");
+                attributes.append(";\n");
             }
         }
         if(cEnv.hasOnlyImplicitConstructor()){
@@ -149,7 +146,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             cEnv.appendFunctionCode(cID + " * p = malloc(sizeof(" + cID + "));\n");
             cEnv.appendFunctionCode(INTERNAL_METHOD_PREFIX + nameSpace + "_init0(p);\nreturn p;\n}\n");
         }
-        type.setAttributesCode(attributes.getCode());
+        type.setAttributesCode(attributes.toString());
         //parent type doesn't have implicit constructor
         if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
             for(var v:i.getConstructor().getVariants()){
@@ -167,13 +164,13 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 }
             }
         }
-        var internalCode = new BuilderWriter();
+        var internalCode = new StringBuilder();
         var constructor = type.getConstructor();
         if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){
             modEnv.addFunction(id.getValue(),constructor);
         }
         for(var i:interfaces){
-            internalCode.write("static " + i.getImplName() + " " + cID + i.getCname() + "_impl={");
+            internalCode.append("static ").append(i.getImplName()).append(" ").append(cID).append(i.getCname()).append("_impl={");
             var first = true;
             for(var method:i.getMethodsOfType(FunctionType.ABSTRACT)){
                 var inThisClass = (Function)type.getField(method.getName(),cEnv);
@@ -181,35 +178,35 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                     if(first){
                         first = false;
                     }else{
-                        internalCode.write(',');
+                        internalCode.append(',');
                     }
-                    internalCode.write("(void*)" + inThisClass.getVariant(v.args()).cname());
+                    internalCode.append("(void*)").append(inThisClass.getVariant(v.args()).cname());
                 }
             }
-            internalCode.write("};\n");
-            internalCode.write(i.getCname() + ' ');
-            internalCode.write(type.getConversionMethod(i) + '(' + type.getCname() + "* this){\n");
-            internalCode.write(i.getCname());
-            internalCode.write(" tmp={this,&");
-            internalCode.write(cEnv.getImplOf(i));
-            internalCode.write("};\nreturn tmp;\n}\n");
+            internalCode.append("};\n");
+            internalCode.append(i.getCname()).append(' ');
+            internalCode.append(type.getConversionMethod(i)).append('(').append(type.getCname()).append("* this){\n");
+            internalCode.append(i.getCname());
+            internalCode.append(" tmp={this,&");
+            internalCode.append(cEnv.getImplOf(i));
+            internalCode.append("};\nreturn tmp;\n}\n");
         }
-        internalCode.write(type.getCname() + "* " + type.getToPointerName() + "(");
-        internalCode.write(type.getCname() + " this," + type.getCname() + "* p){\n*p = this;\n");
-        internalCode.write("return p;\n}\n");
+        internalCode.append(type.getCname()).append("* ").append(type.getToPointerName()).append("(");
+        internalCode.append(type.getCname()).append(" this,").append(type.getCname()).append("* p){\n*p = this;\n");
+        internalCode.append("return p;\n}\n");
         var copyName = type.getCopyConstructorName();
         if(copyName == null && !cEnv.getImplicitCopyConstructorCode().isEmpty()){
             copyName = INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_copy";
-            internalCode.write("void " + copyName + "(" + type.getCname() + "* this," + type.getCname() + "* o){\n");
-            internalCode.write(cEnv.getImplicitCopyConstructorCode() + cEnv.getDefaultCopyConstructorCode() + "}\n");
+            internalCode.append("void ").append(copyName).append("(").append(type.getCname()).append("* this,").append(type.getCname()).append("* o){\n");
+            internalCode.append(cEnv.getImplicitCopyConstructorCode()).append(cEnv.getDefaultCopyConstructorCode()).append("}\n");
             type.setCopyConstructorName(copyName);
         }
         if(copyName != null){
-            internalCode.write(type.getCname() + " " + copyName + "AndReturn(" + type.getCname() + " original){\n" + type.getCname() + " instance;\n");
-            internalCode.write(copyName + "(&instance,&original);\n");
-            internalCode.write("return instance;\n}\n");
+            internalCode.append(type.getCname()).append(" ").append(copyName).append("AndReturn(").append(type.getCname()).append(" original){\n").append(type.getCname()).append(" instance;\n");
+            internalCode.append(copyName).append("(&instance,&original);\n");
+            internalCode.append("return instance;\n}\n");
         }
-        cEnv.appendFunctionCode(internalCode.getCode());
+        cEnv.appendFunctionCode(internalCode.toString());
         if(templateStatus != TemplateStatus.TEMPLATE){
             modEnv.appendFunctionDeclaration(cEnv.getFunctionDeclarations());
             modEnv.appendFunctionCode(cEnv.getDestructor());

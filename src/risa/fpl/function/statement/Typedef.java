@@ -1,6 +1,5 @@
 package risa.fpl.function.statement;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
@@ -8,13 +7,10 @@ import risa.fpl.info.CustomTypeInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public final class Typedef implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        writer.write("typedef ");
+    public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        builder.append("typedef ");
         var type = it.nextID();
         if(env.hasTypeInCurrentEnv(type.getValue()) && env.getType(type) instanceof CustomTypeInfo t && t.isPrimitive()){
             throw new CompilerException(type,"type " + type + " is already defined");
@@ -42,13 +38,10 @@ public final class Typedef implements IFunction{
         if(!t.isPrimitive()){
             throw new CompilerException(originalType,"primitive type expected");
         }
-        var b = new BuilderWriter();
-        b.write(t.getCname());
-        b.write(' ');
-        b.write(IFunction.toCId(type.getValue()));
-        b.write(after);
-        writer.write(b.getCode());
-        env.addType(new CustomTypeInfo(type.getValue(),t,b.getCode()));
+        var b = new StringBuilder(t.getCname());
+        b.append(' ').append(IFunction.toCId(type.getValue())).append(after);
+        builder.append(b);
+        env.addType(new CustomTypeInfo(type.getValue(),t,b.toString()));
         return TypeInfo.VOID;
     }
 }

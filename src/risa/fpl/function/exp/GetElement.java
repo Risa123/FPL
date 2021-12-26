@@ -1,9 +1,5 @@
 package risa.fpl.function.exp;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.info.TypeInfo;
@@ -15,16 +11,16 @@ public final class GetElement extends AField{
     	this.returnType = returnType;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-        var prev = new BuilderWriter();
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        var prev = new StringBuilder();
 		writePrev(prev);
-		prev.write('[');
+		prev.append('[');
 		var indexExp = it.next();
 		var indexType = indexExp.compile(prev,env,it);
 		if(indexType.notIntegerNumber()){
 		    throw new CompilerException(indexExp,"integer number expected");
         }
-		prev.write(']');
-		return compileChainedCall(returnType,writer,env,it,prev.getCode());
+		prev.append(']');
+		return compileChainedCall(returnType,builder,env,it,prev.toString());
 	}
 }

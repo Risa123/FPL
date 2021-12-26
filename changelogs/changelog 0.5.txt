@@ -7,3 +7,4 @@ fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
 fix std.io.file.DirectoryStream.read
 fix problems caused by class and struct fields not being compiled in order of declaration
+fix child class has parent class objectData

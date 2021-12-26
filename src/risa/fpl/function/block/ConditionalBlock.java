@@ -1,10 +1,7 @@
 package risa.fpl.function.block;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import risa.fpl.BuilderWriter;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnSubEnv;
@@ -20,9 +17,8 @@ public final class ConditionalBlock extends ABlock{
     	this.code = code;
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
-		writer.write(code);
-		writer.write('(');
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+		builder.append(code).append('(');
 		var list = new ArrayList<AExp>();
 		int expLine = 0,expCharNum = 0;
 		while(it.hasNext()){
@@ -38,19 +34,19 @@ public final class ConditionalBlock extends ABlock{
 				list.add(exp);
 			}
 		}
-		var ret = new List(expLine,expCharNum,list,false).compile(writer,env,it);
+		var ret = new List(expLine,expCharNum,list,false).compile(builder,env,it);
 		if(ret != TypeInfo.BOOL){
 			throw new CompilerException(expLine,expCharNum,"expression expected to return bool instead of " + ret);
 		}
-		writer.write("){\n");
+		builder.append("){\n");
 		var ifEnv = new FnSubEnv(env);
 		var block = it.nextList();
-		var tmp = new BuilderWriter();
+		var tmp = new StringBuilder();
 		block.compile(tmp,ifEnv,it);
-		ifEnv.compileToPointerVars(writer);
-		writer.write(tmp.getCode());
-		ifEnv.compileDestructorCalls(writer);
-		writer.write("}\n");
+		ifEnv.compileToPointerVars(builder);
+		builder.append(tmp);
+		ifEnv.compileDestructorCalls(builder);
+		builder.append("}\n");
 		if(code.equals("if")){
 			if(it.hasNext()){
 				var elseExp = it.next();
@@ -58,18 +54,18 @@ public final class ConditionalBlock extends ABlock{
 					throw new CompilerException(elseExp,"else block or if expected");
 				}
 				if(elseExp instanceof Atom){
-					writer.write("else ");
+					builder.append("else ");
 				}else{
-					writer.write("else{\n");
+					builder.append("else{\n");
 				}
 				var subEnv = new FnSubEnv(env);
-				var b = new BuilderWriter();
+				var b = new StringBuilder();
 				elseExp.compile(b,subEnv,it);
-				subEnv.compileToPointerVars(writer);
-				writer.write(b.getCode());
-				subEnv.compileDestructorCalls(writer);
+				subEnv.compileToPointerVars(builder);
+				builder.append(b);
+				subEnv.compileDestructorCalls(builder);
 				if(elseExp instanceof List){
-					writer.write("}\n");
+					builder.append("}\n");
 				}
 			}
 		}else if(it.hasNext()){

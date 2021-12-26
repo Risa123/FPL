@@ -1,7 +1,7 @@
 package risa.fpl.function;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -49,7 +49,7 @@ public interface IFunction{
 	  }
 	  return b.toString();
   }
-  TypeInfo compile(BufferedWriter writer,SubEnv env, ExpIterator it, int line, int tokenNum)throws IOException,CompilerException;
+  TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException;
   default boolean appendSemicolon(){
 	  return true;
   }
@@ -137,9 +137,13 @@ public interface IFunction{
       }
       return args;
   }
-  static InstanceInfo generateTypeFor(TypeInfo template,Atom typeAtom,ExpIterator it,AEnv env,boolean classVariable)throws CompilerException,IOException{
+  static InstanceInfo generateTypeFor(TypeInfo template,Atom typeAtom,ExpIterator it,AEnv env,boolean classVariable)throws CompilerException{
       if(template instanceof TemplateTypeInfo tType){
-          return tType.generateTypeFor(parseTemplateGeneration(it,env,classVariable),env,it.getLastLine(),it.getLastCharNum());
+          try{
+              return tType.generateTypeFor(parseTemplateGeneration(it,env,classVariable),env,it.getLastLine(),it.getLastCharNum());
+          }catch(IOException e){
+              throw new UncheckedIOException(e);
+          }
       }
       throw new CompilerException(typeAtom,"template type expected instead of " + template);
   }

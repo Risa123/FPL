@@ -4,9 +4,6 @@ import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
     protected boolean returnNotUsed = true;
     public FnSubEnv(AEnv superEnv){
@@ -39,12 +36,12 @@ public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
     public boolean isInMainBlock(){
         return ((FnSubEnv)superEnv).isInMainBlock();
     }
-    public void compileDestructorCallsFromWholeFunction(BufferedWriter writer)throws IOException{
+    public void compileDestructorCallsFromWholeFunction(StringBuilder builder){
         var superEnv = this.superEnv;
         while(superEnv instanceof FnSubEnv env){
-            env.compileDestructorCalls(writer);
+            env.compileDestructorCalls(builder);
             superEnv = env.superEnv;
         }
-        compileDestructorCalls(writer);
+        compileDestructorCalls(builder);
     }
 }

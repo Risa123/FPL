@@ -7,11 +7,9 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 
-import java.io.BufferedWriter;
-
 public final class Alias implements IFunction{
     @Override
-    public TypeInfo compile(BufferedWriter writer,SubEnv env, ExpIterator it,int line,int tokenNum)throws CompilerException{
+    public TypeInfo compile(StringBuilder builder,SubEnv env, ExpIterator it,int line,int tokenNum)throws CompilerException{
         var id = it.nextID();
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);

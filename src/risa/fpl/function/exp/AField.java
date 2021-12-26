@@ -8,9 +8,6 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public abstract class AField implements IField{
     private String prevCode;
     private final AccessModifier accessModifier;
@@ -24,9 +21,9 @@ public abstract class AField implements IField{
     public void setPrevCode(String code){
         prevCode = code;
     }
-    public void writePrev(BufferedWriter writer)throws IOException{
+    public void writePrev(StringBuilder builder){
         if(prevCode != null){
-            writer.write(prevCode);
+            builder.append(prevCode);
             prevCode = null;
         }
     }
@@ -41,7 +38,7 @@ public abstract class AField implements IField{
     public AccessModifier getAccessModifier(){
         return accessModifier;
     }
-    public TypeInfo compileChainedCall(TypeInfo returnType,BufferedWriter writer,SubEnv env,ExpIterator it,String prevCode)throws IOException,CompilerException{
+    public TypeInfo compileChainedCall(TypeInfo returnType,StringBuilder builder,SubEnv env,ExpIterator it,String prevCode)throws CompilerException{
          if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == AtomType.ID){
            it.next();
            var field = returnType.getField(id.getValue(),env);
@@ -49,9 +46,9 @@ public abstract class AField implements IField{
                throw new CompilerException(id,returnType + " has no field called " + id);
            }
            field.setPrevCode(prevCode);
-           return field.compile(writer,env,it,id.getLine(),id.getTokenNum());
+           return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
          }
-         writer.write(prevCode);
+         builder.append(prevCode);
          return returnType;
     }
 }

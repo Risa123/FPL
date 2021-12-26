@@ -25,16 +25,16 @@ public class ValueExp extends AField{
         this(type,code,AccessModifier.PUBLIC);
     }
 	@Override
-	public TypeInfo compile(BufferedWriter writer,SubEnv env,ExpIterator it,int line,int tokenNum)throws IOException,CompilerException{
+	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() != AtomType.END_ARGS && atom.getType() != AtomType.ARG_SEPARATOR){
 			it.next();
-			return onField(atom,writer,env,it,line,tokenNum);
+			return onField(atom,builder,env,it,line,tokenNum);
         }
-        writePrev(writer);
-		writer.write(code);
+        writePrev(builder);
+		builder.append(code);
 		return type;
 	}
-	protected TypeInfo onField(Atom atom,BufferedWriter writer,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException,IOException{
+	protected TypeInfo onField(Atom atom,StringBuilder builder,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
 		var field = type.getField(atom.getValue(),env);
 		if(field == null){
 			throw new CompilerException(atom,type + " has no field called " + atom);
@@ -60,6 +60,6 @@ public class ValueExp extends AField{
 			f.calledOnReturnedInstance();
 		}
 		field.setPrevCode(prefix + code + selector);
-		return field.compile(writer,env,it,line,charNum);
+		return field.compile(builder,env,it,line,charNum);
 	}
 }
