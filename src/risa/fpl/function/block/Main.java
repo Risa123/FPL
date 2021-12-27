@@ -35,7 +35,7 @@ public final class Main implements IFunction{
         fnEnv.compileDestructorCalls(b);
         b.append(modEnv.getDestructor());
         if(fnEnv.isReturnNotUsed()){
-           b.append("onExit();\nreturn 0;\n");
+           b.append("return 0;\n");
         }
         modEnv.declareMain();
         modEnv.getModuleBlock().setMainFunctionCode(b.toString());

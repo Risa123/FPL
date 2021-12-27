@@ -3,6 +3,8 @@ gcc is now expected to be in directory with FPL.exe/FPL.jar in gcc directory
 gcc property removed
 added const for pointer arguments
 getObjectSize added to all interfaces
+times loop added
+for loop added
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
@@ -14,3 +16,4 @@ fix multiple catches C error
 fix duplicate modifiers check added
 fix interface can now be used as template argument
 fix function pointer can now be used as template argument
+fix access modifiers can only be used in classes and modules check added

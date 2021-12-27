@@ -220,19 +220,8 @@ public class Function implements IField,ICalledOnPointer{
         }else if(accessModifier == AccessModifier.PRIVATE){
             declaration.append("static ");
         }
-        FunctionInfo f = null;
         var returnType = this.returnType;
-        if(returnType instanceof IPointerInfo p){
-            f = p.getFunctionPointer();
-            if(f != null){
-                returnType = f.getFunction().returnType;
-            }
-        }
         declaration.append(returnType.getCname()).append(' ');
-        if(f != null){
-            var times = ((IPointerInfo)this.returnType).getFunctionPointerDepth() + 1;
-            declaration.append('(').append("*".repeat(Math.max(0,times)));
-        }
         if(attrCode != null){
             declaration.append(attrCode).append(' ');
         }
@@ -254,13 +243,6 @@ public class Function implements IField,ICalledOnPointer{
             declaration.append(arg.getCname());
         }
         declaration.append(')');
-        if(f != null){
-            declaration.append(")(");
-            for(var arg:f.getFunction().getPointerVariant().args()){
-                declaration.append(arg.getCname());
-            }
-            declaration.append(')');
-        }
         declaration.append(";\n");
         var v = new FunctionVariant(args,cname,implName);
         variants.add(v);

@@ -4,9 +4,8 @@ import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
-public class PointerInfo extends TypeInfo implements IPointerInfo{
+public class PointerInfo extends TypeInfo{
 	private final TypeInfo type;
-	private int functionPointerDepth;
     private boolean constant;
 	public PointerInfo(TypeInfo type){
 	    super(type.getName() + "*",type.getCname() + "*");
@@ -84,45 +83,7 @@ public class PointerInfo extends TypeInfo implements IPointerInfo{
 	    return type;
     }
     @Override
-    public final String getPointerVariableDeclaration(String cID){
-	    if(type instanceof IPointerInfo p){
-	        return p.getPointerVariableDeclaration("*" + cID);
-        }
-	    return getCname() + " " + cID;
-    }
-    @Override
-    public final FunctionInfo getFunctionPointer(){
-	    var t = type;
-	    for(;;){
-	        if(t instanceof FunctionInfo info){
-	            return info;
-            }else if(t instanceof PointerInfo p){
-	            t = p.getType();
-	            functionPointerDepth++;
-            }else{
-	            break;
-            }
-        }
-        return null;
-    }
-    @Override
-    public final int getFunctionPointerDepth(){
-	    return functionPointerDepth;
-    }
-    @Override
     public String getCname(){
-	    var times = 1;
-	    var t = type;
-	    for(;;){
-	        if(t instanceof FunctionInfo f){
-	            return f.getPointerVariableDeclaration("*".repeat(times));
-            }else if(t instanceof PointerInfo p){
-	            t = p.getType();
-	            times++;
-            }else{
-	            break;
-            }
-        }
 	    return (constant?"const ":"") + super.getCname();
     }
     public final void makeConstant(){

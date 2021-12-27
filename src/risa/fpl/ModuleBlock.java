@@ -48,7 +48,7 @@ public final class ModuleBlock extends AThreePassBlock{
 		   throw e;
 	   }
    }
-   public void compile()throws IOException,CompilerException{
+   public void compile()throws CompilerException{
        try{
            if(!(name.equals("std.lang") || name.equals("std.backend"))){
                env.addModuleToImport(new Atom(0,0,"std.lang", AtomType.ID));
@@ -114,6 +114,7 @@ public final class ModuleBlock extends AThreePassBlock{
            if(isMain()){//main module is written as last
                writer.write("_String* args;\n");
                writer.write("void onExit();\n");
+               writer.write("void _std_system_addOnExitHandler0(_onExit0);\n");
                writer.write("int main(int argc,char** argv){\n");
                writer.write(env.getInitializerCode());
                for(var mod:fpl.getModules()){
@@ -122,6 +123,7 @@ public final class ModuleBlock extends AThreePassBlock{
                    }
                }
                writer.write("_Thread mainThread;\n");
+               writer.write("_std_system_addOnExitHandler0(&onExit);\n");
                writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
                writer.write("_std_lang_currentThread = &mainThread;\n");
                writer.write("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");

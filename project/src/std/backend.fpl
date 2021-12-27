@@ -76,10 +76,8 @@ fn void* directoryOpen char* name{
   return dir
 }
 fn void;T; free[] T* this memory len{
- var i 0L
- while i < len{
+ for i,len{
    [ this + i ] free
-   i ++
  }
  free this cast void*
 }

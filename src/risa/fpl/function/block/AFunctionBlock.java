@@ -5,7 +5,6 @@ import risa.fpl.env.FnEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;
-import risa.fpl.info.IPointerInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
@@ -60,11 +59,7 @@ public abstract class AFunctionBlock extends ABlock{
                 builder.append("const ");
                 p.makeConstant();
             }
-            if(argType instanceof IPointerInfo p){
-                builder.append(p.getPointerVariableDeclaration(argNameCID));
-            }else{
-                builder.append(argType.getCname()).append(' ').append(argNameCID);
-            }
+            builder.append(argType.getCname()).append(' ').append(argNameCID);
             var v = new Variable(argType,IFunction.toCId(argName.getValue()),false,argName.getValue(),constant,null,AccessModifier.PUBLIC);
             env.addFunction(argName.getValue(),v);
         }

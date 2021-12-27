@@ -35,36 +35,28 @@ class String{
     if len != str len{
       return false
     }
-    var i 0
-    while i < len{
+    for i,len{
       if p get i; != str p get i{
         return false
       }
-      i ++
     }
     return true
   }
   fn String + String str{
     var ret char:alloc[] len + str len
-    var i 0
-    while i < len{
+    for i,len{
        ret set i,p get i
-       i ++
     }
-    var strI 0
-    while strI < str len{
+    for strI,str len{
       ret set i,str p get strI
-      strI ++
       i ++
     }
     return String:new ret,len + str len,true
   }
   fn char* toCString{
     var ret char:alloc[] len + 1
-    var i 0
-    while i < len{
+    for i,len{
       ret set i,p get i
-      i ++
     }
     ret set i,$\0
     return ret
@@ -197,10 +189,8 @@ fn void* malloc memory size{
   return p
 }
 fn void memoryCopy byte* src byte* dest memory size{
-    memory i 0L
-    while i < size{
+    for i,size{
      dest set i,src get i
-     i ++
     }
 }
 #these functions will be made inaccessible by compiler

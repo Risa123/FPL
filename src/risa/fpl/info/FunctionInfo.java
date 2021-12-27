@@ -4,7 +4,7 @@ import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.FunctionDereference;
 import risa.fpl.function.exp.PointerSize;
 
-public final class FunctionInfo extends TypeInfo implements IPointerInfo{
+public class FunctionInfo extends TypeInfo{
     private final Function function;
     public FunctionInfo(Function function){
         super(function.getName(),getFunctionPointerDeclaration(function,function.getPointerVariant().cname()));
@@ -22,10 +22,6 @@ public final class FunctionInfo extends TypeInfo implements IPointerInfo{
             return function.hasSignature(f.getFunction());
         }
         return o == NIL;
-    }
-    @Override
-    public String getPointerVariableDeclaration(String cID){
-        return getFunctionPointerDeclaration(function,cID);
     }
     private static String getFunctionPointerDeclaration(Function function,String cID){
         var b = new StringBuilder(function.getReturnType().getCname());
@@ -55,12 +51,7 @@ public final class FunctionInfo extends TypeInfo implements IPointerInfo{
         }
         return b.append(")").toString();
     }
-    @Override
-    public FunctionInfo getFunctionPointer(){
-        return this;
-    }
-    @Override
-    public int getFunctionPointerDepth(){
-        return 0;
+    public String getPointerVariableDeclaration(String cname){
+        return getFunctionPointerDeclaration(function,cname);
     }
 }

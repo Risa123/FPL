@@ -127,13 +127,9 @@ public final class Var implements IFunction{
                 if(env instanceof  ClassEnv && varType instanceof PointerInfo p && !p.getType().isPrimitive()){
                    declaration += "struct ";
                 }
-                if(varType instanceof IPointerInfo p){
-                  declaration += p.getPointerVariableDeclaration(cID);
-                }else{
-                    declaration += varType.getCname() + " " + cID;
-                    if(env.getAccessModifier() == AccessModifier.PRIVATE && !env.hasModifier(Modifier.NATIVE) && env instanceof ModuleEnv){
-                        declaration = "static " + declaration;
-                    }
+                declaration += varType.getCname() + " " + cID;
+                if(env.getAccessModifier() == AccessModifier.PRIVATE && !env.hasModifier(Modifier.NATIVE) && env instanceof ModuleEnv){
+                    declaration = "static " + declaration;
                 }
                 if(env instanceof ModuleEnv mod){
                     mod.appendVariableDeclaration(declaration);

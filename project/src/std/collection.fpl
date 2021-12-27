@@ -81,23 +81,19 @@ class Map;K V{
     }
   }
   fn bool containsKey K key{
-    var i 0L
-    while i < entries getSize{
+    for i,entries getSize{
       if entries get i;getKey; == key{
         return true
       }
-      i ++
     }
     return false
   }
   fn V get K key{
-    var i 0L
-    while i < entries getSize{
+    for i,entries getSize{
       var entry entries get i
       if entry getKey; == key{
         return entry getValue
       }
-      i ++
     }
     NoElementException:new "map has no entry for key";throw
   }

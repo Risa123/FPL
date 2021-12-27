@@ -54,16 +54,7 @@ public class Fn extends AFunctionBlock{
         if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
             headBuilder.append("static ");
         }
-        FunctionInfo fPointer = null;
-        if(returnType instanceof IPointerInfo p){
-            fPointer = p.getFunctionPointer();
-        }
-        if(fPointer != null){
-            headBuilder.append(fPointer.getFunction().getReturnType().getCname()).append('(');
-            headBuilder.append("*".repeat(((IPointerInfo)returnType).getFunctionPointerDepth() + 1));
-        }else{
-            headBuilder.append(returnType.getCname());
-        }
+        headBuilder.append(returnType.getCname());
         headBuilder.append(' ').append(cID);
         if(!env.hasModifier(Modifier.NATIVE)){
            if(env.hasFunctionInCurrentEnv(id.getValue()) && env.getFunction(id) instanceof  Function f){
@@ -73,17 +64,6 @@ public class Fn extends AFunctionBlock{
            }
         }
 		var args = parseArguments(headBuilder,it,fnEnv,self);
-        if(fPointer != null){
-            headBuilder.append(")(");
-            for(var arg:args.entrySet()){
-                if(arg.getValue() instanceof IPointerInfo p){
-                    headBuilder.append(p.getPointerVariableDeclaration(arg.getKey()));
-                }else{
-                    headBuilder.append(arg.getValue().getCname()).append(" ").append(arg.getKey());
-                }
-            }
-            headBuilder.append(')');
-        }
 		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
             it.next();
