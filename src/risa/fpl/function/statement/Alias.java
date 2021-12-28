@@ -10,6 +10,7 @@ import risa.fpl.parser.ExpIterator;
 public final class Alias implements IFunction{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env, ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum);
         var id = it.nextID();
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             throw new CompilerException(id,"there is already a function called " + id);

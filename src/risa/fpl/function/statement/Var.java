@@ -22,6 +22,7 @@ public final class Var implements IFunction{
     }
 	@Override
 	public TypeInfo compile(StringBuilder  builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum,Modifier.NATIVE,Modifier.CONST);
         if(type != null && it.hasNext()){
            if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
                it.next();
@@ -95,7 +96,9 @@ public final class Var implements IFunction{
                         }
                         var buffer = new StringBuilder();
                         if(!it.hasNext() || it.peek() instanceof Atom p && p.getType() == AtomType.END_ARGS && exp instanceof Atom a && a.getType() != AtomType.ID){
-                            constantExp = true;
+                            if(exp instanceof Atom a && a.getType() != AtomType.STRING){
+                                constantExp = true;
+                            }
                         }
                         expType = exp.compile(buffer,env,it);
                         expCode = buffer.toString();

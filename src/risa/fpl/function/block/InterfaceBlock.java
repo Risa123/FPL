@@ -20,6 +20,7 @@ public final class InterfaceBlock implements IFunction{
         if(!(env instanceof ModuleEnv mod)){
             throw new CompilerException(line,tokenNum,"interface can only be declared on module level");
         }
+        env.checkModifiers(line,tokenNum);
         var id = it.nextID();
         var idV = id.getValue();
         if(env.hasTypeInCurrentEnv(idV)){

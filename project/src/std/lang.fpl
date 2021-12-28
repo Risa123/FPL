@@ -44,8 +44,10 @@ class String{
   }
   fn String + String str{
     var ret char:alloc[] len + str len
-    for i,len{
+    var i 0
+    while i < len{
        ret set i,p get i
+       i ++
     }
     for strI,str len{
       ret set i,str p get strI
@@ -55,8 +57,10 @@ class String{
   }
   fn char* toCString{
     var ret char:alloc[] len + 1
-    for i,len{
+    var i 0
+    while i < len{
       ret set i,p get i
+      i ++
     }
     ret set i,$\0
     return ret
@@ -249,11 +253,12 @@ fn String charToString char this{
   return str
 }
 #bool methods
+private const var TRUE "true";FALSE "false"
 fn String boolToString bool this{
    if this{
-     return "true"
+     return TRUE
    }
-   return "false"
+   return FALSE
 }
 #integer methods
 fn String integerToString long this{
@@ -286,4 +291,15 @@ fn String integerToString long this{
    i --
  }
  return String:new ret,len,true
+}
+const{
+  byte BYTE_MIN_VALUE -128;BYTE_MAX_VALUE 127
+  sbyte SBYTE_MIN_VALUE -128;SBYTE_MAX_VALUE 127
+  ubyte UBYTE_MIN_VALUE 0;UBYTE_MAX_VALUE 255
+  short SHORT_MIN_VALUE -32768;SHORT_MAX_VALUE 32767
+  sshort SSHORT_MIN_VALUE -3268;SSHORT_MAX_VALUE 32767
+  ushort USHORT_MIN_VALUE 0;USHORT_MAX_VALUE 65_535
+  int INT_MIN_VALUE -2147483648;INT_MAX_VALUE  2147483647
+  sint SINT_MIN_VALUE -2147483648;SINT_MAX_VALUE 2147483647
+  uint UINT_MIN_VALUE 0;UINT_MAX_VALUE 4_294_967_295
 }

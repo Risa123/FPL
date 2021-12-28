@@ -1,8 +1,7 @@
-package risa.fpl.function.statement;
+package risa.fpl.function.exp;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
-import risa.fpl.function.exp.AField;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.AExp;
 import risa.fpl.parser.ExpIterator;

@@ -8,7 +8,10 @@ use{
  risa.fpl.main
 }
 class ModuleBlock ObjectInfo{
- private ModuleEnv modEnv init
+ private const{
+    ModuleEnv modEnv init
+    String name
+ }
  this FPL* fpl String fplPath{
    FileReader reader init fplPath
    Tokenizer tokenizer init reader

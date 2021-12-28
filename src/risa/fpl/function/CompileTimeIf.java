@@ -11,6 +11,7 @@ import risa.fpl.parser.List;
 public final class CompileTimeIf implements IFunction{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum);
         var conditionAtom = it.nextID();
         var condition = conditionAtom.getValue();
         var invert = false;

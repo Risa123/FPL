@@ -35,6 +35,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		if(!(env instanceof ModuleEnv modEnv)){
 		    throw new CompilerException(line,tokenNum,"can only be used on module level");
         }
+        env.checkModifiers(line,tokenNum,Modifier.ABSTRACT);
         var id = it.nextID();
 		var idV = id.getValue();
 		if(env.hasTypeInCurrentEnv(idV) && !(env.getType(id) instanceof InstanceInfo)){

@@ -20,6 +20,7 @@ public class Fn extends AFunctionBlock{
 	private boolean appendSemicolon;
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum,Modifier.NATIVE,Modifier.VIRTUAL,Modifier.ABSTRACT,Modifier.OVERRIDE);
 		var returnType = env.getType(it.nextID());
         var fnEnv = new FnEnv(env,returnType);
         LinkedHashMap<String,TypeInfo> templateArgs = null;

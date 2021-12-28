@@ -50,7 +50,7 @@ public final class Tokenizer{
                           builder.appendCodePoint(c);
                       }
                       case 's'->builder.append(' ');
-                      default->throw new CompilerException(line,tokenNum,"no special character " +  Character.toString(c));
+                      default->throw new CompilerException(line,tokenNum,"no special character " + Character.toString(c));
                   }
 			  }else if(Character.isWhitespace(firstChar)){
 			      throw new CompilerException(line,tokenNum,"$ cannot be followed by whitespace");
@@ -61,12 +61,12 @@ public final class Tokenizer{
 			      builder.appendCodePoint(firstChar);
               }
 			  builder.append("'");
-			  return new Atom(line,tokenNum,builder.toString(), AtomType.CHAR);
+			  return new Atom(line,tokenNum,builder.toString(),AtomType.CHAR);
 		  }else if(c == '+' || c == '-' || Character.isDigit(c)){
 			  var signed = false;
 			  var hex = false;
 			  var b = new StringBuilder();
-			  if(c == '+' || c == '-') {
+			  if(c == '+' || c == '-'){
 				  b.appendCodePoint(c);
 				  read();
 				  if(Character.isDigit(c)){
@@ -76,7 +76,7 @@ public final class Tokenizer{
                           b.appendCodePoint(c);
 						  if(!Character.isValidCodePoint(c)){
 							  forceEnd = true;
-							  return new Atom(line,tokenNum,"", AtomType.NEW_LINE);
+							  return new Atom(line,tokenNum,"",AtomType.NEW_LINE);
 						  }
 						  while(hasNext() && notSeparator(read())){
 							  b.appendCodePoint(c);
@@ -84,7 +84,7 @@ public final class Tokenizer{
                       }else{
                           readNext = false;
                       }
-                      return new Atom(line,tokenNum,b.toString(), AtomType.ID);
+                      return new Atom(line,tokenNum,b.toString(),AtomType.ID);
                   }
 				  signed = true;
 			  }else if(c == '0'){
@@ -100,9 +100,10 @@ public final class Tokenizer{
 			  }else{
 				  b.appendCodePoint(c);
 			  }
-			  var type = signed? AtomType.SINT: AtomType.UINT;
+			  var type = signed?AtomType.SINT:AtomType.UINT;
 			  var floatingPoint = false;
 			  var hasTypeChar = false;
+			  var hasScientificNotation = false;
 			  if(hex){
                 while(hasNext() && notSeparator(read())){
                     b.appendCodePoint(c);
@@ -124,22 +125,29 @@ public final class Tokenizer{
 					  }else if(c == 'F'){
 						  type = AtomType.FLOAT;
 						  if(!floatingPoint){
-							  throw new CompilerException(line, tokenNum,"float number expected");
+							  throw new CompilerException(line,tokenNum,"float number expected");
 						  }
 						  break;
 					  }else if(c == 'L'){
 						  hasTypeChar = true;
-						  type = signed? AtomType.SLONG: AtomType.ULONG;
+						  type = signed?AtomType.SLONG:AtomType.ULONG;
 						  break;
 					  }else if(c == 'S'){
 						  hasTypeChar = true;
-						  type = signed? AtomType.SSHORT: AtomType.USHORT;
+						  type = signed?AtomType.SSHORT:AtomType.USHORT;
 						  break;
 					  }else if(c == 'B'){
 						  hasTypeChar = true;
-						  type = signed? AtomType.SBYTE: AtomType.UBYTE;
+						  type = signed?AtomType.SBYTE:AtomType.UBYTE;
 						  break;
-					  }else{
+					  }else if(c == 'e'){
+                        if(hasScientificNotation){
+							throw new CompilerException(line,tokenNum,"this number already has scientific notation");
+						}else{
+							hasScientificNotation = true;
+						}
+						b.append('e');
+					  }else if(c != '_'){//ignore _ to make literals more readable
 						  throw new CompilerException(line,tokenNum,"unexpected character " + Character.toString(c) + ",code:" + c);
 					  }
 				  }
@@ -172,10 +180,10 @@ public final class Tokenizer{
 						  if(hex){
 							  n = Long.parseLong(value,16);
 						  }else{
-							  n = Long.parseLong(value);
+							  n = Double.valueOf(value).longValue();
 						  }
 					  }catch(NumberFormatException e){
-						  throw new CompilerException(tokenNum,line,"invalid number");
+						  throw new CompilerException(tokenNum,line,"invalid number " + value);
 					  }
 					  if(type == AtomType.SBYTE && (n < Byte.MIN_VALUE || n > Byte.MAX_VALUE)){
 						  throw new CompilerException(line,tokenNum,"sbyte numbere expected");
@@ -197,15 +205,15 @@ public final class Tokenizer{
 			  }
 			  return new Atom(line,tokenNum,value,type);
 		  } else if( c == '{'){
-			  return new Atom(line,tokenNum,"{", AtomType.BEGIN_BLOCK);
+			  return new Atom(line,tokenNum,"{",AtomType.BEGIN_BLOCK);
 		  }else if(c == '}'){
-			  return new Atom(line,tokenNum,"}", AtomType.END_BLOCK);
+			  return new Atom(line,tokenNum,"}",AtomType.END_BLOCK);
 		  }else if(c == '\n'){
-			 return new Atom(line,tokenNum,"", AtomType.NEW_LINE) ;
+			 return new Atom(line,tokenNum,"",AtomType.NEW_LINE) ;
 		  }else if(c == ','){
-			  return new Atom(line,tokenNum,",", AtomType.ARG_SEPARATOR);
+			  return new Atom(line,tokenNum,",",AtomType.ARG_SEPARATOR);
 		  }else if(c == ';'){
-			  return new Atom(line,tokenNum,";", AtomType.END_ARGS);
+			  return new Atom(line,tokenNum,";",AtomType.END_ARGS);
 		  }else  if(c == '"'){
 			  var b = new StringBuilder("\"");
 			  while(hasNext() && read() != '"'){
@@ -225,20 +233,20 @@ public final class Tokenizer{
 			  	b.appendCodePoint(c);
 			  }
 			  b.append('"');
-			  return new Atom(line,tokenNum,b.toString(), AtomType.STRING);
+			  return new Atom(line,tokenNum,b.toString(),AtomType.STRING);
 		  }else if(c == ':'){
-		      return new Atom(line,tokenNum,":", AtomType.CLASS_SELECTOR);
-          } else  if(notSeparator(c)){
+		      return new Atom(line,tokenNum,":",AtomType.CLASS_SELECTOR);
+          }else  if(notSeparator(c)){
 			  var b = new StringBuilder();
 			  readNext = false;
 			  if(!Character.isValidCodePoint(c)){
 			      forceEnd = true;
-			      return new Atom(line,tokenNum,"", AtomType.NEW_LINE);
+			      return new Atom(line,tokenNum,"",AtomType.NEW_LINE);
               }
 			  while(hasNext() && notSeparator(read())){
 				  b.appendCodePoint(c);
 			  }
-			  return new Atom(line,tokenNum,b.toString(), AtomType.ID);
+			  return new Atom(line,tokenNum,b.toString(),AtomType.ID);
 		  }
 		  return null;
 	  }

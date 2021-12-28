@@ -14,6 +14,7 @@ import risa.fpl.parser.ExpIterator;
 public final class FPointer extends AFunctionBlock{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum);
         var returnType = env.getType(it.nextID());
         var id = it.nextID();
         var cID = IFunction.toCId(id.getValue());

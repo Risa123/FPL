@@ -1,9 +1,13 @@
 use std.backend std.io.base std.io.file std.collection
 
 fn void exit int exitCode{
- native fn void onExit #declared by main block
- onExit
+ callOnExitHandlers
  std.backend.exit exitCode
+}
+fn void callOnExitHandlers{#made inaccessible
+  for i,onExitHandlers getSize{
+      onExitHandlers get i;drf
+   }
 }
 fn int execute String cmd{
   var CCmd cmd toCString
@@ -13,6 +17,18 @@ fn int execute String cmd{
     IOException:new "invalid command " + cmd;;throw
   }
   return exitCode
+}
+fn void addOnExitHandler onExit handler{
+ onExitHandlers add handler
+}
+fn String getEnv String name{
+  var cstr name toCString
+  var value std.backend.getEnv cstr
+  if value == nil{
+    IOException:new "environment variable " + name; + " not found";;throw
+  }
+  cstr free
+  return String:new value,getCStringLen value;,true
 }
 fpointer void onExit
 const{

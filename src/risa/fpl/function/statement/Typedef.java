@@ -10,6 +10,7 @@ import risa.fpl.parser.ExpIterator;
 public final class Typedef implements IFunction{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum);
         builder.append("typedef ");
         var type = it.nextID();
         if(env.hasTypeInCurrentEnv(type.getValue()) && env.getType(type) instanceof CustomTypeInfo t && t.isPrimitive()){

@@ -16,6 +16,7 @@ import risa.fpl.parser.AtomType;
 public final class Main implements IFunction{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum);
         if(!(env instanceof ModuleEnv modEnv && modEnv.isMain())){
             throw new CompilerException(line,tokenNum,"this can only be used in main module");
         }
@@ -35,6 +36,7 @@ public final class Main implements IFunction{
         fnEnv.compileDestructorCalls(b);
         b.append(modEnv.getDestructor());
         if(fnEnv.isReturnNotUsed()){
+           b.append("_std_system_callOnExitHandlers0();\n");
            b.append("return 0;\n");
         }
         modEnv.declareMain();

@@ -2,7 +2,6 @@ package risa.fpl.env;
 
 import risa.fpl.function.block.ConditionalBlock;
 import risa.fpl.function.block.ForLoop;
-import risa.fpl.function.block.TimesLoop;
 import risa.fpl.function.block.TryCatchFinally;
 import risa.fpl.function.statement.Break;
 import risa.fpl.function.statement.Return;
@@ -14,7 +13,6 @@ public class FnEnv extends FnSubEnv{
 	private static final ConditionalBlock WHILE = new ConditionalBlock("while");
 	private static final Break BREAK = new Break();
 	private static final TryCatchFinally TRY_CATCH_FINALLY = new TryCatchFinally();
-	private static final TimesLoop TIMES = new TimesLoop();
 	private static final ForLoop FOR = new ForLoop();
 	private final TypeInfo returnType;
 	public FnEnv(AEnv superEnv,TypeInfo returnType){
@@ -25,7 +23,6 @@ public class FnEnv extends FnSubEnv{
 	    addFunction("while",WHILE);
 	    addFunction("break",BREAK);
 	    addFunction("try",TRY_CATCH_FINALLY);
-		addFunction("times",TIMES);
 		addFunction("for",FOR);
 	}
 	@Override

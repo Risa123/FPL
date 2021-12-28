@@ -13,6 +13,7 @@ import risa.fpl.parser.ExpIterator;
 public final class CopyConstructor extends ABlock{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum);
         if(!(env instanceof ClassEnv cEnv)){
             throw new CompilerException(line,tokenNum,"can only be declared in class block");
         }

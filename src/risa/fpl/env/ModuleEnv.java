@@ -12,6 +12,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.block.Main;
 import risa.fpl.function.exp.Function;
+import risa.fpl.function.exp.IField;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.function.statement.InstanceVar;
 import risa.fpl.info.*;
@@ -27,7 +28,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final StringBuilder variableDeclarations = new StringBuilder();
 	private int mainDeclared;
 	private final ArrayList<TypeInfo>typesForDeclarations = new ArrayList<>();
-	private final ArrayList<Function>inaccessibleFunctions = new ArrayList<>();
+	private final ArrayList<IField>inaccessibleFunctions = new ArrayList<>();
 	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
@@ -125,8 +126,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public ModuleEnv getModule(){
 	    return this;
     }
-    public Function getAndMakeInaccessible(String name){
-	    var f = (Function)functions.get(name);
+    public IField getAndMakeInaccessible(String name){
+	    var f = (IField)functions.get(name);
 	    inaccessibleFunctions.add(f);
 		return f;
 	}

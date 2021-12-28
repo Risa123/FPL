@@ -29,6 +29,7 @@ public final class InstanceVar extends Function{
    }
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum,Modifier.CONST);
         var b = new StringBuilder();
         var id = it.nextAtom();
 		if(id.getType() == AtomType.ID){

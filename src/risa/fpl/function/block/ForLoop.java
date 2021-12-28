@@ -13,6 +13,7 @@ import risa.fpl.parser.ExpIterator;
 public final class ForLoop extends ABlock{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum);
         builder.append("for(");
         var firstAtom = it.nextID();
         var secondAtom = it.nextAtom();
@@ -27,7 +28,11 @@ public final class ForLoop extends ABlock{
             throw new CompilerException(secondAtom,", or identifier expected");
         }
         var b = new StringBuilder();
-        var expType = it.nextAtom().compile(b,env,it);
+        var expAtom = it.nextAtom();
+        var expType = expAtom.compile(b,env,it);
+        if(expType.notIntegerNumber()){
+            throw new CompilerException(expAtom,"expression returning integer number expected");
+        }
         if(type == null){
             type = expType;
         }
@@ -37,7 +42,11 @@ public final class ForLoop extends ABlock{
         builder.append(cId).append("++){\n");
         var subEnv = new FnSubEnv(env);
         subEnv.addFunction(id.getValue(),new Variable(type,cId,id.getValue()));
-        it.nextList().compile(builder,subEnv,it);
+        var tmp = new StringBuilder();
+        it.nextList().compile(tmp,subEnv,it);
+        subEnv.compileToPointerVars(builder);
+        builder.append(tmp);
+        subEnv.compileDestructorCalls(builder);
         builder.append("}\n");
         return TypeInfo.VOID;
     }

@@ -58,35 +58,46 @@ public final class ModuleBlock extends AThreePassBlock{
                throw new CompilerException("declaration of main expected");
            }
            if(!compiled){
-               if(name.equals("std.lang")){
-                   makeMethod("toString","boolToString",TypeInfo.BOOL);
-                   makeMethod("isDigit",TypeInfo.CHAR);
-                   makeMethod("isControl",TypeInfo.CHAR);
-                   makeMethod("isWhitespace",TypeInfo.CHAR);
-                   makeMethod("isUpper",TypeInfo.CHAR);
-                   makeMethod("isLower",TypeInfo.CHAR);
-                   makeMethod("isBlank",TypeInfo.CHAR);
-                   makeMethod("isHexDigit",TypeInfo.CHAR);
-                   makeMethod("isPrint",TypeInfo.CHAR);
-                   makeMethod("isPunct",TypeInfo.CHAR);
-                   makeMethod("toLower",TypeInfo.CHAR);
-                   makeMethod("toUpper",TypeInfo.CHAR);
-                   makeMethod("toString","charToString",TypeInfo.CHAR);
-                   makeMethod("toString","integerToString",NumberInfo.INT,false);
-                   makeMethod("toString","integerToString",NumberInfo.SINT,false);
-                   makeMethod("toString","integerToString",NumberInfo.UINT,false);
-                   makeMethod("toString","integerToString",NumberInfo.LONG,false);
-                   makeMethod("toString","integerToString",NumberInfo.SLONG,false);
-                   makeMethod("toString","integerToString",NumberInfo.ULONG,false);
-                   makeMethod("toString","integerToString",NumberInfo.MEMORY,false);
-                   makeMethod("toString","integerToString",NumberInfo.BYTE,false);
-                   makeMethod("toString","integerToString",NumberInfo.UBYTE,false);
-                   makeMethod("toString","integerToString",NumberInfo.SBYTE,false);
-                   makeMethod("toString","integerToString",NumberInfo.SHORT,false);
-                   makeMethod("toString","integerToString",NumberInfo.USHORT,false);
-                   makeMethod("toString","integerToString",NumberInfo.SSHORT);
-               }else if(name.equals("std.backend")){
-                   fpl.setFreeArray((Function)env.getFunctionFromModule("free[]"));
+               switch(name){
+                   case "std.lang"->{
+                       makeMethod("toString","boolToString",TypeInfo.BOOL);
+                       makeMethod("isDigit",TypeInfo.CHAR);
+                       makeMethod("isControl",TypeInfo.CHAR);
+                       makeMethod("isWhitespace",TypeInfo.CHAR);
+                       makeMethod("isUpper",TypeInfo.CHAR);
+                       makeMethod("isLower",TypeInfo.CHAR);
+                       makeMethod("isBlank",TypeInfo.CHAR);
+                       makeMethod("isHexDigit",TypeInfo.CHAR);
+                       makeMethod("isPrint",TypeInfo.CHAR);
+                       makeMethod("isPunct",TypeInfo.CHAR);
+                       makeMethod("toLower",TypeInfo.CHAR);
+                       makeMethod("toUpper",TypeInfo.CHAR);
+                       makeMethod("toString","charToString",TypeInfo.CHAR);
+                       makeMethod("toString","integerToString",NumberInfo.INT,false);
+                       makeMethod("toString","integerToString",NumberInfo.SINT,false);
+                       makeMethod("toString","integerToString",NumberInfo.UINT,false);
+                       makeMethod("toString","integerToString",NumberInfo.LONG,false);
+                       makeMethod("toString","integerToString",NumberInfo.SLONG,false);
+                       makeMethod("toString","integerToString",NumberInfo.ULONG,false);
+                       makeMethod("toString","integerToString",NumberInfo.MEMORY,false);
+                       makeMethod("toString","integerToString",NumberInfo.BYTE,false);
+                       makeMethod("toString","integerToString",NumberInfo.UBYTE,false);
+                       makeMethod("toString","integerToString",NumberInfo.SBYTE,false);
+                       makeMethod("toString","integerToString",NumberInfo.SHORT,false);
+                       makeMethod("toString","integerToString",NumberInfo.USHORT,false);
+                       makeMethod("toString","integerToString",NumberInfo.SSHORT);
+                       addNumberFields(NumberInfo.BYTE);
+                       addNumberFields(NumberInfo.SBYTE);
+                       addNumberFields(NumberInfo.UBYTE);
+                       addNumberFields(NumberInfo.SHORT);
+                       addNumberFields(NumberInfo.SSHORT);
+                       addNumberFields(NumberInfo.USHORT);
+                       addNumberFields(NumberInfo.INT);
+                       addNumberFields(NumberInfo.SINT);
+                       addNumberFields(NumberInfo.UINT);
+                   }
+                   case "std.backend"->fpl.setFreeArray((Function)env.getFunctionFromModule("free[]"));
+                   case "std.system"->env.getAndMakeInaccessible("callOnExitHandlers");
                }
            }
        }catch(CompilerException ex){
@@ -157,7 +168,7 @@ public final class ModuleBlock extends AThreePassBlock{
    private void makeMethod(String name,String oldName,TypeInfo ofType,boolean remove){
       Function func;
       if(remove){
-          func = env.getAndMakeInaccessible(oldName);
+          func = (Function)env.getAndMakeInaccessible(oldName);
       }else{
           func = (Function)env.getFunctionFromModule(oldName);
       }
@@ -171,6 +182,11 @@ public final class ModuleBlock extends AThreePassBlock{
    }
    private void makeMethod(String name,String oldName,TypeInfo ofType){
        makeMethod(name,oldName,ofType,true);
+   }
+   private void addNumberFields(NumberInfo type){
+       var prefix = type.getName().toUpperCase() + "_";
+       type.addField("MIN_VALUE",env.getAndMakeInaccessible(prefix + "MIN_VALUE"));
+       type.addField("MAX_VALUE",env.getAndMakeInaccessible(prefix + "MAX_VALUE"));
    }
    public ModuleEnv getEnv(){
        return env;

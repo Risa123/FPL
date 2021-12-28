@@ -10,6 +10,7 @@ import risa.fpl.parser.AtomType;
 public final class Asm implements IFunction{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum);
         var code = it.nextAtom();
         if(code.getType() != AtomType.STRING){
             throw new CompilerException(code,"assembly code as string expected");

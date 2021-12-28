@@ -17,6 +17,7 @@ public final class TryCatchFinally extends ABlock{
     private static InstanceInfo exception;
     @Override
     public TypeInfo compile(StringBuilder  builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+        env.checkModifiers(line,tokenNum);
         var postEntry = new StringBuilder("{\nchar exceptionCaught = 0;\n");
         postEntry.append("if(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context)){\n");
         var tryEnv = new FnSubEnv(env);

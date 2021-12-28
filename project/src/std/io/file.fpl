@@ -4,13 +4,6 @@ private{
   [] char 2 READ $r,$\0
   [] char 2 WRITE $w,$\0
  }
- fn int getCStringLen char* str{
-   var len 0
-   while str get len; != $\0{
-    len ++
-   }
-   return len
- }
  fn void checkErrNo int num String path{
     if num == -1{
        var msg getErrNoMessage

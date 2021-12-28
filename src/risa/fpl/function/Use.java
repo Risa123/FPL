@@ -13,6 +13,7 @@ import risa.fpl.parser.AtomType;
 public final class Use implements IFunction{
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+		env.checkModifiers(line,tokenNum);
 		if(!(env instanceof ModuleEnv e)){
 			throw new CompilerException(line,tokenNum,"can only be used on module level");
 		}

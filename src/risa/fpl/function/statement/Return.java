@@ -15,6 +15,7 @@ import risa.fpl.parser.List;
 public final class Return implements IFunction{
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+		env.checkModifiers(line,tokenNum);
 		var subEnv = (FnSubEnv)env;
 		var expCode = "";
 		TypeInfo returnType = null;
@@ -41,7 +42,8 @@ public final class Return implements IFunction{
 		}
 		subEnv.compileDestructorCallsFromWholeFunction(builder);
 		if(subEnv.isInMainBlock()){
-			builder.append("free(args);\n_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");//args is from main module
+			builder.append("void _std_system_callOnExitHandlers();\n");
+			builder.append("_std_system_callOnExitHandlers0();\n");//args is from main module
 		}
 		if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null){//null is always false
            expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ")";

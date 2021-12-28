@@ -9,6 +9,7 @@ import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SubEnv extends AEnv{
   protected final AEnv superEnv;
@@ -78,5 +79,12 @@ public class SubEnv extends AEnv{
  }
  public final void addModifier(Modifier modifier){
       modifiers.add(modifier);
+ }
+ public final void checkModifiers(int line,int tokenNum,Modifier...allowed)throws CompilerException{
+      for(var mod:modifiers){
+          if(!Arrays.asList(allowed).contains(mod)){
+              throw new CompilerException(line,tokenNum,"modifier " + mod + " cannot be applied on this function");
+          }
+      }
  }
 }

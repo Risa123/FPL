@@ -16,6 +16,7 @@ import risa.fpl.parser.AtomType;
 public final class Array implements IFunction{
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+		env.checkModifiers(line,tokenNum,Modifier.CONST);
 		var b = new StringBuilder();
 		if(env.hasModifier(Modifier.CONST)){
 			b.append("const ");

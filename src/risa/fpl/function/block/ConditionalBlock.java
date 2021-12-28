@@ -18,6 +18,7 @@ public final class ConditionalBlock extends ABlock{
     }
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
+		env.checkModifiers(line,tokenNum);
 		builder.append(code).append('(');
 		var list = new ArrayList<AExp>();
 		int expLine = 0,expCharNum = 0;
