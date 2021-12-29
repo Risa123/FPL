@@ -75,7 +75,7 @@ public final class FPL{
         }
     	Files.createDirectory(path);
         var list = new ArrayList<>(modules.values());
-    	for(var i = 0; i < 4 && !list.isEmpty(); ++i){//four passes needed
+    	for(var i = 0;i < 4 && !list.isEmpty();++i){//four passes needed
             var it = list.iterator();
             while(it.hasNext()){
                 var mod = it.next();

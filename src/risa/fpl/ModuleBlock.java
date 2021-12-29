@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import risa.fpl.env.ClassEnv;
@@ -12,6 +11,7 @@ import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.block.AThreePassBlock;
 import risa.fpl.function.block.ExpressionInfo;
 import risa.fpl.function.exp.Function;
+import risa.fpl.info.ClassInfo;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
@@ -86,15 +86,20 @@ public final class ModuleBlock extends AThreePassBlock{
                        makeMethod("toString","integerToString",NumberInfo.SHORT,false);
                        makeMethod("toString","integerToString",NumberInfo.USHORT,false);
                        makeMethod("toString","integerToString",NumberInfo.SSHORT);
-                       addNumberFields(NumberInfo.BYTE);
-                       addNumberFields(NumberInfo.SBYTE);
-                       addNumberFields(NumberInfo.UBYTE);
-                       addNumberFields(NumberInfo.SHORT);
-                       addNumberFields(NumberInfo.SSHORT);
-                       addNumberFields(NumberInfo.USHORT);
-                       addNumberFields(NumberInfo.INT);
-                       addNumberFields(NumberInfo.SINT);
-                       addNumberFields(NumberInfo.UINT);
+                       addNumberFields(ClassInfo.BYTE);
+                       addNumberFields(ClassInfo.SBYTE);
+                       addNumberFields(ClassInfo.UBYTE);
+                       addNumberFields(ClassInfo.SHORT);
+                       addNumberFields(ClassInfo.SSHORT);
+                       addNumberFields(ClassInfo.USHORT);
+                       addNumberFields(ClassInfo.INT);
+                       addNumberFields(ClassInfo.SINT);
+                       addNumberFields(ClassInfo.UINT);
+                       addNumberFields(ClassInfo.LONG);
+                       addNumberFields(ClassInfo.SLONG);
+                       addNumberFields(ClassInfo.ULONG);
+                       addNumberFields(ClassInfo.FLOAT);
+                       addNumberFields(ClassInfo.DOUBLE);
                    }
                    case "std.backend"->fpl.setFreeArray((Function)env.getFunctionFromModule("free[]"));
                    case "std.system"->env.getAndMakeInaccessible("callOnExitHandlers");
@@ -107,7 +112,7 @@ public final class ModuleBlock extends AThreePassBlock{
        compiled = true;
    }
    public void writeToFile()throws IOException{
-       try(var writer = Files.newBufferedWriter(Paths.get(cPath))){
+       try(var writer = Files.newBufferedWriter(Path.of(cPath))){
            env.declare(writer);
            for(var env:classEnvList){
               if(!(env.getInstanceInfo() instanceof TemplateTypeInfo)){
@@ -183,10 +188,13 @@ public final class ModuleBlock extends AThreePassBlock{
    private void makeMethod(String name,String oldName,TypeInfo ofType){
        makeMethod(name,oldName,ofType,true);
    }
-   private void addNumberFields(NumberInfo type){
-       var prefix = type.getName().toUpperCase() + "_";
-       type.addField("MIN_VALUE",env.getAndMakeInaccessible(prefix + "MIN_VALUE"));
-       type.addField("MAX_VALUE",env.getAndMakeInaccessible(prefix + "MAX_VALUE"));
+   private void addNumberFields(ClassInfo classInfo){
+       var prefix = classInfo.getInstanceInfo().getName().toUpperCase() + "_";
+       classInfo.addField("MIN_VALUE",env.getAndMakeInaccessible(prefix + "MIN_VALUE"));
+       classInfo.addField("MAX_VALUE",env.getAndMakeInaccessible(prefix + "MAX_VALUE"));
+       if(!classInfo.getInstanceInfo().notIntegerNumber()){
+           classInfo.addField("parse",env.getAndMakeInaccessible("integerParse"));
+       }
    }
    public ModuleEnv getEnv(){
        return env;

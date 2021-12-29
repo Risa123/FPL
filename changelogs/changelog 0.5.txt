@@ -4,9 +4,10 @@ gcc property removed
 added const for pointer arguments
 getObjectSize added to all interfaces
 for loop added
-MIN_VALUE and MAX_VALUE constants added to number types
+MIN_VALUE and MAX_VALUE constants added to number classes
 scientific notation added
 number literal can now contain _ to make it more readable
+added parse methods to number classes
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
@@ -21,3 +22,7 @@ fix function pointer can now be used as template argument
 fix access modifiers can only be used in classes and modules check added
 fix modifier cannot be applied to this function check added
 fix var used to declare string in module C error
+fix number literals C errors
+fix invalid number error reports hex numbers without 0x
+fix duplicate type char check added
+fix type chars added to hexadecimal literals

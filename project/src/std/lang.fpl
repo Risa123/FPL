@@ -292,14 +292,35 @@ fn String integerToString long this{
  }
  return String:new ret,len,true
 }
+fn long integerParse String str{
+  long value 0
+  var sign 1
+  for i,str getLength{
+     var c str get i
+     if c == $+{
+       #ignore
+     }if c == $-{
+       sign = -1
+     }{
+       value = value * 10 + c cast long - $0 cast long
+     }
+  }
+  return sign * value
+}
+#these constants will be removed by the compiler
 const{
   byte BYTE_MIN_VALUE -128;BYTE_MAX_VALUE 127
   sbyte SBYTE_MIN_VALUE -128;SBYTE_MAX_VALUE 127
   ubyte UBYTE_MIN_VALUE 0;UBYTE_MAX_VALUE 255
   short SHORT_MIN_VALUE -32768;SHORT_MAX_VALUE 32767
   sshort SSHORT_MIN_VALUE -3268;SSHORT_MAX_VALUE 32767
-  ushort USHORT_MIN_VALUE 0;USHORT_MAX_VALUE 65_535
+  ushort USHORT_MIN_VALUE 0;USHORT_MAX_VALUE 65535
   int INT_MIN_VALUE -2147483648;INT_MAX_VALUE  2147483647
   sint SINT_MIN_VALUE -2147483648;SINT_MAX_VALUE 2147483647
   uint UINT_MIN_VALUE 0;UINT_MAX_VALUE 4_294_967_295
+  long LONG_MIN_VALUE -2147483646L;LONG_MAX_VALUE 2147483647L
+  slong SLONG_MIN_VALUE -2147483646L;SLONG_MAX_VALUE 2147483647L
+  ulong ULONG_MIN_VALUE 0;ULONG_MAX_VALUE 0xffffffffUL
+  float FLOAT_MIN_VALUE 1.4e-45;FLOAT_MAX_VALUE 3.4028235e38F
+  double DOUBLE_MIN_VALUE 4.9e-324;DOUBLE_MAX_VALUE 1.7976931348623157e308
 }

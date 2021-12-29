@@ -30,10 +30,10 @@ public final class ExpIterator{
   }
   public Atom nextAtom()throws CompilerException{
 	  var exp = next();
-	  if(!(exp instanceof Atom)){
-		 throw new CompilerException(exp,"atom expected");
+	  if(exp instanceof Atom a){
+		 return a;
 	  }
-	  return(Atom)exp;
+	  throw new CompilerException(exp,"atom expected");
   }
   public Atom nextID()throws CompilerException{
 	  var atom = nextAtom();
@@ -47,10 +47,10 @@ public final class ExpIterator{
   }
   public List nextList()throws CompilerException{
 	  var list = next();
-	  if(!(list instanceof List)){
-		  throw new CompilerException(list,"list expected");
+	  if(list instanceof List l){
+		  return l;
 	  }
-	  return (List)list;
+	  throw new CompilerException(list,"list expected");
   }
   public AExp peek()throws CompilerException{
 	  if(peeked == null){

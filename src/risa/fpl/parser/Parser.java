@@ -27,21 +27,16 @@ public final class Parser implements AutoCloseable{
  }
  private List parseStatement(Atom first)throws IOException,CompilerException{
 	 var list = new ArrayList<AExp>();
-	 if(first.getType() != AtomType.NEW_LINE) {
+	 if(first.getType() != AtomType.NEW_LINE){
 		 list.add(first);
 	 }
 	 while(hasNext()){
-		 var token = tokenizer.peek();
-		 if(token.getType() == AtomType.NEW_LINE){
-		     tokenizer.next();
+		 var token = tokenizer.next();
+		 if(token.getType() == AtomType.NEW_LINE || token.getType() == AtomType.END_BLOCK){
 			 break;
-		 }else if(token.getType() == AtomType.END_BLOCK){
-		    break;
 		 }else if(token.getType() == AtomType.BEGIN_BLOCK){
-		     tokenizer.next();
 			 list.add(parseBlock(token));
 		 }else{
-             tokenizer.next();
 			 list.add(token);
 		 }
 	 }
