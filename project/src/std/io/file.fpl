@@ -7,7 +7,7 @@ private{
  fn void checkErrNo int num String path{
     if num == -1{
        var msg getErrNoMessage
-       IOException:new String:new msg,getCStringLen msg;,false; + " "; + path;;throw
+       IOException:throw String:new msg,getCStringLen msg;,false; + " "; + path
      }
  }
 }
@@ -18,7 +18,7 @@ abstract class FileHandler Closeable{
         var num fileError handle
         if num != 0{
           var msg getErrorMessage num
-          IOException:new String:new msg,getCStringLen msg;,false;;throw
+          IOException:throw String:new msg,getCStringLen msg;,false
         }
       }
    }
@@ -28,7 +28,7 @@ abstract class FileHandler Closeable{
       cname free
       if handle == nil{
         var msg getErrNoMessage
-        IOException:new String:new msg,getCStringLen msg;,false; + " "; + name;;throw
+        IOException:throw String:new msg,getCStringLen msg;,false; + " "; + name
       }
    }
    this void* handle{
@@ -67,7 +67,7 @@ class DirectoryStream{
     cstr free
     if handle == nil{
       var msg getErrNoMessage
-      IOException:new String:new msg,getCStringLen msg;,false; + " "; + name;;throw
+      IOException:throw String:new msg,getCStringLen msg;,false; + " "; + name
     }
   }
   fn String read{
@@ -76,7 +76,7 @@ class DirectoryStream{
     if entry == nil{
       entry = directoryRead handle
       if entry == nil{
-        IOException:new "no more files";throw
+        IOException:throw "no more files"
       }
     }
     var i 0
@@ -100,7 +100,7 @@ class DirectoryStream{
   fn void close{
     if directoryClose handle; == -1{
       var msg getErrNoMessage
-      IOException:new String:new msg,getCStringLen msg;,false;;throw
+      IOException:throw String:new msg,getCStringLen msg;,false
     }
   }
 }

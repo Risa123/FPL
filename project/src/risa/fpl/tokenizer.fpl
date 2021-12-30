@@ -107,12 +107,12 @@ class Tokenizer{
               b add $"
               while ready; && read; != $"{
                 if c == $\n{
-                  CompilerException:new line,tokenNum,"expected \"";throw
+                  CompilerException:throw line,tokenNum,"expected \""
                 }
                 if c == $\\{
                   b add $\\
                   if ready; !{
-                    CompilerException:new line,tokenNum,"character expected";throw
+                    CompilerException:throw line,tokenNum,"character expected"
                   }
                   read #appended in following lines
                 }
@@ -149,7 +149,7 @@ class Tokenizer{
  fn Token peek{
    prepare
    if tokens isEmpty{
-     CompilerException:new line,tokenNum,"no tokens available";throw
+     CompilerException:throw line,tokenNum,"no tokens available"
    }
    return tokens get i
  }
@@ -163,7 +163,7 @@ class Tokenizer{
  fn Token nextID{
    var id next
    if id getType; != TokenType:ID{
-     CompilerException:new id getLine;,id getTokenNum;,"identifier expected instead of " + id getValue;;;throw
+     CompilerException:throw id getLine;,id getTokenNum;,"identifier expected instead of " + id getValue
    }
    return id
  }

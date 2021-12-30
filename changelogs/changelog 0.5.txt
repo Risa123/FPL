@@ -8,6 +8,7 @@ MIN_VALUE and MAX_VALUE constants added to number classes
 scientific notation added
 number literal can now contain _ to make it more readable
 added parse methods to number classes
+added static throw to exception classes
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C

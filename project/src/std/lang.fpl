@@ -181,14 +181,14 @@ fn void defaultExceptionHandler Exception* ex{
 fn void* realloc void* p memory newSize{
   p = std.backend.realloc p,newSize
   if p == nil{
-    Exception:new "reallocation of memory failed";throw
+    Exception:throw "reallocation of memory failed"
   }
   return p
 }
 fn void* malloc memory size{
   var p std.backend.malloc size
   if p == nil{
-    Exception:new "allocation of memory failed";throw
+    Exception:throw "allocation of memory failed"
   }
   return p
 }
@@ -301,8 +301,10 @@ fn long integerParse String str{
        #ignore
      }if c == $-{
        sign = -1
-     }{
+     }if isDigit c{
        value = value * 10 + c cast long - $0 cast long
+     }{
+       Exception:throw "invalid number " + str
      }
   }
   return sign * value

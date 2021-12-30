@@ -5,7 +5,7 @@ class ArrayList;T{
   memory len
   fn void checkIndex memory index{
     if index >= len{
-      Exception:new "index out of bounds:" + index toString;;;throw
+      Exception:throw "index out of bounds:" + index toString
     }
   }
  }
@@ -95,7 +95,7 @@ class Map;K V{
         return entry getValue
       }
     }
-    NoElementException:new "map has no entry for key";throw
+    NoElementException:throw "map has no entry for key"
   }
   fn void clear = entries clear
   fn memory getSize = entries getSize

@@ -63,7 +63,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         if(templateStatus != TemplateStatus.GENERATING){
             module.addType(instanceInfo);
         }
-        //setup implicit constructor,alloc and new
         ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_alloc0",prefix + "_alloc0"));
         ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_new0",prefix + "_new0"));
         var name = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0";
@@ -146,7 +145,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     @Override
     public void addTemplateInstance(InstanceInfo type){
-        ((ANameSpacedEnv)superEnv).addTemplateInstance(type);
+        ((ModuleEnv)superEnv).addTemplateInstance(type);
     }
     @Override
     public IFunction getFunction(Atom name)throws CompilerException{
@@ -157,7 +156,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    return super.getFunction(name);
     }
     public boolean isAbstract(){
-	    return ((SubEnv)superEnv).hasModifier(Modifier.ABSTRACT);
+	    return ((ModuleEnv)superEnv).hasModifier(Modifier.ABSTRACT);
     }
     public String getImplOf(InterfaceInfo i){
 	    return instanceInfo.getCname() + i.getCname() + "_impl";
@@ -199,8 +198,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             var prefix = IFunction.INTERNAL_METHOD_PREFIX + nameSpace;
             instanceInfo.setDestructorName(prefix);
             b.append(prefix).append("_destructor(").append(instanceInfo.getCname());
-            b.append("* this){\n").append(destructor).append("}\n");
-            return b.toString();
+            return b.append("* this){\n").append(destructor).append("}\n").toString();
         }
 	    return "";
     }
@@ -239,14 +237,39 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var newName = "static" + nameSpace + "_new";
         var newMethod = (Function)classInfo.getFieldFromThisType("new");
         newMethod.addStaticVariant(args,newName);
-        builder.append(cname).append(" ").append(newMethod.getVariant(args).cname()).append("(").append(compiledArgs).append("){\n");
+        builder.append(cname).append(' ').append(newMethod.getVariant(args).cname()).append("(").append(compiledArgs).append("){\n");
         builder.append(cname).append(" inst;\n");
         builder.append(constructorCall(constructorName,"&inst",args));
         builder.append("return inst;\n}\n");
+        if(instanceInfo.isException()){
+            if(instanceInfo.getClassInfo().getFieldFromThisType("throw") == null){
+                instanceInfo.getClassInfo().addField("throw",new StaticThrow());
+            }
+            var func = (Function)classInfo.getFieldFromThisType("throw");
+            func.addStaticVariant(args,"static" + getNameSpace() + "_throw");
+            builder.append("void ").append(func.getVariant(args).cname()).append('(');
+            var argFirst = true;
+            for(var i = 0;i < args.length;++i){
+               if(argFirst){
+                   argFirst = false;
+               }else{
+                   builder.append(',');
+               }
+               builder.append(args[i].getCname()).append(" a").append(i);
+            }
+            builder.append("){\n");
+            builder.append(instanceInfo.getCname()).append(" inst;\n");
+            builder.append(constructorName).append("(&inst");
+            for(var i = 0;i < args.length;++i){
+                builder.append(",a").append(i);
+            }
+            builder.append(");\n");
+            builder.append("_std_lang_Exception_throw0((_Exception*)&inst);\n");
+            builder.append("}\n");
+        }
     }
     private String constructorCall(String constructorName,String self,TypeInfo[]args){
-        var b = new StringBuilder(constructorName);
-        b.append("(").append(self);
+        var b = new StringBuilder(constructorName).append("(").append(self);
         for(int i = 0; i < args.length;++i){
             b.append(",a").append(i);
         }

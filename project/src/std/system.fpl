@@ -14,7 +14,7 @@ fn int execute String cmd{
   var exitCode std.backend.execute CCmd
   CCmd free
   if exitCode == -1{
-    IOException:new "invalid command " + cmd;;throw
+    IOException:throw "invalid command " + cmd
   }
   return exitCode
 }
@@ -25,7 +25,7 @@ fn String getEnv String name{
   var cstr name toCString
   var value std.backend.getEnv cstr
   if value == nil{
-    IOException:new "environment variable " + name; + " not found";;throw
+    IOException:throw "environment variable " + name; + " not found"
   }
   cstr free
   return String:new value,getCStringLen value;,true

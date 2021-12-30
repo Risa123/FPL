@@ -22,7 +22,7 @@ class ModuleBlock ObjectInfo{
             try{
               getField token getValue
             }catch NoElementException{
-              CompilerException:new "function " + token getValue;; + " not found";;throw
+              CompilerException:throw "function " + token getValue;; + " not found"
             }
           }
       }
