@@ -21,24 +21,24 @@ public abstract class AField implements IField{
     public void setPrevCode(String code){
         prevCode = code;
     }
-    public void writePrev(StringBuilder builder){
+    public final void writePrev(StringBuilder builder){
         if(prevCode != null){
             builder.append(prevCode);
             prevCode = null;
         }
     }
-    public String getPrevCode(){
+    public final String getPrevCode(){
         return prevCode;
     }
     @Override
-    public boolean appendSemicolon(){
+    public final boolean appendSemicolon(){
         return true;
     }
     @Override
-    public AccessModifier getAccessModifier(){
+    public final AccessModifier getAccessModifier(){
         return accessModifier;
     }
-    public TypeInfo compileChainedCall(TypeInfo returnType,StringBuilder builder,SubEnv env,ExpIterator it,String prevCode)throws CompilerException{
+    public final TypeInfo compileChainedCall(TypeInfo returnType,StringBuilder builder,SubEnv env,ExpIterator it,String prevCode)throws CompilerException{
          if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == AtomType.ID){
            it.next();
            var field = returnType.getField(id.getValue(),env);

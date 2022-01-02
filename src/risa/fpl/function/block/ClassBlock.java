@@ -122,16 +122,16 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 if(v.getType() instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
                     attributes.append("struct ");
                 }
-                attributes.append(v.getType().getCname()).append(" ").append(v.getCname());
+                attributes.append(v.getType().getCname()).append(' ').append(v.getCname());
                 if(v.getType() instanceof ArrayInfo i){
                     String code;
-                    attributes.append("[");
+                    attributes.append('[');
                     if(i.isLengthUnsignedLong()){
                         code = Long.toUnsignedString(i.getLength());
                     }else{
                         code = Long.toString(i.getLength());
                     }
-                    attributes.append(code).append("]");
+                    attributes.append(code).append(']');
                 }
                 attributes.append(";\n");
             }
@@ -171,7 +171,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             modEnv.addFunction(id.getValue(),constructor);
         }
         for(var i:interfaces){
-            internalCode.append("static ").append(i.getImplName()).append(" ").append(cID).append(i.getCname()).append("_impl={");
+            internalCode.append("static ").append(i.getImplName()).append(' ').append(cID).append(i.getCname()).append("_impl={");
             var first = true;
             for(var method:i.getMethodsOfType(FunctionType.ABSTRACT)){
                 var inThisClass = (Function)type.getField(method.getName(),cEnv);

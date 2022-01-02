@@ -24,7 +24,7 @@ public final class Cast extends AField{
         }
 	    if((self instanceof NumberInfo || self instanceof PointerInfo) && (type instanceof  NumberInfo || type instanceof PointerInfo)){
 	        CCast(prev,type.getCname());
-        }else if(isCharOrNumber(self) && isCharOrNumber(type)){
+        }else if(isCharOrNumber(self) && isCharOrNumber(type) || (self == TypeInfo.CHAR && type instanceof NumberInfo)){
 	        CCast(prev,"char");
         }else if(!type.isPrimitive() && self instanceof InterfaceInfo && type.getParents().contains(self)){
           CCast(prev,type.getCname());

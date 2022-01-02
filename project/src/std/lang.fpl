@@ -292,6 +292,17 @@ fn String integerToString long this{
  }
  return String:new ret,len,true
 }
+fn String floatingPointToString double n{
+   var iPart n cast long
+   var fPart n - iPart cast double
+   while fPart cast long != 0{
+     fPart *= 10
+   }
+   return integerToString iPart;; + "."; + integerToString fPart cast long
+}
+class NumberFormatException Exception{
+   this String message:message
+}
 fn long integerParse String str{
   long value 0
   var sign 1
@@ -304,10 +315,38 @@ fn long integerParse String str{
      }if isDigit c{
        value = value * 10 + c cast long - $0 cast long
      }{
-       Exception:throw "invalid number " + str
+       NumberFormatException:throw "invalid number " + str
      }
   }
   return sign * value
+}
+fn double floatingPointParse String str{
+    double value 0
+    var sign 1
+    var afterFPoint false
+    for i,str getLength{
+       var c str get i
+       if c == $+{
+         #ignore
+       }if c == $-{
+         sign = -1
+       }if c == $.{
+        if afterFPoint{
+          NumberFormatException:throw "invalid number " + str
+        }
+        afterFPoint = true
+       }if isDigit c{
+         var num c cast double - $0 cast double
+         if afterFPoint{
+          value = value / 10 + num
+         }{
+           value = value * 10 + num
+         }
+       }{
+         NumberFormatException:throw "invalid number " + str
+       }
+    }
+    return sign * value
 }
 #these constants will be removed by the compiler
 const{

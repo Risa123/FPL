@@ -46,7 +46,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
             appendToDeclaration(i.attributesCode);
         }
         appendToDeclaration(attributesCode);
-        appendToDeclaration("}" + getCname() + ";\n");
+        appendToDeclaration('}' + getCname() + ";\n");
         var b = new StringBuilder();
         var methods = new HashMap<String,Function>();
         for(var method:getMethodsOfType(FunctionType.VIRTUAL)){
@@ -65,7 +65,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
         appendToDeclaration('}' + getClassDataType() + ";\n");
         appendToDeclaration("extern " + getClassDataType() + " " + dataName + ";\n");
         addFunctionRequiredTypes(constructor);
-        appendToDeclaration(getCname() + "* " + getToPointerName() + "(" + getCname() + " this," + getCname() + "* p);\n");
+        appendToDeclaration(getCname() + "* " + getToPointerName() + '(' + getCname() + " this," + getCname() + "* p);\n");
         for(var field:getClassInfo().getFields().values()){
             if(field instanceof Function f){
                 cEnv.appendFunctionDeclaration(f);
@@ -84,11 +84,11 @@ public class InstanceInfo extends NonTrivialTypeInfo{
             setMethodDeclarations(cEnv.getFunctionDeclarations());
         }
         if(copyConstructorName != null){
-            appendToDeclaration("void " + copyConstructorName + "(" + getCname() + "*," + getCname() + "*);\n");
+            appendToDeclaration("void " + copyConstructorName + '(' + getCname() + "*," + getCname() + "*);\n");
             appendToDeclaration(getCname() + " " + copyConstructorName + "AndReturn(" + getCname() + " original);\n");
         }
         if(destructorName != null){
-            appendToDeclaration("void " + destructorName + "(" + getCname() + "*);\n");
+            appendToDeclaration("void " + destructorName + '(' + getCname() + "*);\n");
         }
         for(var p:parents){
             if(p instanceof InterfaceInfo i){

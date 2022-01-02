@@ -344,7 +344,7 @@ public class Function implements IField,ICalledOnPointer{
     private void addVariantFromTemplate(TemplateVariant variant,SubEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
         var mod = env.getModule();
         var cname = mod.getNameSpace() + IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
-        var path = Path.of(env.getFPL().getOutputDirectory() + "/" + cname + ".c");
+        var path = Path.of(env.getFPL().getOutputDirectory() + '/' + cname + ".c");
         var builder = new StringBuilder();
         try{
            var fnEnv = new FnEnv(variant.superEnv,returnType);
@@ -389,7 +389,7 @@ public class Function implements IField,ICalledOnPointer{
                fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
            }
            var v = addVariant(args,cname,cname);
-           builder.append(returnType.getCname()).append(" ").append(v.cname()).append('(');
+           builder.append(returnType.getCname()).append(' ').append(v.cname()).append('(');
            var firstArg = true;
            if(self != null){
                builder.append(self.getCname());
@@ -408,7 +408,7 @@ public class Function implements IField,ICalledOnPointer{
                if(variant.templateArgs.containsKey(typeName)){
                   type = variant.templateArgs.get(typeName);
                }
-               builder.append(type.getCname()).append(" ").append(IFunction.toCId(arg.getKey()));
+               builder.append(type.getCname()).append(' ').append(IFunction.toCId(arg.getKey()));
            }
            builder.append("){\n");
            variant.code.compile(builder,fnEnv,null);

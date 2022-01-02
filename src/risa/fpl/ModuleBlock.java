@@ -31,7 +31,7 @@ public final class ModuleBlock extends AThreePassBlock{
    public ModuleBlock(Path sourceFile,Path srcDir,FPL fpl)throws IOException,CompilerException{
        var subPath = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount());
        this.sourceFile = subPath.toString();
-	   cPath = fpl.getOutputDirectory() + "/" + this.sourceFile.replace(File.separatorChar,'_') + ".c";
+	   cPath = fpl.getOutputDirectory() + '/' + this.sourceFile.replace(File.separatorChar,'_') + ".c";
 	   this.fpl = fpl;
        var name = new StringBuilder();
        for(int i = 0; i < subPath.getNameCount() - 1;i++){
@@ -41,8 +41,7 @@ public final class ModuleBlock extends AThreePassBlock{
        this.name = name.toString();
        env = new ModuleEnv(fpl.getEnv(),this,null);
        try(var parser = new Parser(Files.newBufferedReader(sourceFile))){
-		   var exps = parser.parse();
-           expInfos = createInfoList(exps);
+           expInfos = createInfoList(parser.parse());
 	   }catch(CompilerException e){
 		   e.setSourceFile(this.sourceFile);
 		   throw e;
@@ -86,6 +85,8 @@ public final class ModuleBlock extends AThreePassBlock{
                        makeMethod("toString","integerToString",NumberInfo.SHORT,false);
                        makeMethod("toString","integerToString",NumberInfo.USHORT,false);
                        makeMethod("toString","integerToString",NumberInfo.SSHORT);
+                       makeMethod("toString","floatingPointToString",NumberInfo.FLOAT,false);
+                       makeMethod("toString","floatingPointToString",NumberInfo.DOUBLE);
                        addNumberFields(ClassInfo.BYTE);
                        addNumberFields(ClassInfo.SBYTE);
                        addNumberFields(ClassInfo.UBYTE);
@@ -178,7 +179,7 @@ public final class ModuleBlock extends AThreePassBlock{
           func = (Function)env.getFunctionFromModule(oldName);
       }
       if(func == null){
-          throw new RuntimeException("internal error: function " + name + " not found");
+          throw new RuntimeException("internal error: function " + oldName + " not found");
        }
        ofType.addField(name,func.makeMethod(ofType,name));
    }
@@ -192,9 +193,14 @@ public final class ModuleBlock extends AThreePassBlock{
        var prefix = classInfo.getInstanceInfo().getName().toUpperCase() + "_";
        classInfo.addField("MIN_VALUE",env.getAndMakeInaccessible(prefix + "MIN_VALUE"));
        classInfo.addField("MAX_VALUE",env.getAndMakeInaccessible(prefix + "MAX_VALUE"));
-       if(!classInfo.getInstanceInfo().notIntegerNumber()){
-           classInfo.addField("parse",env.getAndMakeInaccessible("integerParse"));
+       var n = (NumberInfo)classInfo.getInstanceInfo();
+       String name;
+       if(n.isFloatingPoint()){
+           name = "floatingPointParse";
+       }else{
+           name = "integerParse";
        }
+       classInfo.addField("parse",env.getAndMakeInaccessible(name));
    }
    public ModuleEnv getEnv(){
        return env;
