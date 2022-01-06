@@ -9,7 +9,7 @@ class String{
     bool allocated
     fn void checkIndex uint len uint index{
        if index >= len{
-           Exception:new "index out of bounds:" + integerToString index;;;throw
+           Exception:throw "index out of bounds:" + integerToString index
         }
      }
   }
@@ -80,8 +80,18 @@ class String{
       p free
     }
   }
+   fn bool isBlank{
+      for i,len{
+        if isWhitespace p get i{
+          return false
+        }
+      }
+      return true
+  }
   fn uint getLength = len
   fn String toString = this drf
+  fn bool isEmpty = len == 0
+  fn bool isEmptyOrBlank = isEmpty; || isBlank
 }
 fn void print String str{
    var cstr str toCString
@@ -298,12 +308,15 @@ fn String floatingPointToString double n{
    while fPart cast long != 0{
      fPart *= 10
    }
-   return integerToString iPart;; + "."; + integerToString fPart cast long
+   return integerToString iPart; + "."; + integerToString fPart cast long
 }
 class NumberFormatException Exception{
    this String message:message
 }
 fn long integerParse String str{
+  if str isEmpty{
+    NumberFormatException:throw "invalid number " + str
+  }
   long value 0
   var sign 1
   for i,str getLength{
@@ -321,6 +334,9 @@ fn long integerParse String str{
   return sign * value
 }
 fn double floatingPointParse String str{
+    if str isEmpty{
+      NumberFormatException:throw "invalid number " + str
+    }
     double value 0
     var sign 1
     var afterFPoint false

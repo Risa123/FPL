@@ -5,7 +5,7 @@ import java.io.Reader;
 
 import risa.fpl.CompilerException;
 
-public final class Tokenizer{
+public final class Tokenizer implements AutoCloseable{
 	  private final Reader reader;
 	  private int line = 1,tokenNum = 1,c;
 	  private boolean readNext = true,forceEnd;
@@ -15,6 +15,7 @@ public final class Tokenizer{
 	  public Tokenizer(Reader reader){
 		  this.reader = reader;
 	  }
+	  @Override
 	  public void close()throws IOException{
 		  reader.close();
 	  }

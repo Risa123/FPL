@@ -30,12 +30,14 @@ public final class Return implements IFunction{
 			if(!subEnv.getReturnType().equals(returnType)){
 				throw new CompilerException(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
 			}
-			var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString());
-			if(subEnv.getToPointerVarID() != 0 || returnType.isPrimitive()){//no destructor calls needed
-				expCode = code;
-			}else{
-				expCode = "tmp";
-				builder.append(returnType.getCname()).append(" tmp=").append(code).append(";\n");
+			if(returnType != TypeInfo.VOID){
+				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString());
+				if(subEnv.getToPointerVarID() == 0){//no destructor calls needed
+					expCode = code;
+				}else{
+					expCode = "tmp";
+					builder.append(returnType.getCname()).append(" tmp=").append(code).append(";\n");
+				}
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){
 			throw new CompilerException(line,tokenNum,"this function doesn't return void");

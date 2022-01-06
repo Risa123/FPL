@@ -6,31 +6,26 @@ import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
 
-public final class Parser implements AutoCloseable{
+public final class Parser{
  private final Tokenizer tokenizer;
  public Parser(Reader reader){
 	 tokenizer = new Tokenizer(reader);
  }
- @Override
- public void close()throws IOException{
-	 tokenizer.close();
- }
- public boolean hasNext()throws IOException{
-	 return tokenizer.hasNext();
- }
  public List parse()throws IOException,CompilerException{
-	 var list = new ArrayList<AExp>();
-	 while(hasNext()){
-		 list.add(parseStatement(tokenizer.next()));
+	 try(tokenizer){
+		 var list = new ArrayList<AExp>();
+		 while(tokenizer.hasNext()){
+			 list.add(parseStatement(tokenizer.next()));
+		 }
+		 return new List(1,1,list,false);
 	 }
-	 return new List(1,1,list,false);
  }
  private List parseStatement(Atom first)throws IOException,CompilerException{
 	 var list = new ArrayList<AExp>();
 	 if(first.getType() != AtomType.NEW_LINE){
 		 list.add(first);
 	 }
-	 while(hasNext()){
+	 while(tokenizer.hasNext()){
 		 var token = tokenizer.next();
 		 if(token.getType() == AtomType.NEW_LINE || token.getType() == AtomType.END_BLOCK){
 			 break;
@@ -44,7 +39,7 @@ public final class Parser implements AutoCloseable{
  }
  private List parseBlock(Atom begin)throws IOException,CompilerException{
 	 var list = new ArrayList<AExp>();
-	 while(hasNext()){
+	 while(tokenizer.hasNext()){
 		 var token = tokenizer.next();
 		 if(token.getType() == AtomType.END_BLOCK){
 			 break;

@@ -95,6 +95,7 @@ public class Function implements IField,ICalledOnPointer{
         b.append('(');
 		var first = self == null;
 		var ref = false;
+        var noPrevCode = prevCode == null;
 		if(self != null){
             if(!self.isPrimitive()){
                 b.append('(').append(self.getCname()).append("*)");
@@ -135,19 +136,23 @@ public class Function implements IField,ICalledOnPointer{
             b.append(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
         }
 		b.append(')');
-        if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a && a.getType() == AtomType.ID){
-            var id = it.nextID();
-            var field = returnType.getField(id.getValue(),env);
-            if(field == null){
-                throw new CompilerException(id,returnType + " has no field called " + id);
-            }
-            field.setPrevCode(b.toString());
-            if(field instanceof Function f && returnType instanceof InstanceInfo i){
-               f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
-               f.prevCode = i.getToPointerName() + "(" + f.prevCode + ",&" + env.getToPointerVarName(i);
+        if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a){
+           if(a.getType() == AtomType.ID){
+               var id = it.nextID();
+               var field = returnType.getField(id.getValue(),env);
+               if(field == null){
+                   throw new CompilerException(id,returnType + " has no field called " + id);
+               }
+               field.setPrevCode(b.toString());
+               if(field instanceof Function f && returnType instanceof InstanceInfo i){
+                   f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
+                   f.prevCode = i.getToPointerName() + '(' + f.prevCode + ",&" + env.getToPointerVarName(i);
+                   return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
+               }
                return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
-            }
-            return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
+           }else if(a.getType() == AtomType.END_ARGS && noPrevCode){
+               throw new CompilerException(a,"; not expected");
+           }
         }
         builder.append(b);
 		return returnType;

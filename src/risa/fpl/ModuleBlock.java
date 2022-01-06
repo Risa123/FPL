@@ -40,8 +40,8 @@ public final class ModuleBlock extends AThreePassBlock{
        name.append(subPath.getFileName().toString().split("\\.")[0]);
        this.name = name.toString();
        env = new ModuleEnv(fpl.getEnv(),this,null);
-       try(var parser = new Parser(Files.newBufferedReader(sourceFile))){
-           expInfos = createInfoList(parser.parse());
+       try{
+           expInfos = createInfoList(new Parser(Files.newBufferedReader(sourceFile)).parse());
 	   }catch(CompilerException e){
 		   e.setSourceFile(this.sourceFile);
 		   throw e;
