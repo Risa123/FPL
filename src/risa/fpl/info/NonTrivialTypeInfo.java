@@ -1,8 +1,8 @@
 package risa.fpl.info;
 
 import risa.fpl.env.ModuleEnv;
+import risa.fpl.function.exp.AField;
 import risa.fpl.function.exp.Function;
-import risa.fpl.function.exp.IField;
 import risa.fpl.function.exp.Variable;
 
 public abstract class NonTrivialTypeInfo extends TypeInfo{
@@ -36,7 +36,7 @@ public abstract class NonTrivialTypeInfo extends TypeInfo{
         addRequiredType(parent);
     }
     @Override
-    public void addField(String name,IField field){
+    public void addField(String name,AField field){
         super.addField(name,field);
         if(field instanceof Variable v){
             addRequiredType(v.getType());

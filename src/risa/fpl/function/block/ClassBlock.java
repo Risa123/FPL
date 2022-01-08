@@ -137,7 +137,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             }
         }
         if(cEnv.hasOnlyImplicitConstructor()){
-            cEnv.appendFunctionCode(cEnv.getImplicitConstructor());
+            cEnv.appendFunctionCode(cEnv.getImplicitConstructor(id));
             var nameSpace = cEnv.getNameSpace();
             cEnv.appendFunctionCode(cID + " static" + nameSpace + "_new0(){\n");
             cEnv.appendFunctionCode(cID + " inst;\n" + INTERNAL_METHOD_PREFIX + nameSpace + "_init0(&inst);\n");
@@ -181,6 +181,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                     }else{
                         internalCode.append(',');
                     }
+                    //noinspection ConstantConditions
                     internalCode.append("(void*)").append(inThisClass.getVariant(v.args()).cname());
                 }
             }

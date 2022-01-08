@@ -2,7 +2,7 @@ package risa.fpl.info;
 
 import risa.fpl.env.AEnv;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.exp.IField;
+import risa.fpl.function.exp.AField;
 
 public final class CustomTypeInfo extends TypeInfo{
     private final TypeInfo original;
@@ -16,7 +16,7 @@ public final class CustomTypeInfo extends TypeInfo{
         this.declaration = "typedef " + declaration + ";\n";
     }
     @Override
-    public IField getField(String name,AEnv from){
+    public AField getField(String name, AEnv from){
         return original.getField(name,from);
     }
     @Override

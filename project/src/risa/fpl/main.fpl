@@ -101,7 +101,7 @@ main{
    stderr writeString "<project directory> expected"
    return 2 #1 is reserved for exceptions
  }
- print float:parse "1";toString
+ print -1.12 toString 2
  try{
    FPL:new args get 1
  }catch CompilerException{

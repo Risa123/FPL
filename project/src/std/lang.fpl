@@ -257,12 +257,10 @@ fn char toUpper char this{
  return this
 }
 fn String charToString char this{
-  var b char:alloc[] 1
-  String str init b,1,true
+  String str init char:alloc[] 1,1,true
   str set 0,this
   return str
 }
-#bool methods
 private const var TRUE "true";FALSE "false"
 fn String boolToString bool this{
    if this{
@@ -270,7 +268,6 @@ fn String boolToString bool this{
    }
    return FALSE
 }
-#integer methods
 fn String integerToString long this{
  [] char 20 buf
  int i 0
@@ -302,36 +299,21 @@ fn String integerToString long this{
  }
  return String:new ret,len,true
 }
-fn String floatingPointToString double n{
+fn String floatingPointToString double n int precision{
+   var sign ""
+   if n < 0{
+     n = n -
+     sign = "-"
+   }
    var iPart n cast long
    var fPart n - iPart cast double
-   while fPart cast long != 0{
+   for i,precision{
      fPart *= 10
    }
-   return integerToString iPart; + "."; + integerToString fPart cast long
+   return sign + integerToString iPart; + "."; + integerToString fPart cast long
 }
 class NumberFormatException Exception{
    this String message:message
-}
-fn long integerParse String str{
-  if str isEmpty{
-    NumberFormatException:throw "invalid number " + str
-  }
-  long value 0
-  var sign 1
-  for i,str getLength{
-     var c str get i
-     if c == $+{
-       #ignore
-     }if c == $-{
-       sign = -1
-     }if isDigit c{
-       value = value * 10 + c cast long - $0 cast long
-     }{
-       NumberFormatException:throw "invalid number " + str
-     }
-  }
-  return sign * value
 }
 fn double floatingPointParse String str{
     if str isEmpty{
@@ -354,7 +336,7 @@ fn double floatingPointParse String str{
        }if isDigit c{
          var num c cast double - $0 cast double
          if afterFPoint{
-          value = value / 10 + num
+          value = value / 10  + num
          }{
            value = value * 10 + num
          }

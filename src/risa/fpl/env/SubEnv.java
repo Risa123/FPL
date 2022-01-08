@@ -51,13 +51,17 @@ public class SubEnv extends AEnv{
       builder.append(destructorCalls);
  }
  public final String getToPointerVarName(InstanceInfo type){
-      var name = "c" + toPointerVarID++;
-      toPointerVars.append(type.getCname()).append(' ').append(name).append(";\n");
+      var name = addToPointerVar(type);
       var destructor = type.getDestructorName();
       if(destructor != null){
           destructorCalls.append(destructor).append("(&").append(name).append(");\n");
       }
       return name;
+ }
+ protected String addToPointerVar(InstanceInfo type){
+     var name = "c" + toPointerVarID++;
+     toPointerVars.append(type.getCname()).append(' ').append(name).append(";\n");
+     return name;
  }
  public final void compileToPointerVars(StringBuilder builder){
       builder.append(toPointerVars);

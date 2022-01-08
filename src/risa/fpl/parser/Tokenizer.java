@@ -165,9 +165,6 @@ public final class Tokenizer implements AutoCloseable{
 						  }
 						  floatingPoint = true;
 						  type = AtomType.DOUBLE;
-						  if(signed){
-							  throw new CompilerException(line,tokenNum,"floating point number cannot be signed");
-						  }
 						  b.append('.');
 					  }else if(c == 'F'){
 						  type = AtomType.FLOAT;

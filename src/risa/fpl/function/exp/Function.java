@@ -17,11 +17,9 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.parser.AtomType;
 
-public class Function implements IField,ICalledOnPointer{
+public class Function extends AField implements ICalledOnPointer{
 	private final TypeInfo self,returnType;
-	private String prevCode;
 	private final StringBuilder declaration = new StringBuilder();
-	private final AccessModifier accessModifier;
 	private final FunctionType type;
 	private int callStatus;
 	private boolean asFunctionPointer;
@@ -30,8 +28,8 @@ public class Function implements IField,ICalledOnPointer{
 	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
 	private final ArrayList<TemplateVariant>templateVariants = new ArrayList<>();
     public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
+       super(accessModifier);
        this.returnType = returnType;
-       this.accessModifier = accessModifier;
        this.self = self;
        this.type = type;
        this.name = name;
@@ -42,10 +40,6 @@ public class Function implements IField,ICalledOnPointer{
     }
     public Function(String name,TypeInfo returnType,AccessModifier accessModifier){
         this(name,returnType,FunctionType.NORMAL,null,accessModifier);
-    }
-    @Override
-    public final AccessModifier getAccessModifier(){
-        return accessModifier;
     }
     @Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
@@ -90,6 +84,7 @@ public class Function implements IField,ICalledOnPointer{
         if(asFunctionPointer){
             asFunctionPointer = false;
         }else{
+            //noinspection ConstantConditions
             b.append(variant.implName());
         }
         b.append('(');
@@ -133,6 +128,7 @@ public class Function implements IField,ICalledOnPointer{
                 b.append(',');
             }
             var comesFromPointer = array[i] instanceof PointerInfo;
+            //noinspection ConstantConditions
             b.append(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
         }
 		b.append(')');
@@ -144,9 +140,11 @@ public class Function implements IField,ICalledOnPointer{
                    throw new CompilerException(id,returnType + " has no field called " + id);
                }
                field.setPrevCode(b.toString());
-               if(field instanceof Function f && returnType instanceof InstanceInfo i){
-                   f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
-                   f.prevCode = i.getToPointerName() + '(' + f.prevCode + ",&" + env.getToPointerVarName(i);
+               if(returnType instanceof InstanceInfo i){
+                   if(field instanceof Function f){
+                       f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
+                   }
+                   field.setPrevCode(i.getToPointerName() + '(' + field.getPrevCode() + ",&" + env.getToPointerVarName(i));
                    return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
                }
                return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
@@ -170,9 +168,6 @@ public class Function implements IField,ICalledOnPointer{
             builder.append(prevCode);
             prevCode = null;
         }
-    }
-    public final String getPrevCode(){
-        return prevCode;
     }
     public final TypeInfo getReturnType(){
         return returnType;

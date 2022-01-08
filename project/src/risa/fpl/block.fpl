@@ -8,13 +8,11 @@ use{
  risa.fpl.main
 }
 class ModuleBlock ObjectInfo{
- private const{
-    ModuleEnv modEnv init
-    String name
- }
+ private const String name
  this FPL* fpl String fplPath{
    FileReader reader init fplPath
    Tokenizer tokenizer init reader
+   name = ""
    try{
       while tokenizer hasNext{
           var token tokenizer next

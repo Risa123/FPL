@@ -3,25 +3,25 @@ package risa.fpl.function.exp;
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
+import risa.fpl.function.IFunction;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
 
-public abstract class AField implements IField{
-    private String prevCode;
-    private final AccessModifier accessModifier;
+public abstract class AField implements IFunction {
+    protected String prevCode;
+    protected final AccessModifier accessModifier;
     public AField(AccessModifier accessModifier){
         this.accessModifier = accessModifier;
     }
     public AField(){
         this(AccessModifier.PUBLIC);
     }
-    @Override
     public void setPrevCode(String code){
         prevCode = code;
     }
-    public final void writePrev(StringBuilder builder){
+    public void writePrev(StringBuilder builder){
         if(prevCode != null){
             builder.append(prevCode);
             prevCode = null;
@@ -31,10 +31,9 @@ public abstract class AField implements IField{
         return prevCode;
     }
     @Override
-    public final boolean appendSemicolon(){
+    public boolean appendSemicolon(){
         return true;
     }
-    @Override
     public final AccessModifier getAccessModifier(){
         return accessModifier;
     }

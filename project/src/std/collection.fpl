@@ -5,7 +5,7 @@ class ArrayList;T{
   memory len
   fn void checkIndex memory index{
     if index >= len{
-      Exception:throw "index out of bounds:" + index toString
+      NoElementException:throw "index out of bounds:" + index toString
     }
   }
  }
@@ -63,7 +63,7 @@ class Entry;K V{
   fn void setValue V value = this value = value
 }
 class Map;K V{
-  private const ArrayList;Entry;K V;; entries
+  private const ArrayList;Entry;K V;; entries init
   fn void put K key V value{
     var notPresent true
     var i 0L

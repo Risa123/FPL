@@ -43,6 +43,7 @@ public final class InstanceVar extends Function{
             var varType = compileVariable(b,null,env,it);
             if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() == AtomType.CLASS_SELECTOR){
                 it.next();
+                //noinspection ConstantConditions
                 return compileClassSelector(it,env,builder,varType.getClassInfo());
             }
         }else{

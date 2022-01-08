@@ -13,6 +13,7 @@ import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
@@ -70,7 +71,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	}
 	@Override
 	public void addFunction(String name,IFunction value){
-		if(value instanceof IField field){
+		if(value instanceof AField field){
 			instanceInfo.addField(name,field);
 			if(value instanceof Variable v){
 			   var cname = v.getCname();
@@ -98,13 +99,22 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	public String getImplicitConstructorCode(){
 		return implicitConstructor.toString();
 	}
-	public String getImplicitConstructor(){
+	public String getImplicitConstructor(Atom classId)throws CompilerException{
         var header = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0(";
         if(struct){
             return "#define " + header + "this) //placeholder\n";//structs have no implicit constructor
         }
-        var setObjectData = "this->objectData=&" + instanceInfo.getDataName() + ";\n";
-        return "void " + header + instanceInfo.getCname() + "* this){\n" + setObjectData + getImplicitConstructorCode() + "}\n";
+        var code = "this->objectData=&" + instanceInfo.getDataName() + ";\n";
+        if(instanceInfo.getPrimaryParent() != null){
+            var parent = (InstanceInfo)instanceInfo.getPrimaryParent();
+            var constructor = parent.getConstructor();
+            if(!constructor.hasVariant(new TypeInfo[0])){
+                throw new CompilerException(classId,"this class can not have implicit constructor if parent has not one");
+            }
+            //noinspection ConstantConditions
+            code = constructor.getVariant(new TypeInfo[0]).cname() + "((" + parent.getCname() + "*)this);\n" + code;
+        }
+        return "void " + header + instanceInfo.getCname() + "* this){\n" + code + getImplicitConstructorCode() + "}\n";
     }
     public void addMethod(Function method,String code){
          if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
@@ -205,8 +215,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public String getImplicitDestructorCode(){
 	    return destructor.toString();
     }
-    public void compileNewAndAlloc(StringBuilder builder,TypeInfo[]args){
-        var constructorName = instanceInfo.getConstructor().getVariant(args).cname();
+    public void compileNewAndAlloc(StringBuilder builder, TypeInfo[]args){
+        var constructorName = Objects.requireNonNull(instanceInfo.getConstructor().getVariant(args)).cname();
         var cname = instanceInfo.getCname();
         builder.append("void ").append(constructorName).append("(").append(cname).append("* this");
         for(var arg:args){
@@ -217,6 +227,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var allocName = "static" + getNameSpace() + "_alloc";
         var allocMethod = (Function)classInfo.getFieldFromThisType("alloc");
         allocMethod.addStaticVariant(args,allocName);
+        //noinspection ConstantConditions
         builder.append(instanceInfo.getCname()).append("* ").append(allocMethod.getVariant(args).cname()).append("(");
         var first = true;
         var b = new StringBuilder();
@@ -237,6 +248,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var newName = "static" + nameSpace + "_new";
         var newMethod = (Function)classInfo.getFieldFromThisType("new");
         newMethod.addStaticVariant(args,newName);
+        //noinspection ConstantConditions
         builder.append(cname).append(' ').append(newMethod.getVariant(args).cname()).append("(").append(compiledArgs).append("){\n");
         builder.append(cname).append(" inst;\n");
         builder.append(constructorCall(constructorName,"&inst",args));
@@ -247,6 +259,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             }
             var func = (Function)classInfo.getFieldFromThisType("throw");
             func.addStaticVariant(args,"static" + getNameSpace() + "_throw");
+            //noinspection ConstantConditions
             builder.append("void ").append(func.getVariant(args).cname()).append('(');
             var argFirst = true;
             for(var i = 0;i < args.length;++i){

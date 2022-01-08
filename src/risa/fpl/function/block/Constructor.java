@@ -33,9 +33,9 @@ public final class Constructor extends AFunctionBlock{
         }
         var hasParentConstructor = false;
         var parentConstructorCall = "";
+        var parentType = (InstanceInfo)type.getPrimaryParent();
         if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
             var callStart = it.next();
-            var parentType = (InstanceInfo)type.getPrimaryParent();
             if(parentType == null){
                 throw new CompilerException(callStart,"this type has no parent");
             }
@@ -45,6 +45,13 @@ public final class Constructor extends AFunctionBlock{
             hasParentConstructor = true;
             parentConstructorCall = parentConstructorCallBuilder.toString();
             cEnv.parentConstructorCalled();
+        }else if(parentType != null){
+           var parentConstructor = parentType.getConstructor();
+           if(!parentConstructor.hasVariant(new TypeInfo[0])){
+               throw new CompilerException(line,tokenNum,"parent does not have implicit constructor");
+           }
+            //noinspection ConstantConditions
+            parentConstructorCall = parentConstructor.getVariant(new TypeInfo[0]).cname() + "((" + parentType.getCname() + "*)this);\n";
         }
         if(it.hasNext()){
            it.nextList().compile(b,fnEnv,it);

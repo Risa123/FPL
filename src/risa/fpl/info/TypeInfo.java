@@ -41,7 +41,7 @@ public class TypeInfo{
       OBJECT.addField("!=",new BinaryOperator(BOOL,OBJECT,"&!="));
   }
   private final String name,cname;
-  protected final HashMap<String,IField>fields = new HashMap<>();
+  protected final HashMap<String,AField>fields = new HashMap<>();
   private ClassInfo classInfo;
   protected final ArrayList<TypeInfo>parents = new ArrayList<>(),requiredTypes = new ArrayList<>();
   private TypeInfo primaryParent;
@@ -53,11 +53,11 @@ public class TypeInfo{
   public String toString(){
 	  return name;
   }
-  public void addField(String name,IField value){
+  public void addField(String name,AField value){
 	  fields.put(name,value);
   }
   //returns null if field cannot be accessed from Env from
-  public IField getField(String name,AEnv from){
+  public AField getField(String name,AEnv from){
       var field = fields.get(name);
       if(field == null){
           for(var parent:parents){
@@ -208,10 +208,10 @@ public class TypeInfo{
   private void addSize(){
       addField("getObjectSize",new UnaryOperator(NumberInfo.MEMORY,"sizeof ",false));
   }
-  public final IField getFieldFromThisType(String name){
+  public final AField getFieldFromThisType(String name){
       return fields.get(name);
   }
-  public final HashMap<String,IField>getFields(){
+  public final HashMap<String,AField>getFields(){
       return fields;
   }
 }

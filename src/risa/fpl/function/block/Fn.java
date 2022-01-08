@@ -202,7 +202,7 @@ public class Fn extends AFunctionBlock{
 			appendSemicolon = true;
 		}
         if(self != null){
-            IField parentField = null;
+            AField parentField = null;
             var parents = self.getParents();
             for(var parent:parents){
                 parentField = parent.getField(id.getValue(),env);

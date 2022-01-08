@@ -2,7 +2,7 @@ package risa.fpl.env;
 
 import risa.fpl.CompilerException;
 import risa.fpl.function.IFunction;
-import risa.fpl.function.exp.IField;
+import risa.fpl.function.exp.AField;
 import risa.fpl.function.statement.Var;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.parser.Atom;
@@ -24,7 +24,7 @@ public final class InterfaceEnv extends SubEnv{
     }
     @Override
     public void addFunction(String name,IFunction value){
-        type.addField(name,(IField)value);
+        type.addField(name,(AField) value);
     }
     public InterfaceInfo getType(){
         return type;

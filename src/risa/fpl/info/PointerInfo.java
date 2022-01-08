@@ -60,7 +60,7 @@ public class PointerInfo extends TypeInfo{
 		}else return o == NIL;
     }
     @Override
-    public final IField getField(String name,AEnv from){
+    public final AField getField(String name,AEnv from){
 	    var field = super.getField(name,from);
 	    if(field == null){
 	        field = type.getField(name,from);

@@ -3,6 +3,7 @@ package risa.fpl.function.block;
 import java.util.ArrayList;
 
 import risa.fpl.CompilerException;
+import risa.fpl.env.ConditionalBlockEnv;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnSubEnv;
 import risa.fpl.info.TypeInfo;
@@ -35,12 +36,13 @@ public final class ConditionalBlock extends ABlock{
 				list.add(exp);
 			}
 		}
-		var ret = new List(expLine,expCharNum,list,false).compile(builder,env,it);
+		var ifEnv = new ConditionalBlockEnv(env);
+		var ret = new List(expLine,expCharNum,list,false).compile(builder,ifEnv,it);
+		ifEnv.turnOffCompilingCondition();
 		if(ret != TypeInfo.BOOL){
 			throw new CompilerException(expLine,expCharNum,"expression expected to return bool instead of " + ret);
 		}
 		builder.append("){\n");
-		var ifEnv = new FnSubEnv(env);
 		var block = it.nextList();
 		var tmp = new StringBuilder();
 		block.compile(tmp,ifEnv,it);

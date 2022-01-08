@@ -78,6 +78,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(type);
                }else{
+                   //noinspection ConstantConditions
                    ((FnSubEnv)env).addTemplateInstance(type);
                }
            }
