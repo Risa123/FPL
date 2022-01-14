@@ -47,7 +47,7 @@ public final class Return implements IFunction{
 			builder.append("void _std_system_callOnExitHandlers();\n");
 			builder.append("_std_system_callOnExitHandlers0();\n");//args is from main module
 		}
-		if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null){//null is always false
+		if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null){
            expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ")";
 		}
 		builder.append("return ").append(expCode);

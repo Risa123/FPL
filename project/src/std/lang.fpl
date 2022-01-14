@@ -252,7 +252,7 @@ fn char toLower char this{
 }
 fn char toUpper char this{
  if isLower this{
-   return $A cast byte + this cast byte  - $a
+   return $A cast byte + this cast byte - $a
  }
  return this
 }
@@ -277,8 +277,7 @@ fn String integerToString long this{
    negative = true
  }
  while this > 0;|| i == 0{
-  var code this % 10 + $0 cast byte
-  buf set i,code cast char
+  buf set i,[ this % 10 + $0 cast byte ] cast char
   this /= 10
   i ++
  }
@@ -299,18 +298,38 @@ fn String integerToString long this{
  }
  return String:new ret,len,true
 }
-fn String floatingPointToString double n int precision{
+fn long integerParse String str{
+  if str isEmpty{
+    NumberFormatException:throw "invalid number " + str
+  }
+  long value 0
+  var sign 1
+  for i,str getLength{
+     var c str get i
+     if c == $+{
+       #ignore
+     }if c == $-{
+       sign = -1
+     }if isDigit c{
+       value = value * 10 + c cast long - $0 cast long
+     }{
+       NumberFormatException:throw "invalid number " + str
+     }
+  }
+  return sign * value
+}
+fn String floatingPointToString double this int precision{
    var sign ""
-   if n < 0{
-     n = n -
+   if this < 0{
+     this = this -
      sign = "-"
    }
-   var iPart n cast long
-   var fPart n - iPart cast double
+   var iPart this cast long
+   var fPart this - iPart cast double
    for i,precision{
      fPart *= 10
    }
-   return sign + integerToString iPart; + "."; + integerToString fPart cast long
+   return sign + integerToString iPart; + integerToString fPart cast long
 }
 class NumberFormatException Exception{
    this String message:message
@@ -336,7 +355,7 @@ fn double floatingPointParse String str{
        }if isDigit c{
          var num c cast double - $0 cast double
          if afterFPoint{
-          value = value / 10  + num
+          value = value / 10 + num
          }{
            value = value * 10 + num
          }

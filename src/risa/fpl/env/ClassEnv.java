@@ -165,6 +165,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
 	    return super.getFunction(name);
     }
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isAbstract(){
 	    return ((ModuleEnv)superEnv).hasModifier(Modifier.ABSTRACT);
     }
@@ -215,7 +216,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public String getImplicitDestructorCode(){
 	    return destructor.toString();
     }
-    public void compileNewAndAlloc(StringBuilder builder, TypeInfo[]args){
+    public void compileNewAndAlloc(StringBuilder builder,TypeInfo[]args){
         var constructorName = Objects.requireNonNull(instanceInfo.getConstructor().getVariant(args)).cname();
         var cname = instanceInfo.getCname();
         builder.append("void ").append(constructorName).append("(").append(cname).append("* this");

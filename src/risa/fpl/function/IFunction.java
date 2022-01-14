@@ -103,7 +103,8 @@ public interface IFunction{
   static ArrayList<Object>parseTemplateGeneration(ExpIterator it,AEnv env)throws CompilerException{
       return parseTemplateGeneration(it,env,false);
   }
-  static ArrayList<Object>parseTemplateGeneration(ExpIterator it,AEnv env,boolean classVariable)throws CompilerException{
+  @SuppressWarnings("ConstantConditions")
+  static ArrayList<Object>parseTemplateGeneration(ExpIterator it, AEnv env, boolean classVariable)throws CompilerException{
       var args = new ArrayList<>();
       while(it.hasNext()){
           var exp = it.peek();

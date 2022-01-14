@@ -9,7 +9,7 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
 
-public abstract class AField implements IFunction {
+public abstract class AField implements IFunction{
     protected String prevCode;
     protected final AccessModifier accessModifier;
     public AField(AccessModifier accessModifier){
@@ -18,7 +18,7 @@ public abstract class AField implements IFunction {
     public AField(){
         this(AccessModifier.PUBLIC);
     }
-    public void setPrevCode(String code){
+    public final void setPrevCode(String code){
         prevCode = code;
     }
     public void writePrev(StringBuilder builder){
@@ -29,10 +29,6 @@ public abstract class AField implements IFunction {
     }
     public final String getPrevCode(){
         return prevCode;
-    }
-    @Override
-    public boolean appendSemicolon(){
-        return true;
     }
     public final AccessModifier getAccessModifier(){
         return accessModifier;

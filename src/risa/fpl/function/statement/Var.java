@@ -20,7 +20,8 @@ public final class Var implements IFunction{
     public Var(TypeInfo type){
     	this.type = type;
     }
-	@Override
+	@SuppressWarnings("ConstantConditions")
+    @Override
 	public TypeInfo compile(StringBuilder  builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         env.checkModifiers(line,tokenNum,Modifier.NATIVE,Modifier.CONST);
         if(type != null && it.hasNext()){

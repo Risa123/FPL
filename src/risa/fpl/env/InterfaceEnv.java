@@ -24,7 +24,7 @@ public final class InterfaceEnv extends SubEnv{
     }
     @Override
     public void addFunction(String name,IFunction value){
-        type.addField(name,(AField) value);
+        type.addField(name,(AField)value);
     }
     public InterfaceInfo getType(){
         return type;

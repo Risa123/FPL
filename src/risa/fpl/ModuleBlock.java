@@ -183,10 +183,10 @@ public final class ModuleBlock extends AThreePassBlock{
        }
        ofType.addField(name,func.makeMethod(ofType,name));
    }
-   private void makeMethod(String name,TypeInfo ofType){
+   private void makeMethod(String name,@SuppressWarnings("SameParameterValue") TypeInfo ofType){
        makeMethod(name,name,ofType,true);
    }
-   private void makeMethod(String name,String oldName,TypeInfo ofType){
+   private void makeMethod(@SuppressWarnings("SameParameterValue") String name, String oldName, TypeInfo ofType){
        makeMethod(name,oldName,ofType,true);
    }
    private void addNumberFields(ClassInfo classInfo){

@@ -60,6 +60,9 @@ public class Function extends AField implements ICalledOnPointer{
                returnedData.add(new ReturnedData(buffer.toString(),!(f instanceof  Function)));
 		   }
 		}
+        if(name.equals("+") && getPrevCode() == null){
+            System.out.println(line);
+        }
 		var array = argList.toArray(new TypeInfo[0]);
 		if(!hasVariant(array)){
 		    throw new CompilerException(line,tokenNum,"function has no variant with arguments " + Arrays.toString(array));
@@ -132,7 +135,7 @@ public class Function extends AField implements ICalledOnPointer{
             b.append(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
         }
 		b.append(')');
-        if(it.hasNext() && returnType != TypeInfo.VOID && it.peek() instanceof Atom a){
+        if(returnType != TypeInfo.VOID && it.hasNext() && it.peek() instanceof Atom a){
            if(a.getType() == AtomType.ID){
                var id = it.nextID();
                var field = returnType.getField(id.getValue(),env);
@@ -145,7 +148,6 @@ public class Function extends AField implements ICalledOnPointer{
                        f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
                    }
                    field.setPrevCode(i.getToPointerName() + '(' + field.getPrevCode() + ",&" + env.getToPointerVarName(i));
-                   return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
                }
                return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
            }else if(a.getType() == AtomType.END_ARGS && noPrevCode){
@@ -156,9 +158,6 @@ public class Function extends AField implements ICalledOnPointer{
 		return returnType;
 	}
     @Override
-    public final void setPrevCode(String code){
-        prevCode = code;
-    }
     public final void writePrev(StringBuilder builder){
         if(prevCode == null){
            if(self != null){
@@ -242,8 +241,7 @@ public class Function extends AField implements ICalledOnPointer{
             }
             declaration.append(arg.getCname());
         }
-        declaration.append(')');
-        declaration.append(";\n");
+        declaration.append(");\n");
         var v = new FunctionVariant(args,cname,implName);
         variants.add(v);
         return v;
@@ -341,7 +339,7 @@ public class Function extends AField implements ICalledOnPointer{
         }
         return null;
     }
-    private void addVariantFromTemplate(TemplateVariant variant,SubEnv env,TypeInfo[]argsForTemplate,boolean asMethod){
+    private void addVariantFromTemplate(TemplateVariant variant,SubEnv env,TypeInfo[]argsForTemplate,@SuppressWarnings("SameParameterValue") boolean asMethod){
         var mod = env.getModule();
         var cname = mod.getNameSpace() + IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
         var path = Path.of(env.getFPL().getOutputDirectory() + '/' + cname + ".c");

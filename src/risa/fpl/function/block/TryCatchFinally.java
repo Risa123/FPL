@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 public final class TryCatchFinally extends ABlock{
     private static InstanceInfo exception;
+    @SuppressWarnings("ConstantConditions")
     @Override
     public TypeInfo compile(StringBuilder  builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         env.checkModifiers(line,tokenNum);
