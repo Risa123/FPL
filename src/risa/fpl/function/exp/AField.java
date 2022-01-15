@@ -9,8 +9,10 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
 
+import java.util.Stack;
+
 public abstract class AField implements IFunction{
-    protected String prevCode;
+    protected final Stack<String>prevCodes = new Stack<>();
     protected final AccessModifier accessModifier;
     public AField(AccessModifier accessModifier){
         this.accessModifier = accessModifier;
@@ -19,16 +21,15 @@ public abstract class AField implements IFunction{
         this(AccessModifier.PUBLIC);
     }
     public final void setPrevCode(String code){
-        prevCode = code;
+        prevCodes.push(code);
     }
     public void writePrev(StringBuilder builder){
-        if(prevCode != null){
-            builder.append(prevCode);
-            prevCode = null;
+        if(getPrevCode() != null){
+            builder.append(prevCodes.pop());
         }
     }
     public final String getPrevCode(){
-        return prevCode;
+        return prevCodes.empty()?null:prevCodes.peek();
     }
     public final AccessModifier getAccessModifier(){
         return accessModifier;

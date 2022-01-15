@@ -60,9 +60,6 @@ public class Function extends AField implements ICalledOnPointer{
                returnedData.add(new ReturnedData(buffer.toString(),!(f instanceof  Function)));
 		   }
 		}
-        if(name.equals("+") && getPrevCode() == null){
-            System.out.println(line);
-        }
 		var array = argList.toArray(new TypeInfo[0]);
 		if(!hasVariant(array)){
 		    throw new CompilerException(line,tokenNum,"function has no variant with arguments " + Arrays.toString(array));
@@ -72,11 +69,11 @@ public class Function extends AField implements ICalledOnPointer{
             if(self instanceof InstanceInfo i){
                 b.append("((").append(i.getClassDataType()).append("*)");
             }
-            b.append(Objects.requireNonNullElse(prevCode,"this"));
+            b.append(Objects.requireNonNullElse(getPrevCode(),"this"));
             if(self instanceof InterfaceInfo){
                 b.append(".impl->");
             }else{
-                if(callStatus == CALLED_ON_POINTER || prevCode == null){
+                if(callStatus == CALLED_ON_POINTER || getPrevCode() == null){
                     b.append("->");
                 }else{
                     b.append('.');
@@ -93,14 +90,14 @@ public class Function extends AField implements ICalledOnPointer{
         b.append('(');
 		var first = self == null;
 		var ref = false;
-        var noPrevCode = prevCode == null;
+        var noPrevCode = getPrevCode() == null;
 		if(self != null){
             if(!self.isPrimitive()){
                 b.append('(').append(self.getCname()).append("*)");
             }
 		    if(callStatus == CALLED_ON_POINTER){
 		      callStatus = NO_STATUS;
-            }else if(!(self instanceof InterfaceInfo) && prevCode != null /*to prevent &this when calling method on implicit this*/){
+            }else if(!(self instanceof InterfaceInfo) && getPrevCode() != null /*to prevent &this when calling method on implicit this*/){
                if(!self.isPrimitive()){
                    if(callStatus == CALLED_ON_RETURNED_INSTANCE || callStatus == CALLED_ON_INSTANCE_R_BY_FUNC){
                      if(callStatus == CALLED_ON_RETURNED_INSTANCE){
@@ -159,13 +156,12 @@ public class Function extends AField implements ICalledOnPointer{
 	}
     @Override
     public final void writePrev(StringBuilder builder){
-        if(prevCode == null){
+        if(getPrevCode() == null){
            if(self != null){
                builder.append("this");
            }
         }else{
-            builder.append(prevCode);
-            prevCode = null;
+            builder.append(prevCodes.pop());
         }
     }
     public final TypeInfo getReturnType(){
