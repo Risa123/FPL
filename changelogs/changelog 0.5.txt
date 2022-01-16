@@ -11,6 +11,10 @@ added parse methods to number classes
 added static throw to exception classes
 NumberFormatException added
 + String.{isEmpty,isBlank,isEmptyOrBlank}
+D number type char added to signify double
+NAN,POSITIVE_INFINITY and NEGATIVE_INFINITY fields added to floating point numbers
+isNaN method added to floating point numbers
+added else and elseif blocks to compile time if
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
@@ -33,3 +37,6 @@ fix chained call C error
 fix unnecessary ; causing C error now causing compilation error
 fix segfault
 fix floating point number cannot be signed
+fix chained call C errors
+fix integer number with F not considered float
+fix attempting to access function in current module in (module name).(function name) module not found error

@@ -23,23 +23,21 @@ public final class ModuleBlock extends AThreePassBlock{
    private final String cPath,name,sourceFile;
    private boolean compiled;
    private final ModuleEnv env;
-   private final FPL fpl;
    private final ArrayList<ClassEnv>classEnvList = new ArrayList<>();
    private CompilerException lastEx;
    private final ArrayList<ExpressionInfo>expInfos;
    private String mainFunctionCode;
-   public ModuleBlock(Path sourceFile,Path srcDir,FPL fpl)throws IOException,CompilerException{
+   public ModuleBlock(Path sourceFile,Path srcDir)throws IOException,CompilerException{
        var subPath = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount());
        this.sourceFile = subPath.toString();
-	   cPath = fpl.getOutputDirectory() + '/' + this.sourceFile.replace(File.separatorChar,'_') + ".c";
-	   this.fpl = fpl;
+	   cPath = FPL.getOutputDirectory() + '/' + this.sourceFile.replace(File.separatorChar,'_') + ".c";
        var name = new StringBuilder();
        for(int i = 0; i < subPath.getNameCount() - 1;i++){
            name.append(subPath.getName(i)).append('.');
        }
        name.append(subPath.getFileName().toString().split("\\.")[0]);
        this.name = name.toString();
-       env = new ModuleEnv(fpl.getEnv(),this,null);
+       env = new ModuleEnv(FPL.getEnv(),this,null);
        try{
            expInfos = createInfoList(new Parser(Files.newBufferedReader(sourceFile)).parse());
 	   }catch(CompilerException e){
@@ -63,14 +61,14 @@ public final class ModuleBlock extends AThreePassBlock{
                        makeMethod("isDigit",TypeInfo.CHAR);
                        makeMethod("isControl",TypeInfo.CHAR);
                        makeMethod("isWhitespace",TypeInfo.CHAR);
-                       makeMethod("isUpper",TypeInfo.CHAR);
-                       makeMethod("isLower",TypeInfo.CHAR);
+                       makeMethod("isUpperCase",TypeInfo.CHAR);
+                       makeMethod("isLowerCase",TypeInfo.CHAR);
                        makeMethod("isBlank",TypeInfo.CHAR);
                        makeMethod("isHexDigit",TypeInfo.CHAR);
                        makeMethod("isPrint",TypeInfo.CHAR);
                        makeMethod("isPunct",TypeInfo.CHAR);
-                       makeMethod("toLower",TypeInfo.CHAR);
-                       makeMethod("toUpper",TypeInfo.CHAR);
+                       makeMethod("toLowerCase",TypeInfo.CHAR);
+                       makeMethod("toUpperCase",TypeInfo.CHAR);
                        makeMethod("toString","charToString",TypeInfo.CHAR);
                        makeMethod("toString","integerToString",NumberInfo.INT,false);
                        makeMethod("toString","integerToString",NumberInfo.SINT,false);
@@ -102,7 +100,7 @@ public final class ModuleBlock extends AThreePassBlock{
                        addNumberFields(ClassInfo.FLOAT);
                        addNumberFields(ClassInfo.DOUBLE);
                    }
-                   case "std.backend"->fpl.setFreeArray((Function)env.getFunctionFromModule("free[]"));
+                   case "std.backend"->FPL.setFreeArray((Function)env.getFunctionFromModule("free[]"));
                    case "std.system"->env.getAndMakeInaccessible("callOnExitHandlers");
                }
            }
@@ -134,7 +132,7 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write("void _std_system_addOnExitHandler0(_onExit0);\n");
                writer.write("int main(int argc,char** argv){\n");
                writer.write(env.getInitializerCode());
-               for(var mod:fpl.getModules()){
+               for(var mod:FPL.getModules()){
                    if(!mod.isMain()){
                        writer.write(mod.env.getInitializerCall());
                    }
@@ -151,7 +149,7 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write(mainFunctionCode);
                writer.write("}\n");
                writer.write("void onExit(){\n");
-               for(var mod:fpl.getModules()){
+               for(var mod:FPL.getModules()){
                    writer.write(mod.getEnv().getDestructorCall());
                }
                writer.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
@@ -169,7 +167,7 @@ public final class ModuleBlock extends AThreePassBlock{
        return cPath;
    }
    public boolean isMain(){
-       return fpl.getMainModule().equals(name);
+       return FPL.getMainModule().equals(name);
    }
    private void makeMethod(String name,String oldName,TypeInfo ofType,boolean remove){
       Function func;
@@ -183,10 +181,10 @@ public final class ModuleBlock extends AThreePassBlock{
        }
        ofType.addField(name,func.makeMethod(ofType,name));
    }
-   private void makeMethod(String name,@SuppressWarnings("SameParameterValue") TypeInfo ofType){
+   private void makeMethod(String name,TypeInfo ofType){
        makeMethod(name,name,ofType,true);
    }
-   private void makeMethod(@SuppressWarnings("SameParameterValue") String name, String oldName, TypeInfo ofType){
+   private void makeMethod(@SuppressWarnings("SameParameterValue") String name,String oldName, TypeInfo ofType){
        makeMethod(name,oldName,ofType,true);
    }
    private void addNumberFields(ClassInfo classInfo){
@@ -197,6 +195,16 @@ public final class ModuleBlock extends AThreePassBlock{
        String name;
        if(n.isFloatingPoint()){
            name = "floatingPointParse";
+           if(n == NumberInfo.FLOAT){
+               classInfo.addField("NAN",env.getAndMakeInaccessible("FLOAT_NAN"));
+               classInfo.addField("POSITIVE_INFINITY",env.getAndMakeInaccessible("FLOAT_POSITIVE_INFINITY"));
+               classInfo.addField("NEGATIVE_INFINITY",env.getAndMakeInaccessible("FLOAT_NEGATIVE_INFINITY"));
+           }else if(n == NumberInfo.DOUBLE){
+               classInfo.addField("NAN",env.getAndMakeInaccessible("DOUBLE_NAN"));
+               classInfo.addField("POSITIVE_INFINITY",env.getAndMakeInaccessible("DOUBLE_POSITIVE_INFINITY"));
+               classInfo.addField("NEGATIVE_INFINITY",env.getAndMakeInaccessible("DOUBLE_NEGATIVE_INFINITY"));
+           }
+           makeMethod("isNaN",n);
        }else{
            name = "integerParse";
        }
@@ -206,7 +214,7 @@ public final class ModuleBlock extends AThreePassBlock{
        return env;
    }
    public void setString(TypeInfo string){
-       fpl.setString(string);
+       FPL.setString(string);
    }
    public ArrayList<ClassEnv>getClassEnvList(){
        return classEnvList;

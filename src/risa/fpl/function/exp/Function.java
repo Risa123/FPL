@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Objects;
 
 import risa.fpl.CompilerException;
+import risa.fpl.FPL;
 import risa.fpl.env.*;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
@@ -44,6 +45,7 @@ public class Function extends AField implements ICalledOnPointer{
     @Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         var b = new StringBuilder();
+        var callStatus = this.callStatus;
 		var argList = new ArrayList<TypeInfo>();
 		var returnedData = new ArrayList<ReturnedData>();
 		if(self instanceof InstanceInfo i && i.isException() && name.equals("throw") && env instanceof FnSubEnv subEnv){
@@ -96,12 +98,12 @@ public class Function extends AField implements ICalledOnPointer{
                 b.append('(').append(self.getCname()).append("*)");
             }
 		    if(callStatus == CALLED_ON_POINTER){
-		      callStatus = NO_STATUS;
+		      this.callStatus = NO_STATUS;
             }else if(!(self instanceof InterfaceInfo) && getPrevCode() != null /*to prevent &this when calling method on implicit this*/){
                if(!self.isPrimitive()){
                    if(callStatus == CALLED_ON_RETURNED_INSTANCE || callStatus == CALLED_ON_INSTANCE_R_BY_FUNC){
                      if(callStatus == CALLED_ON_RETURNED_INSTANCE){
-                         callStatus = NO_STATUS;
+                         this.callStatus = NO_STATUS;
                      }
                    }else{
                        ref = true;
@@ -115,7 +117,7 @@ public class Function extends AField implements ICalledOnPointer{
             }
 		    if(callStatus == CALLED_ON_INSTANCE_R_BY_FUNC){
 		        b.append(')');
-		        callStatus = NO_STATUS;
+		        this.callStatus = NO_STATUS;
             }
             if(self instanceof InterfaceInfo){
                 b.append(".instance");
@@ -144,7 +146,7 @@ public class Function extends AField implements ICalledOnPointer{
                    if(field instanceof Function f){
                        f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
                    }
-                   field.setPrevCode(i.getToPointerName() + '(' + field.getPrevCode() + ",&" + env.getToPointerVarName(i));
+                   field.setPrevCode(i.getToPointerName() + '(' + field.prevCodes.pop() + ",&" + env.getToPointerVarName(i));
                }
                return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
            }else if(a.getType() == AtomType.END_ARGS && noPrevCode){
@@ -215,7 +217,6 @@ public class Function extends AField implements ICalledOnPointer{
         }else if(accessModifier == AccessModifier.PRIVATE){
             declaration.append("static ");
         }
-        var returnType = this.returnType;
         declaration.append(returnType.getCname()).append(' ');
         if(attrCode != null){
             declaration.append(attrCode).append(' ');
@@ -338,7 +339,7 @@ public class Function extends AField implements ICalledOnPointer{
     private void addVariantFromTemplate(TemplateVariant variant,SubEnv env,TypeInfo[]argsForTemplate,@SuppressWarnings("SameParameterValue") boolean asMethod){
         var mod = env.getModule();
         var cname = mod.getNameSpace() + IFunction.createTemplateTypeCname(IFunction.toCId(name),argsForTemplate);
-        var path = Path.of(env.getFPL().getOutputDirectory() + '/' + cname + ".c");
+        var path = Path.of(FPL.getOutputDirectory() + '/' + cname + ".c");
         var builder = new StringBuilder();
         try{
            var fnEnv = new FnEnv(variant.superEnv,returnType);
@@ -412,7 +413,7 @@ public class Function extends AField implements ICalledOnPointer{
                selfType = p.getType();
            }
            if(!(selfType instanceof InstanceInfo i) || i.canWriteTemplateFunctionVariants()){
-               mod.getFPL().addFunctionVariantGenerationData(new VariantGenData(builder.toString(),path,mod));
+               FPL.addFunctionVariantGenerationData(new VariantGenData(builder.toString(),path,mod));
            }
        }catch(CompilerException e){
            throw new RuntimeException(e);

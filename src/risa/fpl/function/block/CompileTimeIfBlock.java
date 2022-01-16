@@ -15,7 +15,6 @@ public class CompileTimeIfBlock extends AThreePassBlock implements IFunction{
     }
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
-        env.checkModifiers(line,tokenNum);
         if(env instanceof ANameSpacedEnv e){
            var infos = e.getCompileBlockInfos(line);
            if(infos == null){

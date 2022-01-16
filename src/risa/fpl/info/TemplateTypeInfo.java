@@ -1,6 +1,7 @@
 package risa.fpl.info;
 
 import risa.fpl.CompilerException;
+import risa.fpl.FPL;
 import risa.fpl.ModuleBlock;
 import risa.fpl.env.*;
 import risa.fpl.function.IFunction;
@@ -51,9 +52,9 @@ public final class TemplateTypeInfo extends InstanceInfo{
            if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
                superMod.addInstanceFile(file);
            }
-           var path = Path.of(superMod.getFPL().getOutputDirectory() + "/" + file);
+           var path = Path.of(FPL.getOutputDirectory() + "/" + file);
            Files.createFile(path);//created for module block so it does not throw exception
-           var mod = new ModuleEnv(superMod,new ModuleBlock(path,superMod.getFPL().getSrcDir(),superMod.getFPL()),cname);
+           var mod = new ModuleEnv(superMod,new ModuleBlock(path,FPL.getSrcDir()),cname);
            Files.delete(path);
            var name = getName() + nameBuilder;
            var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false);
@@ -89,7 +90,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            }
            //prevent declaration of template in a template
            if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
-               mod.getFPL().addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + cEnv.getConstructorCode(),typesForDeclaration));
+               FPL.addTemplateCompData(new TemplateCompData(mod,path,cEnv.getDataDefinition() + cEnv.getConstructorCode(),typesForDeclaration));
            }
        }
        return type;

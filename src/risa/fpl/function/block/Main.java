@@ -1,6 +1,7 @@
 package risa.fpl.function.block;
 
 import risa.fpl.CompilerException;
+import risa.fpl.FPL;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.env.ModuleEnv;
@@ -25,7 +26,7 @@ public final class Main implements IFunction{
         }
         var fnEnv = new FnEnv(env,NumberInfo.INT);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
-        fnEnv.addFunction("args",new Variable(new PointerInfo(modEnv.getFPL().getString()),"args","args"));
+        fnEnv.addFunction("args",new Variable(new PointerInfo(FPL.getString()),"args","args"));
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",AtomType.ID)),"mainThread","mainThread"));
         var b = new StringBuilder();
         b.append(modEnv.getInitializer());

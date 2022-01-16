@@ -119,3 +119,10 @@ fn memory getSize String path{
  checkErrNo fileStatus path toCString;,status ref;,path
  return getFileSize status ref
 }
+const{
+ compIf os WINDOWS{
+   char pathSeparatorChar $;
+ }{
+   char pathSeparatorChar $:
+ }
+}

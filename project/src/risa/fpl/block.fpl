@@ -12,7 +12,6 @@ class ModuleBlock ObjectInfo{
  this FPL* fpl String fplPath{
    FileReader reader init fplPath
    Tokenizer tokenizer init reader
-   name = ""
    try{
       while tokenizer hasNext{
           var token tokenizer next

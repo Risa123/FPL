@@ -167,10 +167,12 @@ public final class Tokenizer implements AutoCloseable{
 						  type = AtomType.DOUBLE;
 						  b.append('.');
 					  }else if(c == 'F'){
+						  hasTypeChar = true;
 						  type = AtomType.FLOAT;
 						  if(!floatingPoint){
-							  throw new CompilerException(line,tokenNum,"float number expected");
+							  b.append(".0");
 						  }
+						  b.append('F');
 					  }else if(c == 'L'){
 						  hasTypeChar = true;
 						  type = signed?AtomType.SLONG:AtomType.ULONG;
@@ -180,6 +182,13 @@ public final class Tokenizer implements AutoCloseable{
 					  }else if(c == 'B'){
 						  hasTypeChar = true;
 						  type = signed?AtomType.SBYTE:AtomType.UBYTE;
+					  }else if(c == 'D'){
+						  hasTypeChar = true;
+						  type = AtomType.DOUBLE;
+						  if(!floatingPoint){
+							  b.append(".0");
+						  }
+						  b.append('D');
 					  }else if(c == 'e'){
                         if(hasScientificNotation){
 							throw new CompilerException(line,tokenNum,"this number already has scientific notation");

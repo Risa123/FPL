@@ -51,7 +51,7 @@ public abstract class AEnv{
 	  case CHAR:
 		 return new ValueExp(NumberInfo.CHAR,atom.getValue());
 	  case STRING:
-		 return new ValueExp(getFPL().getString(),"static_std_lang_String_new0(" + atom.getValue() + "," + (atom.getValue().length() - 2) + ",0)");
+		 return new ValueExp(FPL.getString(),"static_std_lang_String_new0(" + atom.getValue() + "," + (atom.getValue().length() - 2) + ",0)");
 	   default:
 		   throw new CompilerException(atom,"identifier or literal expected instead of " + atom.getType());
 	 }
@@ -91,5 +91,4 @@ public abstract class AEnv{
 		 }
       }
   }
-  public abstract FPL getFPL();
 }

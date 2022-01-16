@@ -1,5 +1,6 @@
 package risa.fpl.info;
 
+import risa.fpl.FPL;
 import risa.fpl.env.AEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
@@ -38,7 +39,7 @@ public class PointerInfo extends TypeInfo{
         }
         if(type instanceof InstanceInfo i && i.getDestructorName() != null){
             var mod = i.getModule();
-            var freeArray = mod.getFPL().getFreeArray();
+            var freeArray = FPL.getFreeArray();
             if(freeArray != null && !(i instanceof TemplateTypeInfo)){
                 addField("free[]",freeArray.makeMethodFromTemplate(this,new TypeInfo[]{NumberInfo.MEMORY},mod));
             }

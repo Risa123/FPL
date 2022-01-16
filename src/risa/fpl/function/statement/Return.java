@@ -6,9 +6,11 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnSubEnv;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.AExp;
+import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
@@ -18,7 +20,7 @@ public final class Return implements IFunction{
 		env.checkModifiers(line,tokenNum);
 		var subEnv = (FnSubEnv)env;
 		var expCode = "";
-		TypeInfo returnType = null;
+		TypeInfo returnType;
 		if(it.hasNext()){
 		    var list = new ArrayList<AExp>();
 		    while(it.hasNext()){
@@ -32,12 +34,16 @@ public final class Return implements IFunction{
 			}
 			if(returnType != TypeInfo.VOID){
 				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString());
-				if(subEnv.getToPointerVarID() == 0){//no destructor calls needed
+				if(subEnv.hasNoDestructorCalls()){
 					expCode = code;
 				}else{
 					expCode = "tmp";
 					builder.append(returnType.getCname()).append(" tmp=").append(code).append(";\n");
 				}
+			}
+			//code of instance variable already starts with copyAndReturn
+			if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !(env.getFunction((Atom)list.get(0)) instanceof Variable)){
+				expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ")";
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){
 			throw new CompilerException(line,tokenNum,"this function doesn't return void");
@@ -46,9 +52,6 @@ public final class Return implements IFunction{
 		if(subEnv.isInMainBlock()){
 			builder.append("void _std_system_callOnExitHandlers();\n");
 			builder.append("_std_system_callOnExitHandlers0();\n");//args is from main module
-		}
-		if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null){
-           expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ")";
 		}
 		builder.append("return ").append(expCode);
 		return TypeInfo.VOID;

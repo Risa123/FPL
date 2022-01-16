@@ -14,9 +14,7 @@ public final class CompilerException extends Exception{
       super(msg);
   }
   public void setSourceFile(String sourceFile){
-      if(this.sourceFile == null){
-          this.sourceFile = sourceFile;
-      }
+      this.sourceFile = sourceFile;
   }
   @Override
   public String getMessage(){

@@ -34,10 +34,6 @@ public class SubEnv extends AEnv{
       }
       return super.getType(atom);
   }
- @Override
- public final FPL getFPL(){
-      return superEnv.getFPL();
- }
  public ModuleEnv getModule(){
       return ((SubEnv)superEnv).getModule();
  }
@@ -66,8 +62,8 @@ public class SubEnv extends AEnv{
  public final void compileToPointerVars(StringBuilder builder){
       builder.append(toPointerVars);
  }
- public final int getToPointerVarID(){
-      return toPointerVarID;
+ public final boolean hasNoDestructorCalls(){
+      return destructorCalls.isEmpty();
  }
  public final void setAccessModifier(AccessModifier accessModifier){
       this.accessModifier = accessModifier;

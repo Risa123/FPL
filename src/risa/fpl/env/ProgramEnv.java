@@ -13,9 +13,7 @@ import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 
 public final class ProgramEnv extends AEnv{
-  private final FPL fpl;
-  public ProgramEnv(FPL fpl){
-      this.fpl = fpl;
+  public ProgramEnv(){
       addFunction("nil",new ValueExp(TypeInfo.NIL,"0"));
       addFunction("private",new SetAccessModifier(AccessModifier.PRIVATE));
       addFunction("abstract",new AddModifier(Modifier.ABSTRACT));
@@ -56,9 +54,5 @@ public final class ProgramEnv extends AEnv{
 	  addType(TypeInfo.CHAR);
 	  addType(NumberInfo.MEMORY);
       addType(NumberInfo.NUMBER,false);
-  }
-  @Override
-  public FPL getFPL(){
-      return fpl;
   }
 }

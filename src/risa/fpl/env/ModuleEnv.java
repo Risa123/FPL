@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import risa.fpl.CompilerException;
+import risa.fpl.FPL;
 import risa.fpl.ModuleBlock;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
@@ -78,6 +79,9 @@ public final class ModuleEnv extends ANameSpacedEnv{
                     return mod.getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1],AtomType.ID));
                 }
             }
+            if(modName.equals(moduleBlock.getName())){
+                return getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1],AtomType.ID));
+            }
             throw new CompilerException(name,"module " + modName + " not found");
         }
         if(hasFunctionInCurrentEnv(name.getValue())){
@@ -141,7 +145,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    if(module.getValue().equals(moduleBlock.getName())){
 	        throw new CompilerException(module,"cannot import current module");
         }
-        var block = getFPL().getModule(module.getValue());
+        var block = FPL.getModule(module.getValue());
         if(block == null){
             throw new CompilerException(module,"module " +  module + " not found");
         }
