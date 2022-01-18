@@ -116,10 +116,38 @@ class String{
     }
     return str
   }
+  fn bool contains char c{
+    for i,len{
+      if get i; == c{
+        return true
+      }
+    }
+    return false
+  }
+  fn bool contains String str{
+     if len < str len{
+       return false
+     }
+     for i,len{
+       var match true
+       for j,str len{
+         if get i; != str get j{
+           match = false
+           break
+         }
+         if match{
+           return true
+         }
+         i ++
+       }
+     }
+     return false
+  }
   fn uint getLength = len
   fn String toString = this drf
   fn bool isEmpty = len == 0
   fn bool isEmptyOrBlank = isEmpty; || isBlank
+  fn char* getData = p
 }
 fn void print String str{
    var cstr str toCString

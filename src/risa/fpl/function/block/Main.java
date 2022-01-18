@@ -30,11 +30,7 @@ public final class Main implements IFunction{
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",AtomType.ID)),"mainThread","mainThread"));
         var b = new StringBuilder();
         b.append(modEnv.getInitializer());
-        var tmp = new StringBuilder();
-        it.nextList().compile(tmp,fnEnv,it);
-        fnEnv.compileToPointerVars(b);
-        b.append(tmp);
-        fnEnv.compileDestructorCalls(b);
+        fnEnv.compileBlock(it.nextList(),b,it);
         b.append(modEnv.getDestructor());
         if(fnEnv.isReturnNotUsed()){
            b.append("_std_system_callOnExitHandlers0();\n");

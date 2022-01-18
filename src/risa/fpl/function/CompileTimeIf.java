@@ -49,7 +49,7 @@ public final class CompileTimeIf implements IFunction{
                 }
             }else if(next instanceof Atom a && a.getValue().equals("compIf")){
                 if(!isTrue){
-                    noElseIfOrElseIfIsTrue = false;
+                    noElseIfOrElseIfIsTrue = true;
                 }
                 compile(builder,env,it,next.getLine(),next.getTokenNum());
                 noElseIfOrElseIfIsTrue = true;

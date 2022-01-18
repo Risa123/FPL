@@ -10,11 +10,15 @@ number literal can now contain _ to make it more readable
 added parse methods to number classes
 added static throw to exception classes
 NumberFormatException added
-+ String.{isEmpty,isBlank,isEmptyOrBlank}
++ String.{isEmpty,isBlank,isEmptyOrBlank,getData,contains}
 D number type char added to signify double
 NAN,POSITIVE_INFINITY and NEGATIVE_INFINITY fields added to floating point numbers
 isNaN method added to floating point numbers
 added else and elseif blocks to compile time if
+char.isUpper renamed to isUpperCase
+char.isLower renamed to isLowerCase
+char.toUpper renamed to toUpperCase
+char.toLower rename to toUpperCase
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C

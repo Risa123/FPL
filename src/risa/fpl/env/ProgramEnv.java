@@ -1,6 +1,5 @@
 package risa.fpl.env;
 
-import risa.fpl.FPL;
 import risa.fpl.function.*;
 import risa.fpl.function.block.ClassBlock;
 import risa.fpl.function.block.Fn;

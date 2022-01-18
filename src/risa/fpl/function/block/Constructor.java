@@ -54,7 +54,7 @@ public final class Constructor extends AFunctionBlock{
             parentConstructorCall = parentConstructor.getVariant(new TypeInfo[0]).cname() + "((" + parentType.getCname() + "*)this);\n";
         }
         if(it.hasNext()){
-           it.nextList().compile(b,fnEnv,it);
+           fnEnv.compileBlock(it.nextList(),b,it);
         }else if(!hasParentConstructor){
             throw new CompilerException(line,tokenNum,"block expected as last argument");
         }

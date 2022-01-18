@@ -12,6 +12,8 @@ class ModuleBlock ObjectInfo{
  this FPL* fpl String fplPath{
    FileReader reader init fplPath
    Tokenizer tokenizer init reader
+   name = fplPath replace $/,$.; replace $\\,$.
+   print name
    try{
       while tokenizer hasNext{
           var token tokenizer next

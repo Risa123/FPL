@@ -22,10 +22,8 @@ public final class TryCatchFinally extends ABlock{
         var postEntry = new StringBuilder("{\nchar exceptionCaught = 0;\n");
         postEntry.append("if(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context)){\n");
         var tryEnv = new FnSubEnv(env);
-        var tmp = new StringBuilder();
-        it.nextList().compile(tmp,tryEnv,it);
-        tryEnv.compileToPointerVars(builder);
-        postEntry.append(tmp).append("}\n");
+        tryEnv.compileBlock(it.nextList(),postEntry,it);
+        postEntry.append("}\n");
         var hasFin = false;
         var finallyCode = "";
         var finallyEnv = new FnSubEnv(env);
@@ -72,10 +70,7 @@ public final class TryCatchFinally extends ABlock{
                     postEntry.append(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,(_Exception*)&ex);\n");
                     var blockEnv = new FnSubEnv(env);
                     blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
-                    var tmp1 = new StringBuilder();
-                    block.compile(tmp1,blockEnv,it);
-                    blockEnv.compileToPointerVars(builder);
-                    postEntry.append(tmp1);
+                    blockEnv.compileBlock(block,postEntry,it);
                     postEntry.append("}\n");
                 }else if(blockName.getValue().equals("finally")){
                     if(hasFin){
@@ -84,7 +79,7 @@ public final class TryCatchFinally extends ABlock{
                     hasFin = true;
                     it.next();
                     var b = new StringBuilder();
-                    it.nextList().compile(b,finallyEnv,it);
+                    finallyEnv.compileBlock(it.nextList(),b,it);
                     finallyCode = b.toString();
                 }else{
                     break;
@@ -94,9 +89,7 @@ public final class TryCatchFinally extends ABlock{
             }
         }
         postEntry.append("if(!exceptionCaught){\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\n}\n");
-        finallyEnv.compileToPointerVars(postEntry);
         postEntry.append(finallyCode);
-        finallyEnv.compileDestructorCalls(postEntry);
         postEntry.append("}\n");
         if(exDataNames.isEmpty()){
             exDataNames.add(exception.getDataName());

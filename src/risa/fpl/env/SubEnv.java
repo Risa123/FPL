@@ -1,12 +1,13 @@
 package risa.fpl.env;
 
 import risa.fpl.CompilerException;
-import risa.fpl.FPL;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
+import risa.fpl.parser.ExpIterator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,9 +44,6 @@ public class SubEnv extends AEnv{
          destructorCalls.append(destructor).append("(&").append(cname).append(");\n");
      }
  }
- public final void compileDestructorCalls(StringBuilder builder){
-      builder.append(destructorCalls);
- }
  public final String getToPointerVarName(InstanceInfo type){
       var name = addToPointerVar(type);
       var destructor = type.getDestructorName();
@@ -58,6 +56,16 @@ public class SubEnv extends AEnv{
      var name = "c" + toPointerVarID++;
      toPointerVars.append(type.getCname()).append(' ').append(name).append(";\n");
      return name;
+ }
+ public final void compileBlock(AExp exp,StringBuilder builder,ExpIterator it)throws CompilerException{
+      var tmp = new StringBuilder();
+      exp.compile(tmp,this,it);
+      builder.append(toPointerVars);
+      builder.append(tmp);
+      builder.append(destructorCalls);
+ }
+ public final void compileDestructorCalls(StringBuilder builder){
+      builder.append(destructorCalls);
  }
  public final void compileToPointerVars(StringBuilder builder){
       builder.append(toPointerVars);

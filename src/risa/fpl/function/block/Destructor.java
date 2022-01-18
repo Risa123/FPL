@@ -27,7 +27,7 @@ public final class Destructor extends ABlock{
             b.append(parent.getDestructorName()).append("(this);\n");
         }
         b.append(cEnv.getImplicitDestructorCode());
-        it.nextList().compile(b,new FnEnv(env,TypeInfo.VOID),it);
+        new FnEnv(env,TypeInfo.VOID).compileBlock(it.nextList(),b,it);
         b.append("}\n");
         cEnv.appendFunctionCode(b.toString());
         cEnv.destructorDeclared();

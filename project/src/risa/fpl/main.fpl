@@ -101,9 +101,8 @@ main{
    stderr writeString "<project directory> expected"
    return 2 #1 is reserved for exceptions
  }
- print "a" toUpperCase
  try{
-   FPL:new args get 1
+  FPL:new args get 1
  }catch CompilerException{
    stderr writeString ex getMessage
    return 3

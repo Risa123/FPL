@@ -44,11 +44,7 @@ public final class ConditionalBlock extends ABlock{
 		}
 		builder.append("){\n");
 		var block = it.nextList();
-		var tmp = new StringBuilder();
-		block.compile(tmp,ifEnv,it);
-		ifEnv.compileToPointerVars(builder);
-		builder.append(tmp);
-		ifEnv.compileDestructorCalls(builder);
+		ifEnv.compileBlock(block,builder,it);
 		builder.append("}\n");
 		if(code.equals("if")){
 			if(it.hasNext()){
@@ -61,12 +57,7 @@ public final class ConditionalBlock extends ABlock{
 				}else{
 					builder.append("else{\n");
 				}
-				var subEnv = new FnSubEnv(env);
-				var b = new StringBuilder();
-				elseExp.compile(b,subEnv,it);
-				subEnv.compileToPointerVars(builder);
-				builder.append(b);
-				subEnv.compileDestructorCalls(builder);
+				new FnSubEnv(env).compileBlock(elseExp,builder,it);
 				if(elseExp instanceof List){
 					builder.append("}\n");
 				}

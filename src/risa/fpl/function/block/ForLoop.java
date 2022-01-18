@@ -49,11 +49,7 @@ public final class ForLoop extends ABlock{
         builder.append(cId).append("++){\n");
         var subEnv = new FnSubEnv(env);
         subEnv.addFunction(id.getValue(),new Variable(type,cId,id.getValue()));
-        var tmp = new StringBuilder();
-        it.nextList().compile(tmp,subEnv,it);
-        subEnv.compileToPointerVars(builder);
-        builder.append(tmp);
-        subEnv.compileDestructorCalls(builder);
+        subEnv.compileBlock(it.nextList(),builder,it);
         builder.append("}\n");
         return TypeInfo.VOID;
     }
