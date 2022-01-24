@@ -29,7 +29,7 @@ public final class TryCatchFinally extends ABlock{
         var finallyEnv = new FnSubEnv(env);
         var exDataNames = new ArrayList<String>();
         if(exception == null){
-            exception = (InstanceInfo)env.getType(new Atom(0,0,"Exception", AtomType.ID));
+            exception = (InstanceInfo)env.getType(new Atom(0,0,"Exception",AtomType.ID));
         }
         while(it.hasNext()){
             if(it.peek() instanceof Atom blockName && blockName.getType() == AtomType.ID){

@@ -111,7 +111,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             if(!constructor.hasVariant(new TypeInfo[0])){
                 throw new CompilerException(classId,"this class can not have implicit constructor if parent has not one");
             }
-            //noinspection ConstantConditions
             code = constructor.getVariant(new TypeInfo[0]).cname() + "((" + parent.getCname() + "*)this);\n" + code;
         }
         return "void " + header + instanceInfo.getCname() + "* this){\n" + code + getImplicitConstructorCode() + "}\n";
@@ -228,7 +227,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var allocName = "static" + getNameSpace() + "_alloc";
         var allocMethod = (Function)classInfo.getFieldFromThisType("alloc");
         allocMethod.addStaticVariant(args,allocName);
-        //noinspection ConstantConditions
         builder.append(instanceInfo.getCname()).append("* ").append(allocMethod.getVariant(args).cname()).append("(");
         var first = true;
         var b = new StringBuilder();
@@ -249,7 +247,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var newName = "static" + nameSpace + "_new";
         var newMethod = (Function)classInfo.getFieldFromThisType("new");
         newMethod.addStaticVariant(args,newName);
-        //noinspection ConstantConditions
         builder.append(cname).append(' ').append(newMethod.getVariant(args).cname()).append("(").append(compiledArgs).append("){\n");
         builder.append(cname).append(" inst;\n");
         builder.append(constructorCall(constructorName,"&inst",args));
@@ -259,8 +256,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
                 instanceInfo.getClassInfo().addField("throw",new StaticThrow());
             }
             var func = (Function)classInfo.getFieldFromThisType("throw");
-            func.addStaticVariant(args,"static" + getNameSpace() + "_throw");
-            //noinspection ConstantConditions
+            func.addStaticVariant(args,"static" + nameSpace + "_throw");
             builder.append("void ").append(func.getVariant(args).cname()).append('(');
             var argFirst = true;
             for(var i = 0;i < args.length;++i){

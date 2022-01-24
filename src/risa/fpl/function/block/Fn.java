@@ -29,7 +29,7 @@ public class Fn extends AFunctionBlock{
         }
         var b = new StringBuilder();
 		var id = it.nextID();
-        if(env instanceof  ModuleEnv e && e.isMain() && id.getValue().equals("main")){
+        if(env instanceof ModuleEnv e && e.isMain() && id.getValue().equals("main")){
            throw new CompilerException(id,"main function can only be declared using built-in function main");
         }
 	    String cID;
@@ -55,8 +55,7 @@ public class Fn extends AFunctionBlock{
         if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
             headBuilder.append("static ");
         }
-        headBuilder.append(returnType.getCname());
-        headBuilder.append(' ').append(cID);
+        headBuilder.append(returnType.getCname()).append(' ').append(cID);
         if(!env.hasModifier(Modifier.NATIVE)){
            if(env.hasFunctionInCurrentEnv(id.getValue()) && env.getFunction(id) instanceof  Function f){
                headBuilder.append(f.getVariants().size());

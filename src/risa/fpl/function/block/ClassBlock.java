@@ -117,7 +117,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         for(var name:cEnv.getVariableFieldDeclarationOrder()){
             var v = (Variable)type.getField(name,cEnv);
             if(v.getType() instanceof FunctionInfo f){
-                attributes.append(f.getPointerVariableDeclaration(v.getCname())).append(";\n");
+                attributes.append(f.getPointerVariableDeclaration(v.getCname()));
             }else{
                 if(v.getType() instanceof PointerInfo p && p.getType() instanceof InstanceInfo){
                     attributes.append("struct ");
@@ -133,8 +133,8 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                     }
                     attributes.append(code).append(']');
                 }
-                attributes.append(";\n");
             }
+            attributes.append(";\n");
         }
         if(cEnv.hasOnlyImplicitConstructor()){
             cEnv.appendFunctionCode(cEnv.getImplicitConstructor(id));
@@ -166,10 +166,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             }
         }
         var internalCode = new StringBuilder();
-        var constructor = type.getConstructor();
-        if(!modEnv.hasModifier(Modifier.ABSTRACT) && templateStatus != TemplateStatus.GENERATING){
-            modEnv.addFunction(id.getValue(),constructor);
-        }
         for(var i:interfaces){
             internalCode.append("static ").append(i.getImplName()).append(' ').append(cID).append(i.getCname()).append("_impl={");
             var first = true;
@@ -181,7 +177,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                     }else{
                         internalCode.append(',');
                     }
-                    //noinspection ConstantConditions
                     internalCode.append("(void*)").append(inThisClass.getVariant(v.args()).cname());
                 }
             }

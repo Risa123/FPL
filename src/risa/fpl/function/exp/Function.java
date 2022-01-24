@@ -46,6 +46,7 @@ public class Function extends AField implements ICalledOnPointer{
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         var b = new StringBuilder();
         var callStatus = this.callStatus;
+        this.callStatus = NO_STATUS;
 		var argList = new ArrayList<TypeInfo>();
 		var returnedData = new ArrayList<ReturnedData>();
 		if(self instanceof InstanceInfo i && i.isException() && name.equals("throw") && env instanceof FnSubEnv subEnv){
@@ -86,7 +87,6 @@ public class Function extends AField implements ICalledOnPointer{
         if(asFunctionPointer){
             asFunctionPointer = false;
         }else{
-            //noinspection ConstantConditions
             b.append(variant.implName());
         }
         b.append('(');
@@ -97,19 +97,13 @@ public class Function extends AField implements ICalledOnPointer{
             if(!self.isPrimitive()){
                 b.append('(').append(self.getCname()).append("*)");
             }
-		    if(callStatus == CALLED_ON_POINTER){
-		      this.callStatus = NO_STATUS;
-            }else if(!(self instanceof InterfaceInfo) && getPrevCode() != null /*to prevent &this when calling method on implicit this*/){
-               if(!self.isPrimitive()){
-                   if(callStatus == CALLED_ON_RETURNED_INSTANCE || callStatus == CALLED_ON_INSTANCE_R_BY_FUNC){
-                     if(callStatus == CALLED_ON_RETURNED_INSTANCE){
-                         this.callStatus = NO_STATUS;
-                     }
-                   }else{
-                       ref = true;
-                       b.append("(&");
-                   }
-               }
+		    if(callStatus != CALLED_ON_POINTER){
+                if(!(self instanceof InterfaceInfo) && getPrevCode() != null /*to prevent &this when calling method on implicit this*/){
+                    if(!self.isPrimitive() && callStatus != CALLED_ON_RETURNED_INSTANCE && callStatus != CALLED_ON_INSTANCE_R_BY_FUNC){
+                        ref = true;
+                        b.append("(&");
+                    }
+                }
             }
             writePrev(b);
 		    if(ref){
@@ -117,7 +111,6 @@ public class Function extends AField implements ICalledOnPointer{
             }
 		    if(callStatus == CALLED_ON_INSTANCE_R_BY_FUNC){
 		        b.append(')');
-		        this.callStatus = NO_STATUS;
             }
             if(self instanceof InterfaceInfo){
                 b.append(".instance");
@@ -130,7 +123,6 @@ public class Function extends AField implements ICalledOnPointer{
                 b.append(',');
             }
             var comesFromPointer = array[i] instanceof PointerInfo;
-            //noinspection ConstantConditions
             b.append(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
         }
 		b.append(')');
@@ -255,7 +247,7 @@ public class Function extends AField implements ICalledOnPointer{
                 return v;
             }
         }
-        return null;
+        throw new RuntimeException("variant " + Arrays.toString(args) + " not found");
     }
     public final ArrayList<TypeInfo>getRequiredTypes(){
         var list = new ArrayList<TypeInfo>();

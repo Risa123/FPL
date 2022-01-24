@@ -104,11 +104,16 @@ public final class FPL{
             }
             if(!list.isEmpty()){
                 var b = new StringBuilder();
+                var first = true;
                 for(var mod:list){
                     var ex = mod.getLastEx();
                     if(ex != null){
+                        if(!first){
+                            b.append('\n');
+                        }
                         b.append(ex.getMessage());
                     }
+                    first = false;
                 }
                 throw new CompilerException(b.toString());
             }
