@@ -108,7 +108,7 @@ public class Fn extends AFunctionBlock{
         if(env.hasModifier(Modifier.ABSTRACT)){
             type = FunctionType.ABSTRACT;
             appendSemicolon = false;
-            if(env instanceof ClassEnv e && !e.isAbstract()){
+            if(env instanceof ClassEnv e && e.notAbstract()){
                 throw new CompilerException(line,tokenNum,"abstract method can only be declared in abstract class");
             }
             if(env.getAccessModifier() == AccessModifier.PRIVATE){

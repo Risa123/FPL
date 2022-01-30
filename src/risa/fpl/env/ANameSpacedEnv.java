@@ -11,12 +11,14 @@ import java.util.HashMap;
 public abstract class ANameSpacedEnv extends SubEnv{
     private final StringBuilder initializer = new StringBuilder();
     private String initializerCall;
+    protected final String nameSpace;
     private final StringBuilder functionCode = new StringBuilder(),functionDeclarations = new StringBuilder();
     protected final StringBuilder destructor = new StringBuilder();
     private final HashMap<Integer,ArrayList<ExpressionInfo>>modifierBlockInfos = new HashMap<>();
     private final HashMap<Integer,ArrayList<ExpressionInfo>>compileIfBlockInfos = new HashMap<>();
-    public ANameSpacedEnv(AEnv superEnv){
+    public ANameSpacedEnv(AEnv superEnv,String nameSpace){
         super(superEnv);
+        this.nameSpace = nameSpace;
     }
     public final void appendToInitializer(String code){
         initializer.append(code);
@@ -38,7 +40,9 @@ public abstract class ANameSpacedEnv extends SubEnv{
         return initializerCall;
     }
     public abstract String getNameSpace(IFunction caller);
-    public abstract String getNameSpace();
+    public final String getNameSpace(){
+        return nameSpace;
+    }
     public String getFunctionCode(){
         return functionCode.toString();
     }

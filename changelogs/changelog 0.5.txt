@@ -19,6 +19,7 @@ char.isUpper renamed to isUpperCase
 char.isLower renamed to isLowerCase
 char.toUpper renamed to toUpperCase
 char.toLower rename to toUpperCase
+upgraded to jdk 17
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C

@@ -94,7 +94,7 @@ public class TypeInfo{
   public String getCname(){
       return cname;
   }
-  public  String getDeclaration(){
+  public String getDeclaration(){
       return "";
   }
   protected final void addRequiredType(TypeInfo type){
@@ -165,11 +165,11 @@ public class TypeInfo{
             if(notReturnedByFunction){
                 prefix = "&";
             }else{
-                prefix = instance.getToPointerName() + "(";
+                prefix = instance.getToPointerName() + '(';
                 postfix = ")";
             }
           }
-          return instance.getConversionMethod(i) + "(" + prefix +  expCode + postfix + ")";
+          return instance.getConversionMethod(i) + '(' + prefix +  expCode + postfix + ')';
       }
       return expCode;
   }

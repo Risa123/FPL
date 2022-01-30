@@ -23,7 +23,6 @@ import risa.fpl.parser.AtomType;
 public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<ModuleEnv>importedModules = new ArrayList<>();
 	private final ModuleBlock moduleBlock;
-	private final String nameSpace;
 	private String destructorCall,declarationCode = "";//prevent NPE
 	private boolean getRequestFromOutSide;
 	private final StringBuilder variableDeclarations = new StringBuilder();
@@ -34,13 +33,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
-		super(superEnv);
+		super(superEnv,generatedTemplateCName == null?IFunction.toCId(moduleBlock.getName().replace('.','_')):((ModuleEnv)superEnv).nameSpace + generatedTemplateCName);
 		this.moduleBlock = moduleBlock;
-		if(generatedTemplateCName == null){//template generation
-            nameSpace = IFunction.toCId(moduleBlock.getName().replace('.','_'));
-        }else{
-            nameSpace = ((ModuleEnv)superEnv).nameSpace + generatedTemplateCName;
-        }
 		if(moduleBlock.isMain()){
 		    addFunction("main",new Main());
         }
@@ -107,15 +101,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
 	@Override
 	public String getNameSpace(IFunction caller){
-	    if(!hasModifier(Modifier.NATIVE) && getAccessModifier() == AccessModifier.PRIVATE){
-	        return "";
-        }
-		return nameSpace;
+		return (!hasModifier(Modifier.NATIVE) && getAccessModifier() == AccessModifier.PRIVATE)?"":nameSpace;
 	}
-	@Override
-    public String getNameSpace(){
-	    return nameSpace;
-    }
     @Override
     public void addTemplateInstance(InstanceInfo type){
         addTypesForDeclaration(type);
@@ -215,7 +202,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	    super.addType(type,declaration);
         addTypesForDeclaration(type);
 	    if(nameSpace.equals("_std_lang") && type.getName().equals("String")){
-	        moduleBlock.setString(type);
+	        FPL.setString(type);
         }
     }
     public void addTypesForDeclaration(TypeInfo type){
@@ -252,10 +239,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
         return !classConstructorLines.contains(line);
     }
     public String getInitializer(){
-        if(isMain()){
-            return "";
-        }
-        return getInitializer("init");
+        return isMain()?"":getInitializer("init");
     }
     public void addInstanceFile(String file){
         if(!instanceFiles.contains(file)){

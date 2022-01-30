@@ -60,35 +60,37 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 break;
             }else{
                 var typeID = (Atom)exp;
-                if(typeID.getType() != AtomType.ID){
+                if(typeID.getType() != AtomType.ID){//do not remove error message is more precise than identifier or literal expected
                     throw new CompilerException(typeID,"identifier expected");
                 }
                 var parentType = env.getType(typeID);
                 if(parentType.isPrimitive()){
                     throw new CompilerException(typeID,"primitive types cannot be inherited from");
                 }
-                type.addParent(parentType);
-                if(parentType instanceof InterfaceInfo i){
-                   interfaces.add(i);
-                }else{
-                    if(primaryParent != null){
-                        throw new CompilerException(typeID,"there is already parent class");
-                    }
-                    if(parentType instanceof InstanceInfo t){
-                        primaryParent = t;
-                        if(primaryParent instanceof TemplateTypeInfo){
-                            if(!it.checkTemplate()){
-                                throw new CompilerException(exp,"template arguments expected");
-                            }
-                            primaryParent = IFunction.generateTypeFor(t,typeID,it,env,false);
-                        }
+                if(!type.getParents().contains(parentType)){
+                    if(parentType instanceof InterfaceInfo i){
+                        interfaces.add(i);
+                        type.addParent(parentType);
                     }else{
-                        throw new CompilerException(typeID,"can only inherit from other classes");
+                        if(primaryParent != null){
+                            throw new CompilerException(typeID,"there is already parent class");
+                        }
+                        if(parentType instanceof InstanceInfo t){
+                            primaryParent = t;
+                            if(primaryParent instanceof TemplateTypeInfo){
+                                if(!it.checkTemplate()){
+                                    throw new CompilerException(exp,"template arguments expected");
+                                }
+                                primaryParent = IFunction.generateTypeFor(t,typeID,it,env,false);
+                            }
+                        }else{
+                            throw new CompilerException(typeID,"can only inherit from other classes");
+                        }
+                        if(struct){
+                            throw new CompilerException(line,tokenNum,"struct cannot inherit");
+                        }
+                        cEnv.setPrimaryParent(primaryParent);
                     }
-                    if(struct){
-                        throw new CompilerException(line,tokenNum,"struct cannot inherit");
-                    }
-                    cEnv.setPrimaryParent(primaryParent);
                 }
             }
         }
@@ -156,7 +158,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                }
             }
         }
-        if(!cEnv.isAbstract()){
+        if(cEnv.notAbstract()){
             for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
                 var name = method.getName();
                 var impl = type.getField(name,cEnv);
@@ -188,18 +190,18 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             internalCode.append(cEnv.getImplOf(i));
             internalCode.append("};\nreturn tmp;\n}\n");
         }
-        internalCode.append(type.getCname()).append("* ").append(type.getToPointerName()).append("(");
+        internalCode.append(type.getCname()).append("* ").append(type.getToPointerName()).append('(');
         internalCode.append(type.getCname()).append(" this,").append(type.getCname()).append("* p){\n*p = this;\n");
         internalCode.append("return p;\n}\n");
         var copyName = type.getCopyConstructorName();
         if(copyName == null && !cEnv.getImplicitCopyConstructorCode().isEmpty()){
             copyName = INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_copy";
-            internalCode.append("void ").append(copyName).append("(").append(type.getCname()).append("* this,").append(type.getCname()).append("* o){\n");
+            internalCode.append("void ").append(copyName).append('(').append(type.getCname()).append("* this,").append(type.getCname()).append("* o){\n");
             internalCode.append(cEnv.getImplicitCopyConstructorCode()).append(cEnv.getDefaultCopyConstructorCode()).append("}\n");
             type.setCopyConstructorName(copyName);
         }
         if(copyName != null){
-            internalCode.append(type.getCname()).append(" ").append(copyName).append("AndReturn(").append(type.getCname()).append(" original){\n").append(type.getCname()).append(" instance;\n");
+            internalCode.append(type.getCname()).append(' ').append(copyName).append("AndReturn(").append(type.getCname()).append(" original){\n").append(type.getCname()).append(" instance;\n");
             internalCode.append(copyName).append("(&instance,&original);\n");
             internalCode.append("return instance;\n}\n");
         }
@@ -208,7 +210,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             modEnv.appendFunctionDeclaration(cEnv.getFunctionDeclarations());
             modEnv.appendFunctionCode(cEnv.getDestructor());
             if(type.getDestructorName() != null){
-                cEnv.appendFunctionCode("void " + type.getInstanceFree() + "(" + type.getCname() + "* this){\n");
+                cEnv.appendFunctionCode("void " + type.getInstanceFree() + '(' + type.getCname() + "* this){\n");
                 cEnv.appendFunctionCode("void free(void*);\n");
                 cEnv.appendFunctionCode(type.getDestructorName() + "(this);\nfree(this);\n}\n");
             }

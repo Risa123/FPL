@@ -170,12 +170,7 @@ public final class ModuleBlock extends AThreePassBlock{
        return FPL.getMainModule().equals(name);
    }
    private void makeMethod(String name,String oldName,TypeInfo ofType,boolean remove){
-      Function func;
-      if(remove){
-          func = (Function)env.getAndMakeInaccessible(oldName);
-      }else{
-          func = (Function)env.getFunctionFromModule(oldName);
-      }
+      var func = (Function)(remove?env.getAndMakeInaccessible(oldName):env.getFunctionFromModule(oldName));
       if(func == null){
           throw new RuntimeException("internal error: function " + oldName + " not found");
        }
@@ -184,7 +179,7 @@ public final class ModuleBlock extends AThreePassBlock{
    private void makeMethod(String name,TypeInfo ofType){
        makeMethod(name,name,ofType,true);
    }
-   private void makeMethod(@SuppressWarnings("SameParameterValue") String name,String oldName, TypeInfo ofType){
+   private void makeMethod(@SuppressWarnings("SameParameterValue")String name,String oldName,TypeInfo ofType){
        makeMethod(name,oldName,ofType,true);
    }
    private void addNumberFields(ClassInfo classInfo){
@@ -212,9 +207,6 @@ public final class ModuleBlock extends AThreePassBlock{
    }
    public ModuleEnv getEnv(){
        return env;
-   }
-   public void setString(TypeInfo string){
-       FPL.setString(string);
    }
    public ArrayList<ClassEnv>getClassEnvList(){
        return classEnvList;

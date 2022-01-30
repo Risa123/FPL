@@ -18,7 +18,6 @@ import java.util.Objects;
 
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implicitConstructor = new StringBuilder();
-	private final String nameSpace;
 	private final InstanceInfo instanceInfo;
 	private final StringBuilder implCopyConstructorCode = new StringBuilder();
 	private final StringBuilder defaultCopyConstructorCode = new StringBuilder();
@@ -36,7 +35,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     private final ArrayList<ConstructorData>constructors = new ArrayList<>();
     private final ArrayList<String>variableFieldDeclarationOrder = new ArrayList<>();
 	public ClassEnv(ModuleEnv module,String id,TemplateStatus templateStatus,boolean struct){
-		super(module);
+		super(module,module.getNameSpace() + (templateStatus == TemplateStatus.GENERATING?"":IFunction.toCId(id)));
 		super.addFunction("this",CONSTRUCTOR);
 		super.addFunction("protected",PROTECTED);
 		if(!struct){
@@ -46,12 +45,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("internal",INTERNAL);
 		super.addFunction("-this",DESTRUCTOR);
 		super.addFunction("=this",COPY_CONSTRUCTOR);
-		var cname = IFunction.toCId(id);
-		if(templateStatus == TemplateStatus.GENERATING){
-		    nameSpace = module.getNameSpace();
-        }else{
-            nameSpace = module.getNameSpace() + cname;
-        }
         this.struct = struct;
         if(templateStatus == TemplateStatus.TEMPLATE){
             instanceInfo = new TemplateTypeInfo(id,module,nameSpace);
@@ -149,10 +142,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    return nameSpace;
     }
     @Override
-    public String getNameSpace(){
-	    return nameSpace;
-    }
-    @Override
     public void addTemplateInstance(InstanceInfo type){
         ((ModuleEnv)superEnv).addTemplateInstance(type);
     }
@@ -164,9 +153,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
 	    return super.getFunction(name);
     }
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isAbstract(){
-	    return ((ModuleEnv)superEnv).hasModifier(Modifier.ABSTRACT);
+    public boolean notAbstract(){
+	    return !((ModuleEnv)superEnv).hasModifier(Modifier.ABSTRACT);
     }
     public String getImplOf(InterfaceInfo i){
 	    return instanceInfo.getCname() + i.getCname() + "_impl";
@@ -177,15 +165,14 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         var b = new StringBuilder(instanceInfo.getClassDataType());
         b.append(' ').append(instanceInfo.getDataName()).append("={sizeof(").append(instanceInfo.getCname()).append(')');
-        if(!isAbstract()){
+        if(notAbstract()){
           for(var method: instanceInfo.getMethodsOfType(FunctionType.VIRTUAL)){
               for(var v:method.getVariants()){
                   b.append(",(void*)").append(v.cname());
               }
           }
         }
-        b.append("};\n");
-        return b.toString();
+        return b.append("};\n").toString();
     }
     public void parentConstructorCalled(){
 	    parentConstructorCalled = true;
@@ -218,16 +205,16 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public void compileNewAndAlloc(StringBuilder builder,TypeInfo[]args){
         var constructorName = Objects.requireNonNull(instanceInfo.getConstructor().getVariant(args)).cname();
         var cname = instanceInfo.getCname();
-        builder.append("void ").append(constructorName).append("(").append(cname).append("* this");
+        builder.append("void ").append(constructorName).append('(').append(cname).append("* this");
         for(var arg:args){
-            builder.append(",").append(arg.getCname());
+            builder.append(',').append(arg.getCname());
         }
         var classInfo = instanceInfo.getClassInfo();
         builder.append(");\n");
         var allocName = "static" + getNameSpace() + "_alloc";
         var allocMethod = (Function)classInfo.getFieldFromThisType("alloc");
         allocMethod.addStaticVariant(args,allocName);
-        builder.append(instanceInfo.getCname()).append("* ").append(allocMethod.getVariant(args).cname()).append("(");
+        builder.append(instanceInfo.getCname()).append("* ").append(allocMethod.getVariant(args).cname()).append('(');
         var first = true;
         var b = new StringBuilder();
         for(int i = 0; i < args.length;++i){
@@ -247,7 +234,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var newName = "static" + nameSpace + "_new";
         var newMethod = (Function)classInfo.getFieldFromThisType("new");
         newMethod.addStaticVariant(args,newName);
-        builder.append(cname).append(' ').append(newMethod.getVariant(args).cname()).append("(").append(compiledArgs).append("){\n");
+        builder.append(cname).append(' ').append(newMethod.getVariant(args).cname()).append('(').append(compiledArgs).append("){\n");
         builder.append(cname).append(" inst;\n");
         builder.append(constructorCall(constructorName,"&inst",args));
         builder.append("return inst;\n}\n");

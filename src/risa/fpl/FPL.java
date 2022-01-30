@@ -65,8 +65,8 @@ public final class FPL{
                     throwBuildFileError("no property " + key + " allowed");
                 }
             }
-            String output = build.getProperty("outputFile");
-            String ccArgs = build.getProperty("ccArgs", "");
+            var output = build.getProperty("outputFile");
+            var ccArgs = build.getProperty("ccArgs","");
             outputDirectory = project + "/output";
             mainModule = build.getProperty("mainModule");
             Collections.addAll(flags,build.getProperty("flags","").split(","));
@@ -169,7 +169,7 @@ public final class FPL{
     public static TypeInfo getString(){
         return string;
     }
-    static void setString(TypeInfo stringType){
+    public static void setString(TypeInfo stringType){
         string = stringType;
     }
     public static Path getSrcDir(){
