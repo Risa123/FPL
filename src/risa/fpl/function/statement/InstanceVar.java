@@ -82,7 +82,7 @@ public final class InstanceVar extends Function{
         if(id.getValue().equals("*")){
             id = it.nextID();
             notPointer = false;
-            typeCname += "*";
+            typeCname += '*';
         }
         var cID = IFunction.toCId(id.getValue());
         builder.append(typeCname).append(' ').append(cID).append(";\n");
@@ -114,10 +114,7 @@ public final class InstanceVar extends Function{
                 throw new CompilerException(id,"init(constructor arguments) or nothing expected");
             }
         }
-        TypeInfo instanceType = null;
-        if(env instanceof ClassEnv e){
-            instanceType = e.getInstanceInfo();
-        }
+        var instanceType = env instanceof ClassEnv e?e.getInstanceInfo():null;
         env.addFunction(id.getValue(),new Variable(varType,cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
         env.addInstanceVariable(varType,cID);
         return null;

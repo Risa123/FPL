@@ -18,10 +18,7 @@ public class FunctionInfo extends TypeInfo{
     }
     @Override
     public boolean equals(Object o){
-        if(o instanceof FunctionInfo f){
-            return function.hasSignature(f.getFunction());
-        }
-        return o == NIL;
+        return o instanceof FunctionInfo f?function.hasSignature(f.getFunction()):o == NIL;
     }
     private static String getFunctionPointerDeclaration(Function function,String cID){
         var b = new StringBuilder(function.getReturnType().getCname());
@@ -49,7 +46,7 @@ public class FunctionInfo extends TypeInfo{
                 b.append(arg.getCname());
             }
         }
-        return b.append(")").toString();
+        return b.append(')').toString();
     }
     public String getPointerVariableDeclaration(String cname){
         return getFunctionPointerDeclaration(function,cname);

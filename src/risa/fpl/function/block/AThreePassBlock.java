@@ -30,12 +30,7 @@ public abstract class AThreePassBlock{
         }
         if(!infos.isEmpty()){
             var b = new StringBuilder("errors in ");
-            if(this instanceof ClassBlock){
-                b.append("class block");
-            }else{
-                b.append("module block");
-            }
-            b.append(':');
+            b.append(this instanceof ClassBlock?"class block":"module block").append(':');
             for(var info:infos){
                 b.append('\n').append(info.getLastEx().getMessage());
             }

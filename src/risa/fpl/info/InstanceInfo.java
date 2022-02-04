@@ -37,66 +37,66 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     }
     @Override
     public final void buildDeclaration(){
-        appendToDeclaration("typedef struct " + getCname() + "{\n");
-        if(!cEnv.isStruct()){
-            appendToDeclaration("void* objectData;\n");
-        }
-        if(getPrimaryParent() instanceof InstanceInfo i){
-            appendToDeclaration(i.attributesCode);
-        }
-        appendToDeclaration(attributesCode);
-        appendToDeclaration('}' + getCname() + ";\n");
-        var b = new StringBuilder();
-        var methods = new HashMap<String,Function>();
-        for(var method:getMethodsOfType(FunctionType.VIRTUAL)){
-            methods.put(method.getName(),method);
-        }
-        for(var method:getMethodsOfType(FunctionType.ABSTRACT)){
-            methods.put(method.getName(),method);
-        }
-        for(var method:methods.values()){
-           for(var v:method.getVariants()){
-               b.append(new FunctionInfo(method).getPointerVariableDeclaration(v.implName())).append(";\n");
-           }
-        }
-        appendToDeclaration("typedef struct " + getClassDataType());
-        appendToDeclaration("{\nunsigned long size;\n" + b);
-        appendToDeclaration('}' + getClassDataType() + ";\n");
-        appendToDeclaration("extern " + getClassDataType() + ' ' + dataName + ";\n");
-        addFunctionRequiredTypes(constructor);
-        appendToDeclaration(getCname() + "* " + getToPointerName() + '(' + getCname() + " this," + getCname() + "* p);\n");
-        for(var field:getClassInfo().getFields().values()){
-            if(field instanceof Function f){
-                cEnv.appendFunctionDeclaration(f);
-            }
-        }
-        for(var field:getFields().values()){
-            if(field instanceof Function f && f.getAccessModifier() != AccessModifier.PRIVATE){
-                cEnv.appendFunctionDeclaration(f);
-            }
-        }
-        if(cEnv.hasOnlyImplicitConstructor()){
-            cEnv.appendFunctionDeclaration("void " + IFunction.INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_init0(" + getCname() + "*);\n");
-        }
-        cEnv.appendFunctionDeclaration(constructor);
         if(!(this instanceof TemplateTypeInfo)){
+            appendToDeclaration("typedef struct " + getCname() + "{\n");
+            if(!cEnv.isStruct()){
+                appendToDeclaration("void* objectData;\n");
+            }
+            if(getPrimaryParent() instanceof InstanceInfo i){
+                appendToDeclaration(i.attributesCode);
+            }
+            appendToDeclaration(attributesCode);
+            appendToDeclaration('}' + getCname() + ";\n");
+            var b = new StringBuilder();
+            var methods = new HashMap<String,Function>();
+            for(var method:getMethodsOfType(FunctionType.VIRTUAL)){
+                methods.put(method.getName(),method);
+            }
+            for(var method:getMethodsOfType(FunctionType.ABSTRACT)){
+                methods.put(method.getName(),method);
+            }
+            for(var method:methods.values()){
+                for(var v:method.getVariants()){
+                    b.append(new FunctionInfo(method).getPointerVariableDeclaration(v.implName())).append(";\n");
+                }
+            }
+            appendToDeclaration("typedef struct " + getClassDataType());
+            appendToDeclaration("{\nunsigned long size;\n" + b);
+            appendToDeclaration('}' + getClassDataType() + ";\n");
+            appendToDeclaration("extern " + getClassDataType() + ' ' + dataName + ";\n");
+            addFunctionRequiredTypes(constructor);
+            appendToDeclaration(getCname() + "* " + getToPointerName() + '(' + getCname() + " this," + getCname() + "* p);\n");
+            for(var field:getClassInfo().getFields().values()){
+                if(field instanceof Function f){
+                    cEnv.appendFunctionDeclaration(f);
+                }
+            }
+            for(var field:getFields().values()){
+                if(field instanceof Function f && f.getAccessModifier() != AccessModifier.PRIVATE){
+                    cEnv.appendFunctionDeclaration(f);
+                }
+            }
+            if(cEnv.hasOnlyImplicitConstructor()){
+                cEnv.appendFunctionDeclaration("void " + IFunction.INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_init0(" + getCname() + "*);\n");
+            }
+            cEnv.appendFunctionDeclaration(constructor);
+            if(copyConstructorName != null){
+                appendToDeclaration("void " + copyConstructorName + '(' + getCname() + "*," + getCname() + "*);\n");
+                appendToDeclaration(getCname() + ' ' + copyConstructorName + "AndReturn(" + getCname() + " original);\n");
+            }
+            if(destructorName != null){
+                appendToDeclaration("void " + destructorName + '(' + getCname() + "*);\n");
+            }
+            for(var p:parents){
+                if(p instanceof InterfaceInfo i){
+                    appendToDeclaration(i.getCname() + ' ' + getConversionMethod(i) + '(' + getCname() + "*);\n");
+                }
+            }
+            appendToDeclaration("void " + module.getNameSpace());
+            appendToDeclaration("_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET" + getCname() + "ASTERISK");
+            appendToDeclaration(NumberInfo.MEMORY.getCname().replace(' ','_') +"0("+ getCname() + "*," + NumberInfo.MEMORY.getCname() + ");\n");
             setMethodDeclarations(cEnv.getFunctionDeclarations());
         }
-        if(copyConstructorName != null){
-            appendToDeclaration("void " + copyConstructorName + '(' + getCname() + "*," + getCname() + "*);\n");
-            appendToDeclaration(getCname() + ' ' + copyConstructorName + "AndReturn(" + getCname() + " original);\n");
-        }
-        if(destructorName != null){
-            appendToDeclaration("void " + destructorName + '(' + getCname() + "*);\n");
-        }
-        for(var p:parents){
-            if(p instanceof InterfaceInfo i){
-                appendToDeclaration(i.getCname() + ' ' + getConversionMethod(i) + '(' + getCname() + "*);\n");
-            }
-        }
-        appendToDeclaration("void " + module.getNameSpace());
-        appendToDeclaration("_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET" + getCname() + "ASTERISK");
-        appendToDeclaration(NumberInfo.MEMORY.getCname().replace(' ','_') +"0("+ getCname() + "*," + NumberInfo.MEMORY.getCname() + ");\n");
     }
     @Override
     public final void setClassInfo(ClassInfo info){

@@ -78,10 +78,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             }
             throw new CompilerException(name,"module " + modName + " not found");
         }
-        if(hasFunctionInCurrentEnv(name.getValue())){
-            return getFunctionFromModule(name);
-        }
-		return superEnv.getFunction(name);
+		return hasFunctionInCurrentEnv(name.getValue())?getFunctionFromModule(name):superEnv.getFunction(name);
 	}
 	private IFunction getFunctionFromModule(Atom name)throws CompilerException{
         var f = super.getFunction(name);

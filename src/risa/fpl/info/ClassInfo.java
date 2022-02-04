@@ -66,7 +66,7 @@ public final class ClassInfo extends TypeInfo{
         FUNCTION.addField("getInstanceSize",PointerSize.INSTANCE);
     }
     private void addMethods(){
-        addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + instanceInfo.getCname() + ")"));
+        addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + instanceInfo.getCname() + ')'));
         addField("alloc",new Alloc(instanceInfo,false));
         addField("alloc[]",new Alloc(instanceInfo,true));
     }

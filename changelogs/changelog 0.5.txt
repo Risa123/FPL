@@ -45,3 +45,4 @@ fix floating point number cannot be signed
 fix chained call C errors
 fix integer number with F not considered float
 fix attempting to access function in current module in (module name).(function name) module not found error
+fix method variants

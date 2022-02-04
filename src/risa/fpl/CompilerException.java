@@ -5,7 +5,7 @@ import risa.fpl.parser.AExp;
 public final class CompilerException extends Exception{
   private String sourceFile;
   public CompilerException(int line,int charNum,String msg){
-	  super(line + ":" + charNum + ":" + msg);
+	  super(line + ":" + charNum + ':' + msg);
   }
   public CompilerException(AExp exp,String msg){
 	  this(exp.getLine(),exp.getTokenNum(),msg);
@@ -18,6 +18,6 @@ public final class CompilerException extends Exception{
   }
   @Override
   public String getMessage(){
-	  return (sourceFile == null?"":sourceFile + ":") + super.getMessage();
+	  return (sourceFile == null?"":sourceFile + ':') + super.getMessage();
   }
 }

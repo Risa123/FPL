@@ -101,6 +101,7 @@ main{
    stderr writeString "<project directory> expected"
    return 2 #1 is reserved for exceptions
  }
+ print "test" endsWith "x";toString
  try{
   FPL:new args get 1
  }catch CompilerException{

@@ -24,7 +24,7 @@ public final class CopyConstructor extends ABlock{
         var type = cEnv.getInstanceInfo();
         var copyName = INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_copy";
         type.setCopyConstructorName(copyName);
-        b.append(copyName).append("(").append(type.getCname()).append("* this,").append(type.getCname()).append("* o){\n");
+        b.append(copyName).append('(').append(type.getCname()).append("* this,").append(type.getCname()).append("* o){\n");
         var parent = (InstanceInfo)type.getPrimaryParent();
         if(parent != null){
             b.append(parent.getDestructorName()).append("(this,o);\n");

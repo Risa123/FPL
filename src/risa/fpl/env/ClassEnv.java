@@ -114,7 +114,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
          }
         appendFunctionCode(code);
     }
-    public void addConstructor(String code,String argsCode,TypeInfo[]argsArray,String parentConstructorCall){
+    public void addConstructor(String code,String argsCode,TypeInfo[]args,String parentConstructorCall){
         var constructor = instanceInfo.getConstructor();
         if(onlyImplicitConstructor){
             onlyImplicitConstructor = false;
@@ -122,9 +122,69 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().clear();
             ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().clear();
         }
-        constructors.add(new ConstructorData(code,constructor.addVariant(argsArray,nameSpace).cname(),argsCode,parentConstructorCall));
+        constructors.add(new ConstructorData(code,constructor.addVariant(args,nameSpace).cname(),argsCode,parentConstructorCall));
         var b = new StringBuilder();
-        compileNewAndAlloc(b,argsArray);
+        var constructorName = Objects.requireNonNull(instanceInfo.getConstructor().getVariant(args)).cname();
+        var cname = instanceInfo.getCname();
+        b.append("void ").append(constructorName).append('(').append(cname).append("* this");
+        for(var arg:args){
+            b.append(',').append(arg.getCname());
+        }
+        var classInfo = instanceInfo.getClassInfo();
+        b.append(");\n");
+        var allocName = "static" + getNameSpace() + "_alloc";
+        var allocMethod = (Function)classInfo.getFieldFromThisType("alloc");
+        allocMethod.addStaticVariant(args,allocName);
+        b.append(instanceInfo.getCname()).append("* ").append(allocMethod.getVariant(args).cname()).append('(');
+        var first = true;
+        var b2 = new StringBuilder();
+        for(int i = 0; i < args.length;++i){
+            if(first){
+                first = false;
+            }else{
+                b2.append(',');
+            }
+            b2.append(args[i].getCname()).append(" a").append(i);
+        }
+        var compiledArgs = b2.toString();
+        b.append(compiledArgs).append("){\n");
+        b.append("void* malloc(").append(NumberInfo.MEMORY.getCname()).append(");\n");
+        b.append(cname).append("* p=malloc(sizeof(").append(cname).append("));\n");
+        b.append(constructorCall(constructorName,"p",args));
+        b.append("return p;\n}\n");
+        var newName = "static" + nameSpace + "_new";
+        var newMethod = (Function)classInfo.getFieldFromThisType("new");
+        newMethod.addStaticVariant(args,newName);
+        b.append(cname).append(' ').append(newMethod.getVariant(args).cname()).append('(').append(compiledArgs).append("){\n");
+        b.append(cname).append(" inst;\n");
+        b.append(constructorCall(constructorName,"&inst",args));
+        b.append("return inst;\n}\n");
+        if(instanceInfo.isException()){
+            if(instanceInfo.getClassInfo().getFieldFromThisType("throw") == null){
+                instanceInfo.getClassInfo().addField("throw",new StaticThrow());
+            }
+            var func = (Function)classInfo.getFieldFromThisType("throw");
+            func.addStaticVariant(args,"static" + nameSpace + "_throw");
+            b.append("void ").append(func.getVariant(args).cname()).append('(');
+            var argFirst = true;
+            for(var i = 0;i < args.length;++i){
+                if(argFirst){
+                    argFirst = false;
+                }else{
+                    b.append(',');
+                }
+                b.append(args[i].getCname()).append(" a").append(i);
+            }
+            b.append("){\n");
+            b.append(instanceInfo.getCname()).append(" inst;\n");
+            b.append(constructorName).append("(&inst");
+            for(var i = 0;i < args.length;++i){
+                b.append(",a").append(i);
+            }
+            b.append(");\n");
+            b.append("_std_lang_Exception_throw0((_Exception*)&inst);\n");
+            b.append("}\n");
+        }
         appendFunctionCode(b.toString());
     }
     @Override
@@ -136,10 +196,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     @Override
     public String getNameSpace(IFunction caller){
-	    if(caller instanceof Var || caller instanceof Function f && f.getAccessModifier() == AccessModifier.PRIVATE){
-            return "";
-        }
-	    return nameSpace;
+	    return caller instanceof Var || caller instanceof Function f && f.getAccessModifier() == AccessModifier.PRIVATE?"":nameSpace;
     }
     @Override
     public void addTemplateInstance(InstanceInfo type){
@@ -202,69 +259,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public String getImplicitDestructorCode(){
 	    return destructor.toString();
     }
-    public void compileNewAndAlloc(StringBuilder builder,TypeInfo[]args){
-        var constructorName = Objects.requireNonNull(instanceInfo.getConstructor().getVariant(args)).cname();
-        var cname = instanceInfo.getCname();
-        builder.append("void ").append(constructorName).append('(').append(cname).append("* this");
-        for(var arg:args){
-            builder.append(',').append(arg.getCname());
-        }
-        var classInfo = instanceInfo.getClassInfo();
-        builder.append(");\n");
-        var allocName = "static" + getNameSpace() + "_alloc";
-        var allocMethod = (Function)classInfo.getFieldFromThisType("alloc");
-        allocMethod.addStaticVariant(args,allocName);
-        builder.append(instanceInfo.getCname()).append("* ").append(allocMethod.getVariant(args).cname()).append('(');
-        var first = true;
-        var b = new StringBuilder();
-        for(int i = 0; i < args.length;++i){
-            if(first){
-                first = false;
-            }else{
-                b.append(',');
-            }
-            b.append(args[i].getCname()).append(" a").append(i);
-        }
-        var compiledArgs = b.toString();
-        builder.append(compiledArgs).append("){\n");
-        builder.append("void* malloc(").append(NumberInfo.MEMORY.getCname()).append(");\n");
-        builder.append(cname).append("* p=malloc(sizeof(").append(cname).append("));\n");
-        builder.append(constructorCall(constructorName,"p",args));
-        builder.append("return p;\n}\n");
-        var newName = "static" + nameSpace + "_new";
-        var newMethod = (Function)classInfo.getFieldFromThisType("new");
-        newMethod.addStaticVariant(args,newName);
-        builder.append(cname).append(' ').append(newMethod.getVariant(args).cname()).append('(').append(compiledArgs).append("){\n");
-        builder.append(cname).append(" inst;\n");
-        builder.append(constructorCall(constructorName,"&inst",args));
-        builder.append("return inst;\n}\n");
-        if(instanceInfo.isException()){
-            if(instanceInfo.getClassInfo().getFieldFromThisType("throw") == null){
-                instanceInfo.getClassInfo().addField("throw",new StaticThrow());
-            }
-            var func = (Function)classInfo.getFieldFromThisType("throw");
-            func.addStaticVariant(args,"static" + nameSpace + "_throw");
-            builder.append("void ").append(func.getVariant(args).cname()).append('(');
-            var argFirst = true;
-            for(var i = 0;i < args.length;++i){
-               if(argFirst){
-                   argFirst = false;
-               }else{
-                   builder.append(',');
-               }
-               builder.append(args[i].getCname()).append(" a").append(i);
-            }
-            builder.append("){\n");
-            builder.append(instanceInfo.getCname()).append(" inst;\n");
-            builder.append(constructorName).append("(&inst");
-            for(var i = 0;i < args.length;++i){
-                builder.append(",a").append(i);
-            }
-            builder.append(");\n");
-            builder.append("_std_lang_Exception_throw0((_Exception*)&inst);\n");
-            builder.append("}\n");
-        }
-    }
     private String constructorCall(String constructorName,String self,TypeInfo[]args){
         var b = new StringBuilder(constructorName).append("(").append(self);
         for(int i = 0; i < args.length;++i){
@@ -302,6 +296,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public boolean hasOnlyImplicitConstructor(){
         return onlyImplicitConstructor;
+    }
+    @Override
+    public boolean hasFunctionInCurrentEnv(String name){
+        return instanceInfo.getFieldFromThisType(name) != null || super.hasFunctionInCurrentEnv(name);
     }
     public String getConstructorCode(){
         var b = new StringBuilder();

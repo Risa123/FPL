@@ -11,10 +11,7 @@ public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
     }
     @Override
     public final ClassInfo getClassInfo(){
-        if(superEnv instanceof IClassOwnedEnv e){
-            return e.getClassInfo();
-        }
-        return null;
+        return superEnv instanceof IClassOwnedEnv e?e.getClassInfo():null;
     }
     public final void addTemplateInstance(InstanceInfo type){
         if(superEnv instanceof ANameSpacedEnv e){

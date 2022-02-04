@@ -12,9 +12,6 @@ public final class ConditionalBlockEnv extends FnSubEnv{
     }
     @Override
     protected String addToPointerVar(InstanceInfo type){
-        if(compilingCondition){
-            ((SubEnv)superEnv).addToPointerVar(type);
-        }
-        return super.addToPointerVar(type);
+        return compilingCondition?((SubEnv)superEnv).addToPointerVar(type):super.addToPointerVar(type);
     }
 }

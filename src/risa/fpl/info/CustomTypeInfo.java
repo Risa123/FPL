@@ -16,7 +16,7 @@ public final class CustomTypeInfo extends TypeInfo{
         this.declaration = "typedef " + declaration + ";\n";
     }
     @Override
-    public AField getField(String name, AEnv from){
+    public AField getField(String name,AEnv from){
         return original.getField(name,from);
     }
     @Override

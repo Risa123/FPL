@@ -68,13 +68,7 @@ public final class NumberInfo extends TypeInfo{
 	}
     @Override
 	public boolean equals(Object o){
-		if(o instanceof NumberInfo n){
-			if(!floatingPoint && n.floatingPoint){
-				return false;
-			}
-			return size >= n.size;
-		}
-		return super.equals(o);
+		return o instanceof NumberInfo n?(floatingPoint || !n.floatingPoint) && size >= n.size:super.equals(o);
 	}
 	public boolean isFloatingPoint(){
 	    return floatingPoint;

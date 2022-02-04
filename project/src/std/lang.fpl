@@ -143,6 +143,44 @@ class String{
      }
      return false
   }
+  fn bool startsWith String str{
+    if str len > len{
+      return false
+    }
+    for i,str len{
+      if str get i; != p get i{
+        return false
+      }
+    }
+    return true
+  }
+  fn bool endsWith String str{
+    if str len > len{
+     return false
+    }
+    var i str len - 1
+    var j len - 1
+    while i < 0{
+     if str get i; != p get j{
+        return false
+     }
+     i --
+     j --
+    }
+    return true
+  }
+  fn bool startsWith char c{
+    if len == 0{
+      return false
+    }
+    return p get 0; == c
+  }
+  fn bool endsWith char c{
+    if len == 0{
+      return false
+    }
+    return p get len - 1; == c
+  }
   fn uint getLength = len
   fn String toString = this drf
   fn bool isEmpty = len == 0

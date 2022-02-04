@@ -9,7 +9,7 @@ public class PointerInfo extends TypeInfo{
 	private final TypeInfo type;
     private boolean constant;
 	public PointerInfo(TypeInfo type){
-	    super(type.getName() + "*",type.getCname() + "*");
+	    super(type.getName() + '*',type.getCname() + '*');
         this.type = type;
         if(type != TypeInfo.VOID){
             addField("+",new BinaryOperator(this,NumberInfo.MEMORY,"+"));
@@ -56,9 +56,7 @@ public class PointerInfo extends TypeInfo{
 	}
 	@Override
 	public final boolean equals(Object o){
-		if(o instanceof PointerInfo p){
-			return type.equals(p.type);
-		}else return o == NIL;
+		return o instanceof PointerInfo p?type.equals(p.type):o == NIL;
     }
     @Override
     public final AField getField(String name,AEnv from){
