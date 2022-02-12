@@ -7,7 +7,7 @@ import risa.fpl.function.exp.PointerSize;
 public class FunctionInfo extends TypeInfo{
     private final Function function;
     public FunctionInfo(Function function){
-        super(function.getName(),getFunctionPointerDeclaration(function,function.getPointerVariant().cname()));
+        super(function.getName(),getFunctionPointerDeclaration(function,function.getPointerVariant().getCname()));
         this.function = function;
         addField("drf",new FunctionDereference(function));
         addField("getObjectSize",PointerSize.INSTANCE);
@@ -34,7 +34,7 @@ public class FunctionInfo extends TypeInfo{
             b.append("* this");
         }
         var variant = function.getPointerVariant();
-        for(var arg:variant.args()){
+        for(var arg:variant.getArgs()){
             if(firstArg){
                 firstArg = false;
             }else{

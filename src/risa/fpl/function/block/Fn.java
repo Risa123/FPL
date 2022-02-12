@@ -2,7 +2,6 @@ package risa.fpl.function.block;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
@@ -23,10 +22,7 @@ public class Fn extends AFunctionBlock{
         env.checkModifiers(line,tokenNum,Modifier.NATIVE,Modifier.VIRTUAL,Modifier.ABSTRACT,Modifier.OVERRIDE);
 		var returnType = env.getType(it.nextID());
         var fnEnv = new FnEnv(env,returnType);
-        LinkedHashMap<String,TypeInfo> templateArgs = null;
-        if(it.checkTemplate()){
-            templateArgs = IFunction.parseTemplateArguments(it,fnEnv);
-        }
+        var templateArgs = it.checkTemplate()?IFunction.parseTemplateArguments(it,fnEnv):null;
         var b = new StringBuilder();
 		var id = it.nextID();
         if(env instanceof ModuleEnv e && e.isMain() && id.getValue().equals("main")){
@@ -39,18 +35,10 @@ public class Fn extends AFunctionBlock{
 	    		throw new CompilerException(id,"invalid C identifier");
 	    	}
 	    }else{
-	    	cID = "";
-	    	if(!env.hasModifier(Modifier.ABSTRACT) && env instanceof ANameSpacedEnv tmp){
-	    	    cID = tmp.getNameSpace(this);
-	    	}
-	    	cID += IFunction.toCId(id.getValue());
+	    	cID = !env.hasModifier(Modifier.ABSTRACT) && env instanceof ANameSpacedEnv tmp?tmp.getNameSpace(this):"";
+            cID += IFunction.toCId(id.getValue());
 	    }
-        TypeInfo self = null;
-        if(env instanceof  ClassEnv cEnv){
-            self = cEnv.getInstanceInfo();
-        }else if(env instanceof InterfaceEnv e){
-            self = e.getType();
-        }
+        var self = env instanceof  ClassEnv cEnv?cEnv.getInstanceInfo():(env instanceof InterfaceEnv e?e.getType():null);
         var headBuilder = new StringBuilder();
         if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
             headBuilder.append("static ");
@@ -138,13 +126,16 @@ public class Fn extends AFunctionBlock{
             f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
         }
         var argsArray = args.values().toArray(new TypeInfo[0]);
-        if(f.hasVariant(argsArray)){
+        FunctionVariant variant = null;
+        if(f.hasVariant(argsArray) && (variant = f.getVariant(argsArray)).getLine() != line){
             throw new CompilerException(line,tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
         }
         FunctionInfo p = null;
-        FunctionVariant variant = null;
         if(templateArgs == null){
-            variant = f.addVariant(argsArray,cID,implName);
+            if(variant == null){
+                variant = f.addVariant(argsArray,cID,implName);
+                variant.setLine(line);
+            }
             p = new FunctionInfo(f);
             fnEnv.addFunction("&" + id,new FunctionReference(p));
             fnEnv.addType(p,false);
@@ -167,7 +158,7 @@ public class Fn extends AFunctionBlock{
                 codeExp = new List(line,a.getTokenNum(),atoms,false);
             }
             if(templateArgs != null){
-                f.addTemplateVariant(templateArgs,codeExp,args,env);
+                f.addTemplateVariant(templateArgs,codeExp,args,env,line);
             }
             headBuilder.append("{\n");
             for(var arg:args.entrySet()){
@@ -229,7 +220,7 @@ public class Fn extends AFunctionBlock{
                 tmp.append(b);
                 cEnv.addMethod(f,tmp.toString());
             }else if(env instanceof InterfaceEnv){
-                builder.append(p.getPointerVariableDeclaration(variant.cname()));
+                builder.append(p.getPointerVariableDeclaration(variant.getCname()));
             }else if(env instanceof ModuleEnv e){
                 if(f.getType() != FunctionType.NATIVE){
                     var tmp = new StringBuilder();

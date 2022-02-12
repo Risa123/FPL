@@ -37,16 +37,12 @@ public final class Variable extends ValueExp{
 			}
 		    var assignmentOperator = false;
 		    if(type instanceof InstanceInfo && type.getField("=",env) instanceof Function f){
-		    	builder.append(f.getPointerVariant().cname()).append("(&");
+		    	builder.append(f.getPointerVariant().getCname()).append("(&");
 		    	assignmentOperator = true;
 			}
 			writePrev(builder);
 			builder.append(code);
-			if(assignmentOperator){
-				builder.append(',');
-			}else{
-				builder.append('=');
-			}
+			builder.append(assignmentOperator?',':'=');
 			onlyDeclared = false;
 			execute(it,builder,env,"");//not drf equals
 			if(assignmentOperator){
@@ -183,10 +179,7 @@ public final class Variable extends ValueExp{
 	    return type;
     }
     public String getExternDeclaration(){
-		if(getAccessModifier() == AccessModifier.PRIVATE){
-			return "";
-		}
-	    return "extern " + type.getCname() + " " + code + ";\n";
+	    return getAccessModifier() == AccessModifier.PRIVATE?"":"extern " + type.getCname() + ' ' + code + ";\n";
     }
     public String getCname(){
 		return code;

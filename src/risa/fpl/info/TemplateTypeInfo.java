@@ -48,7 +48,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
        if(type == null){
            var superMod = getModule();
            var cname = IFunction.createTemplateTypeCname(getCname(),argsInfo.toArray(new TypeInfo[0]));
-           var file = superMod.getNameSpace() + cname  + ".c";
+           var file = superMod.getNameSpace() + cname + ".c";
            if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
                superMod.addInstanceFile(file);
            }

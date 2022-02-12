@@ -154,10 +154,7 @@ public class TypeInfo{
       if(expCode.endsWith(";\n")){ //caused by Var
           expCode = expCode.substring(0,expCode.length() - 2);
       }
-      var npType = to;
-      if(npType instanceof PointerInfo p){
-          npType = p.getType();
-      }
+      var npType = to instanceof PointerInfo p?p.getType():to;
       if(this != npType && this instanceof InstanceInfo instance && npType instanceof InterfaceInfo i && parents.contains(i)){
           var prefix = "";
           var postfix = "";

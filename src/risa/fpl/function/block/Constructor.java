@@ -50,7 +50,7 @@ public final class Constructor extends AFunctionBlock{
            if(!parentConstructor.hasVariant(new TypeInfo[0])){
                throw new CompilerException(line,tokenNum,"parent does not have implicit constructor");
            }
-           parentConstructorCall = parentConstructor.getVariant(new TypeInfo[0]).cname() + "((" + parentType.getCname() + "*)this);\n";
+           parentConstructorCall = parentConstructor.getVariant(new TypeInfo[0]).getCname() + "((" + parentType.getCname() + "*)this);\n";
         }
         if(it.hasNext()){
            fnEnv.compileBlock(it.nextList(),b,it);

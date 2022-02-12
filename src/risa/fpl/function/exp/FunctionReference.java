@@ -9,7 +9,7 @@ import risa.fpl.parser.ExpIterator;
 public final class FunctionReference extends ValueExp{
     private final FunctionInfo info;
     public FunctionReference(FunctionInfo info){
-        super(info,"&" + info.getFunction().getPointerVariant().cname());
+        super(info,"&" + info.getFunction().getPointerVariant().getCname());
         this.info = info;
     }
     @Override

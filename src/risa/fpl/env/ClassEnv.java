@@ -104,7 +104,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             if(!constructor.hasVariant(new TypeInfo[0])){
                 throw new CompilerException(classId,"this class can not have implicit constructor if parent has not one");
             }
-            code = constructor.getVariant(new TypeInfo[0]).cname() + "((" + parent.getCname() + "*)this);\n" + code;
+            code = constructor.getVariant(new TypeInfo[0]).getCname() + "((" + parent.getCname() + "*)this);\n" + code;
         }
         return "void " + header + instanceInfo.getCname() + "* this){\n" + code + getImplicitConstructorCode() + "}\n";
     }
@@ -122,9 +122,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().clear();
             ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().clear();
         }
-        constructors.add(new ConstructorData(code,constructor.addVariant(args,nameSpace).cname(),argsCode,parentConstructorCall));
+        constructors.add(new ConstructorData(code,constructor.addVariant(args,nameSpace).getCname(),argsCode,parentConstructorCall));
         var b = new StringBuilder();
-        var constructorName = Objects.requireNonNull(instanceInfo.getConstructor().getVariant(args)).cname();
+        var constructorName = Objects.requireNonNull(instanceInfo.getConstructor().getVariant(args)).getCname();
         var cname = instanceInfo.getCname();
         b.append("void ").append(constructorName).append('(').append(cname).append("* this");
         for(var arg:args){
@@ -135,7 +135,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var allocName = "static" + getNameSpace() + "_alloc";
         var allocMethod = (Function)classInfo.getFieldFromThisType("alloc");
         allocMethod.addStaticVariant(args,allocName);
-        b.append(instanceInfo.getCname()).append("* ").append(allocMethod.getVariant(args).cname()).append('(');
+        b.append(instanceInfo.getCname()).append("* ").append(allocMethod.getVariant(args).getCname()).append('(');
         var first = true;
         var b2 = new StringBuilder();
         for(int i = 0; i < args.length;++i){
@@ -155,7 +155,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var newName = "static" + nameSpace + "_new";
         var newMethod = (Function)classInfo.getFieldFromThisType("new");
         newMethod.addStaticVariant(args,newName);
-        b.append(cname).append(' ').append(newMethod.getVariant(args).cname()).append('(').append(compiledArgs).append("){\n");
+        b.append(cname).append(' ').append(newMethod.getVariant(args).getCname()).append('(').append(compiledArgs).append("){\n");
         b.append(cname).append(" inst;\n");
         b.append(constructorCall(constructorName,"&inst",args));
         b.append("return inst;\n}\n");
@@ -165,7 +165,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             }
             var func = (Function)classInfo.getFieldFromThisType("throw");
             func.addStaticVariant(args,"static" + nameSpace + "_throw");
-            b.append("void ").append(func.getVariant(args).cname()).append('(');
+            b.append("void ").append(func.getVariant(args).getCname()).append('(');
             var argFirst = true;
             for(var i = 0;i < args.length;++i){
                 if(argFirst){
@@ -205,10 +205,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     @Override
     public IFunction getFunction(Atom name)throws CompilerException{
 	    var field = instanceInfo.getField(name.getValue(),this);
-	    if(field != null){
-	        return field;
-        }
-	    return super.getFunction(name);
+	    return field != null?field:super.getFunction(name);
     }
     public boolean notAbstract(){
 	    return !((ModuleEnv)superEnv).hasModifier(Modifier.ABSTRACT);
@@ -225,7 +222,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         if(notAbstract()){
           for(var method: instanceInfo.getMethodsOfType(FunctionType.VIRTUAL)){
               for(var v:method.getVariants()){
-                  b.append(",(void*)").append(v.cname());
+                  b.append(",(void*)").append(v.getCname());
               }
           }
         }
@@ -236,9 +233,6 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public boolean isParentConstructorCalled(){
 	    return parentConstructorCalled;
-    }
-    public void setPrimaryParent(InstanceInfo parent){
-        instanceInfo.setPrimaryParent(parent);
     }
     public void destructorDeclared(){
 	    destructorDeclared = true;

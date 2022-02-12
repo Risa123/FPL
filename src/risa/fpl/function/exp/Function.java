@@ -87,7 +87,7 @@ public class Function extends AField implements ICalledOnPointer{
         if(asFunctionPointer){
             asFunctionPointer = false;
         }else{
-            b.append(variant.implName());
+            b.append(variant.getImplName());
         }
         b.append('(');
 		var first = self == null;
@@ -123,7 +123,7 @@ public class Function extends AField implements ICalledOnPointer{
                 b.append(',');
             }
             var comesFromPointer = array[i] instanceof PointerInfo;
-            b.append(array[i].ensureCast(variant.args()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
+            b.append(array[i].ensureCast(variant.getArgs()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
         }
 		b.append(')');
         if(returnType != TypeInfo.VOID && it.hasNext() && it.peek() instanceof Atom a){
@@ -173,7 +173,7 @@ public class Function extends AField implements ICalledOnPointer{
     public final boolean hasSignature(Function f){
         if(returnType.equals(f.returnType)){
             for(var v:variants){
-                if(f.hasVariant(v.args())){
+                if(f.hasVariant(v.getArgs())){
                     return true;
                 }
             }
@@ -182,19 +182,16 @@ public class Function extends AField implements ICalledOnPointer{
     }
     @Override
     public final boolean equals(Object o){
-        if(o instanceof Function f){
-            return hasSignature(f);
-        }
-        return false;
+        return o instanceof Function f && hasSignature(f);
     }
     public final Function makeMethod(TypeInfo ofType,String newName){
         var variant = getPointerVariant();
-        var args = new TypeInfo[variant.args().length - 1];
+        var args = new TypeInfo[variant.getArgs().length - 1];
         if(args.length > 0){
-            System.arraycopy(variant.args(),1,args,0,args.length);
+            System.arraycopy(variant.getArgs(),1,args,0,args.length);
         }
         var f = new Function(newName,returnType,type,ofType,accessModifier);
-        f.variants.add(new FunctionVariant(args,variant.cname(),variant.implName()));
+        f.variants.add(new FunctionVariant(args,variant.getCname(),variant.getImplName()));
         return f;
     }
     public final Function changeAccessModifier(AccessModifier accessModifier){
@@ -214,6 +211,9 @@ public class Function extends AField implements ICalledOnPointer{
             declaration.append(attrCode).append(' ');
         }
         if(type != FunctionType.NATIVE){
+            if(cname.isEmpty()){
+                throw new RuntimeException(name);
+            }
             cname = cname + variants.size();
             implName = implName + variants.size();
         }
@@ -243,7 +243,7 @@ public class Function extends AField implements ICalledOnPointer{
     }
     public final FunctionVariant getVariant(TypeInfo[]args){
         for(var v:variants){
-            if(Arrays.equals(v.args(),args)){
+            if(Arrays.equals(v.getArgs(),args)){
                 return v;
             }
         }
@@ -253,7 +253,7 @@ public class Function extends AField implements ICalledOnPointer{
         var list = new ArrayList<TypeInfo>();
         list.add(returnType);
         for(var v:variants){
-            list.addAll(Arrays.asList(v.args()));
+            list.addAll(Arrays.asList(v.getArgs()));
         }
         return list;
     }
@@ -271,7 +271,7 @@ public class Function extends AField implements ICalledOnPointer{
     }
     public final boolean hasVariant(TypeInfo[]args){
         for(var v:variants){
-           if(Arrays.equals(v.args(),args)){
+           if(Arrays.equals(v.getArgs(),args)){
                return true;
            }
         }
@@ -287,8 +287,8 @@ public class Function extends AField implements ICalledOnPointer{
     public final void calledOnPointer(){
         callStatus = CALLED_ON_POINTER;
     }
-    public final void addTemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,LinkedHashMap<String,TypeInfo>args,AEnv env){
-        templateVariants.add(new TemplateVariant(templateArgs,code,args,env));
+    public final void addTemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,LinkedHashMap<String,TypeInfo>args,AEnv env,int line){
+        templateVariants.add(new TemplateVariant(templateArgs,code,args,env,line));
     }
     public final Function makeMethodFromTemplate(TypeInfo self,TypeInfo[]args,ModuleEnv module){
         var f = new Function(name,returnType,FunctionType.NORMAL,self,accessModifier);
@@ -376,7 +376,8 @@ public class Function extends AField implements ICalledOnPointer{
                fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
            }
            var v = addVariant(args,cname,cname);
-           builder.append(returnType.getCname()).append(' ').append(v.cname()).append('(');
+           v.setLine(variant.line);
+           builder.append(returnType.getCname()).append(' ').append(v.getCname()).append('(');
            var firstArg = true;
            if(self != null){
                builder.append(self.getCname());
@@ -400,11 +401,7 @@ public class Function extends AField implements ICalledOnPointer{
            builder.append("){\n");
            variant.code.compile(builder,fnEnv,null);
            builder.append('}');
-           var selfType = self;
-           if(selfType instanceof PointerInfo p){
-               selfType = p.getType();
-           }
-           if(!(selfType instanceof InstanceInfo i) || i.canWriteTemplateFunctionVariants()){
+           if(!((self instanceof PointerInfo p?p.getType():self) instanceof InstanceInfo i) || i.canWriteTemplateFunctionVariants()){
                FPL.addFunctionVariantGenerationData(new VariantGenData(builder.toString(),path,mod));
            }
        }catch(CompilerException e){
@@ -413,5 +410,5 @@ public class Function extends AField implements ICalledOnPointer{
     }
     private record ReturnedData(String code,boolean notReturnedByFunction){}
     private record TemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,LinkedHashMap<String,TypeInfo>args,
-                                   AEnv superEnv){}
+                                   AEnv superEnv,int line){}
 }

@@ -6,7 +6,7 @@ public final class FunctionPointerInfo extends FunctionInfo{
     private final String cname;
     public FunctionPointerInfo(Function function){
         super(function);
-        cname = getFunction().getPointerVariant().cname();
+        cname = getFunction().getPointerVariant().getCname();
         for(var type:function.getRequiredTypes()){
             addRequiredType(type);
         }

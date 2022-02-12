@@ -20,10 +20,7 @@ public final class Tokenizer implements AutoCloseable{
 		  reader.close();
 	  }
 	  public boolean hasNext()throws IOException{
-	      if(forceEnd){
-	          return false;
-          }
-		  return reader.ready() || !readNext;
+		  return !forceEnd && (reader.ready() || !readNext);
 	  }
 	  private Atom nextPrivate()throws IOException,CompilerException{
 		  read();

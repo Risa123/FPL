@@ -89,7 +89,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                         if(struct){
                             throw new CompilerException(line,tokenNum,"struct cannot inherit");
                         }
-                        cEnv.setPrimaryParent(primaryParent);
+                        cEnv.getInstanceInfo().setPrimaryParent(primaryParent);
                     }
                 }
             }
@@ -153,7 +153,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         //parent type doesn't have implicit constructor
         if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
             for(var v:i.getConstructor().getVariants()){
-               if(v.args().length > 0){
+               if(v.getArgs().length > 0){
                    throw new CompilerException(id,"constructor is required to call parent constructor");
                }
             }
@@ -179,7 +179,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                     }else{
                         internalCode.append(',');
                     }
-                    internalCode.append("(void*)").append(inThisClass.getVariant(v.args()).cname());
+                    internalCode.append("(void*)").append(inThisClass.getVariant(v.getArgs()).getCname());
                 }
             }
             internalCode.append("};\n");

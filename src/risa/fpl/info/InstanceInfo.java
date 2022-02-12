@@ -57,7 +57,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
             }
             for(var method:methods.values()){
                 for(var v:method.getVariants()){
-                    b.append(new FunctionInfo(method).getPointerVariableDeclaration(v.implName())).append(";\n");
+                    b.append(new FunctionInfo(method).getPointerVariableDeclaration(v.getImplName())).append(";\n");
                 }
             }
             appendToDeclaration("typedef struct " + getClassDataType());

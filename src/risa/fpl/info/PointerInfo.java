@@ -19,11 +19,7 @@ public class PointerInfo extends TypeInfo{
             addField("%",new BinaryOperator(this,NumberInfo.MEMORY,"%"));
             addField("get",new GetElement(type));
             addField("set",new SetElement(type));
-            if(type instanceof FunctionInfo f){
-               addField("drf",new FunctionDereference(f.getFunction()));
-            }else{
-               addField("drf",new Dereference(type));
-            }
+            addField("drf",type instanceof FunctionInfo f?new FunctionDereference(f.getFunction()):new Dereference(type));
         }
         addField("==",new BinaryOperator(BOOL,this,"=="));
         addField("!=",new BinaryOperator(BOOL,this,"!="));
