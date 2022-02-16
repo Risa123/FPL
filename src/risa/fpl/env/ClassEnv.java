@@ -114,15 +114,11 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
          }
         appendFunctionCode(code);
     }
-    public void addConstructor(String code,String argsCode,TypeInfo[]args,String parentConstructorCall){
+    public void addConstructor(String code,String argsCode,TypeInfo[]args,String parentConstructorCall,int line){
         var constructor = instanceInfo.getConstructor();
-        if(onlyImplicitConstructor){
-            onlyImplicitConstructor = false;
-            constructor.getVariants().clear();
-            ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().clear();
-            ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().clear();
-        }
-        constructors.add(new ConstructorData(code,constructor.addVariant(args,nameSpace).getCname(),argsCode,parentConstructorCall));
+        var v = constructor.hasVariant(args)?constructor.getVariant(args):constructor.addVariant(args,nameSpace);
+        v.setLine(line);
+        constructors.add(new ConstructorData(code,v.getCname(),argsCode,parentConstructorCall));
         var b = new StringBuilder();
         var constructorName = Objects.requireNonNull(instanceInfo.getConstructor().getVariant(args)).getCname();
         var cname = instanceInfo.getCname();
@@ -130,8 +126,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         for(var arg:args){
             b.append(',').append(arg.getCname());
         }
-        var classInfo = instanceInfo.getClassInfo();
         b.append(");\n");
+        var classInfo = instanceInfo.getClassInfo();
         var allocName = "static" + getNameSpace() + "_alloc";
         var allocMethod = (Function)classInfo.getFieldFromThisType("alloc");
         allocMethod.addStaticVariant(args,allocName);
@@ -294,6 +290,14 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     @Override
     public boolean hasFunctionInCurrentEnv(String name){
         return instanceInfo.getFieldFromThisType(name) != null || super.hasFunctionInCurrentEnv(name);
+    }
+    public void removeImplicitConstructor(){
+        if(onlyImplicitConstructor){
+            onlyImplicitConstructor = false;
+            instanceInfo.getConstructor().getVariants().clear();
+            ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().clear();
+            ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().clear();
+        }
     }
     public String getConstructorCode(){
         var b = new StringBuilder();

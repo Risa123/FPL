@@ -29,7 +29,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private int mainDeclared;
 	private final ArrayList<TypeInfo>typesForDeclarations = new ArrayList<>();
 	private final ArrayList<AField>inaccessibleFunctions = new ArrayList<>();
-	private final ArrayList<Integer>classConstructorLines = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
@@ -224,16 +223,6 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public String getDestructorCall(){
         return destructorCall;
-    }
-    /**
-     * Add line where constructor is declared on list.
-     * Prevents constructors form being compiled multiple times
-     */
-    public void addClassConstructorLine(int line){
-	    classConstructorLines.add(line);
-    }
-    public boolean notClassConstructorOnLine(int line){
-        return !classConstructorLines.contains(line);
     }
     public String getInitializer(){
         return isMain()?"":getInitializer("init");

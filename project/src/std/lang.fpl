@@ -158,14 +158,12 @@ class String{
     if str len > len{
      return false
     }
-    var i str len - 1
-    var j len - 1
-    while i < 0{
+    var j len - str len
+    for i,str len{
      if str get i; != p get j{
         return false
      }
-     i --
-     j --
+     j ++
     }
     return true
   }
@@ -181,6 +179,48 @@ class String{
     }
     return p get len - 1; == c
   }
+  fn String substring uint beginIndex uint endIndex{
+    if endIndex < beginIndex{
+      IllegalArgumentException:throw "endIndex must be bigger than beginIndex"
+    }
+    if endIndex > len{
+      IllegalArgumentException:throw "endIndex cannot be bigger than length of string"
+    }
+    var i beginIndex
+    var len endIndex - beginIndex
+    String result init char:alloc[] len,len,true
+    var resultIndex 0
+    while i < len; && i < endIndex{
+      result set resultIndex,p get i
+      i ++
+      resultIndex ++
+    }
+    return result
+  }
+  fn String strip{
+    var beginIndex 0
+    var endIndex 0
+    var afterBegin false
+    for i,len{
+      var c p get i
+      if afterBegin ! && beginIndex == 0; && isWhitespace c;!{
+        if i > 0{
+          beginIndex = i - 1
+        }
+        afterBegin = true
+      }
+      if afterBegin && endIndex == 0; && isWhitespace c{
+        endIndex = i - 1
+      }
+    }
+    if beginIndex == 0; && endIndex  == 0{
+      return this drf
+    }
+    return substring beginIndex,endIndex
+  }
+  fn bool isAllocated = allocated
+  fn String substring uint endIndex = substring 0,endIndex
+  fn bool equalsIgnoreCase String str = toLowerCase; == str toLowerCase
   fn uint getLength = len
   fn String toString = this drf
   fn bool isEmpty = len == 0
@@ -436,6 +476,9 @@ fn String floatingPointToString double this int precision{
 }
 class NumberFormatException Exception{
    this String message:message
+}
+class IllegalArgumentException Exception{
+  this String message:message
 }
 fn double floatingPointParse String str{
     if str isEmpty{

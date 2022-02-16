@@ -39,19 +39,8 @@ public class Fn extends AFunctionBlock{
             cID += IFunction.toCId(id.getValue());
 	    }
         var self = env instanceof  ClassEnv cEnv?cEnv.getInstanceInfo():(env instanceof InterfaceEnv e?e.getType():null);
-        var headBuilder = new StringBuilder();
-        if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
-            headBuilder.append("static ");
-        }
-        headBuilder.append(returnType.getCname()).append(' ').append(cID);
-        if(!env.hasModifier(Modifier.NATIVE)){
-           if(env.hasFunctionInCurrentEnv(id.getValue()) && env.getFunction(id) instanceof  Function f){
-               headBuilder.append(f.getVariants().size());
-           }else{
-               headBuilder.append('0');
-           }
-        }
-		var args = parseArguments(headBuilder,it,fnEnv,self);
+        var argsBuilder = new StringBuilder();
+		var args = parseArguments(argsBuilder,it,fnEnv,self);
 		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
             it.next();
@@ -160,7 +149,7 @@ public class Fn extends AFunctionBlock{
             if(templateArgs != null){
                 f.addTemplateVariant(templateArgs,codeExp,args,env,line);
             }
-            headBuilder.append("{\n");
+            argsBuilder.append("{\n");
             for(var arg:args.entrySet()){
                 if(arg.getValue() instanceof InstanceInfo i){
                     fnEnv.addInstanceVariable(i,IFunction.toCId(arg.getKey()));
@@ -212,9 +201,13 @@ public class Fn extends AFunctionBlock{
             }
         }
         if(templateArgs == null){
+            var headBuilder = new StringBuilder(attrCode);
+            if(env.getAccessModifier() == AccessModifier.PRIVATE && !(env instanceof ClassEnv)){
+                headBuilder.append("static ");
+            }
+            headBuilder.append(returnType.getCname()).append(' ').append(variant.getCname()).append(argsBuilder);
             if(env instanceof ClassEnv cEnv){
                 var tmp = new StringBuilder();
-                tmp.append(attrCode);
                 tmp.append(headBuilder);
                 fnEnv.compileToPointerVars(tmp);
                 tmp.append(b);
@@ -224,7 +217,6 @@ public class Fn extends AFunctionBlock{
             }else if(env instanceof ModuleEnv e){
                 if(f.getType() != FunctionType.NATIVE){
                     var tmp = new StringBuilder();
-                    tmp.append(attrCode);
                     tmp.append(headBuilder);
                     fnEnv.compileToPointerVars(tmp);
                     tmp.append(b);
@@ -232,7 +224,6 @@ public class Fn extends AFunctionBlock{
                 }
                 e.appendFunctionDeclaration(f);
             }else{
-                builder.append(attrCode);
                 fnEnv.compileToPointerVars(builder);
                 builder.append(b);
                 if(type == FunctionType.NATIVE && !id.getValue().equals("__builtin_longjmp")){//builtin functions cannot have declaration with extern

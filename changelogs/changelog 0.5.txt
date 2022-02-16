@@ -10,7 +10,7 @@ number literal can now contain _ to make it more readable
 added parse methods to number classes
 added static throw to exception classes
 NumberFormatException added
-+ String.{isEmpty,isBlank,isEmptyOrBlank,getData,contains}
++ String.{isEmpty,isBlank,isEmptyOrBlank,getData,contains,isAllocated,endsWith,startsWith,strip,substring}
 D number type char added to signify double
 NAN,POSITIVE_INFINITY and NEGATIVE_INFINITY fields added to floating point numbers
 isNaN method added to floating point numbers
