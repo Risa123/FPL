@@ -167,18 +167,8 @@ class String{
     }
     return true
   }
-  fn bool startsWith char c{
-    if len == 0{
-      return false
-    }
-    return p get 0; == c
-  }
-  fn bool endsWith char c{
-    if len == 0{
-      return false
-    }
-    return p get len - 1; == c
-  }
+  fn bool startsWith char c = len != 0; && [ p get 0; == c ]
+  fn bool endsWith char c = len != 0; && [ p get len - 1; == c ]
   fn String substring uint beginIndex uint endIndex{
     if endIndex < beginIndex{
       IllegalArgumentException:throw "endIndex must be bigger than beginIndex"
@@ -210,13 +200,10 @@ class String{
         afterBegin = true
       }
       if afterBegin && endIndex == 0; && isWhitespace c{
-        endIndex = i - 1
+        endIndex = i
       }
     }
-    if beginIndex == 0; && endIndex  == 0{
-      return this drf
-    }
-    return substring beginIndex,endIndex
+    return [ beginIndex == 0; && endIndex  == 0 ] ? this drf,substring beginIndex,endIndex
   }
   fn bool isAllocated = allocated
   fn String substring uint endIndex = substring 0,endIndex
@@ -397,10 +384,7 @@ fn String charToString char this{
 }
 private const var TRUE "true";FALSE "false"
 fn String boolToString bool this{
-   if this{
-     return TRUE
-   }
-   return FALSE
+   return this ? TRUE,FALSE
 }
 fn String integerToString long this{
  [] char 20 buf

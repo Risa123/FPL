@@ -211,9 +211,6 @@ public class Function extends AField implements ICalledOnPointer{
             declaration.append(attrCode).append(' ');
         }
         if(type != FunctionType.NATIVE){
-            if(cname.isEmpty()){
-                throw new RuntimeException(name);
-            }
             cname = cname + variants.size();
             implName = implName + variants.size();
         }

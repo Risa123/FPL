@@ -84,11 +84,7 @@ public abstract class AEnv{
   public void addType(TypeInfo type,boolean declaration){
       types.put(type.getName(),type);
       if(declaration){
-         if(type instanceof InstanceInfo i){
-			 addFunction(type.getName(),i.getConstructor());
-		 }else{
-			 addFunction(type.getName(),new Var(type));
-		 }
+		  addFunction(type.getName(),type instanceof InstanceInfo i?i.getConstructor():new Var(type));
       }
   }
 }

@@ -153,9 +153,7 @@ class Tokenizer{
    }
    return tokens get i
  }
- fn void close{
-   reader close
- }
+ fn void close = reader close
  fn bool hasNext{
   prepare
   return tokens isEmpty; !

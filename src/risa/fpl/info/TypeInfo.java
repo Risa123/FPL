@@ -33,6 +33,7 @@ public class TypeInfo{
       BOOL.addField("|",new BinaryOperator(BOOL,BOOL,"|"));
       BOOL.addField("==",new BinaryOperator(BOOL,BOOL,"=="));
       BOOL.addField("!=",new BinaryOperator(BOOL,BOOL,"!="));
+      BOOL.addField("?",new TertiaryOperator());
 	  NIL.addField("==",new BinaryOperator(BOOL,NIL,"=="));
       NIL.addField("!=",new BinaryOperator(BOOL,NIL,"!="));
       BOOL.addSize();
@@ -187,13 +188,7 @@ public class TypeInfo{
       if(this == TypeInfo.CHAR && o instanceof NumberInfo n && n.getSize() == 1){
           return true;
       }
-      if(o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this)){
-          return true;
-      }
-      if(this == OBJECT){
-          return true;
-      }
-      return  this == o;
+      return o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this) || this == OBJECT || this == o;
   }
   public final void setPrimaryParent(TypeInfo primaryParent){
       this.primaryParent = primaryParent;
