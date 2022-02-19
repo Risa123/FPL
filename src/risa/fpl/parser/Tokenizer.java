@@ -322,8 +322,7 @@ public final class Tokenizer implements AutoCloseable{
 	  }
 	  private int read()throws IOException{
 		  if(readNext){
-			 c = reader.read();
-			 if(c == '\n'){
+			 if((c = reader.read()) == '\n'){
 				 line++;
 				 tokenNum = 1;
 			 }

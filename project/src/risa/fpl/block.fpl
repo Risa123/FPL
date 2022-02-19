@@ -8,11 +8,15 @@ use{
  risa.fpl.main
 }
 class ModuleBlock ObjectInfo{
- private const String name
- this FPL* fpl String fplPath{
+ private const{
+   String name
+   String cPath
+ }
+ this String fplPath{
    FileReader reader init fplPath
    Tokenizer tokenizer init reader
-   name = fplPath replace $/,$.; replace $\\,$.
+   name = fplPath replace $/,$.;replace $\\,$.
+   cPath = name replace $.,$_; + ".c"
    print name
    try{
       while tokenizer hasNext{

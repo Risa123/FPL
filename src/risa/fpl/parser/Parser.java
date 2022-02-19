@@ -29,10 +29,8 @@ public final class Parser{
 		 var token = tokenizer.next();
 		 if(token.getType() == AtomType.NEW_LINE || token.getType() == AtomType.END_BLOCK){
 			 break;
-		 }else if(token.getType() == AtomType.BEGIN_BLOCK){
-			 list.add(parseBlock(token));
 		 }else{
-			 list.add(token);
+			 list.add(token.getType() == AtomType.BEGIN_BLOCK?parseBlock(token):token);
 		 }
 	 }
 	 return new List(first.getLine(),first.getTokenNum(),list,true);

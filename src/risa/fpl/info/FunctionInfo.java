@@ -40,11 +40,7 @@ public class FunctionInfo extends TypeInfo{
             }else{
                 b.append(',');
             }
-            if(arg instanceof PointerInfo p && p.getType() instanceof NonTrivialTypeInfo && self instanceof InterfaceInfo){
-                b.append("void*");
-            }else{
-                b.append(arg.getCname());
-            }
+            b.append(arg instanceof PointerInfo p && p.getType() instanceof NonTrivialTypeInfo && self instanceof InterfaceInfo?"void*":arg.getCname());
         }
         return b.append(')').toString();
     }

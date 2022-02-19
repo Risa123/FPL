@@ -29,10 +29,7 @@ public class PointerInfo extends TypeInfo{
         addField("<=",new BinaryOperator(TypeInfo.BOOL,this,"<="));
         addField("cast",new Cast(this));
         addField("getObjectSize",PointerSize.INSTANCE);
-        var cName = "free";
-        if(type instanceof InstanceInfo i){
-          cName = i.getInstanceFree();
-        }
+        var cName = type instanceof InstanceInfo i?i.getInstanceFree():"free";
         if(type instanceof InstanceInfo i && i.getDestructorName() != null){
             var mod = i.getModule();
             var freeArray = FPL.getFreeArray();
@@ -57,10 +54,7 @@ public class PointerInfo extends TypeInfo{
     @Override
     public final AField getField(String name,AEnv from){
 	    var field = super.getField(name,from);
-	    if(field == null){
-	        field = type.getField(name,from);
-        }
-	    return field;
+	    return field == null?type.getField(name,from):field;
     }
     @Override
     public final String ensureCast(TypeInfo to,String expCode){

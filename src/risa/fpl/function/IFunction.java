@@ -81,10 +81,7 @@ public interface IFunction{
          var argType = new TypeInfo(arg.getValue(),""){
              @Override
              public boolean equals(Object o){
-                 if(o instanceof TypeInfo t){
-                     return getPrimaryParent() == t.getPrimaryParent();
-                 }
-                 return false;
+                 return o instanceof TypeInfo t && getPrimaryParent() == t.getPrimaryParent();
              }
          };
          argType.setPrimaryParent(TypeInfo.OBJECT);

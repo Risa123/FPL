@@ -176,11 +176,14 @@ class String{
     if endIndex > len{
       IllegalArgumentException:throw "endIndex cannot be bigger than length of string"
     }
+    if beginIndex  == 0; && endIndex == len{
+      return this drf
+    }
     var i beginIndex
-    var len endIndex - beginIndex
+    var len endIndex - beginIndex + 1
     String result init char:alloc[] len,len,true
     var resultIndex 0
-    while i < len; && i < endIndex{
+    while i < len; || i <= endIndex{
       result set resultIndex,p get i
       i ++
       resultIndex ++
@@ -189,21 +192,20 @@ class String{
   }
   fn String strip{
     var beginIndex 0
-    var endIndex 0
-    var afterBegin false
     for i,len{
-      var c p get i
-      if afterBegin ! && beginIndex == 0; && isWhitespace c;!{
-        if i > 0{
-          beginIndex = i - 1
-        }
-        afterBegin = true
-      }
-      if afterBegin && endIndex == 0; && isWhitespace c{
-        endIndex = i
+      if isWhitespace p get i; !{
+        beginIndex = i
+        break
       }
     }
-    return [ beginIndex == 0; && endIndex  == 0 ] ? this drf,substring beginIndex,endIndex
+    var endIndex len - 1
+    while endIndex > 0{
+      if isWhitespace p get endIndex; !{
+         break
+      }
+      endIndex --
+    }
+    return [ beginIndex == 0;&& endIndex == len - 1 ] ? this drf,substring beginIndex,endIndex
   }
   fn bool isAllocated = allocated
   fn String substring uint endIndex = substring 0,endIndex

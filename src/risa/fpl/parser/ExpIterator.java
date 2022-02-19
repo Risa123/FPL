@@ -53,10 +53,7 @@ public final class ExpIterator{
 	  throw new CompilerException(list,"list expected");
   }
   public AExp peek()throws CompilerException{
-	  if(peeked == null){
-		  peeked = next();
-	  }
-	  return peeked;
+	  return peeked == null?(peeked = next()):peeked;
   }
   public boolean checkTemplate()throws CompilerException{
         var result = hasNext() && peek() instanceof Atom atom && atom.getType() == AtomType.END_ARGS;

@@ -167,10 +167,7 @@ public final class Variable extends ValueExp{
     private void execute(ExpIterator it,StringBuilder builder,SubEnv env,String operator)throws CompilerException{
 	    var exp = it.next();
 	    var ret = exp.compile(builder,env,it);
-	    var t = type;
-	    if(operator.equals("=") && type instanceof PointerInfo p){
-	        t = p.getType();
-        }
+	    var t = operator.equals("=") && type instanceof PointerInfo p?p.getType():type;
 	    if(!t.equals(ret)){
 	        throw new CompilerException(exp,"expression expected to return  " + t + " instead of " + ret);
         }

@@ -37,7 +37,7 @@ public final class List extends AExp{
             	 b = new StringBuilder();
             	 ret = field.compile(b,env,it,atom.getLine(),atom.getTokenNum());
               }
-		   }else if(exp instanceof List){
+		   }else{
 			   exp.compile(builder,env,it);
 		   }
 	   }

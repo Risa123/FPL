@@ -7,8 +7,7 @@ use{
   risa.fpl.base
   risa.fpl.block
 }
-class FPL{
- private{
+private{
    const{
      String outputFile
      String mainModule
@@ -37,72 +36,69 @@ class FPL{
        if isDirectory path{
         compileDirectory srcDir,path
        }if isFile path{
-        ModuleBlock block init this,path
+        ModuleBlock block init path
        }
      }
      stream close
    }
  }
- this String project{
-  FileReader reader init project + "/build.bs"
-  Tokenizer tokenizer init reader
-  var noMainModule true;noOutputFile true
-  String ccArgs
-  while tokenizer hasNext{
-    var id tokenizer nextID
-    if tokenizer hasNext; !{
-      CompilerException ex init id getLine;,id getTokenNum;,"property value expected"
-      ex setFile "build.bs"
-      ex throw
-    }
-    var idS id getValue
-    if idS == "outputFile"{
-      outputFile = readValue tokenizer ref
-      noOutputFile = false
-    }if idS == "mainModule"{
-      mainModule = readValue tokenizer ref
-      noMainModule = false
-    }if idS == "flags"{
-      while tokenizer hasNext{
-        var flag tokenizer next
-        if flag getType; == TokenType:ID{
-          flags add flag getValue
-        }if flag getType; == TokenType:NEW_LINE{
-          break
-        }{
-         CompilerException ex init flag getLine;,flag getTokenNum;,"flag expected instead of " + flag getValue
-         ex setFile "build.bs"
-         ex throw
-        }
-      }
-    }{
-      CompilerException ex init id getLine;,id getTokenNum;,idS + " property doesn't exist"
-      ex setFile "build.bs"
-      ex throw
-    }
-  }
-  tokenizer close
-  if noMainModule{
-    CompilerException ex init "no main module"
-    ex setFile "build.bs"
-    ex throw
-  }
-  if noOutputFile{
-    CompilerException ex init "no output file"
-    ex setFile "build.bs"
-    ex throw
-  }
-  compileDirectory project + "/src";,""
- }
  fn String getMainModule = mainModule
-}
 main{
  if argc != 2{
    stderr writeString "<project directory> expected"
    return 2 #1 is reserved for exceptions
  }
  try{
-  FPL:new args get 1
+    var project args get 1
+    FileReader reader init project + "/build.bs"
+    Tokenizer tokenizer init reader
+    var noMainModule true;noOutputFile true
+    String ccArgs
+    while tokenizer hasNext{
+      var id tokenizer nextID
+      if tokenizer hasNext; !{
+        CompilerException ex init id getLine;,id getTokenNum;,"property value expected"
+        ex setFile "build.bs"
+        ex throw
+      }
+      var idS id getValue
+      if idS == "outputFile"{
+        outputFile = readValue tokenizer ref
+        noOutputFile = false
+      }if idS == "mainModule"{
+        mainModule = readValue tokenizer ref
+        noMainModule = false
+      }if idS == "flags"{
+        while tokenizer hasNext{
+          var flag tokenizer next
+          if flag getType; == TokenType:ID{
+            flags add flag getValue
+          }if flag getType; == TokenType:NEW_LINE{
+            break
+          }{
+           CompilerException ex init flag getLine;,flag getTokenNum;,"flag expected instead of " + flag getValue
+           ex setFile "build.bs"
+           ex throw
+          }
+        }
+      }{
+        CompilerException ex init id getLine;,id getTokenNum;,idS + " property doesn't exist"
+        ex setFile "build.bs"
+        ex throw
+      }
+    }
+    tokenizer close
+    if noMainModule{
+      CompilerException ex init "no main module"
+      ex setFile "build.bs"
+      ex throw
+    }
+    if noOutputFile{
+      CompilerException ex init "no output file"
+      ex setFile "build.bs"
+      ex throw
+    }
+    compileDirectory project + "/src";,""
  }catch CompilerException{
    stderr writeString ex getMessage
    return 3
