@@ -151,7 +151,7 @@ public class TypeInfo{
   public boolean notIntegerNumber(){
       return true;
   }
-  public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,boolean notReturnedByFunction){
+  public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,boolean notReturnedByFunction,SubEnv env){
       if(expCode.endsWith(";\n")){ //caused by Var
           expCode = expCode.substring(0,expCode.length() - 2);
       }
@@ -164,18 +164,18 @@ public class TypeInfo{
                 prefix = "&";
             }else{
                 prefix = instance.getToPointerName() + '(';
-                postfix = ")";
+                postfix = ",&" + env.getToPointerVarName(instance) + ')';
             }
           }
           return instance.getConversionMethod(i) + '(' + prefix +  expCode + postfix + ')';
       }
       return expCode;
   }
-  public String ensureCast(TypeInfo to,String expCode){
-      return ensureCast(to,expCode,false,true);
+  public String ensureCast(TypeInfo to,String expCode,SubEnv env){
+      return ensureCast(to,expCode,false,true,env);
   }
-  public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
-      return ensureCast(to,expCode,comesFromPointer,true);
+  public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,SubEnv env){
+      return ensureCast(to,expCode,comesFromPointer,true,env);
   }
     /**
      *checks if type can be implicitly  converted or is  this one

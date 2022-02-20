@@ -144,15 +144,15 @@ public final class Var implements IFunction{
                     builder.append(declaration);
                 }
                 if(expType != null){
-                    expCode = expType.ensureCast(this.type,expCode);
+                    expCode = expType.ensureCast(this.type,expCode,env);
                     if(env instanceof ModuleEnv e){
                        if(constantExp){
-                           e.appendVariableDeclaration("=" + expCode + ";\n");
+                           e.appendVariableDeclaration('=' + expCode + ";\n");
                        }else{
-                           e.appendToInitializer(cID + "=" + expCode + ";\n");
+                           e.appendToInitializer(cID + '=' + expCode + ";\n");
                        }
                     }else if(env instanceof ClassEnv e){
-                        e.appendToImplicitConstructor("this->" + cID + "=" + expCode + ";\n");
+                        e.appendToImplicitConstructor("this->" + cID + '=' + expCode + ";\n");
                     }else{
                         builder.append('=').append(expCode);
                     }

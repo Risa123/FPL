@@ -138,9 +138,7 @@ class Tokenizer{
     }
     fn bool isSeparator = c isWhitespace; ||  c == ${; || c == $}; || c == $; #char ;
  }
- this Readable readable{
-    reader = DataReader:new readable
- }
+ this Readable readable = reader = DataReader:new readable
  fn Token next{
     var token peek
     i ++

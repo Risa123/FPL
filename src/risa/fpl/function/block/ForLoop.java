@@ -44,8 +44,7 @@ public final class ForLoop extends ABlock{
             type = expType;
         }
         var cId = IFunction.toCId(id.getValue());
-        builder.append(type.getCname()).append(' ').append(cId).append("=0;");
-        builder.append(cId).append('<').append(b).append(';');
+        builder.append(type.getCname()).append(' ').append(cId).append("=0;").append(cId).append('<').append(b).append(';');
         builder.append(cId).append("++){\n");
         var subEnv = new FnSubEnv(env);
         subEnv.addFunction(id.getValue(),new Variable(type,cId,id.getValue()));

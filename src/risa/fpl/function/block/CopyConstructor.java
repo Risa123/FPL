@@ -34,7 +34,7 @@ public final class CopyConstructor extends ABlock{
         fnEnv.addFunction("o",new Variable(new PointerInfo(type),"o","o"));
         fnEnv.addFunction("this",new Variable(new PointerInfo(type),"this","this"));
         b.append(cEnv.getImplicitCopyConstructorCode());
-        fnEnv.compileBlock(it.nextList(),b,it);
+        fnEnv.compileFunctionBlock(b,it);
         b.append("}\n");
         cEnv.appendFunctionCode(b.toString());
         cEnv.declareCopyConstructor();

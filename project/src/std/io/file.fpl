@@ -31,9 +31,7 @@ abstract class FileHandler Closeable{
         IOException:throw String:new msg,getCStringLen msg;,false; + " "; + name
       }
    }
-   this void* handle{
-     this handle = handle
-   }
+   this void* handle = this handle = handle
    override fn void close{
      fileClose handle
      checkError

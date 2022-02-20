@@ -1,8 +1,11 @@
 package risa.fpl.env;
 
+import risa.fpl.CompilerException;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.AExp;
+import risa.fpl.parser.ExpIterator;
 
 public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
     protected boolean returnNotUsed = true;
@@ -40,5 +43,12 @@ public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
             superEnv = env.superEnv;
         }
         compileDestructorCalls(builder);
+    }
+    public final void compileBlock(AExp exp,StringBuilder builder,ExpIterator it)throws CompilerException{
+        var tmp = new StringBuilder();
+        exp.compile(tmp,this,it);
+        builder.append(toPointerVars);
+        builder.append(tmp);
+        builder.append(destructorCalls);
     }
 }

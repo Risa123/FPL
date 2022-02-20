@@ -2,6 +2,7 @@ package risa.fpl.info;
 
 import risa.fpl.FPL;
 import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.exp.*;
 
@@ -57,16 +58,16 @@ public class PointerInfo extends TypeInfo{
 	    return field == null?type.getField(name,from):field;
     }
     @Override
-    public final String ensureCast(TypeInfo to,String expCode){
-        return type.ensureCast(to,expCode,true);
+    public final String ensureCast(TypeInfo to,String expCode,SubEnv env){
+        return type.ensureCast(to,expCode,true,env);
     }
     @Override
-    public final String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
-	    return type.ensureCast(to,expCode,comesFromPointer);
+    public final String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,SubEnv env){
+	    return type.ensureCast(to,expCode,comesFromPointer,env);
     }
     @Override
-    public final String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,boolean returnedByFunction){
-	    return type.ensureCast(to,expCode,comesFromPointer,returnedByFunction);
+    public final String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,boolean returnedByFunction,SubEnv env){
+	    return type.ensureCast(to,expCode,comesFromPointer,returnedByFunction,env);
     }
     public final TypeInfo getType(){
 	    return type;

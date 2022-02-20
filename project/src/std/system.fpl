@@ -18,9 +18,7 @@ fn int execute String cmd{
   }
   return exitCode
 }
-fn void addOnExitHandler onExit handler{
- onExitHandlers add handler
-}
+fn void addOnExitHandler onExit handler = onExitHandlers add handler
 fn String getEnv String name{
   var cstr name toCString
   var value std.backend.getEnv cstr

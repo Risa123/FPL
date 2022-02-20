@@ -28,8 +28,7 @@ public final class Main implements IFunction{
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("args",new Variable(new PointerInfo(FPL.getString()),"args","args"));
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",AtomType.ID)),"mainThread","mainThread"));
-        var b = new StringBuilder();
-        b.append(modEnv.getInitializer());
+        var b = new StringBuilder(modEnv.getInitializer());
         fnEnv.compileBlock(it.nextList(),b,it);
         b.append(modEnv.getDestructor());
         if(fnEnv.isReturnNotUsed()){

@@ -1,6 +1,7 @@
 package risa.fpl.info;
 
 import risa.fpl.env.AEnv;
+import risa.fpl.env.SubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.AField;
 
@@ -20,8 +21,8 @@ public final class CustomTypeInfo extends TypeInfo{
         return original.getField(name,from);
     }
     @Override
-    public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer){
-        return original.ensureCast(to,expCode,comesFromPointer);
+    public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,SubEnv env){
+        return original.ensureCast(to,expCode,comesFromPointer,env);
     }
     @Override
     public String getDeclaration(){

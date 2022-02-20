@@ -2,7 +2,6 @@ package risa.fpl.function.block;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.*;
-import risa.fpl.function.exp.Function;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
@@ -51,7 +50,7 @@ public final class Constructor extends AFunctionBlock{
            parentConstructorCall = parentConstructor.getVariant(new TypeInfo[0]).getCname() + "((" + parentType.getCname() + "*)this);\n";
         }
         if(it.hasNext()){
-           fnEnv.compileBlock(it.nextList(),b,it);
+           fnEnv.compileFunctionBlock(b,it);
         }else if(!hasParentConstructor){
             throw new CompilerException(line,tokenNum,"block expected as last argument");
         }

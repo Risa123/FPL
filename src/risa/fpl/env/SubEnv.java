@@ -5,9 +5,7 @@ import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
-import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
-import risa.fpl.parser.ExpIterator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +15,7 @@ public class SubEnv extends AEnv{
   private int toPointerVarID;
   private AccessModifier accessModifier = AccessModifier.PUBLIC;
   private final ArrayList<Modifier>modifiers = new ArrayList<>();
-  private final StringBuilder toPointerVars = new StringBuilder(),destructorCalls = new StringBuilder();
+  protected final StringBuilder toPointerVars = new StringBuilder(),destructorCalls = new StringBuilder();
   public SubEnv(AEnv superEnv){
 	  this.superEnv = superEnv;
   }
@@ -50,13 +48,6 @@ public class SubEnv extends AEnv{
      var name = "c" + toPointerVarID++;
      toPointerVars.append(type.getCname()).append(' ').append(name).append(";\n");
      return name;
- }
- public final void compileBlock(AExp exp,StringBuilder builder,ExpIterator it)throws CompilerException{
-      var tmp = new StringBuilder();
-      exp.compile(tmp,this,it);
-      builder.append(toPointerVars);
-      builder.append(tmp);
-      builder.append(destructorCalls);
  }
  public final void compileDestructorCalls(StringBuilder builder){
       builder.append(destructorCalls);

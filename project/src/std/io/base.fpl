@@ -28,9 +28,7 @@ class DataReader Readable{
 }
 class DataWriter Writable{
  private Writable writable
- this Writable writable{
-   this writable = writable
- }
+ this Writable writable = this writable = writable
  override fn void close = writable close
  override fn void write byte* p memory size = writable write p,size
  fn void writeString String str{

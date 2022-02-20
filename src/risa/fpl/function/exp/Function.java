@@ -122,8 +122,7 @@ public class Function extends AField implements ICalledOnPointer{
             }else{
                 b.append(',');
             }
-            var comesFromPointer = array[i] instanceof PointerInfo;
-            b.append(array[i].ensureCast(variant.getArgs()[i],returnedData.get(i).code,comesFromPointer,returnedData.get(i).notReturnedByFunction));
+            b.append(array[i].ensureCast(variant.getArgs()[i],returnedData.get(i).code,array[i] instanceof PointerInfo,returnedData.get(i).notReturnedByFunction,env));
         }
 		b.append(')');
         if(returnType != TypeInfo.VOID && it.hasNext() && it.peek() instanceof Atom a){

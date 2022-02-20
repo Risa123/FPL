@@ -80,7 +80,7 @@ public final class Array implements IFunction{
 					if(!expType.equals(type)){
 						throw new CompilerException(exp,type + " expected instead of " + expType);
 					}
-					b.append(expType.ensureCast(type,buffer.toString()));
+					b.append(expType.ensureCast(type,buffer.toString(),env));
 					count++;
 				}
 		    }

@@ -229,9 +229,7 @@ struct EHEntry{
 }
 class Exception{
    protected String message
-   this String message{
-     this message = message
-   }
+   this String message = this message = message
    virtual fn String getMessage = message
    fn void throw{
      var target currentThread currentEHEntry
@@ -349,7 +347,7 @@ fn bool isLetter char this{
   return c >= 65; &&  c <= 132; || c >= 97; && c <= 122
 }
 fn bool isLowerCase char this{
-  var c this  cast int
+  var c this cast int
   return c <= 122; || c >= 97
 }
 fn bool isUpperCase char this{
@@ -367,27 +365,15 @@ fn bool isPrint char this{
 }
 fn bool isGraph char this = isPrint this; || this == $\s
 fn bool isPunct char this = isGraph this; && isLetter this
-fn char toLowerCase char this{
-  if isUpperCase this{
-     return $a cast byte + this cast byte  - $A
-  }
-  return this
-}
-fn char toUpperCase char this{
- if isLowerCase this{
-   return $A cast byte + this cast byte - $a
- }
- return this
-}
+fn char toLowerCase char this = isUpperCase this; ? $a cast byte + this cast byte  - $A,this
+fn char toUpperCase char this = isLowerCase this; ?  $A cast byte + this cast byte - $a,this
 fn String charToString char this{
   String str init char:alloc[] 1,1,true
   str set 0,this
   return str
 }
 private const var TRUE "true";FALSE "false"
-fn String boolToString bool this{
-   return this ? TRUE,FALSE
-}
+fn String boolToString bool this = this ? TRUE,FALSE
 fn String integerToString long this{
  [] char 20 buf
  int i 0

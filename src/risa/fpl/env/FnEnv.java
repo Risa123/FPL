@@ -1,11 +1,14 @@
 package risa.fpl.env;
 
+import risa.fpl.CompilerException;
 import risa.fpl.function.block.ConditionalBlock;
 import risa.fpl.function.block.ForLoop;
 import risa.fpl.function.block.TryCatchFinally;
 import risa.fpl.function.statement.Break;
 import risa.fpl.function.statement.Return;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
+import risa.fpl.parser.ExpIterator;
 
 public class FnEnv extends FnSubEnv{
 	private static final Return RETURN = new Return();
@@ -37,5 +40,15 @@ public class FnEnv extends FnSubEnv{
 	@Override
 	public boolean isInMainBlock(){
 		return false;
+	}
+	public final void compileFunctionBlock(StringBuilder builder,ExpIterator it)throws CompilerException{
+		var exp = it.next();
+		if(exp instanceof Atom a && a.getValue().equals("=")){
+			exp = it.nextAtom();
+		}
+		compileBlock(exp,builder,it);
+		if(exp instanceof Atom){
+			builder.append(";\n");
+		}
 	}
 }

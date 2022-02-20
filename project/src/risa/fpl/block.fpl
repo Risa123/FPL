@@ -13,8 +13,7 @@ class ModuleBlock ObjectInfo{
    String cPath
  }
  this String fplPath{
-   FileReader reader init fplPath
-   Tokenizer tokenizer init reader
+   Tokenizer tokenizer init FileReader:new fplPath
    name = fplPath replace $/,$.;replace $\\,$.
    cPath = name replace $.,$_; + ".c"
    print name
