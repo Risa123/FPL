@@ -33,7 +33,7 @@ public final class Enum implements IFunction{
                 break;
             }else if(t.getType() == AtomType.ID){
                 if(c.getField(t.getValue(),env) != null){
-                    throw new CompilerException(t,"value "  + t + " is already declared");
+                    throw new CompilerException(t,"value " + t + " is already declared");
                 }
                 c.addField(t.getValue(),new ValueExp(type,Integer.toString(i)));
                 i++;

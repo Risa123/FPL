@@ -24,8 +24,4 @@ public final class FPointer extends AFunctionBlock{
         env.addType(new FunctionPointerInfo(f));
         return TypeInfo.VOID;
     }
-    @Override
-    public boolean appendSemicolon(){
-        return true;
-    }
 }

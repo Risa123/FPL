@@ -31,12 +31,7 @@ public final class ModuleBlock extends AThreePassBlock{
        var subPath = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount());
        this.sourceFile = subPath.toString();
 	   cPath = FPL.getOutputDirectory() + '/' + this.sourceFile.replace(File.separatorChar,'_') + ".c";
-       var name = new StringBuilder();
-       for(int i = 0; i < subPath.getNameCount() - 1;i++){
-           name.append(subPath.getName(i)).append('.');
-       }
-       name.append(subPath.getFileName().toString().split("\\.")[0]);
-       this.name = name.toString();
+       this.name = this.sourceFile.replace(File.separatorChar,'.').substring(0,this.sourceFile.lastIndexOf('.'));
        env = new ModuleEnv(FPL.getEnv(),this,null);
        try{
            expInfos = createInfoList(new Parser(Files.newBufferedReader(sourceFile)).parse());
@@ -183,7 +178,7 @@ public final class ModuleBlock extends AThreePassBlock{
        makeMethod(name,oldName,ofType,true);
    }
    private void addNumberFields(ClassInfo classInfo){
-       var prefix = classInfo.getInstanceInfo().getName().toUpperCase() + "_";
+       var prefix = classInfo.getInstanceInfo().getName().toUpperCase() + '_';
        classInfo.addField("MIN_VALUE",env.getAndMakeInaccessible(prefix + "MIN_VALUE"));
        classInfo.addField("MAX_VALUE",env.getAndMakeInaccessible(prefix + "MAX_VALUE"));
        var n = (NumberInfo)classInfo.getInstanceInfo();

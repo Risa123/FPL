@@ -54,16 +54,8 @@ public final class Array implements IFunction{
 	    }
 	    int count = 0;
 	    var first = true;
-	    TypeInfo instanceType = null;
-	    if(env instanceof ClassEnv e){
-	        instanceType = e.getInstanceInfo();
-        }
-		long len;
-		if(lenAtom.getType() == AtomType.ULONG){
-            len = Long.parseUnsignedLong(lenAtom.getValue());
-		}else{
-			len = Long.parseLong(lenAtom.getValue());
-		}
+	    var instanceType = env instanceof ClassEnv e?e.getInstanceInfo():null;
+		var len = lenAtom.getType() == AtomType.ULONG?Long.parseUnsignedLong(lenAtom.getValue()):Long.parseLong(lenAtom.getValue());
 	    var v = new Variable(new ArrayInfo(type,len,lenAtom.getType() == AtomType.ULONG),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
 	    env.addFunction(id.getValue(),v);
 	    if(it.hasNext()){

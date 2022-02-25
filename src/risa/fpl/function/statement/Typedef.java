@@ -39,8 +39,7 @@ public final class Typedef implements IFunction{
         if(!t.isPrimitive()){
             throw new CompilerException(originalType,"primitive type expected");
         }
-        var b = new StringBuilder(t.getCname());
-        b.append(' ').append(IFunction.toCId(type.getValue())).append(after);
+        var b = new StringBuilder(t.getCname()).append(' ').append(IFunction.toCId(type.getValue())).append(after);
         builder.append(b);
         env.addType(new CustomTypeInfo(type.getValue(),t,b.toString()));
         return TypeInfo.VOID;

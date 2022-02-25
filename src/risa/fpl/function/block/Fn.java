@@ -94,10 +94,8 @@ public class Fn extends AFunctionBlock{
         }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
             type = FunctionType.VIRTUAL;
             implName = IFunction.toCId(id.getValue());
-        }else if(env.hasModifier(Modifier.NATIVE)){
-            type = FunctionType.NATIVE;
         }else{
-            type = FunctionType.NORMAL;
+            type = env.hasModifier(Modifier.NATIVE)?FunctionType.NATIVE:FunctionType.NORMAL;
         }
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             if(env.getFunction(id) instanceof Function ft){

@@ -15,6 +15,7 @@ import risa.fpl.parser.List;
 import risa.fpl.parser.AtomType;
 
 public final class InterfaceBlock implements IFunction{
+    @SuppressWarnings("ConstantConditions")
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         if(!(env instanceof ModuleEnv mod)){
@@ -29,6 +30,7 @@ public final class InterfaceBlock implements IFunction{
         var cID = IFunction.toCId(idV);
         var iEnv = new InterfaceEnv(mod,idV);
         var type = iEnv.getType();
+        env.addType(type);
         List block = null;
         while(it.hasNext()){
             var exp = it.next();
@@ -40,8 +42,7 @@ public final class InterfaceBlock implements IFunction{
                if(typeID.getType() != AtomType.ID){
                    throw new CompilerException(id,"identifier expected");
                }
-               var parentType = env.getType(typeID);
-               if(!(parentType instanceof InterfaceInfo)){
+               if(!(env.getType(typeID) instanceof InterfaceInfo parentType)){
                    throw new CompilerException(typeID,"interface can only inherit from interfaces");
                }
                type.addParent(parentType);
@@ -52,8 +53,7 @@ public final class InterfaceBlock implements IFunction{
         }
         block.compile(new StringBuilder(),iEnv,it);
         var implName = type.getImplName();
-        var b = new StringBuilder("typedef struct ");
-        b.append(implName).append("{\n");
+        var b = new StringBuilder("typedef struct ").append(implName).append("{\n");
         for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
             var p = new FunctionInfo(method);
             for(var v:method.getVariants()){
@@ -66,7 +66,6 @@ public final class InterfaceBlock implements IFunction{
         b.append(implName).append("* impl;\n}").append(cID).append(";\n");
         type.appendToDeclaration(b.toString());
         type.buildDeclaration();
-        env.addType(type);
         return TypeInfo.VOID;
     }
 }

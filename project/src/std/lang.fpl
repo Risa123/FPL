@@ -366,7 +366,7 @@ fn bool isPrint char this{
 fn bool isGraph char this = isPrint this; || this == $\s
 fn bool isPunct char this = isGraph this; && isLetter this
 fn char toLowerCase char this = isUpperCase this; ? $a cast byte + this cast byte  - $A,this
-fn char toUpperCase char this = isLowerCase this; ?  $A cast byte + this cast byte - $a,this
+fn char toUpperCase char this = isLowerCase this; ? $A cast byte + this cast byte - $a,this
 fn String charToString char this{
   String str init char:alloc[] 1,1,true
   str set 0,this
@@ -471,12 +471,7 @@ fn double floatingPointParse String str{
         }
         afterFPoint = true
        }if isDigit c{
-         var num c cast double - $0 cast double
-         if afterFPoint{
-          value = value / 10 + num
-         }{
-           value = value * 10 + num
-         }
+         value = [ afterFPoint ? value / 10,value * 10 ] + c cast double - $0 cast double
        }{
          NumberFormatException:throw "invalid number " + str
        }

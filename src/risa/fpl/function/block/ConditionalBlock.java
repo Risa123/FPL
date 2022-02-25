@@ -52,11 +52,7 @@ public final class ConditionalBlock extends ABlock{
 				if(!(elseExp instanceof List || elseExp instanceof Atom a && a.getValue().equals("if"))){
 					throw new CompilerException(elseExp,"else block or if expected");
 				}
-				if(elseExp instanceof Atom){
-					builder.append("else ");
-				}else{
-					builder.append("else{\n");
-				}
+				builder.append(elseExp instanceof Atom?"else ":"else{\n");
 				new FnSubEnv(env).compileBlock(elseExp,builder,it);
 				if(elseExp instanceof List){
 					builder.append("}\n");

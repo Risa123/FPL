@@ -15,6 +15,22 @@ class ModuleBlock ObjectInfo{
  this String fplPath{
    Tokenizer tokenizer init FileReader:new fplPath
    name = fplPath replace $/,$.;replace $\\,$.
+   var endIndex 0
+   var beginIndex 0
+   var first false
+   for i,name getLength{
+     if beginIndex == 0; && name get i; == $.{
+        if first{
+         beginIndex = i + 1
+        }{
+          first = true
+        }
+     }
+     if name get i; == $.{
+       endIndex = i - 1
+     }
+   }
+   name = name substring beginIndex,endIndex
    cPath = name replace $.,$_; + ".c"
    print name
    try{
