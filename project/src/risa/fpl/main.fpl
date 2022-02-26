@@ -98,6 +98,8 @@ main{
       ex setFile "build.bs"
       ex throw
     }
+    IRWriter writer init FileWriter:new outputFile
+    writer close
     compileDirectory project + "/src";,""
  }catch CompilerException{
    stderr writeString ex getMessage

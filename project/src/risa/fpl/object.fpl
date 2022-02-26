@@ -18,6 +18,6 @@ class Field{
   fn IFunction getValue = value
 }
 interface IFunction{
- fn void compile int line int tokenNum ObjectInfo* env
+ fn void compile int line int tokenNum ObjectInfo* env IRWriter* writer
 }
 enum AccessModifier PUBLIC PROTECTED PRIVATE

@@ -47,9 +47,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("=this",COPY_CONSTRUCTOR);
         this.struct = struct;
         if(templateStatus == TemplateStatus.TEMPLATE){
-            instanceInfo = new TemplateTypeInfo(id,module,nameSpace);
+            instanceInfo = new TemplateTypeInfo(id,module,nameSpace,((SubEnv)superEnv).hasModifier(Modifier.FINAL));
         }else{
-            instanceInfo = new InstanceInfo(id,module,nameSpace);
+            instanceInfo = new InstanceInfo(id,module,nameSpace,((SubEnv)superEnv).hasModifier(Modifier.FINAL));
             instanceInfo.setClassEnv(this);
         }
         var prefix = "static" + nameSpace;

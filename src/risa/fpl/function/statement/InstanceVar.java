@@ -91,11 +91,7 @@ public final class InstanceVar extends Function{
                 it.next();
                 var b = new StringBuilder();
                 if(notPointer){
-                    if(env instanceof ClassEnv){
-                        setPrevCode("this->" + cID);
-                    }else{
-                        setPrevCode(cID);
-                    }
+                    setPrevCode(env instanceof ClassEnv?"this->" + cID:cID);
                     if(type instanceof TemplateTypeInfo){
                         varType.getConstructor().setPrevCode(getPrevCode());
                         varType.getConstructor().superCompile(b,env,it,id.getLine(),id.getTokenNum());

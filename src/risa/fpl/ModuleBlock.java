@@ -28,8 +28,7 @@ public final class ModuleBlock extends AThreePassBlock{
    private final ArrayList<ExpressionInfo>expInfos;
    private String mainFunctionCode;
    public ModuleBlock(Path sourceFile,Path srcDir)throws IOException,CompilerException{
-       var subPath = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount());
-       this.sourceFile = subPath.toString();
+       this.sourceFile = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount()).toString();
 	   cPath = FPL.getOutputDirectory() + '/' + this.sourceFile.replace(File.separatorChar,'_') + ".c";
        this.name = this.sourceFile.replace(File.separatorChar,'.').substring(0,this.sourceFile.lastIndexOf('.'));
        env = new ModuleEnv(FPL.getEnv(),this,null);

@@ -13,10 +13,8 @@ class IOException Exception{
   this String message:message
 }
 class DataReader Readable{
- private Readable readable
- this Readable readable{
-   this readable = readable
- }
+ private const Readable readable
+ this Readable readable = this readable = readable
  override fn void read byte* p memory size = readable read p,size
  override fn bool ready = readable ready
  override fn void close = readable close

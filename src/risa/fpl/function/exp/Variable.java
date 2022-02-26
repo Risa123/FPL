@@ -54,8 +54,7 @@ public final class Variable extends ValueExp{
 			}
 		    return TypeInfo.VOID;
 		}else if(value.equals("ref")){
-		    var b = new StringBuilder();
-            b.append('&');
+		    var b = new StringBuilder("&");
             writePrev(b);
 		    b.append(code);
 		    var ret = new PointerInfo(type);

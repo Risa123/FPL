@@ -39,11 +39,7 @@ public class ValueExp extends AField{
 		var selector = "";
 		var prefix = "";
 		if(field instanceof Variable){
-		   if(type instanceof PointerInfo){
-			   selector = "->";
-		   }else{
-			   selector = ".";
-		   }
+		   selector = type instanceof PointerInfo?"->":".";
 		}else if(field instanceof ICalledOnPointer f && type instanceof PointerInfo){
             f.calledOnPointer();
         }

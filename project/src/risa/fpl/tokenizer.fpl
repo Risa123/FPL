@@ -5,7 +5,7 @@ use{
  std.backend
 }
 enum TokenType NEW_LINE ID CHAR_LIT END_BLOCK BEGIN_BLOCK STRING
-class Token{
+final class Token{
   private const{
    int line;tokenNum
    String value
@@ -23,7 +23,7 @@ class Token{
   fn TokenType getType = type
   fn String toString = value
 }
-class Tokenizer{
+final class Tokenizer{
  private{
     int line 1;tokenNum 1;i 0
     char c

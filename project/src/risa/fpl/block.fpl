@@ -26,13 +26,12 @@ class ModuleBlock ObjectInfo{
           first = true
         }
      }
-     if name get i; == $.{
+     if first && name get i; == $.{
        endIndex = i - 1
      }
    }
    name = name substring beginIndex,endIndex
    cPath = name replace $.,$_; + ".c"
-   print name
    try{
       while tokenizer hasNext{
           var token tokenizer next
@@ -51,8 +50,8 @@ class ModuleBlock ObjectInfo{
    tokenizer close
  }
 }
-class MainBlock IFunction{
- override fn void compile int line int tokenNum ObjectInfo* env{
+final class MainBlock IFunction{
+ override fn void compile int line int tokenNum ObjectInfo* env IRWriter* writer{
 
  }
 }

@@ -22,6 +22,7 @@ char.toLower rename to toUpperCase
 upgraded to jdk 17
 tertiary operator added
 constructors,destructors and copy constructors can now be one line
+final modifier for classes added
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
@@ -49,3 +50,4 @@ fix integer number with F not considered float
 fix attempting to access function in current module in (module name).(function name) module not found error
 fix method variants
 fix interface not found when used inside of itself
+fix constant instance variables now cannot be changed through copy constructor

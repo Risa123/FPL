@@ -12,8 +12,7 @@ public final class Dereference extends AField{
     }
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
-        var prev = new StringBuilder();
-        prev.append("(*");
+        var prev = new StringBuilder("(*");
         writePrev(prev);
         prev.append(')');
         return compileChainedCall(type,builder,env,it,prev.toString());

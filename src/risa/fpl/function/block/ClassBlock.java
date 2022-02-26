@@ -35,7 +35,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		if(!(env instanceof ModuleEnv modEnv)){
 		    throw new CompilerException(line,tokenNum,"can only be used on module level");
         }
-        env.checkModifiers(line,tokenNum,Modifier.ABSTRACT);
+        env.checkModifiers(line,tokenNum,Modifier.ABSTRACT,Modifier.FINAL);
         var id = it.nextID();
 		var idV = id.getValue();
 		if(env.hasTypeInCurrentEnv(idV) && !(env.getType(id) instanceof InstanceInfo)){
@@ -77,6 +77,9 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                         }
                         if(parentType instanceof InstanceInfo t){
                             primaryParent = t;
+                            if(t.isFinal()){
+                                throw new CompilerException(typeID,"cannot inherit form final types");
+                            }
                             if(primaryParent instanceof TemplateTypeInfo){
                                 if(!it.checkTemplate()){
                                     throw new CompilerException(exp,"template arguments expected");
@@ -126,14 +129,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 }
                 attributes.append(v.getType().getCname()).append(' ').append(v.getCname());
                 if(v.getType() instanceof ArrayInfo i){
-                    String code;
-                    attributes.append('[');
-                    if(i.isLengthUnsignedLong()){
-                        code = Long.toUnsignedString(i.getLength());
-                    }else{
-                        code = Long.toString(i.getLength());
-                    }
-                    attributes.append(code).append(']');
+                    attributes.append(i.isLengthUnsignedLong()?Long.toUnsignedString(i.getLength()):Long.toString(i.getLength())).append(']');
                 }
             }
             attributes.append(";\n");
@@ -172,14 +168,13 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             internalCode.append("static ").append(i.getImplName()).append(' ').append(cID).append(i.getCname()).append("_impl={");
             var first = true;
             for(var method:i.getMethodsOfType(FunctionType.ABSTRACT)){
-                var inThisClass = (Function)type.getField(method.getName(),cEnv);
                 for(var v:method.getVariants()){
                     if(first){
                         first = false;
                     }else{
                         internalCode.append(',');
                     }
-                    internalCode.append("(void*)").append(inThisClass.getVariant(v.getArgs()).getCname());
+                    internalCode.append("(void*)").append(((Function)type.getField(method.getName(),cEnv)).getVariant(v.getArgs()).getCname());
                 }
             }
             internalCode.append("};\n");

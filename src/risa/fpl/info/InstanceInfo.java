@@ -16,10 +16,12 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     private String methodDeclarations = "";
     private ClassEnv cEnv;
     private boolean writeTemplateFunctionVariants = true;
-    public InstanceInfo(String name,ModuleEnv module,String nameSpace){
+    private final boolean isFinal;
+    public InstanceInfo(String name,ModuleEnv module,String nameSpace,boolean isFinal){
         super(module,name,IFunction.toCId(name));
         toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
         dataName = nameSpace + "_data";
+        this.isFinal = isFinal;
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
         addField("cast",new Cast(this));
@@ -153,5 +155,8 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     }
     public final String getDataName(){
         return dataName;
+    }
+    public boolean isFinal(){
+        return isFinal;
     }
 }

@@ -30,8 +30,7 @@ public final class ParenthExp extends AField{
             }
             list.add(exp);
         }
-        var b = new StringBuilder();
-        b.append('(');
+        var b = new StringBuilder("(");
         var ret = new List(line,tokenNum,list,false).compile(b,env,it);
         b.append(')');
         return compileChainedCall(ret,builder,env,it,b.toString());

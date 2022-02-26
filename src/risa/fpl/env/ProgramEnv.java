@@ -16,6 +16,7 @@ public final class ProgramEnv extends AEnv{
       addFunction("nil",new ValueExp(TypeInfo.NIL,"0"));
       addFunction("private",new SetAccessModifier(AccessModifier.PRIVATE));
       addFunction("abstract",new AddModifier(Modifier.ABSTRACT));
+      addFunction("final",new AddModifier(Modifier.FINAL));
       addFunction("interface",new InterfaceBlock());
       addFunction("fpointer",new FPointer());
       addFunction("struct",new ClassBlock(true));
