@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 public final class TemplateTypeInfo extends InstanceInfo{
     private List block;
     private ArrayList<InterfaceInfo>interfaces;
-    private LinkedHashMap<String,TypeInfo>templateArgs;
+    private LinkedHashMap<String,TypeInfo>templateArgs = new LinkedHashMap<>();//placeholder to prevent NPE
     private final ArrayList<InstanceInfo>generatedTypes = new ArrayList<>();
     private final ArrayList<TypeInfo>typesForDeclaration = new ArrayList<>();//initialized here to prevent NPE
     public TemplateTypeInfo(String name,ModuleEnv module,String nameSpace,boolean isFinal){
@@ -29,10 +29,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
     public InstanceInfo generateTypeFor(ArrayList<Object>args,AEnv env,int line,int tokenNum)throws CompilerException,IOException{
        var argsInfo = new ArrayList<TypeInfo>(args.size());
        for(var arg:args){
-           if(arg instanceof TemplateArgument t){
-            arg = t.type().generateTypeFor(t.args(),env,line,tokenNum);
-           }
-           argsInfo.add((TypeInfo)arg);
+           argsInfo.add(arg instanceof TemplateArgument t?t.type().generateTypeFor(t.args(),env,line,tokenNum):(TypeInfo)arg);
        }
        var nameBuilder = new StringBuilder();
        for(var arg:argsInfo){
@@ -52,12 +49,12 @@ public final class TemplateTypeInfo extends InstanceInfo{
            if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
                superMod.addInstanceFile(file);
            }
-           var path = Path.of(FPL.getOutputDirectory() + "/" + file);
+           var path = Path.of(FPL.getOutputDirectory() + '/' + file);
            Files.createFile(path);//created for module block so it does not throw exception
            var mod = new ModuleEnv(superMod,new ModuleBlock(path,FPL.getSrcDir()),cname);
            Files.delete(path);
            var name = getName() + nameBuilder;
-           var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false);
+           var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false,line);
            type = cEnv.getInstanceInfo();
            if(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo){
                type.disableWriteTemplateFunctionVariants();

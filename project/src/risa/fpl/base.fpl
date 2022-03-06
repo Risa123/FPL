@@ -20,7 +20,7 @@ final{
     return str + message
   }
  }
- class IRWriter{
+class IRWriter{
    const FileWriter writer
    this FileWriter writer = this writer = writer
    fn void close = writer close

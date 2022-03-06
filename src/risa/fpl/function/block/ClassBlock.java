@@ -20,13 +20,14 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
     public ClassBlock(boolean struct){
        this.struct = struct;
     }
-    private ClassEnv getEnv(ModuleEnv modEnv,String id,TemplateStatus templateStatus){
+    private ClassEnv getEnv(ModuleEnv modEnv,String id,TemplateStatus templateStatus,int tokenNum,int line)throws CompilerException{
         for(var classEnv:modEnv.getModuleBlock().getClassEnvList()){
             if(classEnv.getInstanceInfo().getName().equals(id)){
                 return classEnv;
             }
         }
-        var env = new ClassEnv(modEnv,id,templateStatus,struct);
+        modEnv.checkModifiers(line,tokenNum,Modifier.ABSTRACT,Modifier.FINAL);
+        var env = new ClassEnv(modEnv,id,templateStatus,struct,line);
         modEnv.getModuleBlock().getClassEnvList().add(env);
         return env;
     }
@@ -35,23 +36,22 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		if(!(env instanceof ModuleEnv modEnv)){
 		    throw new CompilerException(line,tokenNum,"can only be used on module level");
         }
-        env.checkModifiers(line,tokenNum,Modifier.ABSTRACT,Modifier.FINAL);
         var id = it.nextID();
 		var idV = id.getValue();
-		if(env.hasTypeInCurrentEnv(idV) && !(env.getType(id) instanceof InstanceInfo)){
+        ClassEnv cEnv;
+        LinkedHashMap<String,TypeInfo>templateArgs = null;
+        if(it.checkTemplate()){
+            cEnv = getEnv(modEnv,idV,TemplateStatus.TEMPLATE,tokenNum,line);
+            templateArgs = IFunction.parseTemplateArguments(it,cEnv);
+        }else{
+            cEnv = getEnv(modEnv,idV,TemplateStatus.INSTANCE,tokenNum,line);
+        }
+		if(env.hasTypeInCurrentEnv(idV) && cEnv.getFirstLine() != line){
 		    throw new CompilerException(id,"type " + idV + " is already declared");
         }
 		InstanceInfo primaryParent = null;
 		List block = null;
 		var interfaces = new ArrayList<InterfaceInfo>();
-		LinkedHashMap<String,TypeInfo>templateArgs = null;
-        ClassEnv cEnv;
-		if(it.checkTemplate()){
-            cEnv = getEnv(modEnv,idV,TemplateStatus.TEMPLATE);
-		    templateArgs = IFunction.parseTemplateArguments(it,cEnv);
-        }else{
-		    cEnv = getEnv(modEnv,idV,TemplateStatus.INSTANCE);
-        }
         var type = cEnv.getInstanceInfo();
         while(it.hasNext()){
             var exp = it.next();
@@ -106,7 +106,8 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         compileClassBlock(cEnv,modEnv,id,block,interfaces,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
 		return TypeInfo.VOID;
 	}
-	public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException{
+	@SuppressWarnings("ConstantConditions")
+    public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException{
         var type = cEnv.getInstanceInfo();
         var parentType = type.getPrimaryParent();
         var cID = IFunction.toCId(id.getValue());
@@ -138,8 +139,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             cEnv.appendFunctionCode(cEnv.getImplicitConstructor(id));
             var nameSpace = cEnv.getNameSpace();
             cEnv.appendFunctionCode(cID + " static" + nameSpace + "_new0(){\n");
-            cEnv.appendFunctionCode(cID + " inst;\n" + INTERNAL_METHOD_PREFIX + nameSpace + "_init0(&inst);\n");
-            cEnv.appendFunctionCode("return inst;\n}\n");
+            cEnv.appendFunctionCode(cID + " inst;\n" + INTERNAL_METHOD_PREFIX + nameSpace + "_init0(&inst);\nreturn inst;\n}\n");
             cEnv.appendFunctionCode(cID + "* static" + nameSpace + "_alloc0(){\n");
             cEnv.appendFunctionCode("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
             cEnv.appendFunctionCode(cID + " * p = malloc(sizeof(" + cID + "));\n");
@@ -157,8 +157,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         if(cEnv.notAbstract()){
             for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
                 var name = method.getName();
-                var impl = type.getField(name,cEnv);
-                if(!(impl instanceof Function f) || f.getType() == FunctionType.ABSTRACT){
+                if(!(type.getField(name,cEnv) instanceof Function f) || f.getType() == FunctionType.ABSTRACT){
                     throw new CompilerException(id,"this class doesn't implement method " + name);
                 }
             }
@@ -186,8 +185,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             internalCode.append("};\nreturn tmp;\n}\n");
         }
         internalCode.append(type.getCname()).append("* ").append(type.getToPointerName()).append('(');
-        internalCode.append(type.getCname()).append(" this,").append(type.getCname()).append("* p){\n*p = this;\n");
-        internalCode.append("return p;\n}\n");
+        internalCode.append(type.getCname()).append(" this,").append(type.getCname()).append("* p){\n*p = this;\nreturn p;\n}\n");
         var copyName = type.getCopyConstructorName();
         if(copyName == null && !cEnv.getImplicitCopyConstructorCode().isEmpty()){
             copyName = INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_copy";
@@ -197,16 +195,14 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }
         if(copyName != null){
             internalCode.append(type.getCname()).append(' ').append(copyName).append("AndReturn(").append(type.getCname()).append(" original){\n").append(type.getCname()).append(" instance;\n");
-            internalCode.append(copyName).append("(&instance,&original);\n");
-            internalCode.append("return instance;\n}\n");
+            internalCode.append(copyName).append("(&instance,&original);\nreturn instance;\n}\n");
         }
         cEnv.appendFunctionCode(internalCode.toString());
         if(templateStatus != TemplateStatus.TEMPLATE){
             modEnv.appendFunctionDeclaration(cEnv.getFunctionDeclarations());
             modEnv.appendFunctionCode(cEnv.getDestructor());
             if(type.getDestructorName() != null){
-                cEnv.appendFunctionCode("void " + type.getInstanceFree() + '(' + type.getCname() + "* this){\n");
-                cEnv.appendFunctionCode("void free(void*);\n");
+                cEnv.appendFunctionCode("void " + type.getInstanceFree() + '(' + type.getCname() + "* this){\nvoid free(void*);\n");
                 cEnv.appendFunctionCode(type.getDestructorName() + "(this);\nfree(this);\n}\n");
             }
             modEnv.appendFunctionCode(cEnv.getFunctionCode());

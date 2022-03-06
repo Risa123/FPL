@@ -121,8 +121,7 @@ public final class ModuleBlock extends AThreePassBlock{
                }
            }
            if(isMain()){//main module is written as last
-               writer.write("_String* args;\n");
-               writer.write("void onExit();\n");
+               writer.write("_String* args;\nvoid onExit();\n");
                writer.write("void _std_system_addOnExitHandler0(_onExit0);\n");
                writer.write("int main(int argc,char** argv){\n");
                writer.write(env.getInitializerCode());
@@ -131,8 +130,7 @@ public final class ModuleBlock extends AThreePassBlock{
                        writer.write(mod.env.getInitializerCall());
                    }
                }
-               writer.write("_Thread mainThread;\n");
-               writer.write("_std_system_addOnExitHandler0(&onExit);\n");
+               writer.write("_Thread mainThread;\n_std_system_addOnExitHandler0(&onExit);\n");
                writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
                writer.write("_std_lang_currentThread = &mainThread;\n");
                writer.write("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
@@ -141,13 +139,11 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write(NumberInfo.MEMORY.getCname() + " strlen(const char*);\n");
                writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n}\n");
                writer.write(mainFunctionCode);
-               writer.write("}\n");
-               writer.write("void onExit(){\n");
+               writer.write("}\nvoid onExit(){\n");
                for(var mod:FPL.getModules()){
                    writer.write(mod.getEnv().getDestructorCall());
                }
-               writer.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\n");
-               writer.write("free(args);\n}");
+               writer.write("_std_lang_Thread_freeEHEntries0(_std_lang_currentThread);\nfree(args);\n}");
            }else{
                writer.write(env.getInitializer());
                writer.write(env.getDestructor());

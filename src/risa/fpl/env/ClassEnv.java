@@ -34,7 +34,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     private boolean onlyImplicitConstructor = true;
     private final ArrayList<ConstructorData>constructors = new ArrayList<>();
     private final ArrayList<String>variableFieldDeclarationOrder = new ArrayList<>();
-	public ClassEnv(ModuleEnv module,String id,TemplateStatus templateStatus,boolean struct){
+    private final int firstLine;
+	public ClassEnv(ModuleEnv module,String id,TemplateStatus templateStatus,boolean struct,int firstLine){
 		super(module,module.getNameSpace() + (templateStatus == TemplateStatus.GENERATING?"":IFunction.toCId(id)));
 		super.addFunction("this",CONSTRUCTOR);
 		super.addFunction("protected",PROTECTED);
@@ -46,6 +47,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("-this",DESTRUCTOR);
 		super.addFunction("=this",COPY_CONSTRUCTOR);
         this.struct = struct;
+        this.firstLine = firstLine;
         if(templateStatus == TemplateStatus.TEMPLATE){
             instanceInfo = new TemplateTypeInfo(id,module,nameSpace,((SubEnv)superEnv).hasModifier(Modifier.FINAL));
         }else{
@@ -177,9 +179,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             for(var i = 0;i < args.length;++i){
                 b.append(",a").append(i);
             }
-            b.append(");\n");
-            b.append("_std_lang_Exception_throw0((_Exception*)&inst);\n");
-            b.append("}\n");
+            b.append(");\n_std_lang_Exception_throw0((_Exception*)&inst);\n}\n");
         }
         appendFunctionCode(b.toString());
     }
@@ -314,6 +314,9 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     }
     public ArrayList<String>getVariableFieldDeclarationOrder(){
         return variableFieldDeclarationOrder;
+    }
+    public int getFirstLine(){
+        return firstLine;
     }
     private record ConstructorData(String code,String cname,String argsCode,String parentConstructorCall){}
 }

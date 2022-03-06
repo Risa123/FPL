@@ -35,8 +35,7 @@ public class Fn extends AFunctionBlock{
 	    		throw new CompilerException(id,"invalid C identifier");
 	    	}
 	    }else{
-	    	cID = !env.hasModifier(Modifier.ABSTRACT) && env instanceof ANameSpacedEnv tmp?tmp.getNameSpace(this):"";
-            cID += IFunction.toCId(id.getValue());
+	    	cID = (!env.hasModifier(Modifier.ABSTRACT) && env instanceof ANameSpacedEnv tmp?tmp.getNameSpace(this):"") + IFunction.toCId(id.getValue());
 	    }
         var self = env instanceof  ClassEnv cEnv?cEnv.getInstanceInfo():(env instanceof InterfaceEnv e?e.getType():null);
         var argsBuilder = new StringBuilder();

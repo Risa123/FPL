@@ -14,7 +14,9 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 import risa.fpl.parser.AtomType;
 
-public final class InterfaceBlock implements IFunction{
+import java.util.ArrayList;
+
+public final class InterfaceBlock extends AThreePassBlock implements IFunction{
     @SuppressWarnings("ConstantConditions")
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
@@ -24,12 +26,21 @@ public final class InterfaceBlock implements IFunction{
         env.checkModifiers(line,tokenNum);
         var id = it.nextID();
         var idV = id.getValue();
-        if(env.hasTypeInCurrentEnv(idV)){
-            throw new CompilerException(id,"this type " + idV + " is already declared");
+        InterfaceEnv iEnv = null;
+        for(var e:mod.getInterfaceEnvList()){
+            if(e.getType().getName().equals(idV)){
+                iEnv = e;
+            }
         }
-        var cID = IFunction.toCId(idV);
-        var iEnv = new InterfaceEnv(mod,idV);
+        if(iEnv == null){
+            iEnv = new InterfaceEnv(mod,idV,line);
+            mod.getInterfaceEnvList().add(iEnv);
+        }
+        if(env.hasTypeInCurrentEnv(idV) && (!(env.getType(id) instanceof InterfaceInfo) || iEnv.getFirstLine() != line)) {
+            throw new CompilerException(id, "this type " + idV + " is already declared");
+        }
         var type = iEnv.getType();
+        var cID = type.getCname();
         env.addType(type);
         List block = null;
         while(it.hasNext()){
@@ -51,7 +62,14 @@ public final class InterfaceBlock implements IFunction{
         if(block == null){
             throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
-        block.compile(new StringBuilder(),iEnv,it);
+        ArrayList<ExpressionInfo> infos;
+        if(iEnv.getBlock() == null){
+            infos = createInfoList(block);
+            iEnv.setBlock(infos);
+        }else{
+            infos = iEnv.getBlock();
+        }
+        compile(builder,iEnv,infos);
         var implName = type.getImplName();
         var b = new StringBuilder("typedef struct ").append(implName).append("{\n");
         for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
@@ -61,8 +79,7 @@ public final class InterfaceBlock implements IFunction{
             }
         }
         b.append('}').append(implName).append(";\n");
-        b.append("typedef struct ").append(cID).append("{\n");
-        b.append("void* instance;\n");
+        b.append("typedef struct ").append(cID).append("{\nvoid* instance;\n");
         b.append(implName).append("* impl;\n}").append(cID).append(";\n");
         type.appendToDeclaration(b.toString());
         type.buildDeclaration();

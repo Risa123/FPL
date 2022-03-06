@@ -19,9 +19,9 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     private final boolean isFinal;
     public InstanceInfo(String name,ModuleEnv module,String nameSpace,boolean isFinal){
         super(module,name,IFunction.toCId(name));
+        this.isFinal = isFinal;
         toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
         dataName = nameSpace + "_data";
-        this.isFinal = isFinal;
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
         addField("cast",new Cast(this));
@@ -94,8 +94,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
                     appendToDeclaration(i.getCname() + ' ' + getConversionMethod(i) + '(' + getCname() + "*);\n");
                 }
             }
-            appendToDeclaration("void " + module.getNameSpace());
-            appendToDeclaration("_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET" + getCname() + "ASTERISK");
+            appendToDeclaration("void " + module.getNameSpace() + "_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET" + getCname() + "ASTERISK");
             appendToDeclaration(NumberInfo.MEMORY.getCname().replace(' ','_') +"0("+ getCname() + "*," + NumberInfo.MEMORY.getCname() + ");\n");
             setMethodDeclarations(cEnv.getFunctionDeclarations());
         }

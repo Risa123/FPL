@@ -11,7 +11,7 @@ public final class InterfaceInfo extends NonTrivialTypeInfo{
     public InterfaceInfo(ModuleEnv module,String name){
         super(module,name,IFunction.toCId(name));
         addField("cast",new Cast(this));
-        implName = "I" + getCname() + "_impl";
+        implName = 'I' + getCname() + "_impl";
         addField("getObjectSize",new UnaryOperator(NumberInfo.MEMORY,"sizeof ",false));
         getClassInfo().addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + getCname() + ')'));
     }
@@ -19,12 +19,12 @@ public final class InterfaceInfo extends NonTrivialTypeInfo{
         return implName;
     }
     @Override
-    public boolean equals(Object o){
-        if(o instanceof TypeInfo type){
-            if(type instanceof PointerInfo p){
+    public boolean equals(Object o) {
+        if (o instanceof TypeInfo type) {
+            if (type instanceof PointerInfo p) {
                 type = p.getType();
             }
-            if(type.getParents().contains(this)){
+            if (type.getParents().contains(this)) {
                 return true;
             }
         }

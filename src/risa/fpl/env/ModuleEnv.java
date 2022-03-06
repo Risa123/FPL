@@ -31,6 +31,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
 	private final ArrayList<AField>inaccessibleFunctions = new ArrayList<>();
 	private final StringBuilder importDeclarations = new StringBuilder();
 	private final ArrayList<String>instanceFiles = new ArrayList<>();
+    private final ArrayList<InterfaceEnv>interfaceEnvList = new ArrayList<>();
 	public ModuleEnv(AEnv superEnv,ModuleBlock moduleBlock,String generatedTemplateCName){
 		super(superEnv,generatedTemplateCName == null?IFunction.toCId(moduleBlock.getName().replace('.','_')):((ModuleEnv)superEnv).nameSpace + generatedTemplateCName);
 		this.moduleBlock = moduleBlock;
@@ -260,5 +261,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 t.buildDeclaration();
             }
         }
+    }
+    public ArrayList<InterfaceEnv>getInterfaceEnvList(){
+        return interfaceEnvList;
     }
 }

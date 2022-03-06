@@ -156,8 +156,7 @@ public final class FPL{
                     w.write(data.code());
                 }
             }
-            var err = Runtime.getRuntime().exec("gcc\\bin\\gcc " + ccArgs + " -o " + output + files).getErrorStream();
-            System.err.print(new String(err.readAllBytes()));
+            System.err.print(new String(Runtime.getRuntime().exec("gcc\\bin\\gcc " + ccArgs + " -o " + output + files).getErrorStream().readAllBytes()));
 		}catch (CompilerException e){
 			System.err.println(e.getMessage());
 			System.exit(3);
