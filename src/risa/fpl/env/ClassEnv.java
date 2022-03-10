@@ -59,10 +59,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         if(templateStatus != TemplateStatus.GENERATING){
             module.addType(instanceInfo);
         }
-        ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_alloc0",prefix + "_alloc0"));
-        ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_new0",prefix + "_new0"));
+        ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_alloc0",prefix + "_alloc0",null));
+        ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_new0",prefix + "_new0",null));
         var name = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0";
-        instanceInfo.getConstructor().getVariants().add(new FunctionVariant(new TypeInfo[0],name,name));
+        instanceInfo.getConstructor().getVariants().add(new FunctionVariant(new TypeInfo[0],name,name,null));
 	}
 	@Override
 	public void addFunction(String name,IFunction value){

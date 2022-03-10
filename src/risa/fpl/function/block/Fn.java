@@ -37,8 +37,44 @@ public class Fn extends AFunctionBlock{
 	    }else{
 	    	cID = (!env.hasModifier(Modifier.ABSTRACT) && env instanceof ANameSpacedEnv tmp?tmp.getNameSpace(this):"") + IFunction.toCId(id.getValue());
 	    }
-        var self = env instanceof  ClassEnv cEnv?cEnv.getInstanceInfo():(env instanceof InterfaceEnv e?e.getType():null);
+        var self = env instanceof ClassEnv cEnv?cEnv.getInstanceInfo():(env instanceof InterfaceEnv e?e.getType():null);
         var argsBuilder = new StringBuilder();
+        Function f;
+        FunctionType type;
+        var implName = cID;
+        if(env.hasModifier(Modifier.ABSTRACT)){
+            type = FunctionType.ABSTRACT;
+            appendSemicolon = false;
+            if(env instanceof ClassEnv e && e.notAbstract()){
+                throw new CompilerException(line,tokenNum,"abstract method can only be declared in abstract class");
+            }
+            if(env.getAccessModifier() == AccessModifier.PRIVATE){
+                throw new CompilerException(line,tokenNum,"abstract function can't be private");
+            }
+        }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
+            type = FunctionType.VIRTUAL;
+            implName = IFunction.toCId(id.getValue());
+        }else{
+            type = env.hasModifier(Modifier.NATIVE)?FunctionType.NATIVE:FunctionType.NORMAL;
+        }
+        if(env.hasFunctionInCurrentEnv(id.getValue())){
+            if(env.getFunction(id) instanceof Function ft){
+                f = ft;
+                if(f.getType() != type){
+                    throw new CompilerException(line,tokenNum,"all variants require same function type");
+                }
+                if(f.getAccessModifier() != env.getAccessModifier()){
+                    throw new CompilerException(line,tokenNum,"all variants require same access modifier");
+                }
+            }else{
+                throw new CompilerException(line,tokenNum,"there is already a function called " + id);
+            }
+        }else{
+            f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier());
+        }
+        if(self != null){
+            self.addField(id.getValue(),f);
+        }
 		var args = parseArguments(argsBuilder,it,fnEnv,self);
 		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
@@ -78,39 +114,6 @@ public class Fn extends AFunctionBlock{
             }
         }
         var oneLine = false;
-        Function f;
-        FunctionType type;
-        var implName = cID;
-        if(env.hasModifier(Modifier.ABSTRACT)){
-            type = FunctionType.ABSTRACT;
-            appendSemicolon = false;
-            if(env instanceof ClassEnv e && e.notAbstract()){
-                throw new CompilerException(line,tokenNum,"abstract method can only be declared in abstract class");
-            }
-            if(env.getAccessModifier() == AccessModifier.PRIVATE){
-                throw new CompilerException(line,tokenNum,"abstract function can't be private");
-            }
-        }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
-            type = FunctionType.VIRTUAL;
-            implName = IFunction.toCId(id.getValue());
-        }else{
-            type = env.hasModifier(Modifier.NATIVE)?FunctionType.NATIVE:FunctionType.NORMAL;
-        }
-        if(env.hasFunctionInCurrentEnv(id.getValue())){
-            if(env.getFunction(id) instanceof Function ft){
-                f = ft;
-                if(f.getType() != type){
-                    throw new CompilerException(line,tokenNum,"all variants require same function type");
-                }
-                if(f.getAccessModifier() != env.getAccessModifier()){
-                    throw new CompilerException(line,tokenNum,"all variants require same access modifier");
-                }
-            }else{
-                throw new CompilerException(line,tokenNum,"there is already a function called " + id);
-            }
-        }else{
-            f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier(),attrCode.toString());
-        }
         var argsArray = args.values().toArray(new TypeInfo[0]);
         FunctionVariant variant = null;
         if(f.hasVariant(argsArray) && (variant = f.getVariant(argsArray)).getLine() != line){
@@ -133,10 +136,10 @@ public class Fn extends AFunctionBlock{
             }
             var codeExp = it.next();
             if(codeExp instanceof Atom a){
-                oneLine = true;
                 if(!a.getValue().equals("=")){
                     throw new CompilerException(a,"= expected");
                 }
+                oneLine = true;
                 var atoms = new ArrayList<AExp>();
                 while(it.hasNext()){
                     atoms.add(it.nextAtom());
@@ -204,8 +207,7 @@ public class Fn extends AFunctionBlock{
             }
             headBuilder.append(returnType.getCname()).append(' ').append(variant.getCname()).append(argsBuilder);
             if(env instanceof ClassEnv cEnv){
-                var tmp = new StringBuilder();
-                tmp.append(headBuilder);
+                var tmp = new StringBuilder(headBuilder);
                 fnEnv.compileToPointerVars(tmp);
                 tmp.append(b);
                 cEnv.addMethod(f,tmp.toString());
@@ -213,8 +215,7 @@ public class Fn extends AFunctionBlock{
                 builder.append(p.getPointerVariableDeclaration(variant.getCname()));
             }else if(env instanceof ModuleEnv e){
                 if(f.getType() != FunctionType.NATIVE){
-                    var tmp = new StringBuilder();
-                    tmp.append(headBuilder);
+                    var tmp = new StringBuilder(headBuilder);
                     fnEnv.compileToPointerVars(tmp);
                     tmp.append(b);
                     e.appendFunctionCode(tmp.toString());

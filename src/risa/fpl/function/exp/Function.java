@@ -25,19 +25,15 @@ public class Function extends AField implements ICalledOnPointer{
 	private int callStatus;
 	private boolean asFunctionPointer;
 	public static final int NO_STATUS = 0,CALLED_ON_POINTER = 1,CALLED_ON_RETURNED_INSTANCE = 2,CALLED_ON_INSTANCE_R_BY_FUNC = 3;
-	private final String name,attrCode;
+	private final String name;
 	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
 	private final ArrayList<TemplateVariant>templateVariants = new ArrayList<>();
-    public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier,String attrCode){
+    public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier){
        super(accessModifier);
        this.returnType = returnType;
        this.self = self;
        this.type = type;
        this.name = name;
-       this.attrCode = attrCode;
-    }
-    public Function(String name,TypeInfo returnType,FunctionType type,TypeInfo self,AccessModifier accessModifier){
-        this(name,returnType,type,self,accessModifier,null);
     }
     public Function(String name,TypeInfo returnType,AccessModifier accessModifier){
         this(name,returnType,FunctionType.NORMAL,null,accessModifier);
@@ -190,7 +186,7 @@ public class Function extends AField implements ICalledOnPointer{
             System.arraycopy(variant.getArgs(),1,args,0,args.length);
         }
         var f = new Function(newName,returnType,type,ofType,accessModifier);
-        f.variants.add(new FunctionVariant(args,variant.getCname(),variant.getImplName()));
+        f.variants.add(new FunctionVariant(args,variant.getCname(),variant.getImplName(),variant.getAttrCode()));
         return f;
     }
     public final Function changeAccessModifier(AccessModifier accessModifier){
@@ -199,7 +195,7 @@ public class Function extends AField implements ICalledOnPointer{
         f.declaration.append(declaration);
         return f;
     }
-    public final FunctionVariant addVariant(TypeInfo[]args,String cname,String implName){
+    public final FunctionVariant addVariant(TypeInfo[]args,String cname,String implName,String attrCode){
         if(type == FunctionType.NATIVE){
             declaration.append("extern ");
         }else if(accessModifier == AccessModifier.PRIVATE){
@@ -227,9 +223,12 @@ public class Function extends AField implements ICalledOnPointer{
             declaration.append(arg.getCname());
         }
         declaration.append(");\n");
-        var v = new FunctionVariant(args,cname,implName);
+        var v = new FunctionVariant(args,cname,implName,attrCode);
         variants.add(v);
         return v;
+    }
+    public final FunctionVariant addVariant(TypeInfo[]args,String cname,String implName){
+        return addVariant(args,cname,implName,null);
     }
     public final String getName(){
         return name;
