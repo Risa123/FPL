@@ -72,9 +72,6 @@ public class Fn extends AFunctionBlock{
         }else{
             f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier());
         }
-        if(self != null){
-            self.addField(id.getValue(),f);
-        }
 		var args = parseArguments(argsBuilder,it,fnEnv,self);
 		var attrCode = new StringBuilder();
         if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){

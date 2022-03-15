@@ -98,7 +98,7 @@ main{
       ex setFile "build.bs"
       ex throw
     }
-    IRWriter writer init FileWriter:new outputFile
+    IRWriter writer init FileWriter:new outputFile substring 1,outputFile getLength; - 2#remove parenthesis
     writer close
     compileDirectory project + "/src";,""
  }catch CompilerException{

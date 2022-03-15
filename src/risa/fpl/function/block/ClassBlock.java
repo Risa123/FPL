@@ -130,7 +130,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 }
                 attributes.append(v.getType().getCname()).append(' ').append(v.getCname());
                 if(v.getType() instanceof ArrayInfo i){
-                    attributes.append(i.isLengthUnsignedLong()?Long.toUnsignedString(i.getLength()):Long.toString(i.getLength())).append(']');
+                    attributes.append('[').append(i.isLengthUnsignedLong()?Long.toUnsignedString(i.getLength()):Long.toString(i.getLength())).append(']');
                 }
             }
             attributes.append(";\n");

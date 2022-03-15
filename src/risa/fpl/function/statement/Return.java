@@ -6,6 +6,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnSubEnv;
 import risa.fpl.function.IFunction;
+import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
@@ -34,7 +35,7 @@ public final class Return implements IFunction{
 			}
 			if(returnType != TypeInfo.VOID){
 				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
-				if(subEnv.hasNoDestructorCalls()){
+				if(subEnv.hasNoDestructorCalls() || (list.size() == 1 && env.getFunction((Atom)list.get(0)) instanceof ValueExp)){
 					expCode = code;
 				}else{
 					expCode = "tmp";
@@ -43,15 +44,14 @@ public final class Return implements IFunction{
 			}
 			//code of instance variable already starts with copyAndReturn
 			if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !(env.getFunction((Atom)list.get(0)) instanceof Variable)){
-				expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ")";
+				expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ')';
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){
 			throw new CompilerException(line,tokenNum,"this function doesn't return void");
 		}
 		subEnv.compileDestructorCallsFromWholeFunction(builder);
 		if(subEnv.isInMainBlock()){
-			builder.append("void _std_system_callOnExitHandlers();\n");
-			builder.append("_std_system_callOnExitHandlers0();\n");//args is from main module
+			builder.append("void _std_system_callOnExitHandlers();\n_std_system_callOnExitHandlers0();\n");//args is from main module
 		}
 		builder.append("return ").append(expCode);
 		return TypeInfo.VOID;

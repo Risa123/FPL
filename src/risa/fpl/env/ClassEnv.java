@@ -257,7 +257,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         return b.append(");\n").toString();
     }
     public String getInitializer(){
-	    return getInitializer("cinit");
+	    return getInitializer("cinit") + '\n';
     }
     public boolean isCopyConstructorDeclared(){
 	    return copyConstructorDeclared;

@@ -26,7 +26,7 @@ public final class Typedef implements IFunction{
            if(len.notIndexLiteral()){
                throw new CompilerException(len,"array length expected instead of " + len);
            }
-           after = "[" + len + "]";
+           after = "[" + len + ']';
            originalType = it.nextID();
         }
         var t = env.getType(originalType);

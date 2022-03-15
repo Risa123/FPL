@@ -30,7 +30,7 @@ public abstract class ANameSpacedEnv extends SubEnv{
             var cname = IFunction.INTERNAL_METHOD_PREFIX + getNameSpace() + '_' + name;
             var b = new StringBuilder("void ").append(cname);
             initializerCall = "void " + cname + "();\n" + cname + "();\n";
-            b.append("(){\n").append(initializer).append("}\n");
+            b.append("(){\n").append(initializer).append("}");
             return b.toString();
         }
         return "";

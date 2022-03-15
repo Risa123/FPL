@@ -62,7 +62,7 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
         if(block == null){
             throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
-        ArrayList<ExpressionInfo> infos;
+        ArrayList<ExpressionInfo>infos;
         if(iEnv.getBlock() == null){
             infos = createInfoList(block);
             iEnv.setBlock(infos);

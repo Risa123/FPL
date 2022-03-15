@@ -7,18 +7,13 @@ final{
        var zero line toString
        var first zero + ":"
        var tokenNumStr tokenNum toString
-       var second first + tokenNumStr
-       var third second + " "
-       return third + message
+       return first + tokenNumStr + " " + message
      }
   }
   this String message:message
   this int line int tokenNum String message:createMessage message,line,tokenNum
   fn void setFile String file = this file = file
-  override fn String getMessage{
-    var str file + ":"
-    return str + message
-  }
+  override fn String getMessage = file + ":" + message
  }
 class IRWriter{
    const FileWriter writer

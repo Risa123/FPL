@@ -29,8 +29,8 @@ public abstract class AThreePassBlock{
             }
         }
         if(!infos.isEmpty()){
-            var blockName = this instanceof ClassBlock?"class block":(this instanceof ModuleBlock?"module block":"interface block");
-            var b = new StringBuilder("errors in ").append(blockName).append(':');
+            var b = new StringBuilder("errors in ");
+            b.append(this instanceof ClassBlock?"class block":(this instanceof ModuleBlock?"module block":"interface block")).append(':');
             for(var info:infos){
                 b.append('\n').append(info.getLastEx().getMessage());
             }

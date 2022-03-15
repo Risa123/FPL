@@ -1,4 +1,5 @@
 use std.collection
+use risa.fpl.base
 
 class ObjectInfo{
  private const Map;String Field;fields init

@@ -361,7 +361,7 @@ fn bool isHexDigit char this{
 }
 fn bool isPrint char this{
   var c this cast int
-  return c <= 176; || c >= 32
+  return c cast int <= 176; || c cast int >= 32
 }
 fn bool isGraph char this = isPrint this; || this == $\s
 fn bool isPunct char this = isGraph this; && isLetter this
