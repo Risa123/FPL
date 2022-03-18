@@ -103,11 +103,11 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		if(templateArgs != null){
             ((TemplateTypeInfo)type).setDataForGeneration(block,interfaces,templateArgs);
         }
-        compileClassBlock(cEnv,modEnv,id,block,interfaces,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
+        compileClassBlock(cEnv,modEnv,id,block,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
 		return TypeInfo.VOID;
 	}
 	@SuppressWarnings("ConstantConditions")
-    public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,ArrayList<InterfaceInfo>interfaces,TemplateStatus templateStatus)throws CompilerException{
+    public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,TemplateStatus templateStatus)throws CompilerException{
         var type = cEnv.getInstanceInfo();
         var parentType = type.getPrimaryParent();
         var cID = IFunction.toCId(id.getValue());
@@ -118,6 +118,12 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             cEnv.setBlock(infos);
         }else{
             infos = cEnv.getBlock();
+        }
+        var interfaces = new ArrayList<InterfaceInfo>();
+        for(var p:type.getParents()){
+            if(p instanceof InterfaceInfo i){
+                interfaces.add(i);
+            }
         }
         compile(new StringBuilder(),cEnv,infos);
         for(var name:cEnv.getVariableFieldDeclarationOrder()){

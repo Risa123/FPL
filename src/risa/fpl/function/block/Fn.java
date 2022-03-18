@@ -23,7 +23,6 @@ public class Fn extends AFunctionBlock{
 		var returnType = env.getType(it.nextID());
         var fnEnv = new FnEnv(env,returnType);
         var templateArgs = it.checkTemplate()?IFunction.parseTemplateArguments(it,fnEnv):null;
-        var b = new StringBuilder();
 		var id = it.nextID();
         if(env instanceof ModuleEnv e && e.isMain() && id.getValue().equals("main")){
            throw new CompilerException(id,"main function can only be declared using built-in function main");
@@ -127,6 +126,7 @@ public class Fn extends AFunctionBlock{
             fnEnv.addType(p,false);
         }
         fnEnv.addFunction(id.getValue(),f);
+        var b = new StringBuilder();
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
 		        throw new CompilerException(line,tokenNum,"abstract methods can only be declared");

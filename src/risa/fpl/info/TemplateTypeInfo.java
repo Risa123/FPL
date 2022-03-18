@@ -71,7 +71,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                    cEnv.addFunction(typeName,instance.getConstructor());
                }
            }
-           new ClassBlock(false).compileClassBlock(cEnv,mod,new Atom(0,0,name,AtomType.ID),block,interfaces,TemplateStatus.GENERATING);
+           new ClassBlock(false).compileClassBlock(cEnv,mod,new Atom(0,0,name,AtomType.ID),block,TemplateStatus.GENERATING);
            if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(type);
