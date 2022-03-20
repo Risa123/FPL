@@ -51,3 +51,4 @@ fix attempting to access function in current module in (module name).(function n
 fix method variants
 fix interface not found when used inside of itself
 fix constant instance variables now cannot be changed through copy constructor
+fix String copy constructor

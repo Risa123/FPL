@@ -87,6 +87,7 @@ main{
         ex throw
       }
     }
+    print outputFile
     tokenizer close
     if noMainModule{
       CompilerException ex init "no main module"

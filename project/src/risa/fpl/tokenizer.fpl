@@ -114,7 +114,7 @@ final class Tokenizer{
                   if ready; !{
                     CompilerException:throw line,tokenNum,"character expected"
                   }
-                  read #appended in following lines
+                  read
                 }
                 b add c
               }

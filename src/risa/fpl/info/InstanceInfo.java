@@ -10,10 +10,9 @@ import risa.fpl.function.statement.InstanceVar;
 import java.util.HashMap;
 
 public class InstanceInfo extends NonTrivialTypeInfo{
-    private String attributesCode,destructorName,instanceFree = "free",copyConstructorName;
+    private String attributesCode,destructorName,instanceFree = "free",copyConstructorName,methodDeclarations = "";
     private final InstanceVar constructor = new InstanceVar(this);
     private final String toPointerName,dataName;
-    private String methodDeclarations = "";
     private ClassEnv cEnv;
     private boolean writeTemplateFunctionVariants = true;
     private final boolean isFinal;

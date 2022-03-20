@@ -1,4 +1,4 @@
-use std.io.file
+use std.io.file std.io.base
 final{
  class CompilerException Exception{
   private{
@@ -16,8 +16,8 @@ final{
   override fn String getMessage = file + ":" + message
  }
 class IRWriter{
-   const FileWriter writer
-   this FileWriter writer = this writer = writer
+   const DataWriter writer
+   this FileWriter writer = this writer = DataWriter:new writer
    fn void close = writer close
  }
 }

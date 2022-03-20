@@ -110,7 +110,7 @@ public final class Variable extends ValueExp{
 		if(copyCallNeeded){
 			builder.append(')');
 		}
-		copyCallNeeded = true;
+		copyCallNeeded = false;
 		return ret;
 	}
 	private TypeInfo processOperator(String operator,StringBuilder builder,ExpIterator it,SubEnv env)throws CompilerException{

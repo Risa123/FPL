@@ -10,10 +10,7 @@ import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
-import risa.fpl.parser.AExp;
-import risa.fpl.parser.Atom;
-import risa.fpl.parser.ExpIterator;
-import risa.fpl.parser.List;
+import risa.fpl.parser.*;
 
 public final class Return implements IFunction{
 	@Override
@@ -35,15 +32,19 @@ public final class Return implements IFunction{
 			}
 			if(returnType != TypeInfo.VOID){
 				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
-				if(subEnv.hasNoDestructorCalls() || (list.size() == 1 && env.getFunction((Atom)list.get(0)) instanceof ValueExp)){
+				if(subEnv.hasNoDestructorCalls() || (list.size() == 1 && env.getFunction((Atom)list.get(0)) instanceof ValueExp v && !(v instanceof  Variable))){
 					expCode = code;
 				}else{
 					expCode = "tmp";
-					builder.append(returnType.getCname()).append(" tmp=").append(code).append(";\n");
+					builder.append(returnType.getCname()).append(" tmp=");
+					if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && ((Atom)list.get(0)).getType() != AtomType.STRING){
+						code = i.getCopyConstructorName()+ "AndReturn("+ code + ')';
+					}
+					builder.append(code).append(";\n");
 				}
 			}
 			//code of instance variable already starts with copyAndReturn
-			if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !(env.getFunction((Atom)list.get(0)) instanceof Variable)){
+			if(returnType instanceof InstanceInfo i && (i.getCopyConstructorName() != null && !(env.getFunction((Atom)list.get(0)) instanceof Variable))){
 				expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ')';
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){

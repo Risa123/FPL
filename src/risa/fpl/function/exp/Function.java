@@ -361,12 +361,10 @@ public class Function extends AField implements ICalledOnPointer{
                    if(first){
                        first = false;
                    }else{
-                       args[argsI] = type;
-                       argsI++;
+                       args[argsI++] = type;
                    }
                }else{
-                   args[argsI] = type;
-                   argsI++;
+                   args[argsI++] = type;
                }
                fnEnv.addFunction(entry.getKey(),new Variable(type,IFunction.toCId(entry.getKey()),entry.getKey()));
            }
@@ -404,6 +402,5 @@ public class Function extends AField implements ICalledOnPointer{
        }
     }
     private record ReturnedData(String code,boolean notReturnedByFunction){}
-    private record TemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,LinkedHashMap<String,TypeInfo>args,
-                                   AEnv superEnv,int line){}
+    private record TemplateVariant(LinkedHashMap<String,TypeInfo>templateArgs,AExp code,LinkedHashMap<String,TypeInfo>args,AEnv superEnv,int line){}
 }

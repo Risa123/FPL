@@ -75,10 +75,10 @@ class String{
     len = str len
     p = char:alloc[] len
     memoryCopy str p,p,len
-    allocated = true
     if allocated && p == nil{
       p free
     }
+    allocated = true
   }
    fn bool isBlank{
       for i,len{
