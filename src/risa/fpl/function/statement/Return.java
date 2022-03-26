@@ -44,7 +44,7 @@ public final class Return implements IFunction{
 				}
 			}
 			//code of instance variable already starts with copyAndReturn
-			if(returnType instanceof InstanceInfo i && (i.getCopyConstructorName() != null && !(env.getFunction((Atom)list.get(0)) instanceof Variable))){
+			if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null){
 				expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ')';
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){

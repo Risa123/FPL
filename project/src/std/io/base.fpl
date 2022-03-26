@@ -25,7 +25,7 @@ class DataReader Readable{
  }
 }
 class DataWriter Writable{
- private Writable writable
+ private const Writable writable
  this Writable writable = this writable = writable
  override fn void close = writable close
  override fn void write byte* p memory size = writable write p,size

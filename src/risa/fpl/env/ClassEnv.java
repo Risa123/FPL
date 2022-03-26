@@ -77,8 +77,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
                        appendToDestructor(destructor + "(&this->" + cname +");\n");
                    }
                    if(copyName != null){
-                       implCopyConstructorCode.append(copyName).append("(&this->").append(cname);
-                       implCopyConstructorCode.append(",&o->").append(v.getCname()).append(");\n");
+                       implCopyConstructorCode.append(copyName).append("(&this->").append(cname).append(",&o->").append(v.getCname()).append(");\n");
                    }
                }else if(v.getType().isPrimitive() && !(v.getType() instanceof PointerInfo)){
 			       defaultCopyConstructorCode.append("this->").append(cname).append("=o->").append(cname).append(";\n");
@@ -97,7 +96,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	public String getImplicitConstructor(Atom classId)throws CompilerException{
         var header = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0(";
         if(struct){
-            return "#define " + header + "this) //placeholder\n";//structs have no implicit constructor
+            return "";
         }
         var code = "this->objectData=&" + instanceInfo.getDataName() + ";\n";
         if(instanceInfo.getPrimaryParent() != null){

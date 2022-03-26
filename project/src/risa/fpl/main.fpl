@@ -87,7 +87,6 @@ main{
         ex throw
       }
     }
-    print outputFile
     tokenizer close
     if noMainModule{
       CompilerException ex init "no main module"
@@ -100,7 +99,6 @@ main{
       ex throw
     }
     IRWriter writer init FileWriter:new outputFile substring 1,outputFile getLength; - 2#remove parenthesis
-    writer close
     compileDirectory project + "/src";,""
  }catch CompilerException{
    stderr writeString ex getMessage

@@ -154,7 +154,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     public final String getDataName(){
         return dataName;
     }
-    public boolean isFinal(){
+    public final boolean isFinal(){
         return isFinal;
     }
 }

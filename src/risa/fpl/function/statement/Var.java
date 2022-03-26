@@ -113,10 +113,7 @@ public final class Var implements IFunction{
                     }
                     onlyDeclared = true;
                 }
-                TypeInfo instanceType = null;
-                if(env instanceof ClassEnv e){
-                    instanceType = e.getInstanceInfo();
-                }
+                var instanceType = env instanceof ClassEnv e?e.getInstanceInfo():null;
                 if(env instanceof ANameSpacedEnv){
                     onlyDeclared = false;
                 }
@@ -124,10 +121,7 @@ public final class Var implements IFunction{
                 if(!varType.isPrimitive()){
                     onlyDeclared = false;
                 }
-                var declaration = "";
-                if(env.hasModifier(Modifier.NATIVE)){
-                    declaration = "extern ";
-                }
+                var declaration = env.hasModifier(Modifier.NATIVE)?"extern ":"";
                 if(env instanceof  ClassEnv && varType instanceof PointerInfo p && !p.getType().isPrimitive()){
                    declaration += "struct ";
                 }

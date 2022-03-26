@@ -144,12 +144,18 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         if(cEnv.hasOnlyImplicitConstructor()){
             cEnv.appendFunctionCode(cEnv.getImplicitConstructor(id));
             var nameSpace = cEnv.getNameSpace();
-            cEnv.appendFunctionCode(cID + " static" + nameSpace + "_new0(){\n");
-            cEnv.appendFunctionCode(cID + " inst;\n" + INTERNAL_METHOD_PREFIX + nameSpace + "_init0(&inst);\nreturn inst;\n}\n");
+            cEnv.appendFunctionCode(cID + " static" + nameSpace + "_new0(){\n" + cID + " inst;\n");
+            if(!cEnv.isStruct()){
+                cEnv.appendFunctionCode(INTERNAL_METHOD_PREFIX + nameSpace + "_init0(&inst);\n");
+            }
+            cEnv.appendFunctionCode("return inst;\n}\n");
             cEnv.appendFunctionCode(cID + "* static" + nameSpace + "_alloc0(){\n");
             cEnv.appendFunctionCode("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
             cEnv.appendFunctionCode(cID + " * p = malloc(sizeof(" + cID + "));\n");
-            cEnv.appendFunctionCode(INTERNAL_METHOD_PREFIX + nameSpace + "_init0(p);\nreturn p;\n}\n");
+            if(!cEnv.isStruct()){
+                cEnv.appendFunctionCode(INTERNAL_METHOD_PREFIX + nameSpace + "_init0(p);");
+            }
+            cEnv.appendFunctionCode("\nreturn p;\n}\n");
         }
         type.setAttributesCode(attributes.toString());
         //parent type doesn't have implicit constructor
