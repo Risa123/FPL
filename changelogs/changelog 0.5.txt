@@ -52,3 +52,5 @@ fix method variants
 fix interface not found when used inside of itself
 fix constant instance variables now cannot be changed through copy constructor
 fix String copy constructor
+fix copy constructor
+fix onExitHandlers not called before return statement in main block

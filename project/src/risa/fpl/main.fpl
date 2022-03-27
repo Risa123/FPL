@@ -99,6 +99,7 @@ main{
       ex throw
     }
     IRWriter writer init FileWriter:new outputFile substring 1,outputFile getLength; - 2#remove parenthesis
+    writer close
     compileDirectory project + "/src";,""
  }catch CompilerException{
    stderr writeString ex getMessage

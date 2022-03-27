@@ -137,7 +137,7 @@ public final class Variable extends ValueExp{
                 return TypeInfo.VOID;
             }else if(type instanceof PointerInfo p && operator.equals("drf=")){
                 if(p.getType() instanceof InstanceInfo i && i.getCopyConstructorName() != null){
-                	builder.append(i.getCopyConstructorName()).append("(");
+                	builder.append(i.getCopyConstructorName()).append('(');
 					writePrev(builder);
 					builder.append(code).append(",&");
 					var exp = it.nextAtom();

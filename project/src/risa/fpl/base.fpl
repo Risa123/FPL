@@ -1,17 +1,9 @@
 use std.io.file std.io.base
 final{
  class CompilerException Exception{
-  private{
-    String file
-    fn String createMessage String message int line int tokenNum{
-       var zero line toString
-       var first zero + ":"
-       var tokenNumStr tokenNum toString
-       return first + tokenNumStr + " " + message
-     }
-  }
+  private String line
   this String message:message
-  this int line int tokenNum String message:createMessage message,line,tokenNum
+  this int line int tokenNum String message:line toString;  + ":"; + tokenNum toString; + " " + message
   fn void setFile String file = this file = file
   override fn String getMessage = file + ":" + message
  }

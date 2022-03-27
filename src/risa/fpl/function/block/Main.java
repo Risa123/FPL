@@ -2,6 +2,7 @@ package risa.fpl.function.block;
 
 import risa.fpl.CompilerException;
 import risa.fpl.FPL;
+import risa.fpl.env.MainEnv;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnEnv;
 import risa.fpl.env.ModuleEnv;
@@ -24,7 +25,7 @@ public final class Main implements IFunction{
         if(modEnv.multipleMainDeclared()){
             throw new CompilerException(line,tokenNum,"declaration of multiple main blocks is not allowed");
         }
-        var fnEnv = new FnEnv(env,NumberInfo.INT);
+        var fnEnv = new MainEnv(env);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));
         fnEnv.addFunction("args",new Variable(new PointerInfo(FPL.getString()),"args","args"));
         fnEnv.addFunction("mainThread",new Variable(modEnv.getType(new Atom(0,0,"Thread",AtomType.ID)),"mainThread","mainThread"));
@@ -32,8 +33,7 @@ public final class Main implements IFunction{
         fnEnv.compileBlock(it.nextList(),b,it);
         b.append(modEnv.getDestructor());
         if(fnEnv.isReturnNotUsed()){
-           b.append("_std_system_callOnExitHandlers0();\n");
-           b.append("return 0;\n");
+           b.append("_std_system_callOnExitHandlers0();\nreturn 0;\n");
         }
         modEnv.declareMain();
         modEnv.getModuleBlock().setMainFunctionCode(b.toString());
