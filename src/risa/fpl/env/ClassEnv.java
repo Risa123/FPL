@@ -77,10 +77,12 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
                        appendToDestructor(destructor + "(&this->" + cname +");\n");
                    }
                    if(copyName != null){
-                       implCopyConstructorCode.append(copyName).append("(&this->").append(cname).append(",&o->").append(v.getCname()).append(");\n");
+                       implCopyConstructorCode.append(copyName).append("(&this->").append(cname).append(",&o->").append(cname).append(");\n");
                    }
                }else if(v.getType().isPrimitive() && !(v.getType() instanceof PointerInfo)){
 			       defaultCopyConstructorCode.append("this->").append(cname).append("=o->").append(cname).append(";\n");
+               }else if(v.getType() instanceof InterfaceInfo){
+                    appendToDestructor("free(this->" + cname + ".instance);\n");
                }
             }
         }else{
@@ -94,10 +96,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		return implicitConstructor.toString();
 	}
 	public String getImplicitConstructor(Atom classId)throws CompilerException{
-        var header = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0(";
         if(struct){
             return "";
         }
+        var header = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0(";
         var code = "this->objectData=&" + instanceInfo.getDataName() + ";\n";
         if(instanceInfo.getPrimaryParent() != null){
             var parent = (InstanceInfo)instanceInfo.getPrimaryParent();
@@ -120,10 +122,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var v = constructor.hasVariant(args)?constructor.getVariant(args):constructor.addVariant(args,nameSpace);
         v.setLine(line);
         constructors.add(new ConstructorData(code,v.getCname(),argsCode,parentConstructorCall));
-        var b = new StringBuilder();
+        var b = new StringBuilder("void ");
         var constructorName = Objects.requireNonNull(instanceInfo.getConstructor().getVariant(args)).getCname();
         var cname = instanceInfo.getCname();
-        b.append("void ").append(constructorName).append('(').append(cname).append("* this");
+        b.append(constructorName).append('(').append(cname).append("* this");
         for(var arg:args){
             b.append(',').append(arg.getCname());
         }
@@ -215,7 +217,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var b = new StringBuilder(instanceInfo.getClassDataType());
         b.append(' ').append(instanceInfo.getDataName()).append("={sizeof(").append(instanceInfo.getCname()).append(')');
         if(notAbstract()){
-          for(var method: instanceInfo.getMethodsOfType(FunctionType.VIRTUAL)){
+          for(var method:instanceInfo.getMethodsOfType(FunctionType.VIRTUAL)){
               for(var v:method.getVariants()){
                   b.append(",(void*)").append(v.getCname());
               }
@@ -301,8 +303,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public String getConstructorCode(){
         var b = new StringBuilder();
         for(var data:constructors){
-            b.append("void ").append(data.cname);
-            b.append(data.argsCode()).append("{\n");
+            b.append("void ").append(data.cname).append(data.argsCode()).append("{\n");
             b.append(data.parentConstructorCall);
             b.append("this->objectData=&").append(instanceInfo.getDataName()).append(";\n");
             b.append(getImplicitConstructorCode());

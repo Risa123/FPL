@@ -4,6 +4,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
 import risa.fpl.info.InstanceInfo;
+import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 
@@ -30,9 +31,9 @@ public class SubEnv extends AEnv{
  public ModuleEnv getModule(){
       return ((SubEnv)superEnv).getModule();
  }
- public final void addInstanceVariable(InstanceInfo type,String cname){
+ public final void addInstanceVariable(InstanceInfo type,String cname) {
      var destructor = type.getDestructorName();
-     if(destructor != null){//check presence of destructor
+     if (destructor != null) {//check presence of destructor
          destructorCalls.append(destructor).append("(&").append(cname).append(");\n");
      }
  }

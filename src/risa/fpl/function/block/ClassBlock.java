@@ -191,10 +191,16 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             internalCode.append("};\n");
             internalCode.append(i.getCname()).append(' ');
             internalCode.append(type.getConversionMethod(i)).append('(').append(type.getCname()).append("* this){\n");
-            internalCode.append(i.getCname());
-            internalCode.append(" tmp={this,&");
-            internalCode.append(cEnv.getImplOf(i));
-            internalCode.append("};\nreturn tmp;\n}\n");
+            internalCode.append(i.getCname()).append(" tmp;\n");
+            internalCode.append("void* malloc(").append(NumberInfo.MEMORY.getCname()).append(");\n");
+            internalCode.append("tmp.instance=(void*)malloc(sizeof(").append(type.getCname()).append("));\n");
+            internalCode.append("tmp.impl=&").append(cEnv.getImplOf(i)).append(";\n");
+            if(type.getCopyConstructorName() != null){
+                internalCode.append(type.getCopyConstructorName()).append("(tmp.instance,this);");
+            }else{
+                internalCode.append("*((").append(type.getCname()).append("*)tmp.instance)=*this;");
+            }
+            internalCode.append("\nreturn tmp;\n}\n");
         }
         internalCode.append(type.getCname()).append("* ").append(type.getToPointerName()).append('(');
         internalCode.append(type.getCname()).append(" this,").append(type.getCname()).append("* p){\n*p = this;\nreturn p;\n}\n");

@@ -19,7 +19,7 @@ char.isUpper renamed to isUpperCase
 char.isLower renamed to isLowerCase
 char.toUpper renamed to toUpperCase
 char.toLower rename to toUpperCase
-upgraded to jdk 17
+upgraded to jdk 18
 tertiary operator added
 constructors,destructors and copy constructors can now be one line
 final modifier for classes added
@@ -53,4 +53,5 @@ fix interface not found when used inside of itself
 fix constant instance variables now cannot be changed through copy constructor
 fix String copy constructor
 fix copy constructor
-fix onExitHandlers not called before return statement in main block
+fix onExitHandlers not called before return statements in main block
+fix parent constructor call C error

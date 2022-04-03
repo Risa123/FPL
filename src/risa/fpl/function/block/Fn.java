@@ -150,6 +150,8 @@ public class Fn extends AFunctionBlock{
             for(var arg:args.entrySet()){
                 if(arg.getValue() instanceof InstanceInfo i){
                     fnEnv.addInstanceVariable(i,IFunction.toCId(arg.getKey()));
+                }else if(arg.getValue() instanceof InterfaceInfo){
+                    fnEnv.addInterfaceFreeCall(IFunction.toCId(arg.getKey()));
                 }
             }
 			if(oneLine && returnType != TypeInfo.VOID){

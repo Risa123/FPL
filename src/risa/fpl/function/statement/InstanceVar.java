@@ -115,9 +115,14 @@ public final class InstanceVar extends Function{
         env.addInstanceVariable(varType,cID);
         return null;
     }
-	public void compileAsParentConstructor(StringBuilder builder,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
+	public void compileAsParentConstructor(StringBuilder builder,FnSubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
        calledOnPointer();
-       super.compile(builder,env,it,line,charNum);
+       var tmp = new StringBuilder();
+       super.compile(tmp,env,it,line,charNum);
+       builder.append(env.getToPointerVars()).append(tmp);
+       if(!env.getDestructorCalls().isEmpty()){
+           builder.append(";\n").append(env.getDestructorCalls());
+       }
     }
     private void superCompile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
        super.compile(builder,env,it,line,charNum);

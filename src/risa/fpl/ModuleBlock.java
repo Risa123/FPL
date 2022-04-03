@@ -30,7 +30,7 @@ public final class ModuleBlock extends AThreePassBlock{
    public ModuleBlock(Path sourceFile,Path srcDir)throws IOException,CompilerException{
        this.sourceFile = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount()).toString();
 	   cPath = FPL.getOutputDirectory() + '/' + this.sourceFile.replace(File.separatorChar,'_') + ".c";
-       this.name = this.sourceFile.replace(File.separatorChar,'.').substring(0,this.sourceFile.lastIndexOf('.'));
+       name = this.sourceFile.replace(File.separatorChar,'.').substring(0,this.sourceFile.lastIndexOf('.'));
        env = new ModuleEnv(FPL.getEnv(),this,null);
        try{
            expInfos = createInfoList(new Parser(Files.newBufferedReader(sourceFile)).parse());
@@ -121,9 +121,7 @@ public final class ModuleBlock extends AThreePassBlock{
                }
            }
            if(isMain()){//main module is written as last
-               writer.write("_String* args;\nvoid onExit();\n");
-               writer.write("void _std_system_addOnExitHandler0(_onExit0);\n");
-               writer.write("int main(int argc,char** argv){\n");
+               writer.write("_String* args;\nvoid onExit();\nvoid _std_system_addOnExitHandler0(_onExit0);\nint main(int argc,char** argv){\n");
                writer.write(env.getInitializerCode());
                for(var mod:FPL.getModules()){
                    if(!mod.isMain()){
@@ -134,8 +132,7 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write("I_std_lang_Thread_init0(&mainThread,static_std_lang_String_new0(\"Main\",4,0));\n");
                writer.write("_std_lang_currentThread = &mainThread;\n");
                writer.write("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
-               writer.write("args = malloc(argc * sizeof(_String));\n");
-               writer.write("for(int i = 0;i < argc;++i){\n");
+               writer.write("args = malloc(argc * sizeof(_String));\nfor(int i = 0;i < argc;++i){\n");
                writer.write(NumberInfo.MEMORY.getCname() + " strlen(const char*);\n");
                writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n}\n");
                writer.write(mainFunctionCode);
