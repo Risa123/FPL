@@ -19,7 +19,6 @@ import java.util.LinkedHashMap;
 
 public final class TemplateTypeInfo extends InstanceInfo{
     private List block;
-    private ArrayList<InterfaceInfo>interfaces;
     private LinkedHashMap<String,TypeInfo>templateArgs = new LinkedHashMap<>();//placeholder to prevent NPE
     private final ArrayList<InstanceInfo>generatedTypes = new ArrayList<>();
     private final ArrayList<TypeInfo>typesForDeclaration = new ArrayList<>();//initialized here to prevent NPE
@@ -92,9 +91,8 @@ public final class TemplateTypeInfo extends InstanceInfo{
        }
        return type;
     }
-    public void setDataForGeneration(List block,ArrayList<InterfaceInfo>interfaces,LinkedHashMap<String,TypeInfo>templateArgs){
+    public void setDataForGeneration(List block,LinkedHashMap<String,TypeInfo>templateArgs){
         this.block = block;
-        this.interfaces = interfaces;
         this.templateArgs = templateArgs;
     }
     public void setTypesForDeclaration(ArrayList<TypeInfo>types){

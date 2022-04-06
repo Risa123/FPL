@@ -40,7 +40,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     public final void buildDeclaration(){
         if(!(this instanceof TemplateTypeInfo)){
             appendToDeclaration("typedef struct " + getCname() + "{\n");
-            if(!cEnv.isStruct()){
+            if(cEnv.notStruct()){
                 appendToDeclaration("void* objectData;\n");
             }
             if(getPrimaryParent() instanceof InstanceInfo i){

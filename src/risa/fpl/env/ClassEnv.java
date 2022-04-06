@@ -282,8 +282,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         types.put(name,type);
         addFunction(name,new Var(type));
     }
-    public boolean isStruct(){
-        return struct;
+    public boolean notStruct(){
+        return !struct;
     }
     public boolean hasOnlyImplicitConstructor(){
         return onlyImplicitConstructor;

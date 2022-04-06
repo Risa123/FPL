@@ -38,6 +38,7 @@ public class Function extends AField implements ICalledOnPointer{
     public Function(String name,TypeInfo returnType,AccessModifier accessModifier){
         this(name,returnType,FunctionType.NORMAL,null,accessModifier);
     }
+    @SuppressWarnings("ConstantConditions")
     @Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         var b = new StringBuilder();

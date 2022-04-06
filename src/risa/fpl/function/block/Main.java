@@ -4,7 +4,6 @@ import risa.fpl.CompilerException;
 import risa.fpl.FPL;
 import risa.fpl.env.MainEnv;
 import risa.fpl.env.SubEnv;
-import risa.fpl.env.FnEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.Variable;

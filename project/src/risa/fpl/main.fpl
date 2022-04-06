@@ -15,6 +15,7 @@ private{
    }
    fn String readValue Tokenizer* tokenizer{
       var value tokenizer next
+      print value getValue
       if value getType; != TokenType:STRING{
        CompilerException ex init value getLine;,value getTokenNum;,"String literal expected"
        ex setFile "build.bs"
