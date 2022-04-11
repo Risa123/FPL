@@ -73,11 +73,7 @@ public class Function extends AField implements ICalledOnPointer{
             if(self instanceof InterfaceInfo){
                 b.append(".impl->");
             }else{
-                if(callStatus == CALLED_ON_POINTER || getPrevCode() == null){
-                    b.append("->");
-                }else{
-                    b.append('.');
-                }
+                b.append(callStatus == CALLED_ON_POINTER || getPrevCode() == null?"->":'.');
                 b.append("objectData)->");
             }
         }

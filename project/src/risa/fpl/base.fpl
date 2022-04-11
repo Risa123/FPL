@@ -1,9 +1,10 @@
-use std.io.file std.io.base
+use std.io.file std.io.base risa.fpl.tokenizer
 final{
  class CompilerException Exception{
   private String file
-  this String message:message
-  this int line int tokenNum String message:line toString;  + ":"; + tokenNum toString; + " "; + message
+  this String message:super message
+  this int line int tokenNum String message:this line toString;  + ":"; + tokenNum toString; + " "; + message
+  this Token token String message:this token getLine;,token getTokenNum;,message
   fn void setFile String file = this file = file
   override fn String getMessage = file + ":" + message
  }

@@ -51,7 +51,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         }
 		InstanceInfo primaryParent = null;
 		List block = null;
-		var interfaces = new ArrayList<InterfaceInfo>();
         var type = cEnv.getInstanceInfo();
         while(it.hasNext()){
             var exp = it.next();
@@ -69,7 +68,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 }
                 if(!type.getParents().contains(parentType)){
                     if(parentType instanceof InterfaceInfo i){
-                        interfaces.add(i);
                         type.addParent(parentType);
                     }else{
                         if(primaryParent != null){

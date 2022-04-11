@@ -23,6 +23,7 @@ upgraded to jdk 18
 tertiary operator added
 constructors,destructors and copy constructors can now be one line
 final modifier for classes added
+one-line constructor can now also invoke all constructor variants not just the once's form parent class
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C

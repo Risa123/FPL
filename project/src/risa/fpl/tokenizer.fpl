@@ -159,7 +159,7 @@ final class Tokenizer{
  fn Token nextID{
    var id next
    if id getType; != TokenType:ID{
-     CompilerException:throw id getLine;,id getTokenNum;,"identifier expected instead of " + id getValue
+     CompilerException:throw id,"identifier expected instead of " + id getValue
    }
    return id
  }

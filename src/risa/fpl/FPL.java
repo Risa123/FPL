@@ -21,7 +21,7 @@ public final class FPL{
 	private static Function freeArray;
 	private static final ArrayList<VariantGenData>functionVariantGenerationData = new ArrayList<>();
 	private static final ArrayList<TemplateCompData>templateCompData = new ArrayList<>();
-    private static final ArrayList<String> files = new ArrayList<>();
+    private static final ArrayList<String>files = new ArrayList<>();
     private static void throwBuildFileError(String msg)throws CompilerException{
       var ex = new CompilerException(msg);
       ex.setSourceFile("build.properties");
@@ -66,10 +66,10 @@ public final class FPL{
                 }
             }
             var output = build.getProperty("outputFile");
-            var ccArgs = build.getProperty("ccArgs","");
+            var ccArgs = build.getProperty("ccArgs","").strip().replaceAll("\\s+"," ").split(",");
             outputDirectory = project + "/output";
             mainModule = build.getProperty("mainModule");
-            Collections.addAll(flags,build.getProperty("flags","").split(","));
+            Collections.addAll(flags,build.getProperty("flags","").strip().replaceAll("\\s+"," ").split(","));
             srcDir = Path.of(project + "/src");
             try{
                 for(var p:Files.walk(srcDir).toList()){
@@ -156,12 +156,17 @@ public final class FPL{
                     w.write(data.code());
                 }
             }
-            var cmd = new String[3 + files.size()];
+            var cmd = new String[2 + ccArgs.length + files.size()];
             cmd[0] = "gcc\\bin\\gcc";
-            cmd[1] = ccArgs;
-            cmd[2] = "-o " + output;
-            for(var i = 3;i < cmd.length;++i){
-                cmd[i] = files.get(i - 3);
+            cmd[1] = "-o " + output;
+            var i = 2;
+            for(var arg:ccArgs){
+                cmd[i] = arg;
+                i++;
+            }
+            for(var file:files){
+                cmd[i] = file;
+                i++;
             }
             System.err.print(new String(Runtime.getRuntime().exec(cmd).getErrorStream().readAllBytes()));
 		}catch (CompilerException e){

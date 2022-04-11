@@ -32,16 +32,23 @@ public final class Constructor extends AFunctionBlock{
         var parentConstructorCall = "";
         var parentType = (InstanceInfo)type.getPrimaryParent();
         if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
-            var callStart = it.next();
-            if(parentType == null){
-                throw new CompilerException(callStart,"this type has no parent");
+            it.next();
+            var constructorOwner = it.nextID();
+            if(constructorOwner.getValue().equals("this")){
+               type.getConstructor().compileAsParentConstructor(builder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
+            }else if(constructorOwner.getValue().equals("super")){
+                if(parentType == null){
+                    throw new CompilerException(constructorOwner,"this type has no parent");
+                }
+                var parentConstructorCallBuilder = new StringBuilder();
+                parentType.getConstructor().compileAsParentConstructor(parentConstructorCallBuilder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
+                parentConstructorCallBuilder.append(";\n");
+                hasParentConstructor = true;
+                parentConstructorCall = parentConstructorCallBuilder.toString();
+                cEnv.parentConstructorCalled();
+            }else{
+                throw new CompilerException(constructorOwner,"super or this expected");
             }
-            var parentConstructorCallBuilder = new StringBuilder();
-            parentType.getConstructor().compileAsParentConstructor(parentConstructorCallBuilder,fnEnv,it,callStart.getLine(),callStart.getTokenNum());
-            parentConstructorCallBuilder.append(";\n");
-            hasParentConstructor = true;
-            parentConstructorCall = parentConstructorCallBuilder.toString();
-            cEnv.parentConstructorCalled();
         }else if(parentType != null){
            var parentConstructor = parentType.getConstructor();
            if(!parentConstructor.hasVariant(new TypeInfo[0])){
@@ -51,8 +58,6 @@ public final class Constructor extends AFunctionBlock{
         }
         if(it.hasNext()){
            fnEnv.compileFunctionBlock(b,it);
-        }else if(!hasParentConstructor){
-            throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
         if(!(type instanceof TemplateTypeInfo)){
             cEnv.addConstructor(b.toString(),argsCode.toString(),argsArray,parentConstructorCall,line);

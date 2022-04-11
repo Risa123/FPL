@@ -19,8 +19,7 @@ import java.util.Objects;
 public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	private final StringBuilder implicitConstructor = new StringBuilder();
 	private final InstanceInfo instanceInfo;
-	private final StringBuilder implCopyConstructorCode = new StringBuilder();
-	private final StringBuilder defaultCopyConstructorCode = new StringBuilder();
+	private final StringBuilder implCopyConstructorCode = new StringBuilder(),defaultCopyConstructorCode = new StringBuilder();
     private final boolean struct;
 	private boolean parentConstructorCalled,destructorDeclared,copyConstructorDeclared;
     private ArrayList<ExpressionInfo>block;
@@ -251,7 +250,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    return destructor.toString();
     }
     private String constructorCall(String constructorName,String self,TypeInfo[]args){
-        var b = new StringBuilder(constructorName).append("(").append(self);
+        var b = new StringBuilder(constructorName).append('(').append(self);
         for(int i = 0; i < args.length;++i){
             b.append(",a").append(i);
         }

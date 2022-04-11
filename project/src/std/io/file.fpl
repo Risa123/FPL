@@ -38,16 +38,16 @@ abstract class FileHandler Closeable{
    }
 }
 class FileWriter FileHandler Writable{
-  this String name:name,WRITE
-  this void* handle:handle
+  this String name:super name,WRITE
+  this void* handle:super handle
   override fn void write byte* p memory size{
     fileWrite handle,p,size
     checkError
   }
 }
 class FileReader FileHandler Readable{
-  this String name:name,READ
-  this void* handle:handle
+  this String name:super name,READ
+  this void* handle:super handle
   override fn void read byte* p memory size{
     fileRead handle,p,size
     checkError

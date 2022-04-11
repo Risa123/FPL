@@ -447,10 +447,10 @@ fn String floatingPointToString double this int precision{
    return sign + integerToString iPart; + "." + integerToString fPart cast long
 }
 class NumberFormatException Exception{
-   this String message:message
+   this String message:super message
 }
 class IllegalArgumentException Exception{
-  this String message:message
+  this String message:super message
 }
 fn double floatingPointParse String str{
     if str isEmpty{

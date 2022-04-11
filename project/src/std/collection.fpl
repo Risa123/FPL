@@ -102,5 +102,5 @@ class Map;K V{
   fn bool isEmpty = entries getSize; == 0
 }
 class NoElementException Exception{
-  this String message:message
+  this String message:super message
 }
