@@ -195,8 +195,6 @@ public class Fn extends AFunctionBlock{
                 if(!parentMethod.hasSignature(f)){
                     throw new CompilerException(line,tokenNum,"this method doesn't have signature of one it overrides");
                 }
-            }else if(parentField != null){
-                throw new CompilerException(line,tokenNum,"override is required");
             }
         }
         if(templateArgs == null){

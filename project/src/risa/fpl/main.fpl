@@ -11,20 +11,15 @@ private{
    const{
      String outputFile
      String mainModule
-     ArrayList;String; flags init
+     ArrayList;String;flags init
    }
    fn String readValue Tokenizer* tokenizer{
       var value tokenizer next
-      print value getValue
       if value getType; != TokenType:STRING{
-       CompilerException ex init value getLine;,value getTokenNum;,"String literal expected"
-       ex setFile "build.bs"
-       ex throw
+       CompilerException:new value getLine;,value getTokenNum;,"String literal expected";throw "build.bs"
       }
       if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
-        CompilerException ex init value getLine;,value getTokenNum;,"end of line expected"
-        ex setFile "build.bs"
-        ex throw
+        CompilerException:new value getLine;,value getTokenNum;,"end of line expected";throw "build.bs"
       }
       return value getValue
    }
@@ -58,9 +53,7 @@ main{
     while tokenizer hasNext{
       var id tokenizer nextID
       if tokenizer hasNext; !{
-        CompilerException ex init id getLine;,id getTokenNum;,"property value expected"
-        ex setFile "build.bs"
-        ex throw
+        CompilerException:new id getLine;,id getTokenNum;,"property value expected";throw "build.bs"
       }
       var idS id getValue
       if idS == "outputFile"{
@@ -77,27 +70,19 @@ main{
           }if flag getType; == TokenType:NEW_LINE{
             break
           }{
-           CompilerException ex init flag getLine;,flag getTokenNum;,"flag expected instead of " + flag getValue
-           ex setFile "build.bs"
-           ex throw
+           CompilerException:new flag getLine;,flag getTokenNum;,"flag expected instead of " + flag getValue;;;throw "build.bs"
           }
         }
       }{
-        CompilerException ex init id getLine;,id getTokenNum;,idS + " property doesn't exist"
-        ex setFile "build.bs"
-        ex throw
+        CompilerException:new id getLine;,id getTokenNum;,idS + " property doesn't exist"; throw "build.bs"
       }
     }
     tokenizer close
     if noMainModule{
-      CompilerException ex init "no main module"
-      ex setFile "build.bs"
-      ex throw
+      CompilerException:new "no main module";throw "build.bs"
     }
     if noOutputFile{
-      CompilerException ex init "no output file"
-      ex setFile "build.bs"
-      ex throw
+      CompilerException:new "no output file";throw "build.bs"
     }
     IRWriter writer init FileWriter:new outputFile substring 1,outputFile getLength; - 2#remove parenthesis
     writer close

@@ -30,7 +30,7 @@ final class Tokenizer{
     bool readNext true
     const{
        DataReader reader
-       ArrayList;Token; tokens init
+       ArrayList;Token;tokens init
     }
     fn void token String value TokenType type{
      tokens add Token:new line,tokenNum,value,type
@@ -121,7 +121,7 @@ final class Tokenizer{
               b add $"
               valueToken b ref,TokenType:STRING
              }if c isWhitespace;!{
-               ArrayList;char; b init
+               ArrayList;char;b init
                b add c
                while ready{
                  read

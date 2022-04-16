@@ -5,7 +5,10 @@ final{
   this String message:super message
   this int line int tokenNum String message:this line toString;  + ":"; + tokenNum toString; + " "; + message
   this Token token String message:this token getLine;,token getTokenNum;,message
-  fn void setFile String file = this file = file
+  fn void throw String file{
+    this file = file
+    super throw
+  }
   override fn String getMessage = file + ":" + message
  }
 class IRWriter{

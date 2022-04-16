@@ -23,7 +23,7 @@ class ModuleBlock ObjectInfo{
         if first{
          beginIndex = i + 1
         }{
-          first = true
+         first = true
         }
      }
      if first && name get i; == $.{
@@ -44,8 +44,7 @@ class ModuleBlock ObjectInfo{
           }
       }
    }catch CompilerException{
-     ex setFile fplPath
-     ex throw
+     ex throw fplPath
    }
    tokenizer close
  }

@@ -28,22 +28,23 @@ public final class Constructor extends AFunctionBlock{
         if(constructor.hasVariant(argsArray) && constructor.getVariant(argsArray).getLine() != line){
             throw new CompilerException(line,tokenNum,"this class already has constructor with arguments " + Arrays.toString(argsArray));
         }
-        var hasParentConstructor = false;
+        var calledAnotherConstructor = false;
         var parentConstructorCall = "";
         var parentType = (InstanceInfo)type.getPrimaryParent();
         if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
             it.next();
             var constructorOwner = it.nextID();
             if(constructorOwner.getValue().equals("this")){
-               type.getConstructor().compileAsParentConstructor(builder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
+               calledAnotherConstructor = true;
+               type.getConstructor().compileCallInsideOfConstructor(builder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
             }else if(constructorOwner.getValue().equals("super")){
                 if(parentType == null){
                     throw new CompilerException(constructorOwner,"this type has no parent");
                 }
                 var parentConstructorCallBuilder = new StringBuilder();
-                parentType.getConstructor().compileAsParentConstructor(parentConstructorCallBuilder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
+                parentType.getConstructor().compileCallInsideOfConstructor(parentConstructorCallBuilder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
                 parentConstructorCallBuilder.append(";\n");
-                hasParentConstructor = true;
+                calledAnotherConstructor = true;
                 parentConstructorCall = parentConstructorCallBuilder.toString();
                 cEnv.parentConstructorCalled();
             }else{
@@ -58,6 +59,8 @@ public final class Constructor extends AFunctionBlock{
         }
         if(it.hasNext()){
            fnEnv.compileFunctionBlock(b,it);
+        }else if(!calledAnotherConstructor){
+            throw new CompilerException(line,tokenNum,"block expected as last argument");
         }
         if(!(type instanceof TemplateTypeInfo)){
             cEnv.addConstructor(b.toString(),argsCode.toString(),argsArray,parentConstructorCall,line);

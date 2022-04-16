@@ -22,6 +22,9 @@ public abstract class AFunctionBlock extends ABlock{
         if(!first){
             builder.append(owner.getCname()).append("* this");
             env.addFunction("this",new Variable(new PointerInfo(owner),"this","this"));
+            if(owner.getPrimaryParent() != null){
+                env.addFunction("super",new Variable(new PointerInfo(owner.getPrimaryParent()),"this","super"));
+            }
         }
         while(it.hasNext()){
             var peeked = it.peek();

@@ -28,7 +28,7 @@ struct now can have normal identifiers
 character numbers are replaced by token numbers
 +/- can be used as unary operator
 destructors added
-goniometric functions added
+trigonometric functions added
 if_flag renamed to ifFlag
 added chained call to type:alloc
 added type:alloc[]
@@ -104,7 +104,7 @@ copy constructor added
 variant of print with char as argument added
 fix template type as argument check
 fix cos function
-fix cotan function
+fix cotangent function
 fix convert to interface function returned instance C error
 fix unknown type C error in constructor
 fix zeroMemoryError caused by throwing exception which is not caught

@@ -39,7 +39,7 @@ public final class FPL{
     static String getMainModule(){
         return mainModule;
     }
-	public static void main(String[] args)throws IOException{
+	public static void main(String[] args)throws IOException,InterruptedException{
 		if(args.length != 1){
 			System.err.println("<project directory> expected");
 			System.exit(2);
@@ -72,21 +72,25 @@ public final class FPL{
             Collections.addAll(flags,build.getProperty("flags","").strip().replaceAll("\\s+"," ").split(","));
             srcDir = Path.of(project + "/src");
             try{
-                for(var p:Files.walk(srcDir).toList()){
-                    if(p.toString().endsWith(".fpl")){
-                        var mod = new ModuleBlock(p,srcDir);
-                        modules.put(mod.getName(),mod);
-                        files.add(mod.getCPath());
-                    }
-                }
+               try(var stream = Files.walk(srcDir)){
+                   for(var p:stream.toList()){
+                       if(p.toString().endsWith(".fpl")){
+                           var mod = new ModuleBlock(p,srcDir);
+                           modules.put(mod.getName(),mod);
+                           files.add(mod.getCPath());
+                       }
+                   }
+               }
             }catch(IOException ex){
                 throw new CompilerException(ex.getMessage());
             }
             var path = Path.of(outputDirectory);
             if(Files.exists(path)){
-                for(var p:Files.walk(path).sorted(Comparator.reverseOrder()).toList()){
-                    Files.delete(p);
-                }
+              try(var stream = Files.walk(path)){
+                  for(var p:stream.sorted(Comparator.reverseOrder()).toList()){
+                      Files.delete(p);
+                  }
+              }
             }
             Files.createDirectory(path);
             var list = new ArrayList<>(modules.values());
@@ -156,10 +160,11 @@ public final class FPL{
                     w.write(data.code());
                 }
             }
-            var cmd = new String[2 + ccArgs.length + files.size()];
+            var i = 3;
+            var cmd = new String[i + ccArgs.length + files.size()];
             cmd[0] = "gcc\\bin\\gcc";
-            cmd[1] = "-o " + output;
-            var i = 2;
+            cmd[1] = "-o";
+            cmd[2] = output;
             for(var arg:ccArgs){
                 cmd[i] = arg;
                 i++;
