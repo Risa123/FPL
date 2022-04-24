@@ -74,7 +74,7 @@ main{
           }
         }
       }{
-        CompilerException:new id getLine;,id getTokenNum;,idS + " property doesn't exist"; throw "build.bs"
+        [ CompilerException:new id getLine;,id getTokenNum;,idS + " property doesn't exist"; ] throw "build.bs"
       }
     }
     tokenizer close

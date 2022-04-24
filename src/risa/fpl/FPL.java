@@ -39,7 +39,7 @@ public final class FPL{
     static String getMainModule(){
         return mainModule;
     }
-	public static void main(String[] args)throws IOException,InterruptedException{
+	public static void main(String[] args)throws IOException{
 		if(args.length != 1){
 			System.err.println("<project directory> expected");
 			System.exit(2);

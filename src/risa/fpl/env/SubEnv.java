@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 public class SubEnv extends AEnv{
   protected final AEnv superEnv;
-  private int toPointerVarID;
+  protected int toPointerVarID;
   private AccessModifier accessModifier = AccessModifier.PUBLIC;
   private final ArrayList<Modifier>modifiers = new ArrayList<>();
   protected final StringBuilder toPointerVars = new StringBuilder(),destructorCalls = new StringBuilder();
