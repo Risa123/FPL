@@ -99,6 +99,7 @@ public final class InstanceVar extends Function{
                         super.compile(b,env,it,id.getLine(),id.getTokenNum());
                     }
                 }
+                env.addInstanceVariable(varType,cID);
                 if(env instanceof ClassEnv e){
                     e.appendToImplicitConstructor(b + ";\n");
                 }else if(env instanceof ModuleEnv e){
@@ -112,7 +113,6 @@ public final class InstanceVar extends Function{
         }
         var instanceType = env instanceof ClassEnv e?e.getInstanceInfo():null;
         env.addFunction(id.getValue(),new Variable(varType,cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
-        env.addInstanceVariable(varType,cID);
         return null;
     }
 	public void compileCallInsideOfConstructor(StringBuilder builder, FnSubEnv env, ExpIterator it, int line, int charNum)throws CompilerException{

@@ -35,8 +35,7 @@ public final class Enum implements IFunction{
                 if(c.getField(t.getValue(),env) != null){
                     throw new CompilerException(t,"value " + t + " is already declared");
                 }
-                c.addField(t.getValue(),new ValueExp(type,Integer.toString(i)));
-                i++;
+                c.addField(t.getValue(),new ValueExp(type,Integer.toString(i++)));
             }else{
                 throw new CompilerException(t,"identifier expected");
             }

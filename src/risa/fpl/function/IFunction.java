@@ -43,7 +43,7 @@ public interface IFunction{
 		 if(isCIdChar(c,first)){
 		 	b.appendCodePoint(c);
 		 }else{
-			b.append(Character.getName(c).replace(' ','_')) ;
+			b.append(Character.getName(c).replace(' ','_'));
 		 }
 		 first = false;
 	  }

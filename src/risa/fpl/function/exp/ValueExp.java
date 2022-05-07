@@ -50,7 +50,7 @@ public class ValueExp extends AField{
 		var code = this.code;
 		if(!(this instanceof Variable) && field instanceof Function f && type instanceof InstanceInfo i){
 			code = i.getToPointerName() + '(' + code + ",&"+ env.getToPointerVarName(i) + ')';
-			f.calledOnReturnedInstance();
+			f.calledOnStringLiteral();
 		}
 		field.setPrevCode(prefix + code + selector);
 		return field.compile(builder,env,it,line,charNum);

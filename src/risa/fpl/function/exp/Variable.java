@@ -36,9 +36,14 @@ public final class Variable extends ValueExp{
 			  throw new CompilerException(line,charNum,"constant cannot be redefined");
 			}
 		    var assignmentOperator = false;
-		    if(type instanceof InstanceInfo && type.getField("=",env) instanceof Function f){
-		    	builder.append(f.getPointerVariant().getCname()).append("(&");
-		    	assignmentOperator = true;
+		    if(type instanceof InstanceInfo i){
+				if(type.getField("=",env) instanceof Function f){
+					builder.append(f.getPointerVariant().getCname()).append("(&");
+					assignmentOperator = true;
+				}
+				if(env.hasDestructorCallFor(getCname())){
+					env.addInstanceVariable(i,getCname());
+				}
 			}
 			writePrev(builder);
 			builder.append(code);

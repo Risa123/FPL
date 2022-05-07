@@ -24,7 +24,7 @@ public class Function extends AField implements ICalledOnPointer{
 	private final FunctionType type;
 	private int callStatus;
 	private boolean asFunctionPointer;
-	public static final int NO_STATUS = 0,CALLED_ON_POINTER = 1,CALLED_ON_RETURNED_INSTANCE = 2,CALLED_ON_INSTANCE_R_BY_FUNC = 3;
+	public static final int NO_STATUS = 0,CALLED_ON_POINTER = 1,CALLED_ON_STRING_LITERAL = 2,CALLED_ON_INSTANCE_R_BY_FUNC = 3;
 	private final String name;
 	private final ArrayList<FunctionVariant>variants = new ArrayList<>();
 	private final ArrayList<TemplateVariant>templateVariants = new ArrayList<>();
@@ -91,7 +91,7 @@ public class Function extends AField implements ICalledOnPointer{
             }
 		    if(callStatus != CALLED_ON_POINTER){
                 if(!(self instanceof InterfaceInfo) && getPrevCode() != null /*to prevent &this when calling method on implicit this*/){
-                    if(!self.isPrimitive() && callStatus != CALLED_ON_RETURNED_INSTANCE && callStatus != CALLED_ON_INSTANCE_R_BY_FUNC){
+                    if(!self.isPrimitive() && callStatus != CALLED_ON_STRING_LITERAL && callStatus != CALLED_ON_INSTANCE_R_BY_FUNC){
                         ref = true;
                         b.append("(&");
                     }
@@ -276,8 +276,8 @@ public class Function extends AField implements ICalledOnPointer{
         }
         return false;
     }
-    public final void calledOnReturnedInstance(){
-        callStatus = CALLED_ON_RETURNED_INSTANCE;
+    public final void calledOnStringLiteral(){
+        callStatus = CALLED_ON_STRING_LITERAL;
     }
     public final void prepareForDereference(){
         asFunctionPointer = true;
@@ -326,6 +326,9 @@ public class Function extends AField implements ICalledOnPointer{
            }
         }
         return null;
+    }
+    public final void calledOnInstanceRByFunc(){
+        callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
     }
     private void addVariantFromTemplate(TemplateVariant variant,SubEnv env,TypeInfo[]argsForTemplate,@SuppressWarnings("SameParameterValue") boolean asMethod){
         var mod = env.getModule();

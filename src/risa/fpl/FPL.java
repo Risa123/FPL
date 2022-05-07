@@ -39,7 +39,7 @@ public final class FPL{
     static String getMainModule(){
         return mainModule;
     }
-	public static void main(String[] args)throws IOException{
+	public static void main(String[] args){
 		if(args.length != 1){
 			System.err.println("<project directory> expected");
 			System.exit(2);
@@ -47,11 +47,7 @@ public final class FPL{
         var project = args[0];
 		try{
             var build = new Properties();
-            try{
-                build.load(Files.newInputStream(Path.of(project + "/build.properties")));
-            }catch(IOException ex){
-                throw new CompilerException(ex.getMessage());
-            }
+            build.load(Files.newInputStream(Path.of(project + "/build.properties")));
             var requiredKeys = Arrays.asList("mainModule","outputFile");
             for(var key:requiredKeys){
                 if(!build.containsKey(key)){
@@ -71,18 +67,14 @@ public final class FPL{
             mainModule = build.getProperty("mainModule");
             Collections.addAll(flags,build.getProperty("flags","").strip().replaceAll("\\s+"," ").split(","));
             srcDir = Path.of(project + "/src");
-            try{
-               try(var stream = Files.walk(srcDir)){
-                   for(var p:stream.toList()){
-                       if(p.toString().endsWith(".fpl")){
-                           var mod = new ModuleBlock(p,srcDir);
-                           modules.put(mod.getName(),mod);
-                           files.add(mod.getCPath());
-                       }
-                   }
-               }
-            }catch(IOException ex){
-                throw new CompilerException(ex.getMessage());
+            try(var stream = Files.walk(srcDir)){
+                for(var p:stream.toList()){
+                    if(p.toString().endsWith(".fpl")){
+                        var mod = new ModuleBlock(p,srcDir);
+                        modules.put(mod.getName(),mod);
+                        files.add(mod.getCPath());
+                    }
+                }
             }
             var path = Path.of(outputDirectory);
             if(Files.exists(path)){
@@ -166,15 +158,13 @@ public final class FPL{
             cmd[1] = "-o";
             cmd[2] = output;
             for(var arg:ccArgs){
-                cmd[i] = arg;
-                i++;
+                cmd[i++] = arg;
             }
             for(var file:files){
-                cmd[i] = file;
-                i++;
+                cmd[i++] = file;
             }
             System.err.print(new String(Runtime.getRuntime().exec(cmd).getErrorStream().readAllBytes()));
-		}catch (CompilerException e){
+		}catch(CompilerException|IOException e){
 			System.err.println(e.getMessage());
 			System.exit(3);
 		}

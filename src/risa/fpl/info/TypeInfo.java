@@ -182,10 +182,7 @@ public class TypeInfo{
      */
   @Override
   public boolean equals(Object o){
-      if(o == TypeInfo.CHAR && this instanceof NumberInfo n && n.getSize() == 1){
-          return true;
-      }
-      if(this == TypeInfo.CHAR && o instanceof NumberInfo n && n.getSize() == 1){
+      if((this == TypeInfo.CHAR && o instanceof NumberInfo n && n.getSize() == 1)||(o == TypeInfo.CHAR && this instanceof NumberInfo n1 && n1.getSize() == 1)){
           return true;
       }
       return o instanceof InterfaceInfo && ((TypeInfo)o).parents.contains(this) || this == OBJECT || this == o;

@@ -57,3 +57,5 @@ fix String copy constructor
 fix copy constructor
 fix onExitHandlers not called before return statements in main block
 fix parent constructor call C error
+fix flags and ccArgs with multiple whitespaces not parsed correctly
+fix [ ] expression C error

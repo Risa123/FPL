@@ -80,4 +80,7 @@ public class SubEnv extends AEnv{
           }
       }
  }
+ public boolean hasDestructorCallFor(String variableCname){
+      return destructorCalls.toString().contains(variableCname);
+ }
 }
