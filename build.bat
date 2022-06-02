@@ -1,10 +1,9 @@
 @echo off
 echo before continuing
-echo make sure there are no easy to find bugs
 echo do code inspection
 echo add changes to wiki
 echo add new keywords to fpl-udl
-echo make sure to are no other things to do
+echo check anything else you can think of
 echo build artifact
 pause
 rmdir FPL-other /s /q

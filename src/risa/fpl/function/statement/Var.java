@@ -14,7 +14,6 @@ import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
 
-@SuppressWarnings("ClassCanBeRecord")
 public final class Var implements IFunction{
     private final TypeInfo type;
     public Var(TypeInfo type){
@@ -102,6 +101,9 @@ public final class Var implements IFunction{
                             }
                         }
                         expType = exp.compile(buffer,env,it);
+                        if(decType != null && !decType.equals(expType)){
+                            throw new CompilerException(exp,decType + " cannot be implicitly converted to " + expType);
+                        }
                         expCode = buffer.toString();
                     }
                 }else{

@@ -59,3 +59,5 @@ fix onExitHandlers not called before return statements in main block
 fix parent constructor call C error
 fix flags and ccArgs with multiple whitespaces not parsed correctly
 fix [ ] expression C error
+fix undefined instance variable zero-reference error
+fix (type)(variable name)(exp) not checking types

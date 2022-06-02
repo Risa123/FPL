@@ -105,7 +105,7 @@ public class TypeInfo{
           requiredTypes.add(p.getType());
       }
   }
-  public final boolean notIn(Collection<TypeInfo> types){
+  public final boolean notIn(Collection<TypeInfo>types){
         for(var t:types){
             if(t == this){
                 return false;
@@ -177,9 +177,9 @@ public class TypeInfo{
   public String ensureCast(TypeInfo to,String expCode,boolean comesFromPointer,SubEnv env){
       return ensureCast(to,expCode,comesFromPointer,true,env);
   }
-    /**
-     *checks if type can be implicitly  converted or is  this one
-     */
+  /**
+   *checks if type can be implicitly  converted or is  this one
+   **/
   @Override
   public boolean equals(Object o){
       if((this == TypeInfo.CHAR && o instanceof NumberInfo n && n.getSize() == 1)||(o == TypeInfo.CHAR && this instanceof NumberInfo n1 && n1.getSize() == 1)){
