@@ -55,6 +55,9 @@ public final class TryCatchFinally extends ABlock{
                         }else{
                             throw new CompilerException(exType,"instance type expected");
                         }
+                        if(exDataNames.contains(exInfo.getDataName())){
+                            throw new CompilerException(exType,"duplicate catch block");
+                        }
                         postEntry.append(exInfo.getDataName()).append(")");
                         block = it.nextList();
                         exDataNames.add(exInfo.getDataName());

@@ -35,10 +35,10 @@ final class Tokenizer{
     fn void token String value TokenType type{
      tokens add Token:new line,tokenNum,value,type
      if type == TokenType:NEW_LINE{
-       this line ++
-       this tokenNum = 1
+       line ++
+       tokenNum = 1
      }{
-       this tokenNum ++
+       tokenNum ++
      }
     }
     fn char read{
@@ -53,86 +53,83 @@ final class Tokenizer{
     fn void valueToken ArrayList;char;* b TokenType type{
       var p char:alloc[] b getSize
       memoryCopy b getArray;cast byte*,p cast byte*,b getSize
-      String id init p,b getSize;cast uint,true
-      token id,type
+      token String:new p,b getSize;cast uint,true;,type
     }
     fn void prepare{
       if tokens getSize; == i{
-           tokens clear
-           i = 0
-      }
-      if tokens isEmpty{
-       while ready{
-         read
-         if c == $({
-            while ready; && read; == $){}
-          }if c == $#{
-            while ready; && read; == $\n{}
-          }if c == $${
-           if ready; !{
+         tokens clear
+         i = 0
+         while ready{
+           read
+           if c == $({
+             while ready; && read; == $){}
+           }if c == $#{
+             while ready; && read; == $\n{}
+           }if c == $${
+            if ready; !{
               CompilerException:throw line,tokenNum,"char expected"
-            }
-            ArrayList;char; b init
-            b add $'
-            var firstChar read
-            if firstChar == $\\{
-              if ready; !{
-               CompilerException:throw line,tokenNum,"character expected"
-              }
-               if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $0{
-                  b add $\\
-                  b add c
-               }if c == $s{
-                 b add $\s
-               }{
-                CompilerException:throw line,tokenNum,"no special character called " + c toString
-               }
-              }if firstChar isWhitespace{
-                CompilerException:throw line,tokenNum,"$ cannot be followed by whitespace"
-               }{
-                b add firstChar
-               }
-               b add $'
-               b add $\0
-               valueToken b ref,TokenType:CHAR_LIT
+             }
+             ArrayList;char; b init
+             b add $'
+             var firstChar read
+             if firstChar == $\\{
+                if ready; !{
+                   CompilerException:throw line,tokenNum,"character expected"
+                }
+                if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $0{
+                    b add $\\
+                    b add c
+                }if c == $s{
+                   b add $\s
+                }{
+                 CompilerException:throw line,tokenNum,"no special character called " + c toString
+                }
+               }if firstChar isWhitespace{
+                   CompilerException:throw line,tokenNum,"$ cannot be followed by whitespace"
+                 }{
+                  b add firstChar
+                 }
+              b add $'
+              b add $\0
+              valueToken b ref,TokenType:CHAR_LIT
              }if c == $\n{
-               token "\n",TokenType:NEW_LINE
-               break
+                 token "\n",TokenType:NEW_LINE
+                 break
              }if c == ${{
-               token "{",TokenType:BEGIN_BLOCK
+                 token "{",TokenType:BEGIN_BLOCK
              }if c == $}{
-               token "}",TokenType:END_BLOCK
-             }if c == $"{
-              ArrayList;char; b init
-              b add $"
-              while ready; && read; != $"{
-                if c == $\n{
-                  CompilerException:throw line,tokenNum,"expected \""
-                }
-                if c == $\\{
-                  b add $\\
-                  if ready; !{
-                    CompilerException:throw line,tokenNum,"character expected"
-                  }
-                  read
-                }
-                b add c
-              }
+                 token "}",TokenType:END_BLOCK
+              }if c == $"{
+                  ArrayList;char;b init
+                  b add $"
+                  while ready; && read; != $"{
+                     if c == $\n{
+                      CompilerException:throw line,tokenNum,"expected \""
+                     }
+                   if c == $\\{
+                      b add $\\
+                      if ready; !{
+                         CompilerException:throw line,tokenNum,"character expected"
+                      }
+                      read
+                      }
+                      b add c
+                    }
               b add $"
               valueToken b ref,TokenType:STRING
              }if c isWhitespace;!{
-               ArrayList;char;b init
-               b add c
-               while ready{
-                 read
-                 if isSeparator{
-                  readNext = false
-                  break
-                 }
+                 ArrayList;char;b init
                  b add c
+                 while ready{
+                    read
+                    if isSeparator{
+                       readNext = false
+                       break
+                   }
+                   b add c
                }
                valueToken b ref,TokenType:ID
-             }
+              }
             }
          }
     }

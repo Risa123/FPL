@@ -160,7 +160,7 @@ public final class Var implements IFunction{
                 if(env.hasModifier(Modifier.NATIVE)){
                     onlyDeclared = false;
                 }
-                if(env instanceof FnSubEnv e && varType instanceof InterfaceInfo i){
+                if(env instanceof FnSubEnv e && varType instanceof InterfaceInfo){
                     e.addInterfaceFreeCall(cID);
                 }
                 env.addFunction(id.getValue(),new Variable(varType,cID,onlyDeclared,id.getValue(),constant,instanceType,env.getAccessModifier()));

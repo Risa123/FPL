@@ -61,3 +61,4 @@ fix flags and ccArgs with multiple whitespaces not parsed correctly
 fix [ ] expression C error
 fix undefined instance variable zero-reference error
 fix (type)(variable name)(exp) not checking types
+fix duplicate catch block check added

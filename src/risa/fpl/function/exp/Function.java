@@ -114,13 +114,13 @@ public class Function extends AField implements ICalledOnPointer{
             }else{
                 b.append(',');
             }
-            var isI = array[i] instanceof InstanceInfo instance && instance.getCopyConstructorName() != null && !returnedData.get(i).code.startsWith("static_std_lang_String_new0");
-            isI = isI && !(array[i] instanceof InstanceInfo  instance && returnedData.get(i).code.startsWith(instance.getCopyConstructorName()));
-            if(isI){
+            var callCopy = array[i] instanceof InstanceInfo instance && instance.getCopyConstructorName() != null && !returnedData.get(i).code.startsWith("static_std_lang_String_new0");
+            callCopy = callCopy && !(array[i] instanceof InstanceInfo instance && returnedData.get(i).code.startsWith(instance.getCopyConstructorName()));
+            if(callCopy){
                 b.append(((InstanceInfo)array[i]).getCopyConstructorName()).append("AndReturn(");
             }
             b.append(array[i].ensureCast(variant.getArgs()[i],returnedData.get(i).code,array[i] instanceof PointerInfo,returnedData.get(i).notReturnedByFunction,env));
-            if(isI){
+            if(callCopy){
                 b.append(')');
             }
         }
