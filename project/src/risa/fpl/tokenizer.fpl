@@ -77,8 +77,8 @@ final class Tokenizer{
                    CompilerException:throw line,tokenNum,"character expected"
                 }
                 if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $0{
-                    b add $\\
-                    b add c
+                   b add $\\
+                   b add c
                 }if c == $s{
                    b add $\s
                 }{
@@ -130,8 +130,8 @@ final class Tokenizer{
                }
                valueToken b ref,TokenType:ID
               }
-            }
-         }
+           }
+        }
     }
     fn bool isSeparator = c isWhitespace; ||  c == ${; || c == $}; || c == $; #char ;
  }

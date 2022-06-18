@@ -19,8 +19,7 @@ public final class TryCatchFinally extends ABlock{
     @Override
     public TypeInfo compile(StringBuilder  builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         env.checkModifiers(line,tokenNum);
-        var postEntry = new StringBuilder("{\nchar exceptionCaught = 0;\n");
-        postEntry.append("if(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context)){\n");
+        var postEntry = new StringBuilder("{\nchar exceptionCaught = 0;\nif(!__builtin_setjmp(_std_lang_currentThread->_currentEHEntry->_context)){\n");
         var tryEnv = new FnSubEnv(env);
         tryEnv.compileBlock(it.nextList(),postEntry,it);
         postEntry.append("}\n");
@@ -58,7 +57,7 @@ public final class TryCatchFinally extends ABlock{
                         if(exDataNames.contains(exInfo.getDataName())){
                             throw new CompilerException(exType,"duplicate catch block");
                         }
-                        postEntry.append(exInfo.getDataName()).append(")");
+                        postEntry.append(exInfo.getDataName()).append(')');
                         block = it.nextList();
                         exDataNames.add(exInfo.getDataName());
                     }else{
@@ -67,8 +66,7 @@ public final class TryCatchFinally extends ABlock{
                     if(!exInfo.isException()){
                         throw new CompilerException(nextExp,"invalid exception");
                     }
-                    postEntry.append("{\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\n");
-                    postEntry.append("exceptionCaught = 1;\n");
+                    postEntry.append("{\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\nexceptionCaught = 1;\n");
                     postEntry.append(exInfo.getCname());
                     postEntry.append(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,(_Exception*)&ex);\n");
                     var blockEnv = new FnSubEnv(env);
@@ -105,7 +103,7 @@ public final class TryCatchFinally extends ABlock{
             }else{
                 builder.append(',');
             }
-            builder.append("&").append(name);
+            builder.append('&').append(name);
         }
         builder.append("};\n_std_lang_Thread_addEHEntry0(_std_lang_currentThread,types,").append(exDataNames.size()).append(");\n}\n");
         builder.append(postEntry);
