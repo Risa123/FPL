@@ -7,9 +7,9 @@ class String{
     char* p
     uint len
     bool allocated
-    fn void checkIndex uint len uint index{
+    fn void checkIndex uint index{
        if index >= len{
-           Exception:throw "index out of bounds:" + integerToString index
+           IllegalArgumentException:throw "index out of bounds:" + integerToString index
         }
      }
   }
@@ -24,11 +24,14 @@ class String{
     }
   }
   fn void set uint index char c{
-    checkIndex len,index
+    if allocated !{
+      IllegalStateException:throw "constant string cannot be mutated"
+    }
+    checkIndex index
     p set index,c
   }
   fn char get uint index{
-    checkIndex len,index
+    checkIndex index
     return p get index
   }
   fn bool == String str{
@@ -260,12 +263,21 @@ class Exception{
      memoryCopy this cast byte*,currentThread exception cast byte*,getObjectSize
      contextRestore target context
    }
-   #DO NOT REMOVE used in try-catch-finally
+   #do not remove used in try-catch-finally
    internal fn void copyAndFree Exception* target{
        memoryCopy this cast byte*,target cast byte*,getObjectSize
        target message = message
-       this free
+       this free #do not remove "this" part
    }
+}
+class NumberFormatException Exception{
+   this String message:super message
+}
+class IllegalArgumentException Exception{
+  this String message:super message
+}
+class IllegalStateException Exception{
+  this String message:super message
 }
 fpointer void ExceptionHandlerType Exception* ex
 class Thread{
@@ -445,12 +457,6 @@ fn String floatingPointToString double this int precision{
      fPart *= 10
    }
    return sign + integerToString iPart; + "." + integerToString fPart cast long
-}
-class NumberFormatException Exception{
-   this String message:super message
-}
-class IllegalArgumentException Exception{
-  this String message:super message
 }
 fn double floatingPointParse String str{
     if str isEmpty{

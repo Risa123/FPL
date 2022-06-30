@@ -48,14 +48,6 @@ void* stderr __acrt_iob_func STDERR_INDEX
 int IO_FULL_BUFFER 0x0000 #_IOFLBF
 int IO_LINE_BUFFER 0x0040 #_IOLBF
 int IO_NO_BUFFER 0x0004 #_IONBF
-alias execute system
-alias fileClose fclose
-alias fileOpen fopen
-fn memory fileRead void* file byte* p memory size = fread p cast void*,size,1,file
-fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1,file
-alias fileEOF feof
-alias fileFlush fflush
-fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
 compIf arch x64{
  typedef Context [] 32 memory
 }
@@ -66,7 +58,7 @@ compIf arch ia64{
  typedef Context [] 32 memory
 }
 fn void contextRestore Context context{
-  native fn void __builtin_longjmp Context context int value
+  native fn void __builtin_longjmp Context context int value #declared inside to prevent conflicting types warning
   return __builtin_longjmp context,1
 }
 fn void* directoryOpen char* name{
@@ -82,7 +74,7 @@ fn void;T; free[] T* this memory len{
  }
  free this cast void*
 }
-fn int getCStringLen char* str{
+fn uint getCStringLen char* str{
    var len 0
    while str get len; != $\0{
     len ++
@@ -90,6 +82,14 @@ fn int getCStringLen char* str{
    return len
 }
 fn void free[] void* p memory len = free p
+fn char* getErrNoMessage = getErrorMessage _errno; drf
+private var S_IFDIR 0x4000;S_IFREG 0x8000;S_IFMT 0xf000
+fn bool isDirectory FileStatus* status = [ status mode & S_IFMT ] == S_IFDIR
+fn bool isFile FileStatus* status = [ status mode & S_IFMT ] == S_IFREG
+fn memory getFileSize FileStatus* status = status size
+fn memory fileRead void* file byte* p memory size = fread p cast void*,size,1,file
+fn memory fileWrite void* file byte* p memory size = fwrite p cast void*,size,1,file
+fn int fileSetBuffer void* file byte* buffer int mode memory size = setvbuf file,buffer,mode,size
 alias directoryRead readdir
 alias directoryClose closedir
 alias directoryTell telldir
@@ -98,9 +98,9 @@ alias directoryReset rewinddir
 alias fileError ferror
 alias fileStatus stat
 alias getEnv getenv
-fn char* getErrorMessage int errnum = strerror errnum
-fn char* getErrNoMessage = getErrorMessage _errno; drf
-private var S_IFDIR 0x4000;S_IFREG 0x8000;S_IFMT 0xf000
-fn bool isDirectory FileStatus* status = [ status mode & S_IFMT ] == S_IFDIR
-fn bool isFile FileStatus* status = [ status mode & S_IFMT ] == S_IFREG
-fn memory getFileSize FileStatus* status = status size
+alias getErrorMessage strerror
+alias fileEOF feof
+alias fileFlush fflush
+alias execute system
+alias fileClose fclose
+alias fileOpen fopen
