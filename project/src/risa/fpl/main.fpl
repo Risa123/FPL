@@ -16,8 +16,9 @@ private{
    fn String readValue Tokenizer* tokenizer{
       var value tokenizer next
       if value getType; != TokenType:STRING{
-       CompilerException:new value getLine;,value getTokenNum;,"String literal expected";throw "build.bs"
+       CompilerException:new value getLine;,value getTokenNum;,"string literal expected";throw "build.bs"
       }
+      print value getValue
       if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
         CompilerException:new value getLine;,value getTokenNum;,"end of line expected";throw "build.bs"
       }
@@ -45,6 +46,7 @@ main{
    return 2 #1 is reserved for exceptions
  }
  try{
+ (
     var project args get 1
     FileReader reader init project + "/build.bs"
     Tokenizer tokenizer init reader
@@ -84,9 +86,17 @@ main{
     if noOutputFile{
       CompilerException:new "no output file";throw "build.bs"
     }
-    IRWriter writer init FileWriter:new outputFile substring 1,outputFile getLength; - 2#remove parenthesis
+    IRWriter writer init FileWriter:new outputFile substring 1,outputFile getLength; - 2#remove quotation marks
     writer close
     compileDirectory project + "/src";,""
+    )
+    FileReader reader init "test/build.bs"
+    Tokenizer tokenizer init reader
+    while tokenizer hasNext{
+       tokenizer next;getValue;getLength
+       print "x"
+    }
+    tokenizer close
  }catch CompilerException{
    stderr writeString ex getMessage
    return 3

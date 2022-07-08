@@ -170,8 +170,6 @@ class String{
     }
     return true
   }
-  fn bool startsWith char c = len != 0; && [ p get 0; == c ]
-  fn bool endsWith char c = len != 0; && [ p get len - 1; == c ]
   fn String substring uint beginIndex uint endIndex{
     if endIndex < beginIndex{
       IllegalArgumentException:throw "endIndex must be bigger than beginIndex"
@@ -210,6 +208,8 @@ class String{
     }
     return [ beginIndex == 0;&& endIndex == len - 1 ] ? this drf,substring beginIndex,endIndex
   }
+  fn bool startsWith char c = len != 0; && [ p get 0; == c ]
+  fn bool endsWith char c = len != 0; && [ p get len - 1; == c ]
   fn bool isAllocated = allocated
   fn String substring uint endIndex = substring 0,endIndex
   fn bool equalsIgnoreCase String str = toLowerCase; == str toLowerCase
@@ -366,7 +366,6 @@ fn bool isUpperCase char this{
   var c this cast int
   return c <= 90; || c >= 65
 }
-fn bool isBlank char this = this == $\s ; || this == $\t
 fn bool isHexDigit char this{
   var c this cast int
   return isDigit this; || c >= 65; && c <= 70; || c >= 97; && c <= 102
@@ -379,6 +378,7 @@ fn bool isGraph char this = isPrint this; || this == $\s
 fn bool isPunct char this = isGraph this; && isLetter this
 fn char toLowerCase char this = isUpperCase this; ? $a cast byte + this cast byte  - $A,this
 fn char toUpperCase char this = isLowerCase this; ? $A cast byte + this cast byte - $a,this
+fn bool isBlank char this = this == $\s ; || this == $\t
 fn String charToString char this{
   String str init char:alloc[] 1,1,true
   str set 0,this
@@ -420,7 +420,7 @@ fn long integerParse String str{
   if str isEmpty{
     NumberFormatException:throw "invalid number " + str
   }
-  long value 0
+  var value 0L
   var sign 1
   for i,str getLength{
      var c str get i

@@ -18,7 +18,7 @@ added else and elseif blocks to compile time if
 char.isUpper renamed to isUpperCase
 char.isLower renamed to isLowerCase
 char.toUpper renamed to toUpperCase
-char.toLower rename to toUpperCase
+char.toLower renamed to toUpperCase
 upgraded to jdk 18
 tertiary operator added
 constructors,destructors and copy constructors can now be one line

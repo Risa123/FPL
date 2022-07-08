@@ -67,7 +67,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                     throw new CompilerException(typeID,"primitive types cannot be inherited from");
                 }
                 if(!type.getParents().contains(parentType)){
-                    if(parentType instanceof InterfaceInfo i){
+                    if(parentType instanceof InterfaceInfo){
                         type.addParent(parentType);
                     }else{
                         if(primaryParent != null){
