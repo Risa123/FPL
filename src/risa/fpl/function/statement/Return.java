@@ -38,7 +38,7 @@ public final class Return implements IFunction{
 					expCode = "tmp";
 					builder.append(returnType.getCname()).append(" tmp=");
 					if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && ((Atom)list.get(0)).getType() != AtomType.STRING){
-						code = i.getCopyConstructorName()+ "AndReturn("+ code + ')';
+						code = i.getCopyConstructorName() + "AndReturn("+ code + ')';
 					}
 					builder.append(code).append(";\n");
 				}
@@ -52,7 +52,7 @@ public final class Return implements IFunction{
 		}
 		subEnv.compileDestructorCallsFromWholeFunction(builder);
 		if(subEnv.isInMainBlock()){
-			builder.append("void _std_system_callOnExitHandlers();\n_std_system_callOnExitHandlers0();\n");//args is from main module
+			builder.append("_std_system_callOnExitHandlers0();\n");//args is from main module
 		}
 		builder.append("return ").append(expCode);
 		return TypeInfo.VOID;

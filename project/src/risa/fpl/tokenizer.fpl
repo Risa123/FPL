@@ -7,25 +7,25 @@ use{
 enum TokenType NEW_LINE ID CHAR_LIT END_BLOCK BEGIN_BLOCK STRING
 final class Token{
   private const{
-   int line;tokenNum
+   uint line;tokenNum
    String value
    TokenType type
   }
-  this int line int tokenNum String value TokenType type{
+  this uint line uint tokenNum String value TokenType type{
     this line = line
     this tokenNum = tokenNum
     this value = value
     this type = type
   }
-  fn int getLine = line
-  fn int getTokenNum = tokenNum
+  fn uint getLine = line
+  fn uint getTokenNum = tokenNum
   fn String getValue = value
   fn TokenType getType = type
   fn String toString = value
 }
 final class Tokenizer{
  private{
-    int line 1;tokenNum 1;i 0
+    uint line 1;tokenNum 1;i 0
     char c
     bool readNext true
     const{

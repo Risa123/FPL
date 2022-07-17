@@ -154,15 +154,22 @@ public class Fn extends AFunctionBlock{
                     fnEnv.addInterfaceFreeCall(IFunction.toCId(arg.getKey()));
                 }
             }
-			if(oneLine && returnType != TypeInfo.VOID){
-			    b.append("return ");
-            }
 			var code = new StringBuilder();
 			var fReturnType = codeExp.compile(code,fnEnv,it);
+            if(oneLine && returnType != TypeInfo.VOID){
+                b.append("return ");
+                var a = (Atom)(codeExp instanceof List l?l.getExps().get(0):codeExp);
+                if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && a.getType() != AtomType.STRING){
+                    b.append(i.getCopyConstructorName()).append("AndReturn(").append(code).append(')');
+                }else{
+                    b.append(code);
+                }
+            }else{
+                b.append(code);
+            }
 			if(oneLine && fnEnv.getReturnType() != TypeInfo.VOID && !fReturnType.equals(fnEnv.getReturnType())){
 			    throw new CompilerException(codeExp,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
             }
-			b.append(code);
 		    if(oneLine){
                 b.append(";\n");
             }

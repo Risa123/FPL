@@ -93,8 +93,8 @@ main{
     FileReader reader init "test/build.bs"
     Tokenizer tokenizer init reader
     while tokenizer hasNext{
-       tokenizer next;getValue;getLength
-       print "x"
+       var token tokenizer next
+       print token getType;toString
     }
     tokenizer close
  }catch CompilerException{
