@@ -111,10 +111,12 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         return "void " + header + instanceInfo.getCname() + "* this){\n" + code + getImplicitConstructorCode() + "}\n";
     }
     public void addMethod(Function method,String code){
-         if(method.getAccessModifier() == AccessModifier.PRIVATE && !hasModifier(Modifier.NATIVE)){
-              appendFunctionCode("static ");
-         }
-        appendFunctionCode(code);
+       if(method.getType() != FunctionType.ABSTRACT){
+           if(method.getAccessModifier() == AccessModifier.PRIVATE && method.getType() != FunctionType.NATIVE){
+               appendFunctionCode("static ");
+           }
+           appendFunctionCode(code);
+       }
     }
     public void addConstructor(String code,String argsCode,TypeInfo[]args,String parentConstructorCall,int line){
         var constructor = instanceInfo.getConstructor();

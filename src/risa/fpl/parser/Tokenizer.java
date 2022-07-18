@@ -25,8 +25,14 @@ public final class Tokenizer implements AutoCloseable{
 	  private Atom nextPrivate()throws IOException,CompilerException{
 		  read();
 		  if(c == '('){
-			  //noinspection StatementWithEmptyBody
-			  while(hasNext() && read() != ')');
+			  while(hasNext()){
+				  if(read() == '('){
+					  //noinspection StatementWithEmptyBody
+					  while(hasNext() && read() != ')');
+				  }else if(c == ')'){
+					  break;
+				  }
+			  }
 		  }else if(c == '#'){
 			  //noinspection StatementWithEmptyBody
 			  while(hasNext() && read() != '\n');
@@ -55,7 +61,7 @@ public final class Tokenizer implements AutoCloseable{
                   }
 			      builder.appendCodePoint(firstChar);
               }
-			  builder.append("'");
+			  builder.append("'");//not possible to do as one character
 			  return new Atom(line,tokenNum,builder.toString(),AtomType.CHAR);
 		  }else if(c == '+' || c == '-' || Character.isDigit(c)){
 			  var signed = false;

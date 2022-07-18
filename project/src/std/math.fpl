@@ -1,9 +1,16 @@
 const var E 2.718281828459045;PI 3.141592653589793
-class Random{
-  private ulong seed
+abstract class ARandom{
+  fn bool nextBool = nextInt 2; == 1
+  (#returns a pseudorandom number between 0 (inclusive) and bounnd (exclusive).)
+  abstract fn uint nextInt uint bound
+}
+class Random ARandom{
+  protected ulong seed
   this ulong seed = this seed = seed
-  fn uint nextInt uint bound{
+  override fn uint nextInt uint bound{
     seed = seed * 1103515245 + 12345
-    return  seed / 65536 % bound;cast uint
+    return seed / 65536 % bound;cast uint
   }
+  fn void setSeed ulong seed = this seed = seed
+  fn ulong getSeed = seed
 }

@@ -158,6 +158,7 @@ public class Fn extends AFunctionBlock{
 			var fReturnType = codeExp.compile(code,fnEnv,it);
             if(oneLine && returnType != TypeInfo.VOID){
                 b.append("return ");
+                //noinspection ConstantConditions
                 var a = (Atom)(codeExp instanceof List l?l.getExps().get(0):codeExp);
                 if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && a.getType() != AtomType.STRING){
                     b.append(i.getCopyConstructorName()).append("AndReturn(").append(code).append(')');

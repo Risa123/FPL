@@ -26,8 +26,9 @@ final modifier for classes added
 one-line constructor can now also invoke all constructor variants not just the once's from parent class using super and this
 added super variable to methods
 String.get and String.set throw IllegalArgumentException instead of Exception
-getCStringLen return type changed form int to uint
-added IllegalStateException
+std.lang.getCStringLen return type changed form int to uint
+added std.lang.IllegalStateException
+added std.math.ARandom
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
@@ -65,3 +66,5 @@ fix [ ] expression C error
 fix undefined instance variable zero-reference error
 fix (type)(variable name)(exp) not checking types
 fix duplicate catch block check added
+fix ) inside multiline comment
+fix abstract method C error
