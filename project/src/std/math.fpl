@@ -1,7 +1,7 @@
 const var E 2.718281828459045;PI 3.141592653589793
 abstract class ARandom{
   fn bool nextBool = nextInt 2; == 1
-  (#returns a pseudorandom number between 0 (inclusive) and bounnd (exclusive).)
+  (#returns a pseudorandom number between 0 (inclusive) and bound (exclusive).)
   abstract fn uint nextInt uint bound
 }
 class Random ARandom{

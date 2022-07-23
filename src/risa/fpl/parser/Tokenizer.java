@@ -10,8 +10,8 @@ public final class Tokenizer implements AutoCloseable{
 	  private int line = 1,tokenNum = 1,c;
 	  private boolean readNext = true,forceEnd;
 	  private static final int UBYTE_MAX = 255,USHORT_MAX = 65_535;
-	  private static final long UINT_MAX = 4_294_967_295L,LONG_MIN = -2147483646L;
-	  private static final long LONG_MAX = 2147483647L;
+	  //C long differs from java one
+	  private static final long UINT_MAX = 4_294_967_295L,LONG_MIN = -2147483646L,LONG_MAX = 2147483647L;
 	  public Tokenizer(Reader reader){
 		  this.reader = reader;
 	  }
@@ -22,7 +22,7 @@ public final class Tokenizer implements AutoCloseable{
 	  public boolean hasNext()throws IOException{
 		  return !forceEnd && (reader.ready() || !readNext);
 	  }
-	  private Atom nextPrivate()throws IOException,CompilerException{
+	  private Atom internalNext()throws IOException,CompilerException{
 		  read();
 		  if(c == '('){
 			  while(hasNext()){
@@ -39,30 +39,30 @@ public final class Tokenizer implements AutoCloseable{
 			  readNext = c != '\n';
 		  }else if(c == '$'){
 			  if(!hasNext()){
-				  throw new CompilerException(line,tokenNum,"char expected");
+				  error("char expected");
 			  }
 			  var builder = new StringBuilder("'");
 			  var firstChar = read();
 			  if(firstChar > 127){
-			  	throw new CompilerException(line,tokenNum,"invalid ascii char " + Character.toString(firstChar));
+			  	error("invalid ascii char " + Character.toString(firstChar));
 			  }
 			  if(firstChar == '\\' && hasNext()){
 			      read();
                   switch(c){
                       case 't','n','f','b','r','\\','0'->builder.append('\\').appendCodePoint(c);
                       case 's'->builder.append(' ');
-                      default->throw new CompilerException(line,tokenNum,"no special character " + Character.toString(c));
+                      default->error("no special character " + Character.toString(c));
                   }
 			  }else if(Character.isWhitespace(firstChar)){
-			      throw new CompilerException(line,tokenNum,"$ cannot be followed by whitespace");
+			      error("$ cannot be followed by whitespace");
               }else{
 			      if(c == '\''){
 			          builder.append('\\');
                   }
 			      builder.appendCodePoint(firstChar);
               }
-			  builder.append("'");//not possible to do as one character
-			  return new Atom(line,tokenNum,builder.toString(),AtomType.CHAR);
+			  //not possible to append as one character
+			  return atom(builder.append("'").toString(),AtomType.CHAR);
 		  }else if(c == '+' || c == '-' || Character.isDigit(c)){
 			  var signed = false;
 			  var hex = false;
@@ -77,7 +77,7 @@ public final class Tokenizer implements AutoCloseable{
                           b.appendCodePoint(c);
 						  if(!Character.isValidCodePoint(c)){
 							  forceEnd = true;
-							  return new Atom(line,tokenNum,"",AtomType.NEW_LINE);
+							  return atom("",AtomType.NEW_LINE);
 						  }
 						  while(hasNext() && notSeparator(read())){
 							  b.appendCodePoint(c);
@@ -85,7 +85,7 @@ public final class Tokenizer implements AutoCloseable{
                       }else{
                           readNext = false;
                       }
-                      return new Atom(line,tokenNum,b.toString(),AtomType.ID);
+                      return atom(b.toString(),AtomType.ID);
                   }
 				  signed = true;
 			  }else if(c == '0'){
@@ -110,7 +110,7 @@ public final class Tokenizer implements AutoCloseable{
 				signed = true;
                 while(hasNext() && notSeparator(read())){
 					if(hasTypeChar){
-						throw new CompilerException(line,tokenNum,"number is expected to end after type char");
+						error("number is expected to end after type char");
 					}
 					switch(c){
 						case 'B'->{
@@ -131,7 +131,7 @@ public final class Tokenizer implements AutoCloseable{
 						}
 						case 'U'->{
 							if(!signed){
-								throw new CompilerException(line,tokenNum,"duplicate U");
+								error("duplicate U");
 							}
 							signed = false;
 						}
@@ -146,8 +146,8 @@ public final class Tokenizer implements AutoCloseable{
 							b.append('D');
 						}
 						default->{
-							if (!signed) {
-								throw new CompilerException(line,tokenNum,"type char expected");
+							if (!signed){
+								error("type char expected");
 							}
 							b.appendCodePoint(c);
 						}
@@ -157,14 +157,14 @@ public final class Tokenizer implements AutoCloseable{
 				  var notationStart = false;
 				  while(hasNext() && notSeparator(read())){
 					  if(hasTypeChar){
-						  throw new CompilerException(line,tokenNum,"number is expected to end after type char");
+						  error("number is expected to end after type char");
 					  }
 					  if(Character.isDigit(c)){
 						  b.appendCodePoint(c);
 						  hasDigitSeparator = false;
 					  }else if(c == '.'){
 						  if(floatingPoint){
-							  throw new CompilerException(line,tokenNum,"this number already has floating point");
+							  error("this number already has floating point");
 						  }
 						  floatingPoint = true;
 						  type = AtomType.DOUBLE;
@@ -194,7 +194,7 @@ public final class Tokenizer implements AutoCloseable{
 						  b.append('D');
 					  }else if(c == 'e'){
                         if(hasScientificNotation){
-							throw new CompilerException(line,tokenNum,"this number already has scientific notation");
+							error("this number already has scientific notation");
 						}else{
 							hasScientificNotation = true;
 						}
@@ -203,23 +203,23 @@ public final class Tokenizer implements AutoCloseable{
 						notationStart = true;
 					  }else if(c == '_'){
 						  if(hasDigitSeparator){
-							  throw new CompilerException(line,tokenNum,"duplicate _");
+							  error("duplicate _");
 						  }
 						  hasDigitSeparator = true;
 					  }else if(c == '+' || c == '-'){
 						  if(notationStart){
 							  notationStart = false;
 						  }else{
-							  throw new CompilerException(line,tokenNum,"this is only allowed at start of scientific notation");
+							  error("this is only allowed at start of scientific notation");
 						  }
 						  b.appendCodePoint(c);
 					  }else{
-						  throw new CompilerException(line,tokenNum,"unexpected character " + Character.toString(c) + ",code:" + c);
+						  error("unexpected character " + c + ",printed:" + Character.toString(c));
 					  }
 				  }
 			  }
 			  if(hasDigitSeparator){
-				  throw new CompilerException(line,tokenNum,"_ must be followed by digit");
+				  error("_ must be followed by digit");
 			  }
 			  if(!hasTypeChar){
 				  readNext = false;
@@ -233,94 +233,91 @@ public final class Tokenizer implements AutoCloseable{
 					 try{
 						 Float.parseFloat(value);
 					 }catch(NumberFormatException e){
-						 throw new CompilerException(line,tokenNum,"float number expected");
+						 error("float number expected");
 					 }
 				  }else if(type == AtomType.DOUBLE){
 					  try{
 						  Double.parseDouble(value);
 					  }catch(NumberFormatException e){
-						  throw new CompilerException(line,tokenNum,"double number expected");
+						  error("double number expected");
 					  }
 				  }
 			  }else{
 				  if(type != AtomType.ULONG){
-					  long n;
+					  long n = 0;
 					  try{
 						  n = hex?Long.parseLong(value,16):Double.valueOf(value).longValue();
 					  }catch(NumberFormatException e){
-						  throw new CompilerException(tokenNum,line,"invalid number " + (hex?"0x" + value:value));
+						  error("invalid number " + (hex?"0x" + value:value));
 					  }
 					  if(type == AtomType.SBYTE && (n < Byte.MIN_VALUE || n > Byte.MAX_VALUE)){
-						  throw new CompilerException(line,tokenNum,"sbyte numbere expected");
+						  error("sbyte numbere expected");
 					  }else if(type == AtomType.SSHORT && (n < Short.MIN_VALUE || n > Short.MAX_VALUE)){
-						  throw new CompilerException(line,tokenNum,"sshort number expected");
+						  error("sshort number expected");
 					  }else if(type == AtomType.SINT && (n < Integer.MIN_VALUE || n > Integer.MAX_VALUE)){
-						  throw new CompilerException(line,tokenNum,"sint number expected");
+						  error("sint number expected");
 					  }else if(type == AtomType.UBYTE &&  n > UBYTE_MAX){
-						  throw new CompilerException(line,tokenNum,"ubyte number expected");
+						  error("ubyte number expected");
 					  }else if(type == AtomType.USHORT && n > USHORT_MAX){
-						  throw new CompilerException(line,tokenNum,"ushort number expected");
+						  error("ushort number expected");
 					  }else if(type == AtomType.UINT && n > UINT_MAX){
-						  throw new CompilerException(line,tokenNum,"uint number expected");
+						  error("uint number expected");
 					  }else if(type == AtomType.SLONG && (n < LONG_MIN || n > LONG_MAX)){
-						  throw new CompilerException(line,tokenNum,"slong number expected");
+						  error("slong number expected");
 					  }
 				  }
 			  }
-			  if(hex){
-			  	 value = "0x" + value;
-			  }
-			  return new Atom(line,tokenNum,value,type);
+			  return atom(hex?"0x" + value:value,type);
 		  } else if( c == '{'){
-			  return new Atom(line,tokenNum,"{",AtomType.BEGIN_BLOCK);
+			  return atom("{",AtomType.BEGIN_BLOCK);
 		  }else if(c == '}'){
-			  return new Atom(line,tokenNum,"}",AtomType.END_BLOCK);
+			  return atom("}",AtomType.END_BLOCK);
 		  }else if(c == '\n'){
-			 return new Atom(line,tokenNum,"",AtomType.NEW_LINE) ;
+			 return atom("",AtomType.NEW_LINE) ;
 		  }else if(c == ','){
-			  return new Atom(line,tokenNum,",",AtomType.ARG_SEPARATOR);
+			  return atom(",",AtomType.ARG_SEPARATOR);
 		  }else if(c == ';'){
-			  return new Atom(line,tokenNum,";",AtomType.END_ARGS);
+			  return atom(";",AtomType.END_ARGS);
 		  }else  if(c == '"'){
 			  var b = new StringBuilder("\"");
 			  while(hasNext() && read() != '"'){
 			  	if(c == '\n'){
-			  		throw new CompilerException(line,tokenNum,"expected \"");
+			  		error("expected \"");
 				}
 			  	if(c == '\\'){
 			  		b.append('\\');
 			  		if(!hasNext()){
-			  			throw new CompilerException(line,tokenNum,"special character ");
+			  			error("special character expected");
 					}
 			  		read();//appended in following lines
 				}
 			  	if(c > 127){
-			  		throw new CompilerException(line,tokenNum,"not valid ascii string");
+			  		error("not valid ascii string");
 				}
 			  	b.appendCodePoint(c);
 			  }
 			  b.append('"');
-			  return new Atom(line,tokenNum,b.toString(),AtomType.STRING);
+			  return atom(b.toString(),AtomType.STRING);
 		  }else if(c == ':'){
-		      return new Atom(line,tokenNum,":",AtomType.CLASS_SELECTOR);
+		      return atom(":",AtomType.CLASS_SELECTOR);
           }else  if(notSeparator(c)){
 			  var b = new StringBuilder();
 			  readNext = false;
 			  if(!Character.isValidCodePoint(c)){
 			      forceEnd = true;
-			      return new Atom(line,tokenNum,"",AtomType.NEW_LINE);
+			      return atom("",AtomType.NEW_LINE);
               }
 			  while(hasNext() && notSeparator(read())){
 				  b.appendCodePoint(c);
 			  }
-			  return new Atom(line,tokenNum,b.toString(),AtomType.ID);
+			  return atom(b.toString(),AtomType.ID);
 		  }
 		  return null;
 	  }
 	  public Atom next()throws IOException,CompilerException{
 		  Atom token;
 		  //noinspection StatementWithEmptyBody
-		  while((token = nextPrivate())  == null || token.getType() != AtomType.NEW_LINE && (token.getValue().isEmpty() || token.getValue().isBlank()));
+		  while((token = internalNext())  == null || token.getType() != AtomType.NEW_LINE && (token.getValue().isEmpty() || token.getValue().isBlank()));
 		  if(token.getType() != AtomType.NEW_LINE){
 			  tokenNum++;
 		  }
@@ -343,5 +340,11 @@ public final class Tokenizer implements AutoCloseable{
               return false;
           }
 		  return !Character.isWhitespace(c);
+	  }
+	  private void error(String msg)throws CompilerException{
+		  throw new CompilerException(line,tokenNum,msg);
+	  }
+	  private Atom atom(String value,AtomType type){
+		  return new Atom(line,tokenNum,value,type);
 	  }
 }

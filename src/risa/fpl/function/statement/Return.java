@@ -44,7 +44,7 @@ public final class Return implements IFunction{
 				}
 			}
 			//code of instance variable already starts with copyAndReturn
-			if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !expCode.startsWith(i.getCopyConstructorName())){
+			if(!expCode.equals("tmp") && returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !expCode.startsWith(i.getCopyConstructorName())){
 				expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ')';
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){

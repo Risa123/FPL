@@ -18,6 +18,8 @@ class String{
     this p = p
     this allocated = allocated
   }
+  (#allocates space for (len) characters)
+  this uint len:this char:alloc[] len,len,true
   -this{
     if allocated{
        p free
@@ -92,24 +94,21 @@ class String{
       return true
   }
   fn String toUpperCase{
-    var p char:alloc[] len
-    String str init p,len,true
+    String str init len
     for i,len{
       str set i,std.lang.toUpperCase get i
     }
     return str
   }
   fn String toLowerCase{
-      var p char:alloc[] len
-      String str init p,len,true
+      String str init len
       for i,len{
         str set i,std.lang.toLowerCase get i
       }
       return str
   }
   fn String replace char original char replacement{
-    var p char:alloc[] len
-    String str init p,len,true
+    String str init len
     for i,len{
       var c get i
       if c == original{
@@ -180,14 +179,13 @@ class String{
     if beginIndex  == 0; && endIndex == len{
       return this drf
     }
+    print this drf
     var i beginIndex
     var len endIndex - beginIndex + 1
-    String result init char:alloc[] len,len,true
-    var resultIndex 0
-    while i < len; || i <= endIndex{
+    String result init len
+    for resultIndex,len{
       result set resultIndex,p get i
       i ++
-      resultIndex ++
     }
     return result
   }

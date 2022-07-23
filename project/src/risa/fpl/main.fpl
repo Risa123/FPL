@@ -6,7 +6,6 @@ use{
   risa.fpl.tokenizer
   risa.fpl.base
   risa.fpl.block
-  std.math
 }
 private{
    const{
@@ -85,7 +84,8 @@ main{
     if noOutputFile{
       CompilerException:new "no output file";throw "build.bs"
     }
-    IRWriter writer init FileWriter:new outputFile substring 1,outputFile getLength; - 2#remove quotation marks
+    var str  outputFile substring 1,outputFile getLength; - 2#remove quotation marks
+    IRWriter writer init FileWriter:new str
     writer close
     compileDirectory project + "/src";,""
  }catch CompilerException{
