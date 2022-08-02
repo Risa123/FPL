@@ -54,7 +54,10 @@ public final class Return implements IFunction{
 		if(subEnv.isInMainBlock()){
 			builder.append("_std_system_callOnExitHandlers0();\n");//args is from main module
 		}
-		builder.append("return ").append(expCode);
+		builder.append("return");
+		if(!expCode.isEmpty()){
+			builder.append(' ').append(expCode);
+		}
 		return TypeInfo.VOID;
 	}
 }

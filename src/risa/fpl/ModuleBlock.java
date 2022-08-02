@@ -133,8 +133,8 @@ public final class ModuleBlock extends AThreePassBlock{
                writer.write("_std_lang_currentThread = &mainThread;\n");
                writer.write("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
                writer.write("args = malloc(argc * sizeof(_String));\nfor(int i = 0;i < argc;++i){\n");
-               writer.write(NumberInfo.MEMORY.getCname() + " strlen(const char*);\n");
-               writer.write("I_std_lang_String_init0(args + i,argv[i],strlen(argv[i]),0);\n}\n");
+               writer.write("unsigned int _std_backend_getCStringLen0(char*);\n");
+               writer.write("I_std_lang_String_init0(args + i,argv[i],_std_backend_getCStringLen0(argv[i]),0);\n}\n");
                writer.write(mainFunctionCode);
                writer.write("}\nvoid onExit(){\n");
                for(var mod:FPL.getModules()){

@@ -63,18 +63,18 @@ public final class Variable extends ValueExp{
             writePrev(b);
 		    b.append(code);
 		    var ret = new PointerInfo(type);
-		    if(it.hasNext() && it.peek() instanceof Atom id && id.getType() == AtomType.ID){
+		    if(it.hasNext() && it.peek() instanceof Atom aID && aID.getType() == AtomType.ID){
 		        it.next();
-		        var field = ret.getField(id.getValue(),env);
+		        var field = ret.getField(aID.getValue(),env);
 		        if(field == null){
-		            throw new CompilerException(id,ret + " has no field called " + id);
+		            throw new CompilerException(aID,ret + " has no field called " + aID);
                 }
 		        var code = b.toString();
 		        if(field instanceof Function){
 		        	code = code.substring(1);
 				}
 		        field.setPrevCode(code);
-		        return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
+		        return field.compile(builder,env,it,aID.getLine(),aID.getTokenNum());
             }
 		    builder.append(b);
 			return ret;

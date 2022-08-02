@@ -32,6 +32,8 @@ final class Tokenizer{
        DataReader reader
        ArrayList;Token;tokens init
     }
+    fn bool isSeparator = c isWhitespace; ||  c == ${; || c == $}; || c == $; #char ;
+    fn void error String msg = CompilerException:throw line,tokenNum,msg
     fn void token String value TokenType type{
      tokens add Token:new line,tokenNum,value,type
      if type == TokenType:NEW_LINE{
@@ -67,14 +69,14 @@ final class Tokenizer{
              while ready; && read; == $\n{}
            }if c == $${
             if ready; !{
-              CompilerException:throw line,tokenNum,"char expected"
+              error "char expected"
              }
              ArrayList;char; b init
              b add $'
              var firstChar read
              if firstChar == $\\{
                 if ready; !{
-                   CompilerException:throw line,tokenNum,"character expected"
+                   error "character expected"
                 }
                 if c == $t; || c == $n; || c == $f; || c == $b; || c == $r; || c == $\\; || c == $0{
                    b add $\\
@@ -82,10 +84,10 @@ final class Tokenizer{
                 }if c == $s{
                    b add $\s
                 }{
-                 CompilerException:throw line,tokenNum,"no special character called " + c toString
+                 error "no special character called " + c toString
                 }
                }if firstChar isWhitespace{
-                   CompilerException:throw line,tokenNum,"$ cannot be followed by whitespace"
+                   error "$ cannot be followed by whitespace"
                  }{
                   b add firstChar
                  }
@@ -104,12 +106,12 @@ final class Tokenizer{
                   b add $"
                   while ready; && read; != $"{
                      if c == $\n{
-                      CompilerException:throw line,tokenNum,"expected \""
+                      error "expected \""
                      }
                    if c == $\\{
                       b add $\\
                       if ready; !{
-                         CompilerException:throw line,tokenNum,"character expected"
+                         error "character expected"
                       }
                       read
                       }
@@ -133,7 +135,6 @@ final class Tokenizer{
            }
         }
     }
-    fn bool isSeparator = c isWhitespace; ||  c == ${; || c == $}; || c == $; #char ;
  }
  this Readable readable = reader = DataReader:new readable
  fn Token next{
@@ -144,7 +145,7 @@ final class Tokenizer{
  fn Token peek{
    prepare
    if tokens isEmpty{
-     CompilerException:throw line,tokenNum,"no tokens available"
+     error "no tokens available"
    }
    return tokens get i
  }
@@ -156,7 +157,7 @@ final class Tokenizer{
  fn Token nextID{
    var id next
    if id getType; != TokenType:ID{
-     CompilerException:throw id,"identifier expected instead of " + id getValue
+     error "identifier expected instead of " + id getValue
    }
    return id
  }

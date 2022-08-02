@@ -61,8 +61,7 @@ public final class Tokenizer implements AutoCloseable{
                   }
 			      builder.appendCodePoint(firstChar);
               }
-			  //not possible to append as one character
-			  return atom(builder.append("'").toString(),AtomType.CHAR);
+			  return atom(builder.append('\'').toString(),AtomType.CHAR);
 		  }else if(c == '+' || c == '-' || Character.isDigit(c)){
 			  var signed = false;
 			  var hex = false;
@@ -195,9 +194,8 @@ public final class Tokenizer implements AutoCloseable{
 					  }else if(c == 'e'){
                         if(hasScientificNotation){
 							error("this number already has scientific notation");
-						}else{
-							hasScientificNotation = true;
 						}
+						hasScientificNotation = true;
 						b.append('e');
 						hasDigitSeparator = false;
 						notationStart = true;

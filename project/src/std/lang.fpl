@@ -179,7 +179,6 @@ class String{
     if beginIndex  == 0; && endIndex == len{
       return this drf
     }
-    print this drf
     var i beginIndex
     var len endIndex - beginIndex + 1
     String result init len
@@ -236,13 +235,11 @@ class Exception{
      var target currentThread currentEHEntry
      var stop false
      while target != nil{
-      var i 0
-      while i < target exceptionTypesLen{
-      if target exceptionTypes get i; == getClass{
+      for i,target exceptionTypesLen{
+       if target exceptionTypes get i; == getClass{
            stop = true
            break
       }
-      i ++
      }
      if stop{
        break
@@ -282,8 +279,8 @@ class Thread{
  private String name
  internal{
    Exception* exception
-   EHEntry* currentEHEntry
-   ExceptionHandlerType exceptionHandler
+   EHEntry* currentEHEntry nil
+   ExceptionHandlerType exceptionHandler &defaultExceptionHandler
    fn void addEHEntry void** exceptionTypes int exceptionTypesLen{
         var prev currentEHEntry
         currentEHEntry = EHEntry:alloc
@@ -304,11 +301,7 @@ class Thread{
        }
      }
  }
- this String name{
-   this name = name
-   currentEHEntry = nil
-   setExceptionHandler &defaultExceptionHandler
- }
+ this String name = this name = name
  fn void setName String name = this name = name
  fn String getName = name
  fn void setExceptionHandler ExceptionHandlerType exceptionHandler = this exceptionHandler = exceptionHandler
@@ -378,7 +371,7 @@ fn char toLowerCase char this = isUpperCase this; ? $a cast byte + this cast byt
 fn char toUpperCase char this = isLowerCase this; ? $A cast byte + this cast byte - $a,this
 fn bool isBlank char this = this == $\s ; || this == $\t
 fn String charToString char this{
-  String str init char:alloc[] 1,1,true
+  String str init 1
   str set 0,this
   return str
 }
@@ -412,6 +405,7 @@ fn String integerToString long this{
    j ++
    i --
  }
+ #String.this(uint) not used to avoid C error
  return String:new ret,len,true
 }
 fn long integerParse String str{

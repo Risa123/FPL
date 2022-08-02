@@ -1,17 +1,13 @@
 
 class ArrayList;T{
  private{
-  T* array
-  memory len
+  T* array nil
+  memory len 0
   fn void checkIndex memory index{
     if index >= len{
       NoElementException:throw "index out of bounds:" + index toString
     }
   }
- }
- this{
-   len = 0
-   array = nil
  }
  fn T get memory index{
    checkIndex index
@@ -22,14 +18,13 @@ class ArrayList;T{
    array set index,value
  }
  fn void add T value{
-   var oldLen len
    len ++
    if array == nil{
       array = malloc value getObjectSize;cast T*
       array drf= value
    }{
     array = realloc array cast void*,len * T:getInstanceSize;cast T*
-    memoryCopy value ref cast byte*,array cast byte* + T:getInstanceSize * oldLen,T:getInstanceSize
+    memoryCopy value ref cast byte*,array cast byte* + T:getInstanceSize * [ len - 1 ],T:getInstanceSize
    }
  }
  fn void clear{
@@ -66,15 +61,13 @@ class Map;K V{
   private const ArrayList;Entry;K V;; entries init
   fn void put K key V value{
     var notPresent true
-    var i 0L
-    while i < entries getSize{
+    for i,entries getSize{
       var entry entries get i
       if entry getKey; == key{
         entry setValue value
         notPresent = false
         break
       }
-      i ++
     }
     if notPresent{
       entries add Entry;K V:new key,value

@@ -16,10 +16,10 @@ private{
    fn String readValue Tokenizer* tokenizer{
       var value tokenizer next
       if value getType; != TokenType:STRING{
-       CompilerException:new value getLine;,value getTokenNum;,"string literal expected";throw "build.bs"
+       CompilerException:new value,"string literal expected";throw "build.bs"
       }
       if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
-        CompilerException:new value getLine;,value getTokenNum;,"end of line expected";throw "build.bs"
+        CompilerException:new value,"end of line expected";throw "build.bs"
       }
       return value getValue
    }
@@ -50,32 +50,11 @@ main{
     Tokenizer tokenizer init reader
     var noMainModule true;noOutputFile true
     String ccArgs
+    CompilerException:new "test";throw "x"
     while tokenizer hasNext{
-      var id tokenizer nextID
-      if tokenizer hasNext; !{
-        CompilerException:new id getLine;,id getTokenNum;,"property value expected";throw "build.bs"
-      }
-      var idS id getValue
-      if idS == "outputFile"{
-        outputFile = readValue tokenizer ref
-        noOutputFile = false
-      }if idS == "mainModule"{
-        mainModule = readValue tokenizer ref
-        noMainModule = false
-      }if idS == "flags"{
-        while tokenizer hasNext{
-          var flag tokenizer next
-          if flag getType; == TokenType:ID{
-            flags add flag getValue
-          }if flag getType; == TokenType:NEW_LINE{
-            break
-          }{
-           CompilerException:new flag getLine;,flag getTokenNum;,"flag expected instead of " + flag getValue;;;throw "build.bs"
-          }
-        }
-      }{
-        [ CompilerException:new id getLine;,id getTokenNum;,idS + " property doesn't exist"; ] throw "build.bs"
-      }
+     var id tokenizer nextID
+     print id getValue
+     print id getType;ordinal toString
     }
     tokenizer close
     if noMainModule{
