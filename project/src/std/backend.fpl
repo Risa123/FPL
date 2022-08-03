@@ -59,7 +59,7 @@ compIf arch ia64{
 }
 fn void contextRestore Context context{
   native fn void __builtin_longjmp Context context int value #declared inside to prevent conflicting types warning
-  return __builtin_longjmp context,1
+  __builtin_longjmp context,1
 }
 fn void* directoryOpen char* name{
   var dir opendir name

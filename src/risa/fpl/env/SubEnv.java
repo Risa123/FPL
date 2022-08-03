@@ -16,6 +16,7 @@ public class SubEnv extends AEnv{
   private AccessModifier accessModifier = AccessModifier.PUBLIC;
   private final ArrayList<Modifier>modifiers = new ArrayList<>();
   protected final StringBuilder toPointerVars = new StringBuilder(),destructorCalls = new StringBuilder();
+  private final ArrayList<String>instanceVarCNames = new ArrayList<>();
   public SubEnv(AEnv superEnv){
 	  this.superEnv = superEnv;
   }
@@ -31,9 +32,12 @@ public class SubEnv extends AEnv{
       return ((SubEnv)superEnv).getModule();
  }
  public final void addInstanceVariable(InstanceInfo type,String cname) {
-     var destructor = type.getDestructorName();
-     if(destructor != null){//check presence of destructor
-         destructorCalls.append(destructor).append("(&").append(cname).append(");\n");
+     if(!instanceVarCNames.contains(cname)){
+         var destructor = type.getDestructorName();
+         if(destructor != null){//check presence of destructor
+             destructorCalls.append(destructor).append("(&").append(cname).append(");\n");
+         }
+         instanceVarCNames.add(cname);
      }
  }
  public final String getToPointerVarName(InstanceInfo type){

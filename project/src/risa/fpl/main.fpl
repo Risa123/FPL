@@ -50,11 +50,8 @@ main{
     Tokenizer tokenizer init reader
     var noMainModule true;noOutputFile true
     String ccArgs
-    CompilerException:new "test";throw "x"
     while tokenizer hasNext{
-     var id tokenizer nextID
-     print id getValue
-     print id getType;ordinal toString
+      var propertyToken tokenizer nextID
     }
     tokenizer close
     if noMainModule{

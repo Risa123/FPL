@@ -115,7 +115,7 @@ public final class InstanceVar extends Function{
         env.addFunction(id.getValue(),new Variable(varType,cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
         return null;
     }
-	public void compileCallInsideOfConstructor(StringBuilder builder, FnSubEnv env, ExpIterator it, int line, int charNum)throws CompilerException{
+	public void compileCallInsideOfConstructor(StringBuilder builder,FnSubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
        calledOnPointer();
        var tmp = new StringBuilder();
        super.compile(tmp,env,it,line,charNum);

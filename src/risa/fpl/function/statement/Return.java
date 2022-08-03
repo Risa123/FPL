@@ -20,6 +20,9 @@ public final class Return implements IFunction{
 		var expCode = "";
 		TypeInfo returnType;
 		if(it.hasNext()){
+			if(subEnv.getReturnType() == TypeInfo.VOID){
+				throw new CompilerException(line,tokenNum,"no expression expected");
+			}
 		    var list = new ArrayList<AExp>();
 		    while(it.hasNext()){
 		        list.add(it.next());

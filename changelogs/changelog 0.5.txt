@@ -69,3 +69,4 @@ fix (type)(variable name)(exp) not checking types
 fix duplicate catch block check added
 fix ) inside multiline comment
 fix abstract method C error
+fix no expression next to return in void functions
