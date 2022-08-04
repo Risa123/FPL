@@ -20,7 +20,7 @@ public final class SetElement extends AField{
 		var tmpBuilder = new StringBuilder();
 	    var indexType = indexExp.compile(tmpBuilder,env,it);
 	    if(indexType.notIntegerNumber()){
-	    	throw new CompilerException(indexExp,"integer number expected");
+	    	error(indexExp,"integer number expected");
 	    }
 	    var code = tmpBuilder.toString();
 	    builder.append(code).append("]=");
@@ -30,7 +30,7 @@ public final class SetElement extends AField{
 		}
 		var valueType = valueAtom.compile(builder,env,it);
 	    if(!this.valueType.equals(valueType)){
-	    	throw new CompilerException(line,beginChar,this.valueType + " return type expected instead of " + valueType);
+	    	error(line,beginChar,this.valueType + " return type expected instead of " + valueType);
 		}
 		return TypeInfo.VOID;
 	}

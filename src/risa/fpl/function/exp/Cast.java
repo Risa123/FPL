@@ -30,7 +30,7 @@ public final class Cast extends AField{
           CCast(prev,type.getCname());
           prev.append(".instance");
         }else if(type instanceof InterfaceInfo){
-	        throw new CompilerException(line, tokenNum,"cannot cast to interface");
+	        error(line,tokenNum,"cannot cast to interface");
         }else{
 	        var npTarget = self;
 	        var npType = type;
@@ -41,7 +41,7 @@ public final class Cast extends AField{
 	            npType = p.getType();
             }
 	        if(npTarget.getParents().contains(npType)){
-	            prev.append("(").append(type.getCname()).append(")");
+	            prev.append('(').append(type.getCname()).append(')');
 	            if(!(self instanceof PointerInfo)){
 	                prev.append('&');
                 }
@@ -56,7 +56,7 @@ public final class Cast extends AField{
         return type == TypeInfo.CHAR || type instanceof NumberInfo n && !n.isFloatingPoint();
     }
     private void CCast(StringBuilder builder,String ctype){
-		builder.append("((").append(ctype).append(")");
+		builder.append("((").append(ctype).append(')');
         writePrev(builder);
         builder.append(')');
     }

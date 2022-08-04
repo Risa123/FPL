@@ -54,7 +54,7 @@ public final class CompileTimeIf implements IFunction{
                 compile(builder,env,it,next.getLine(),next.getTokenNum());
                 noElseIfOrElseIfIsTrue = true;
             }else{
-                throw new CompilerException(next,"compIf or block expected");
+                error(next,"compIf or block expected");
             }
         }
         return TypeInfo.VOID;

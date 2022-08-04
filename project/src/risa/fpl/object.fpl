@@ -5,6 +5,7 @@ class ObjectInfo{
  private const Map;String Field;fields init
  fn Field getField String name = fields get name
  fn void addField String name AccessModifier accessModifier IFunction func = fields put name,Field:new accessModifier,func
+ fn void addField String name IFunction func = addField name,AccessModifier:PUBLIC,func
 }
 class Field{
   private const{

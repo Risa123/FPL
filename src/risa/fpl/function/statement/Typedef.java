@@ -24,7 +24,7 @@ public final class Typedef implements IFunction{
         if(originalType.getValue().equals("[]")){
            var len = it.nextAtom();
            if(len.notIndexLiteral()){
-               throw new CompilerException(len,"array length expected instead of " + len);
+               error(len,"array length expected instead of " + len);
            }
            after = "[" + len + ']';
            originalType = it.nextID();
@@ -37,7 +37,7 @@ public final class Typedef implements IFunction{
             throw new CompilerException(originalType,"type " + originalType + " not found");
         }
         if(!t.isPrimitive()){
-            throw new CompilerException(originalType,"primitive type expected");
+            error(originalType,"primitive type expected");
         }
         var b = new StringBuilder(t.getCname()).append(' ').append(IFunction.toCId(type.getValue())).append(after);
         builder.append(b);

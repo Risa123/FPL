@@ -33,7 +33,7 @@ public final class Array implements IFunction{
         }
         b.append(type.getCname());
 	    if(lenAtom.notIndexLiteral()){
-	    	throw new CompilerException(lenAtom,"array length expected instead of " + lenAtom);
+	    	error(lenAtom,"array length expected instead of " + lenAtom);
 	    }
 	    var id = it.nextID();
 		if(env instanceof ClassEnv e){
@@ -43,7 +43,7 @@ public final class Array implements IFunction{
 	    if(env.hasModifier(Modifier.NATIVE)){
 	    	cID = id.getValue();
 	    	if(IFunction.notCID(cID)){
-	    		throw new CompilerException(id,"invalid C identifier");
+	    		error(id,"invalid C identifier");
 	    	}
 	    }else{
 	    	cID = IFunction.toCId(id.getValue());
@@ -78,7 +78,7 @@ public final class Array implements IFunction{
 		    }
 		    b.append("};\n");
 		    if(count > len){
-		    	throw new CompilerException(line,tokenNum,"can only have " + len + " elements");
+		    	error(line,tokenNum,"can only have " + len + " elements");
 		    }
 	    }
 		if(env instanceof ModuleEnv e){

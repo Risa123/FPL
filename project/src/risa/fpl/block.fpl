@@ -31,6 +31,9 @@ class ModuleBlock ObjectInfo{
      }
    }
    name = name substring beginIndex,endIndex
+   if getMainModule; == name{
+     addField "main",MainBlock:new
+   }
    cPath = name replace $.,$_; + ".c"
    try{
       while tokenizer hasNext{

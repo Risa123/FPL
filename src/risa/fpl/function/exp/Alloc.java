@@ -30,7 +30,7 @@ public final class Alloc extends AField{
             var count = it.next();
             var returnType = count.compile(builder,env,it);
             if(returnType.notIntegerNumber()){
-                throw new CompilerException(count,"integer number expected instead of " + returnType);
+                error(count,"integer number expected instead of " + returnType);
             }
         }
         if(notOneByteType){

@@ -258,12 +258,6 @@ class Exception{
      memoryCopy this cast byte*,currentThread exception cast byte*,getObjectSize
      contextRestore target context
    }
-   #do not remove used in try-catch-finally
-   internal fn void copyAndFree Exception* target{
-       memoryCopy this cast byte*,target cast byte*,getObjectSize
-       target message = message
-       this free #do not remove "this" part
-   }
 }
 class NumberFormatException Exception{
    this String message:super message

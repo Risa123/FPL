@@ -20,7 +20,7 @@ public final class Use implements IFunction{
 		var exp = it.next();
 		if(exp instanceof List){
 			if(it.hasNext()){
-				throw new CompilerException(exp,"only block expected");
+				error(exp,"only block expected");
 			}
 			addFromList(exp,e);
 		}else{
@@ -35,10 +35,10 @@ public final class Use implements IFunction{
         for(var mod:((List)exp).getExps()){
             if(mod instanceof Atom atom){
                 if(atom.getType() != AtomType.ID){
-                    throw new CompilerException(atom,"identifier expected");
+                    error(atom,"identifier expected");
                 }
                 if(atom.getValue().equals("std.lang")){
-                    throw new CompilerException(atom,"this module is imported automatically");
+                    error(atom,"this module is imported automatically");
                 }
                 env.addModuleToImport(atom);
             }else{

@@ -75,7 +75,7 @@ public final class InstanceVar extends Function{
           varType = type;
         }
         if(env.hasFunctionInCurrentEnv(id.getValue())){
-            throw new CompilerException(id,"there is already a function called " + id);
+            error(id,"there is already a function called " + id);
         }
         var typeCname = varType.getCname();
         var notPointer = true;
@@ -108,7 +108,7 @@ public final class InstanceVar extends Function{
                     builder.append(b).append(";\n");
                 }
             }else{
-                throw new CompilerException(id,"init(constructor arguments) or nothing expected");
+                error(id,"init(constructor arguments) or nothing expected");
             }
         }
         var instanceType = env instanceof ClassEnv e?e.getInstanceInfo():null;

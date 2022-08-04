@@ -1,15 +1,15 @@
 use std.io.file std.io.base risa.fpl.tokenizer
 final{
  class CompilerException Exception{
-  private String file
+  private var file ""
   this String message:super message
-  this int line int tokenNum String message:this line toString;  + ":"; + tokenNum toString; + " "; + message
+  this int line int tokenNum String message:this line toString; + ":"; + tokenNum toString; + " "; + message
   this Token token String message:this token getLine;,token getTokenNum;,message
   fn void throw String file{
     this file = file
     super throw
   }
-  override fn String getMessage = file + ":" + message
+  override fn String getMessage = [ file isEmpty;? "",file + ":" ] + message
 }
 class IRWriter{
    const DataWriter writer

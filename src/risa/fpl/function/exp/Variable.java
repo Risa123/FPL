@@ -33,7 +33,7 @@ public final class Variable extends ValueExp{
 	    var value = atom.getValue();
 		if(value.equals("=")){
 		   if(constant && !(type instanceof InstanceInfo) && (!(env instanceof ConstructorEnv e) || e.getDefinedConstFields().contains(id))){
-			  throw new CompilerException(line,charNum,"constant cannot be redefined");
+			  error(line,charNum,"constant cannot be redefined");
 			}
 		    var assignmentOperator = false;
 		    if(type instanceof InstanceInfo i){
@@ -46,8 +46,7 @@ public final class Variable extends ValueExp{
 				}
 			}
 			writePrev(builder);
-			builder.append(code);
-			builder.append(assignmentOperator?',':'=');
+			builder.append(code).append(assignmentOperator?',':'=');
 			onlyDeclared = false;
 			execute(it,builder,env,"");//not drf equals
 			if(assignmentOperator){
@@ -85,7 +84,7 @@ public final class Variable extends ValueExp{
            }
         }else if(type instanceof NumberInfo){
 			if(constant && value.endsWith("=")){
-				throw new CompilerException(line,charNum,"constant cannot be redefined");
+				error(line,charNum,"constant cannot be redefined");
 			}
 			if(constant && env instanceof ConstructorEnv e){
 				e.getDefinedConstFields().add(id);
@@ -152,7 +151,7 @@ public final class Variable extends ValueExp{
 					}
 					var ret  = func.compile(builder,env,it,exp.getLine(),exp.getTokenNum());
 					if(!i.equals(ret)){
-						throw new CompilerException(exp,"expression expected to return " + i + " instead of " + ret);
+						error(exp,"expression expected to return " + i + " instead of " + ret);
 					}
 					builder.append(");\n");
 				}else{

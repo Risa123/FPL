@@ -15,10 +15,10 @@ public final class SetAccessModifier extends AddModifier{
     @Override
     public void addModifier(SubEnv env,int line,int tokenNum)throws CompilerException{
         if(env instanceof FnSubEnv){
-            throw new CompilerException(line,tokenNum,"access modifiers can only be used in classes and modules");
+            error(line,tokenNum,"access modifiers can only be used in classes and modules");
         }
         if(env.getAccessModifier() == mod){
-            throw new CompilerException(line,tokenNum,"duplicate modifier " + mod.toString().toLowerCase());
+            error(line,tokenNum,"duplicate modifier " + mod.toString().toLowerCase());
         }
         env.setAccessModifier((AccessModifier)mod);
     }

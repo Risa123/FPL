@@ -50,7 +50,7 @@ public class AddModifier extends AThreePassBlock implements IFunction{
 	}
 	protected void addModifier(SubEnv env,int line,int tokenNum)throws CompilerException{
 	    if(env.hasModifier((Modifier)mod)){
-			throw new CompilerException(line,tokenNum,"duplicate modifier " + mod.toString().toLowerCase());
+			error(line,tokenNum,"duplicate modifier " + mod.toString().toLowerCase());
 		}
         env.addModifier((Modifier)mod);
     }

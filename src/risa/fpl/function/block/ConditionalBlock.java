@@ -40,7 +40,7 @@ public final class ConditionalBlock extends ABlock{
 		var ret = new List(expLine,expCharNum,list,false).compile(builder,ifEnv,it);
 		ifEnv.turnOffCompilingCondition();
 		if(ret != TypeInfo.BOOL){
-			throw new CompilerException(expLine,expCharNum,"expression expected to return bool instead of " + ret);
+			error(expLine,expCharNum,"expression expected to return bool instead of " + ret);
 		}
 		builder.append("){\n");
 		var block = it.nextList();
@@ -50,16 +50,20 @@ public final class ConditionalBlock extends ABlock{
 			if(it.hasNext()){
 				var elseExp = it.next();
 				if(!(elseExp instanceof List || elseExp instanceof Atom a && a.getValue().equals("if"))){
-					throw new CompilerException(elseExp,"else block or if expected");
+					error(elseExp,"else block or if expected");
 				}
-				builder.append(elseExp instanceof Atom?"else ":"else{\n");
-				new FnSubEnv(env).compileBlock(elseExp,builder,it);
-				if(elseExp instanceof List){
+				builder.append("else");
+				if(elseExp instanceof Atom){
+				  	builder.append(' ');
+					compile(builder,env,it,elseExp.getLine(),elseExp.getTokenNum());
+				}else{
+					builder.append("{\n");
+					new FnSubEnv(env).compileBlock(elseExp,builder,it);
 					builder.append("}\n");
 				}
 			}
 		}else if(it.hasNext()){
-			throw new CompilerException(block,"no other argument expected");
+			error(block,"no other argument expected");
 		}
 		return TypeInfo.VOID;
 	}

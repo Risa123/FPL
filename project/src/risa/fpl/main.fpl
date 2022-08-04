@@ -16,13 +16,14 @@ private{
    fn String readValue Tokenizer* tokenizer{
       var value tokenizer next
       if value getType; != TokenType:STRING{
-       CompilerException:new value,"string literal expected";throw "build.bs"
+       error value,"string literal expected"
       }
       if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
-        CompilerException:new value,"end of line expected";throw "build.bs"
+        error value,"end of line expected"
       }
-      return value getValue
+      return value getValue;substring 1,value getValue;getLength; - 2
    }
+   fn void error Token token String msg = CompilerException:new token,msg;throw "build.bs"
    fn void compileDirectory String srcDir String directory{
      var fullPath srcDir + "/"; + directory
      DirectoryStream stream init fullPath
@@ -48,20 +49,29 @@ main{
     var project args get 1
     FileReader reader init project + "/build.bs"
     Tokenizer tokenizer init reader
-    var noMainModule true;noOutputFile true
+    var hasMainModule false;hasOutputFile false
     String ccArgs
     while tokenizer hasNext{
       var propertyToken tokenizer nextID
+      var property propertyToken getValue
+      if property == "mainModule"{
+         mainModule = readValue tokenizer ref
+         hasMainModule = true
+      }if property == "outputFile"{
+        outputFile = readValue tokenizer ref
+        hasOutputFile = true
+      }{
+        error propertyToken,"no property named " + property
+      }
     }
     tokenizer close
-    if noMainModule{
+    if hasMainModule !{
       CompilerException:new "no main module";throw "build.bs"
     }
-    if noOutputFile{
+    if hasOutputFile !{
       CompilerException:new "no output file";throw "build.bs"
     }
-    var str  outputFile substring 1,outputFile getLength; - 2#remove quotation marks
-    IRWriter writer init FileWriter:new str
+    IRWriter writer init FileWriter:new outputFile
     writer close
     compileDirectory project + "/src";,""
  }catch CompilerException{

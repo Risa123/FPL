@@ -15,7 +15,7 @@ public final class FunctionReference extends ValueExp{
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         if(info.getFunction().notFunctionPointer()){
-            throw new CompilerException(line,tokenNum,"this function has more than one variant so it can't be a function pointer");
+            error(line,tokenNum,"this function has more than one variant so it can't be a function pointer");
         }
         return super.compile(builder,env,it,line,tokenNum);
     }

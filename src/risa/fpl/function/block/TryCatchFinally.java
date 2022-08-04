@@ -5,6 +5,7 @@ import risa.fpl.env.SubEnv;
 import risa.fpl.env.FnSubEnv;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -34,7 +35,7 @@ public final class TryCatchFinally extends ABlock{
             if(it.peek() instanceof Atom blockName && blockName.getType() == AtomType.ID){
                 if(blockName.getValue().equals("catch")){
                     if(hasFin){
-                        throw new CompilerException(blockName,"catch can only come before finally");
+                        error(blockName,"catch can only come before finally");
                     }
                     it.next();
                     List block;
@@ -46,7 +47,7 @@ public final class TryCatchFinally extends ABlock{
                         exInfo = exception;
                     }else if(nextExp instanceof Atom exType && exType.getType() == AtomType.ID){
                         if(exType.getValue().equals("Exception")){
-                            throw new CompilerException(exType,"unnecessary Exception ID");
+                            error(exType,"unnecessary Exception ID");
                         }
                         postEntry.append(" if(_std_lang_currentThread->_exception->objectData==&");
                         if(env.getType(exType) instanceof InstanceInfo i){
@@ -67,15 +68,13 @@ public final class TryCatchFinally extends ABlock{
                         throw new CompilerException(nextExp,"invalid exception");
                     }
                     postEntry.append("{\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\nexceptionCaught = 1;\n");
-                    postEntry.append(exInfo.getCname());
-                    postEntry.append(" ex;\n_std_lang_Exception_copyAndFree0(_std_lang_currentThread->_exception,(_Exception*)&ex);\n");
                     var blockEnv = new FnSubEnv(env);
-                    blockEnv.addFunction("ex",new Variable(exInfo,"ex","ex"));
+                    blockEnv.addFunction("ex",new Variable(new PointerInfo(exInfo),"_std_lang_currentThread->_exception","ex"));
                     blockEnv.compileBlock(block,postEntry,it);
                     postEntry.append("}\n");
                 }else if(blockName.getValue().equals("finally")){
                     if(hasFin){
-                        throw new CompilerException(blockName,"multiple declarations of finally");
+                        error(blockName,"multiple declarations of finally");
                     }
                     hasFin = true;
                     it.next();

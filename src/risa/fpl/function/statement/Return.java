@@ -21,7 +21,7 @@ public final class Return implements IFunction{
 		TypeInfo returnType;
 		if(it.hasNext()){
 			if(subEnv.getReturnType() == TypeInfo.VOID){
-				throw new CompilerException(line,tokenNum,"no expression expected");
+				error(line,tokenNum,"no expression expected");
 			}
 		    var list = new ArrayList<AExp>();
 		    while(it.hasNext()){
@@ -31,7 +31,7 @@ public final class Return implements IFunction{
 			var buffer = new StringBuilder();
 		    returnType = exp.compile(buffer,env,it);
 			if(!subEnv.getReturnType().equals(returnType)){
-				throw new CompilerException(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
+				error(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
 			}
 			if(returnType != TypeInfo.VOID){
 				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
@@ -51,7 +51,7 @@ public final class Return implements IFunction{
 				expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ')';
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){
-			throw new CompilerException(line,tokenNum,"this function doesn't return void");
+			error(line,tokenNum,"this function doesn't return void");
 		}
 		subEnv.compileDestructorCallsFromWholeFunction(builder);
 		if(subEnv.isInMainBlock()){

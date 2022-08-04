@@ -15,11 +15,11 @@ public final class TertiaryOperator extends AField{
         builder.append(':');
         var separator = it.nextAtom();
         if(separator.getType() != AtomType.ARG_SEPARATOR){
-            throw new CompilerException(separator,", expected");
+            error(separator,", expected");
         }
         var ifFalseExp = it.next();
         if(!ifFalseExp.compile(builder,env,it).equals(ifTrueReturn)){
-            throw new CompilerException(ifFalseExp,"expression expected to return " + ifTrueReturn);
+            error(ifFalseExp,"expression expected to return " + ifTrueReturn);
         }
         return ifTrueReturn;
     }

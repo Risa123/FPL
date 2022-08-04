@@ -26,48 +26,50 @@ public final class Constructor extends AFunctionBlock{
         var argsArray = args.values().toArray(new TypeInfo[0]);
         cEnv.removeImplicitConstructor();
         if(constructor.hasVariant(argsArray) && constructor.getVariant(argsArray).getLine() != line){
-            throw new CompilerException(line,tokenNum,"this class already has constructor with arguments " + Arrays.toString(argsArray));
+            error(line,tokenNum,"this class already has constructor with arguments " + Arrays.toString(argsArray));
         }
         var calledAnotherConstructor = false;
-        var parentConstructorCall = "";
+        var callToAnotherConstructor = "";
         var parentType = (InstanceInfo)type.getPrimaryParent();
         if(it.peek() instanceof Atom a && a.getType() == AtomType.CLASS_SELECTOR){
             it.next();
             var constructorOwner = it.nextID();
+            var callToAnotherConstructorBuilder = new StringBuilder();
             if(constructorOwner.getValue().equals("this")){
                calledAnotherConstructor = true;
-               type.getConstructor().compileCallInsideOfConstructor(builder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
+               type.getConstructor().compileCallInsideOfConstructor(callToAnotherConstructorBuilder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
+               callToAnotherConstructorBuilder.append(";\n");
+               callToAnotherConstructor = callToAnotherConstructorBuilder.toString();
             }else if(constructorOwner.getValue().equals("super")){
                 if(parentType == null){
                     throw new CompilerException(constructorOwner,"this type has no parent");
                 }
-                var parentConstructorCallBuilder = new StringBuilder();
-                parentType.getConstructor().compileCallInsideOfConstructor(parentConstructorCallBuilder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
-                parentConstructorCallBuilder.append(";\n");
+                parentType.getConstructor().compileCallInsideOfConstructor(callToAnotherConstructorBuilder,fnEnv,it,constructorOwner.getLine(),constructorOwner.getTokenNum());
+                callToAnotherConstructorBuilder.append(";\n");
                 calledAnotherConstructor = true;
-                parentConstructorCall = parentConstructorCallBuilder.toString();
+                callToAnotherConstructor = callToAnotherConstructorBuilder.toString();
                 cEnv.parentConstructorCalled();
             }else{
-                throw new CompilerException(constructorOwner,"super or this expected");
+                error(constructorOwner,"super or this expected");
             }
         }else if(parentType != null){
            var parentConstructor = parentType.getConstructor();
            if(!parentConstructor.hasVariant(new TypeInfo[0])){
-               throw new CompilerException(line,tokenNum,"parent does not have implicit constructor");
+               error(line,tokenNum,"parent does not have implicit constructor");
            }
-           parentConstructorCall = parentConstructor.getVariant(new TypeInfo[0]).getCname() + "((" + parentType.getCname() + "*)this);\n";
+           callToAnotherConstructor = parentConstructor.getVariant(new TypeInfo[0]).getCname() + "((" + parentType.getCname() + "*)this);\n";
         }
         if(it.hasNext()){
            fnEnv.compileFunctionBlock(b,it);
         }else if(!calledAnotherConstructor){
-            throw new CompilerException(line,tokenNum,"block expected as last argument");
+            error(line,tokenNum,"block expected as last argument");
         }
         if(!(type instanceof TemplateTypeInfo)){
-            cEnv.addConstructor(b.toString(),argsCode.toString(),argsArray,parentConstructorCall,line);
+            cEnv.addConstructor(b.toString(),argsCode.toString(),argsArray,callToAnotherConstructor,line);
         }
         for(var field:type.getFields().values()){
             if(field instanceof Variable v && v.getType().isPrimitive() && v.isConstant() && !v.getId().equals("getClass") && !fnEnv.getDefinedConstFields().contains(v.getId())){
-              throw new CompilerException(line,tokenNum,"constant field " + v.getId() + " not defined in this constructor");
+              error(line,tokenNum,"constant field " + v.getId() + " not defined in this constructor");
             }
         }
         return TypeInfo.VOID;

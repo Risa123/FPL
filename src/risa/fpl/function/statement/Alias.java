@@ -13,7 +13,7 @@ public final class Alias implements IFunction{
         env.checkModifiers(line,tokenNum);
         var id = it.nextID();
         if(env.hasFunctionInCurrentEnv(id.getValue())){
-            throw new CompilerException(id,"there is already a function called " + id);
+            error(id,"there is already a function called " + id);
         }
         var f = env.getFunction(it.nextID());
         if(f instanceof Function fn){
@@ -21,7 +21,7 @@ public final class Alias implements IFunction{
         }
         env.addFunction(id.getValue(),f);
         if(it.hasNext()){
-            throw new CompilerException(line,tokenNum,"no tokens allowed after alias");
+            error(line,tokenNum,"no tokens allowed after alias");
         }
         return TypeInfo.VOID;
     }

@@ -130,7 +130,7 @@ public class Function extends AField implements ICalledOnPointer{
                var id = it.nextID();
                var field = returnType.getField(id.getValue(),env);
                if(field == null){
-                   throw new CompilerException(id,returnType + " has no field called " + id);
+                   error(id,returnType + " has no field called " + id);
                }
                field.setPrevCode(b.toString());
                if(returnType instanceof InstanceInfo i){
@@ -141,7 +141,7 @@ public class Function extends AField implements ICalledOnPointer{
                }
                return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
            }else if(a.getType() == AtomType.END_ARGS && noPrevCode){
-               throw new CompilerException(a,"; not expected");
+               error(a,"; not expected");
            }
         }
         builder.append(b);

@@ -12,6 +12,7 @@ import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TemplateTypeInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
@@ -162,6 +163,12 @@ public interface IFunction{
           cName.append(b);
       }
       return cName.toString();
+  }
+  default void error(AExp atom, String message)throws CompilerException{
+      throw new CompilerException(atom,message);
+  }
+  default void error(int line,int tokenNum,String message)throws CompilerException{
+      throw new CompilerException(line,tokenNum,message);
   }
   String INTERNAL_METHOD_PREFIX = "I";
 }

@@ -29,10 +29,10 @@ public final class BinaryOperator extends AField{
 					returnType = on;
 				}
 			}else if(!operandType.equals(opType) && !(operandType instanceof NumberInfo && opType instanceof NumberInfo && returnType == TypeInfo.BOOL)){
-				throw new CompilerException(exp,operandType + " operand expected instead of " + opType);
+				error(exp,operandType + " operand expected instead of " + opType);
 			}
 		}else if(!(operator.equals("+") || operator.equals("-"))){
-	    	throw new CompilerException(line,tokenNum,"atom expected");
+	    	error(line,tokenNum,"atom expected");
 		}else{
 	    	builder.append(operator);
 	    	writePrev(builder);

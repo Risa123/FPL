@@ -18,7 +18,7 @@ public final class Enum implements IFunction{
         var a = it.nextID();
         var id = a.getValue();
         if(env.hasFunctionInCurrentEnv(id)){
-            throw new CompilerException(a,"there is already function called " + id);
+            error(a,"there is already function called " + id);
         }
         var type = new TypeInfo(id,"unsigned char");
         type.addField("==",new BinaryOperator(TypeInfo.BOOL,type,"=="));
@@ -33,11 +33,11 @@ public final class Enum implements IFunction{
                 break;
             }else if(t.getType() == AtomType.ID){
                 if(c.getField(t.getValue(),env) != null){
-                    throw new CompilerException(t,"value " + t + " is already declared");
+                    error(t,"value " + t + " is already declared");
                 }
                 c.addField(t.getValue(),new ValueExp(type,Integer.toString(i++)));
             }else{
-                throw new CompilerException(t,"identifier expected");
+                error(t,"identifier expected");
             }
         }
         env.addType(type);

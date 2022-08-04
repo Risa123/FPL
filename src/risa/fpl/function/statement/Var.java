@@ -39,7 +39,7 @@ public final class Var implements IFunction{
            }
         }
 		if(env.hasModifier(Modifier.NATIVE) && env instanceof ClassEnv){
-            throw new CompilerException(line,tokenNum,"native variables can only be declared in modules");
+            error(line,tokenNum,"native variables can only be declared in modules");
 		}
 		var decType = type;
 		try{
@@ -49,7 +49,7 @@ public final class Var implements IFunction{
                 }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
                     decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum()));
                 }else{
-                    throw new CompilerException(line,tokenNum,"template type expected instead of " + type);
+                    error(line,tokenNum,"template type expected instead of " + type);
                 }
             }
         }catch(IOException e){
@@ -65,7 +65,7 @@ public final class Var implements IFunction{
                 if(env.hasModifier(Modifier.NATIVE)){
                     cID = id.getValue();
                     if(IFunction.notCID(cID)){
-                        throw new CompilerException(line,tokenNum,cID + " is not a valid C identifier");
+                        error(line,tokenNum,cID + " is not a valid C identifier");
                     }
                 }else{
                     cID = IFunction.toCId(id.getValue());
@@ -74,7 +74,7 @@ public final class Var implements IFunction{
                     }
                 }
                 if(env.hasFunctionInCurrentEnv(id.getValue())){
-                    throw new CompilerException(id,"there is already a function called " + id);
+                    error(id,"there is already a function called " + id);
                 }
                 var onlyDeclared = false;
                 TypeInfo expType = null;
@@ -85,14 +85,14 @@ public final class Var implements IFunction{
                     if(exp instanceof Atom a && a.getType() == AtomType.END_ARGS){
                         onlyDeclared = true;
                         if(env.hasModifier(Modifier.CONST) && !(env instanceof  ClassEnv)){
-                            throw new CompilerException(id,"constant has to be defined");
+                            error(id,"constant has to be defined");
                         }
                         if(decType == null){
-                            throw new CompilerException(exp,"definition required");
+                            error(exp,"definition required");
                         }
                     }else{
                         if(env.hasModifier(Modifier.NATIVE)){
-                            throw new CompilerException(exp,"native variables can only be declared");
+                            error(exp,"native variables can only be declared");
                         }
                         var buffer = new StringBuilder();
                         if(!it.hasNext() || it.peek() instanceof Atom p && p.getType() == AtomType.END_ARGS && exp instanceof Atom a && a.getType() != AtomType.ID){
@@ -102,16 +102,16 @@ public final class Var implements IFunction{
                         }
                         expType = exp.compile(buffer,env,it);
                         if(decType != null && !decType.equals(expType)){
-                            throw new CompilerException(exp,decType + " cannot be implicitly converted to " + expType);
+                            error(exp,decType + " cannot be implicitly converted to " + expType);
                         }
                         expCode = buffer.toString();
                     }
                 }else{
                     if(env.hasModifier(Modifier.CONST) && !(env instanceof ClassEnv)){
-                        throw new CompilerException(id,"constant has to be defined");
+                        error(id,"constant has to be defined");
                     }
                     if(decType == null){
-                        throw new CompilerException(id,"definition required");
+                        error(id,"definition required");
                     }
                     onlyDeclared = true;
                 }

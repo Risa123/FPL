@@ -18,7 +18,7 @@ public final class GetElement extends AField{
 		var indexExp = it.next();
 		var indexType = indexExp.compile(prev,env,it);
 		if(indexType.notIntegerNumber()){
-		    throw new CompilerException(indexExp,"integer number expected");
+		    error(indexExp,"integer number expected");
         }
 		prev.append(']');
 		return compileChainedCall(returnType,builder,env,it,prev.toString());

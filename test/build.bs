@@ -1,2 +1,2 @@
 outputFile "test.ubf"
-mainModule "main"
+mainModule "test"
