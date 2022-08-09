@@ -11,6 +11,7 @@ import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.AExp;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.AtomType;
 
@@ -64,14 +65,14 @@ public abstract class AEnv{
   }
   public TypeInfo getType(Atom atom)throws CompilerException{
 	  if(atom.getType() != AtomType.ID){
-		  throw new CompilerException(atom,"type identifier expected");
+		  error(atom,"type identifier expected");
 	  }
 	  if(atom.getValue().endsWith("*")){
 	      return new PointerInfo(getType(new Atom(atom.getLine(),atom.getTokenNum(),atom.getValue().substring(0,atom.getValue().length() - 1), AtomType.ID)));
       }
 	  var type = types.get(atom.getValue());
 	  if(type == null){
-	      throw new CompilerException(atom,"type " + atom + " not found");
+	      error(atom,"type " + atom + " not found");
       }
 	  return type;
   }
@@ -86,5 +87,8 @@ public abstract class AEnv{
       if(declaration){
 		  addFunction(type.getName(),type instanceof InstanceInfo i?i.getConstructor():new Var(type));
       }
+  }
+  protected final void error(AExp exp,String message)throws CompilerException{
+	  throw new CompilerException(exp,message);
   }
 }

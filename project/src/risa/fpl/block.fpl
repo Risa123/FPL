@@ -21,7 +21,7 @@ class ModuleBlock ObjectInfo{
    for i,name getLength{
      if beginIndex == 0; && name get i; == $.{
         if first{
-         beginIndex = i + 1
+         beginIndex = i + 2
         }{
          first = true
         }
@@ -42,7 +42,7 @@ class ModuleBlock ObjectInfo{
             try{
               getField token getValue
             }catch NoElementException{
-              CompilerException:throw "function " + token getValue;; + " not found"
+              CompilerException:throw token,"function " + token getValue;; + " not found"
             }
           }
       }

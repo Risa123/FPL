@@ -16,7 +16,7 @@ public final class Destructor extends ABlock{
             throw new CompilerException(line,tokenNum,"can only be declared in class block");
         }
         if(cEnv.isDestructorDeclared()){
-            throw new CompilerException(line,tokenNum,"destructor already declared");
+            error(line,tokenNum,"destructor already declared");
         }
         var b = new StringBuilder("void ");
         var type = cEnv.getInstanceInfo();

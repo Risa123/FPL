@@ -102,7 +102,7 @@ public class TypeInfo{
       if(type != this && !type.isPrimitive() && type.notIn(requiredTypes)){
          requiredTypes.add(type);
       }else if(type instanceof PointerInfo p && p.getType() != this && !p.getType().isPrimitive() && p.getType().notIn(requiredTypes)){
-          requiredTypes.add(p.getType());
+         requiredTypes.add(p.getType());
       }
   }
   public final boolean notIn(Collection<TypeInfo>types){

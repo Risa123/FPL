@@ -20,11 +20,8 @@ public final class InterfaceInfo extends NonTrivialTypeInfo{
     }
     @Override
     public boolean equals(Object o) {
-        if (o instanceof TypeInfo type) {
-            if (type instanceof PointerInfo p) {
-                type = p.getType();
-            }
-            if (type.getParents().contains(this)) {
+        if(o instanceof TypeInfo type){
+            if(((type instanceof PointerInfo p)?p.getType():type).getParents().contains(this)){
                 return true;
             }
         }

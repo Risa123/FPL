@@ -60,18 +60,18 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             }else{
                 var typeID = (Atom)exp;
                 if(typeID.getType() != AtomType.ID){//do not remove error message is more precise than identifier or literal expected
-                    throw new CompilerException(typeID,"identifier expected");
+                    error(typeID,"identifier expected");
                 }
                 var parentType = env.getType(typeID);
                 if(parentType.isPrimitive()){
-                    throw new CompilerException(typeID,"primitive types cannot be inherited from");
+                    error(typeID,"primitive types cannot be inherited from");
                 }
                 if(!type.getParents().contains(parentType)){
                     if(parentType instanceof InterfaceInfo){
                         type.addParent(parentType);
                     }else{
                         if(primaryParent != null){
-                            throw new CompilerException(typeID,"there is already parent class");
+                            error(typeID,"there is already parent class");
                         }
                         if(parentType instanceof InstanceInfo t){
                             primaryParent = t;
@@ -85,10 +85,10 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                                 primaryParent = IFunction.generateTypeFor(t,typeID,it,env,false);
                             }
                         }else{
-                            throw new CompilerException(typeID,"can only inherit from other classes");
+                            error(typeID,"can only inherit from other classes");
                         }
                         if(struct){
-                            throw new CompilerException(line,tokenNum,"struct cannot inherit");
+                            error(line,tokenNum,"struct cannot inherit");
                         }
                         cEnv.getInstanceInfo().setPrimaryParent(primaryParent);
                     }
@@ -160,7 +160,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         if(parentType instanceof InstanceInfo i && !cEnv.isParentConstructorCalled()){
             for(var v:i.getConstructor().getVariants()){
                if(v.getArgs().length > 0){
-                   throw new CompilerException(id,"constructor is required to call parent constructor");
+                   error(id,"constructor is required to call parent constructor");
                }
             }
         }
@@ -168,7 +168,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
                 var name = method.getName();
                 if(!(type.getField(name,cEnv) instanceof Function f) || f.getType() == FunctionType.ABSTRACT){
-                    throw new CompilerException(id,"this class doesn't implement method " + name);
+                    error(id,"this class doesn't implement method " + name);
                 }
             }
         }

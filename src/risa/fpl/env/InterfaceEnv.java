@@ -24,7 +24,7 @@ public final class InterfaceEnv extends SubEnv{
     public IFunction getFunction(Atom atom)throws CompilerException{
         var f = super.getFunction(atom);
         if(f instanceof Var){
-            throw new CompilerException(atom,"variables cannot be declared in interface");
+            error(atom,"variables cannot be declared in interface");
         }
         return f;
     }

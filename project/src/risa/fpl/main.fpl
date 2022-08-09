@@ -29,7 +29,7 @@ private{
      DirectoryStream stream init fullPath
      while stream ready{
        var name stream read
-       var path fullPath + name
+       var path fullPath + "/"; + name
        if isDirectory path{
         compileDirectory srcDir,path
        }if isFile path{
@@ -50,7 +50,6 @@ main{
     FileReader reader init project + "/build.bs"
     Tokenizer tokenizer init reader
     var hasMainModule false;hasOutputFile false
-    String ccArgs
     while tokenizer hasNext{
       var propertyToken tokenizer nextID
       var property propertyToken getValue

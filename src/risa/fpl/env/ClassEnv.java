@@ -104,7 +104,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
             var parent = (InstanceInfo)instanceInfo.getPrimaryParent();
             var constructor = parent.getConstructor();
             if(!constructor.hasVariant(new TypeInfo[0])){
-                throw new CompilerException(classId,"this class can not have implicit constructor if parent has not one");
+                error(classId,"this class can not have implicit constructor if parent has not one");
             }
             code = constructor.getVariant(new TypeInfo[0]).getCname() + "((" + parent.getCname() + "*)this);\n" + code;
         }

@@ -25,13 +25,13 @@ public class Fn extends AFunctionBlock{
         var templateArgs = it.checkTemplate()?IFunction.parseTemplateArguments(it,fnEnv):null;
 		var id = it.nextID();
         if(env instanceof ModuleEnv e && e.isMain() && id.getValue().equals("main")){
-           throw new CompilerException(id,"main function can only be declared using built-in function main");
+           error(id,"main function can only be declared using built-in function main");
         }
 	    String cID;
 	    if(env.hasModifier(Modifier.NATIVE)){
 	    	cID = id.getValue();
 	    	if(IFunction.notCID(id.getValue())){
-	    		throw new CompilerException(id,"invalid C identifier");
+	    		error(id,"invalid C identifier");
 	    	}
 	    }else{
 	    	cID = (!env.hasModifier(Modifier.ABSTRACT) && env instanceof ANameSpacedEnv tmp?tmp.getNameSpace(this):"") + IFunction.toCId(id.getValue());
@@ -45,10 +45,10 @@ public class Fn extends AFunctionBlock{
             type = FunctionType.ABSTRACT;
             appendSemicolon = false;
             if(env instanceof ClassEnv e && e.notAbstract()){
-                throw new CompilerException(line,tokenNum,"abstract method can only be declared in abstract class");
+                error(line,tokenNum,"abstract method can only be declared in abstract class");
             }
             if(env.getAccessModifier() == AccessModifier.PRIVATE){
-                throw new CompilerException(line,tokenNum,"abstract function can't be private");
+                error(line,tokenNum,"abstract function can't be private");
             }
         }else if(env.hasModifier(Modifier.VIRTUAL) || env.hasModifier(Modifier.OVERRIDE)){
             type = FunctionType.VIRTUAL;
@@ -60,10 +60,10 @@ public class Fn extends AFunctionBlock{
             if(env.getFunction(id) instanceof Function ft){
                 f = ft;
                 if(f.getType() != type){
-                    throw new CompilerException(line,tokenNum,"all variants require same function type");
+                    error(line,tokenNum,"all variants require same function type");
                 }
                 if(f.getAccessModifier() != env.getAccessModifier()){
-                    throw new CompilerException(line,tokenNum,"all variants require same access modifier");
+                    error(line,tokenNum,"all variants require same access modifier");
                 }
             }else{
                 throw new CompilerException(line,tokenNum,"there is already a function called " + id);
@@ -85,7 +85,7 @@ public class Fn extends AFunctionBlock{
                }else{
                    var attr = it.nextID();
                    if(attrs.contains(attr.getValue())){
-                       throw new CompilerException(attr,"attribute duplicity");
+                       error(attr,"attribute duplicity");
                    }
                    attrs.add(attr.getValue());
                    switch(attr.getValue()){
@@ -113,7 +113,7 @@ public class Fn extends AFunctionBlock{
         var argsArray = args.values().toArray(new TypeInfo[0]);
         FunctionVariant variant = null;
         if(f.hasVariant(argsArray) && (variant = f.getVariant(argsArray)).getLine() != line){
-            throw new CompilerException(line,tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
+            error(line,tokenNum,"this function already has variant with arguments " + Arrays.toString(argsArray));
         }
         FunctionInfo p = null;
         if(templateArgs == null){
@@ -129,12 +129,12 @@ public class Fn extends AFunctionBlock{
         var b = new StringBuilder();
 		if(it.hasNext()){
 		    if(env.hasModifier(Modifier.ABSTRACT)){
-		        throw new CompilerException(line,tokenNum,"abstract methods can only be declared");
+		        error(line,tokenNum,"abstract methods can only be declared");
             }
             var codeExp = it.next();
             if(codeExp instanceof Atom a){
                 if(!a.getValue().equals("=")){
-                    throw new CompilerException(a,"= expected");
+                    error(a,"= expected");
                 }
                 oneLine = true;
                 var atoms = new ArrayList<AExp>();
@@ -178,12 +178,12 @@ public class Fn extends AFunctionBlock{
                 fnEnv.compileDestructorCalls(b);
             }
 			if(fnEnv.isReturnNotUsed() && returnType != TypeInfo.VOID){
-				throw new CompilerException(codeExp,"there is no return in this function and this function doesn't return void");
+				error(codeExp,"there is no return in this function and this function doesn't return void");
 			}
             b.append("}\n");
 		}else{
 		    if(!(env.hasModifier(Modifier.ABSTRACT) || env.hasModifier(Modifier.NATIVE))){
-		        throw new CompilerException(line,tokenNum,"block required");
+		        error(line,tokenNum,"block required");
             }
 			appendSemicolon = true;
 		}
@@ -201,7 +201,7 @@ public class Fn extends AFunctionBlock{
                     throw new CompilerException(line,tokenNum,"there is no method " + id + " to override");
                 }
                 if(!parentMethod.hasSignature(f)){
-                    throw new CompilerException(line,tokenNum,"this method doesn't have signature of one it overrides");
+                    error(line,tokenNum,"this method doesn't have signature of one it overrides");
                 }
             }
         }

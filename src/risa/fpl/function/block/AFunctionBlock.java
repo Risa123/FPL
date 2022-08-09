@@ -48,13 +48,13 @@ public abstract class AFunctionBlock extends ABlock{
                     argName = it.nextID();
                 }
             }else if(argName.getType() != AtomType.ID){
-                throw new CompilerException(argName,"identifier or ; expected");
+                error(argName,"identifier or ; expected");
             }else if(argName.getValue().equals("const")){
                 argName = it.nextID();
                 constant = true;
             }
             if(args.containsKey(argName.getValue())){
-                throw new CompilerException(argName,"there is already argument called " + argName);
+                error(argName,"there is already argument called " + argName);
             }
             args.put(argName.getValue(),argType);
             var argNameCID = IFunction.toCId(argName.getValue());

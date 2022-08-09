@@ -25,11 +25,11 @@ public final class ForLoop extends ABlock{
            id = secondAtom;
            type = env.getType(firstAtom);
            if(type.notIntegerNumber()){
-               throw new CompilerException(firstAtom,"integer type expected");
+               error(firstAtom,"integer type expected");
            }
            var sep = it.nextAtom();
            if(sep.getType() != AtomType.ARG_SEPARATOR){
-               throw new CompilerException(sep,", expected");
+               error(sep,", expected");
            }
         }else{
             throw new CompilerException(secondAtom,", or identifier expected");

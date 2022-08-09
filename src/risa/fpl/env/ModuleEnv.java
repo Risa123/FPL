@@ -76,7 +76,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             if(modName.equals(moduleBlock.getName())){
                 return getFunctionFromModule(new Atom(name.getLine(),name.getTokenNum(),tmp[tmp.length - 1],AtomType.ID));
             }
-            throw new CompilerException(name,"module " + modName + " not found");
+            error(name,"module " + modName + " not found");
         }
 		return hasFunctionInCurrentEnv(name.getValue())?getFunctionFromModule(name):superEnv.getFunction(name);
 	}
@@ -131,7 +131,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
         }
         var block = FPL.getModule(module.getValue());
         if(block == null){
-            throw new CompilerException(module,"module " +  module + " not found");
+            error(module,"module " +  module + " not found");
         }
         importedModules.add(block.getEnv());
     }

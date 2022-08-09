@@ -51,7 +51,7 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
             }else{
                var typeID = (Atom)exp;
                if(typeID.getType() != AtomType.ID){
-                   throw new CompilerException(id,"identifier expected");
+                   error(id,"identifier expected");
                }
                if(!(env.getType(typeID) instanceof InterfaceInfo parentType)){
                    throw new CompilerException(typeID,"interface can only inherit from interfaces");

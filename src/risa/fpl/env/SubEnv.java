@@ -32,9 +32,9 @@ public class SubEnv extends AEnv{
       return ((SubEnv)superEnv).getModule();
  }
  public final void addInstanceVariable(InstanceInfo type,String cname) {
-     if(!instanceVarCNames.contains(cname)){
+     if(!instanceVarCNames.contains(cname)){//prevent duplicate destructor calls
          var destructor = type.getDestructorName();
-         if(destructor != null){//check presence of destructor
+         if(destructor != null){
              destructorCalls.append(destructor).append("(&").append(cname).append(");\n");
          }
          instanceVarCNames.add(cname);
