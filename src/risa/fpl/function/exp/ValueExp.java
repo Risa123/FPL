@@ -23,9 +23,6 @@ public class ValueExp extends AField{
     }
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
-		if(code.startsWith("sizeof") && line == 49){
-			System.out.println(tokenNum);
-		}
         if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() == AtomType.ID){
 			it.next();
 			return onField(atom,builder,env,it,line,tokenNum);
