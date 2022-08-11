@@ -170,5 +170,8 @@ public interface IFunction{
   default void error(int line,int tokenNum,String message)throws CompilerException{
       throw new CompilerException(line,tokenNum,message);
   }
-  String INTERNAL_METHOD_PREFIX = "I";
+  /**
+   Prefix for methods, variables and types  which are used by generated C code internally.
+   **/
+  String INTERNAL_PREFIX = "I";
 }

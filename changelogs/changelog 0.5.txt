@@ -31,7 +31,10 @@ added std.lang.IllegalStateException
 added std.math.ARandom
 String.this(uint len) added
 exception variable in catch changed to pointer
-fileSetBuffer and it's mode removed
+fileSetBuffer and it's modes removed
+copy constructor added to std.collection.ArrayList
+interface copy constructor added
+alloc[] added to object
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C

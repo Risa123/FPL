@@ -25,7 +25,7 @@ public final class InstanceVar extends Function{
 	   this.type = type;
    }
    private String makeCName(String nameSpace){
-      return INTERNAL_METHOD_PREFIX + nameSpace + "_init";
+      return INTERNAL_PREFIX + nameSpace + "_init";
    }
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{

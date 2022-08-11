@@ -62,7 +62,7 @@ public class Function extends AField implements ICalledOnPointer{
 		}
 		var array = argList.toArray(new TypeInfo[0]);
 		if(!hasVariant(array)){
-		    throw new CompilerException(line,tokenNum,"function has no variant with arguments " + Arrays.toString(array));
+		    error(line,tokenNum,"function has no variant with arguments " + Arrays.toString(array));
         }
 		var variant = getVariant(array);
         if(isVirtual()){
@@ -118,6 +118,9 @@ public class Function extends AField implements ICalledOnPointer{
             callCopy = callCopy && !(array[i] instanceof InstanceInfo instance && returnedData.get(i).code.startsWith(instance.getCopyConstructorName()));
             if(callCopy){
                 b.append(((InstanceInfo)array[i]).getCopyConstructorName()).append("AndReturn(");
+            }else if(array[i] instanceof InterfaceInfo iFace){
+                b.append(iFace.getCopyName()).append('(');
+                callCopy = true;
             }
             b.append(array[i].ensureCast(variant.getArgs()[i],returnedData.get(i).code,array[i] instanceof PointerInfo,returnedData.get(i).notReturnedByFunction,env));
             if(callCopy){

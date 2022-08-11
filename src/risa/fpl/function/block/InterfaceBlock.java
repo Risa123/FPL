@@ -36,8 +36,8 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
             iEnv = new InterfaceEnv(mod,idV,line);
             mod.getInterfaceEnvList().add(iEnv);
         }
-        if(env.hasTypeInCurrentEnv(idV) && (!(env.getType(id) instanceof InterfaceInfo) || iEnv.getFirstLine() != line)) {
-            throw new CompilerException(id, "this type " + idV + " is already declared");
+        if(env.hasTypeInCurrentEnv(idV) && (!(env.getType(id) instanceof InterfaceInfo) || iEnv.getFirstLine() != line)){
+            error(id,"this type " + idV + " is already declared");
         }
         var type = iEnv.getType();
         var cID = type.getCname();
@@ -78,11 +78,16 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
                 b.append(p.getPointerVariableDeclaration(v.getCname())).append(";\n");
             }
         }
+        b.append("void(*copyConstructor)(void*,void*);\n");
         b.append('}').append(implName).append(";\n");
         b.append("typedef struct ").append(cID).append("{\nvoid* instance;\n");
         b.append(implName).append("* impl;\n}").append(cID).append(";\n");
+        b.append(cID).append(' ').append(type.getCopyName()).append('(').append(cID).append(");\n");
         type.appendToDeclaration(b.toString());
         type.buildDeclaration();
+        mod.appendFunctionCode(cID + ' ' + type.getCopyName() + '(');
+        mod.appendFunctionCode(cID + " this){\nif(this.impl->copyConstructor != 0){\n");
+        mod.appendFunctionCode("this.impl->copyConstructor(this.instance,this.instance);\n}\nreturn this;\n}\n");
         return TypeInfo.VOID;
     }
 }

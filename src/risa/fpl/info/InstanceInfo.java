@@ -9,7 +9,7 @@ import risa.fpl.function.statement.InstanceVar;
 
 import java.util.HashMap;
 
-public class InstanceInfo extends NonTrivialTypeInfo{
+public class InstanceInfo extends NonTrivialTypeInfo {
     private String attributesCode,destructorName,instanceFree = "free",copyConstructorName,methodDeclarations = "";
     private final InstanceVar constructor = new InstanceVar(this);
     private final String toPointerName,dataName;
@@ -19,7 +19,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
     public InstanceInfo(String name,ModuleEnv module,String nameSpace,boolean isFinal){
         super(module,name,IFunction.toCId(name));
         this.isFinal = isFinal;
-        toPointerName = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_toPointer";
+        toPointerName = IFunction.INTERNAL_PREFIX + nameSpace + "_toPointer";
         dataName = nameSpace + "_data";
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
@@ -78,7 +78,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
                 }
             }
             if(cEnv.hasOnlyImplicitConstructor()){
-                cEnv.appendFunctionDeclaration("void " + IFunction.INTERNAL_METHOD_PREFIX + cEnv.getNameSpace() + "_init0(" + getCname() + "*);\n");
+                cEnv.appendFunctionDeclaration("void " + IFunction.INTERNAL_PREFIX + cEnv.getNameSpace() + "_init0(" + getCname() + "*);\n");
             }
             cEnv.appendFunctionDeclaration(constructor);
             if(copyConstructorName != null){
@@ -132,7 +132,7 @@ public class InstanceInfo extends NonTrivialTypeInfo{
         return methodDeclarations;
     }
     public final String getConversionMethod(InterfaceInfo i){
-        return IFunction.INTERNAL_METHOD_PREFIX + module.getNameSpace() + getCname() + "_as" + i.getCname();
+        return IFunction.INTERNAL_PREFIX + module.getNameSpace() + getCname() + "_as" + i.getCname();
     }
     public final boolean isException(){
         if(module.getNameSpace().equals("_std_lang") && getName().equals("Exception")){

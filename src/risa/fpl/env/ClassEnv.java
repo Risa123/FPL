@@ -60,7 +60,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_alloc0",prefix + "_alloc0",null));
         ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_new0",prefix + "_new0",null));
-        var name = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0";
+        var name = IFunction.INTERNAL_PREFIX + nameSpace + "_init0";
         instanceInfo.getConstructor().getVariants().add(new FunctionVariant(new TypeInfo[0],name,name,null));
 	}
 	@Override
@@ -98,7 +98,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         if(struct){
             return "";
         }
-        var header = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_init0(";
+        var header = IFunction.INTERNAL_PREFIX + nameSpace + "_init0(";
         var code = "this->objectData=&" + instanceInfo.getDataName() + ";\n";
         if(instanceInfo.getPrimaryParent() != null){
             var parent = (InstanceInfo)instanceInfo.getPrimaryParent();
@@ -241,7 +241,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     public String getDestructor(){
 	    if(!(destructor.isEmpty() || destructorDeclared)){
             var b = new StringBuilder("void ");
-            var prefix = IFunction.INTERNAL_METHOD_PREFIX + nameSpace;
+            var prefix = IFunction.INTERNAL_PREFIX + nameSpace;
             instanceInfo.setDestructorName(prefix);
             b.append(prefix).append("_destructor(").append(instanceInfo.getCname());
             return b.append("* this){\n").append(destructor).append("}\n").toString();

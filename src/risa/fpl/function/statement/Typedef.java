@@ -14,10 +14,10 @@ public final class Typedef implements IFunction{
         builder.append("typedef ");
         var type = it.nextID();
         if(env.hasTypeInCurrentEnv(type.getValue()) && env.getType(type) instanceof CustomTypeInfo t && t.isPrimitive()){
-            throw new CompilerException(type,"type " + type + " is already defined");
+            error(type,"type " + type + " is already defined");
         }
         if(env.hasFunctionInCurrentEnv(type.getValue())){
-            throw new CompilerException(type,"type cannot be declared identifier for declaration function occupied");
+            error(type,"type cannot be declared identifier for declaration function occupied");
         }
         var originalType = it.nextID();
         var after = "";

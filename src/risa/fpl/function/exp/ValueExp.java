@@ -23,7 +23,10 @@ public class ValueExp extends AField{
     }
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
-        if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() != AtomType.END_ARGS && atom.getType() != AtomType.ARG_SEPARATOR){
+		if(code.startsWith("sizeof") && line == 49){
+			System.out.println(tokenNum);
+		}
+        if(it.hasNext() && it.peek() instanceof Atom atom && atom.getType() == AtomType.ID){
 			it.next();
 			return onField(atom,builder,env,it,line,tokenNum);
         }
@@ -31,7 +34,7 @@ public class ValueExp extends AField{
 		builder.append(code);
 		return type;
 	}
-	protected TypeInfo onField(Atom atom,StringBuilder builder,SubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{
+	protected TypeInfo onField(Atom atom,StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
 		var field = type.getField(atom.getValue(),env);
 		if(field == null){
 			throw new CompilerException(atom,type + " has no field called " + atom);
@@ -53,6 +56,6 @@ public class ValueExp extends AField{
 			f.calledOnStringLiteral();
 		}
 		field.setPrevCode(prefix + code + selector);
-		return field.compile(builder,env,it,line,charNum);
+		return field.compile(builder,env,it,line,tokenNum);
 	}
 }

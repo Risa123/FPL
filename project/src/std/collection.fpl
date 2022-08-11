@@ -20,7 +20,7 @@ class ArrayList;T{
  fn void add T value{
    len ++
    if array == nil{
-      array = malloc value getObjectSize;cast T*
+      array = malloc T:getInstanceSize;cast T*
       array drf= value
    }{
     array = realloc array cast void*,len * T:getInstanceSize;cast T*
@@ -42,8 +42,15 @@ class ArrayList;T{
      array free[] len
    }
  }
+ =this{
+   if o array != nil{
+     len = o len
+     array = malloc T:getInstanceSize;cast T*
+     memoryCopy o array cast byte*,array cast byte*,T:getInstanceSize * len
+   }
+ }
 }
-class Entry;K V{
+final class Entry;K V{
   private{
    K key
    V value

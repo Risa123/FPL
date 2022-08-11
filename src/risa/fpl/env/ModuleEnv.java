@@ -215,7 +215,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
             destructorCall = "";
         }else{
             var b = new StringBuilder("void ");
-            destructorCall = IFunction.INTERNAL_METHOD_PREFIX + nameSpace + "_destructor()";
+            destructorCall = IFunction.INTERNAL_PREFIX + nameSpace + "_destructor()";
             b.append(destructorCall).append("{\n").append(destructor).append("}\n");
             destructorCall += ";\n";
             return b.toString();

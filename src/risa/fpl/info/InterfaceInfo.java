@@ -6,24 +6,26 @@ import risa.fpl.function.exp.Cast;
 import risa.fpl.function.exp.UnaryOperator;
 import risa.fpl.function.exp.ValueExp;
 
-public final class InterfaceInfo extends NonTrivialTypeInfo{
-    private final String implName;
+public final class InterfaceInfo extends NonTrivialTypeInfo {
+    private final String implName,copyName;
     public InterfaceInfo(ModuleEnv module,String name){
         super(module,name,IFunction.toCId(name));
+        implName = IFunction.INTERNAL_PREFIX + getCname() + "_impl";
+        copyName = IFunction.INTERNAL_PREFIX + module.getNameSpace() + getCname() + "_copy";
         addField("cast",new Cast(this));
-        implName = 'I' + getCname() + "_impl";
         addField("getObjectSize",new UnaryOperator(NumberInfo.MEMORY,"sizeof ",false));
         getClassInfo().addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + getCname() + ')'));
     }
     public String getImplName(){
         return implName;
     }
+    public String getCopyName(){
+        return copyName;
+    }
     @Override
     public boolean equals(Object o) {
-        if(o instanceof TypeInfo type){
-            if(((type instanceof PointerInfo p)?p.getType():type).getParents().contains(this)){
-                return true;
-            }
+        if(o instanceof TypeInfo type && ((type instanceof PointerInfo p)?p.getType():type).getParents().contains(this)){
+            return true;
         }
         return this == o;
     }

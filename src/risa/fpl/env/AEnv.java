@@ -26,7 +26,7 @@ public abstract class AEnv{
 		 }
 		 var func = functions.get(atom.getValue());
 		 if(func == null){
-			 throw new CompilerException(atom,"function " + atom + " not found");
+			 error(atom,"function " + atom + " not found");
 		 }
 		 return func;
 	  case UINT:
