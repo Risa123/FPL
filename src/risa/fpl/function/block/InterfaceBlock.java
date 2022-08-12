@@ -82,12 +82,17 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
         b.append('}').append(implName).append(";\n");
         b.append("typedef struct ").append(cID).append("{\nvoid* instance;\n");
         b.append(implName).append("* impl;\n}").append(cID).append(";\n");
-        b.append(cID).append(' ').append(type.getCopyName()).append('(').append(cID).append(");\n");
+        b.append("void ").append(type.getCopyName()).append('(').append(cID).append("*,").append(cID).append("*);\n");
+        b.append(cID).append(' ').append(type.getCopyName()).append("AndReturn(").append(cID).append(");\n");
         type.appendToDeclaration(b.toString());
         type.buildDeclaration();
-        mod.appendFunctionCode(cID + ' ' + type.getCopyName() + '(');
-        mod.appendFunctionCode(cID + " this){\nif(this.impl->copyConstructor != 0){\n");
-        mod.appendFunctionCode("this.impl->copyConstructor(this.instance,this.instance);\n}\nreturn this;\n}\n");
+        mod.appendFunctionCode("void " + type.getCopyName() + '(');
+        mod.appendFunctionCode(cID + "* this," + cID + "* o){\nthis->instance = o->instance;\nthis->impl = o->impl;\n");
+        mod.appendFunctionCode("if(this->impl->copyConstructor != 0){\n");
+        mod.appendFunctionCode("this->impl->copyConstructor(this->instance,this->instance);\n}\n}\n");
+        mod.appendFunctionCode(cID + ' ' + type.getCopyName() + "AndReturn(" + cID + " original){\n");
+        mod.appendFunctionCode(cID + " instance;\n");
+        mod.appendFunctionCode(type.getCopyName() + "(&instance,&original);\nreturn instance;\n}\n");
         return TypeInfo.VOID;
     }
 }

@@ -13,7 +13,7 @@ public final class Asm implements IFunction{
         env.checkModifiers(line,tokenNum);
         var code = it.nextAtom();
         if(code.getType() != AtomType.STRING){
-            error(code,"assembly code as string expected");
+            error(code,"assembly code is expected to a string");
         }
         builder.append("asm(").append(code).append(')');
         return TypeInfo.VOID;

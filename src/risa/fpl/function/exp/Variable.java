@@ -4,10 +4,7 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.env.ConstructorEnv;
 import risa.fpl.function.AccessModifier;
-import risa.fpl.info.InstanceInfo;
-import risa.fpl.info.NumberInfo;
-import risa.fpl.info.PointerInfo;
-import risa.fpl.info.TypeInfo;
+import risa.fpl.info.*;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
@@ -106,15 +103,20 @@ public final class Variable extends ValueExp{
         }
 		var b = new StringBuilder();
 		var ret = super.compile(b,env,it,line,tokenNum);
-		copyCallNeeded = copyCallNeeded && type instanceof InstanceInfo i && i.getCopyConstructorName() != null;
 		if(copyCallNeeded){
-			builder.append(((InstanceInfo)type).getCopyConstructorName()).append("AndReturn(");
+			if(type instanceof InstanceInfo i && i.getCopyConstructorName() != null){
+				builder.append(i.getCopyConstructorName()).append("AndReturn(");
+			}else if(type instanceof InterfaceInfo i){
+				builder.append(i.getCopyName()).append("AndReturn(");
+			}else{
+				copyCallNeeded = false;
+			}
 		}
 		builder.append(b);
 		if(copyCallNeeded){
 			builder.append(')');
+			copyCallNeeded = false;
 		}
-		copyCallNeeded = false;
 		return ret;
 	}
 	private TypeInfo processOperator(String operator,StringBuilder builder,ExpIterator it,SubEnv env)throws CompilerException{

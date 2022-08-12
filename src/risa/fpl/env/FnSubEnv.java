@@ -47,7 +47,10 @@ public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
     public final void compileBlock(AExp exp,StringBuilder builder,ExpIterator it)throws CompilerException{
         var tmp = new StringBuilder();
         exp.compile(tmp,this,it);
-        builder.append(toPointerVars).append(tmp).append(destructorCalls);
+        builder.append(toPointerVars).append(tmp);
+        if(returnNotUsed){
+            builder.append(destructorCalls);
+        }
     }
     public final String getToPointerVars(){
         return toPointerVars.toString();

@@ -32,7 +32,7 @@ public final class GetObjectInfo extends AField implements ICalledOnPointer{
             prev.append('.');
         }
         prev.append("objectData)->").append(field);
-        return  compileChainedCall(returnType,builder,env,it,prev.toString());
+        return compileChainedCall(returnType,builder,env,it,prev.toString());
     }
     @Override
     public void calledOnPointer(){

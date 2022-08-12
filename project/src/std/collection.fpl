@@ -67,18 +67,14 @@ final class Entry;K V{
 class Map;K V{
   private const ArrayList;Entry;K V;; entries init
   fn void put K key V value{
-    var notPresent true
     for i,entries getSize{
       var entry entries get i
       if entry getKey; == key{
         entry setValue value
-        notPresent = false
-        break
+        return
       }
     }
-    if notPresent{
-      entries add Entry;K V:new key,value
-    }
+    entries add Entry;K V:new key,value
   }
   fn bool containsKey K key{
     for i,entries getSize{

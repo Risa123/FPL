@@ -38,7 +38,7 @@ public final class ForLoop extends ABlock{
         var expAtom = it.nextAtom();
         var expType = expAtom.compile(b,env,it);
         if(expType.notIntegerNumber()){
-            throw new CompilerException(expAtom,"expression returning integer number expected");
+            error(expAtom,"expression returning integer number expected");
         }
         if(type == null){
             type = expType;

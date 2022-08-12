@@ -71,8 +71,8 @@ main{
       CompilerException:new "no output file";throw "build.bs"
     }
     IRWriter writer init FileWriter:new outputFile
-    writer close
     compileDirectory project + "/src";,""
+    writer close
  }catch CompilerException{
    stderr writeString ex getMessage
    return 3

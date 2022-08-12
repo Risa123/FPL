@@ -302,7 +302,7 @@ class Thread{
 }
 Thread* currentThread #initailized in main block
 fn void defaultExceptionHandler Exception* ex{
-  print "exception happened:"
+  print "uncaught exception:"
   print ex getMessage
   exit 1
 }

@@ -8,10 +8,7 @@ use{
  risa.fpl.main
 }
 class ModuleBlock ObjectInfo{
- private const{
-   String name
-   String cPath
- }
+ private const String name
  this String fplPath{
    Tokenizer tokenizer init FileReader:new fplPath
    name = fplPath replace $/,$.;replace $\\,$.
@@ -32,9 +29,8 @@ class ModuleBlock ObjectInfo{
    }
    name = name substring beginIndex,endIndex
    if getMainModule; == name{
-     addField "main",MainBlock:new
+     addField "main",MainBlock:new #bug is here
    }
-   cPath = name replace $.,$_; + ".c"
    try{
       while tokenizer hasNext{
           var token tokenizer next

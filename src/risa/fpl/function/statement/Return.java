@@ -9,6 +9,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
 import risa.fpl.info.InstanceInfo;
+import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.*;
 
@@ -47,8 +48,12 @@ public final class Return implements IFunction{
 				}
 			}
 			//code of instance variable already starts with copyAndReturn
-			if(!expCode.equals("tmp") && returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !expCode.startsWith(i.getCopyConstructorName())){
-				expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ')';
+			if(!expCode.equals("tmp")){
+				if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !expCode.startsWith(i.getCopyConstructorName())){
+					expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ')';
+				}else if(returnType instanceof InterfaceInfo i && !expCode.startsWith(i.getCopyName())){
+					expCode = i.getCopyName() + "AndReturn(" + expCode + ')';
+				}
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){
 			error(line,tokenNum,"this function doesn't return void");

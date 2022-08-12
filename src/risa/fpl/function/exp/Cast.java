@@ -27,8 +27,8 @@ public final class Cast extends AField{
         }else if(isCharOrNumber(self) && isCharOrNumber(type) || (self == TypeInfo.CHAR && type instanceof NumberInfo)){
 	        CCast(prev,"char");
         }else if(!type.isPrimitive() && self instanceof InterfaceInfo && type.getParents().contains(self)){
-          CCast(prev,type.getCname());
-          prev.append(".instance");
+            CCast(prev,type.getCname());
+            prev.append(".instance");
         }else if(type instanceof InterfaceInfo){
 	        error(line,tokenNum,"cannot cast to interface");
         }else{
