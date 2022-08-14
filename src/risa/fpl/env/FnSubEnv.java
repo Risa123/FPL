@@ -3,6 +3,7 @@ package risa.fpl.env;
 import risa.fpl.CompilerException;
 import risa.fpl.info.ClassInfo;
 import risa.fpl.info.InstanceInfo;
+import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.AExp;
 import risa.fpl.parser.ExpIterator;
@@ -36,13 +37,23 @@ public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
     public boolean isInMainBlock(){
         return ((FnSubEnv)superEnv).isInMainBlock();
     }
-    public void compileDestructorCallsFromWholeFunction(StringBuilder builder){
+    public void compileDestructorCallsForReturn(StringBuilder builder,String returnedVariable){
         var superEnv = this.superEnv;
+        var b = new StringBuilder();
         while(superEnv instanceof FnSubEnv env){
-            env.compileDestructorCalls(builder);
+            env.compileDestructorCalls(b);
             superEnv = env.superEnv;
         }
-        compileDestructorCalls(builder);
+        compileDestructorCalls(b);
+        var code = b.toString();
+        if(returnedVariable != null){
+           if(getReturnTypeInternal() instanceof InstanceInfo i && i.getDestructorName() != null){
+               code = code.replace(i.getDestructorName() +"(&" + returnedVariable + ");\n","");
+           }else if(getReturnTypeInternal() instanceof InterfaceInfo){
+               code = code.replace( "free(" + returnedVariable + "instance);\n","");
+           }
+        }
+        builder.append(code);
     }
     public final void compileBlock(AExp exp,StringBuilder builder,ExpIterator it)throws CompilerException{
         var tmp = new StringBuilder();

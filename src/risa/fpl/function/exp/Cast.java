@@ -20,7 +20,7 @@ public final class Cast extends AField{
 	    var type = env.getType(typeAtom);
 	    var prev = new StringBuilder();
 	    if(it.checkTemplate()){
-            type = IFunction.generateTypeFor(type,typeAtom,it,env,false);
+            type = generateTypeFor(type,typeAtom,it,env,false);
         }
 	    if((self instanceof NumberInfo || self instanceof PointerInfo) && (type instanceof  NumberInfo || type instanceof PointerInfo)){
 	        CCast(prev,type.getCname());

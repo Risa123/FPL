@@ -4,7 +4,7 @@ fn void exit int exitCode{
  callOnExitHandlers
  std.backend.exit exitCode
 }
-fn void callOnExitHandlers{#made inaccessible by compiler
+fn void callOnExitHandlers{ #made inaccessible by compiler
   for i,onExitHandlers getSize{
       onExitHandlers get i;drf
    }

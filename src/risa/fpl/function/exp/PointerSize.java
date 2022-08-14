@@ -10,7 +10,7 @@ public final class PointerSize extends AField{
     public static final PointerSize INSTANCE = new PointerSize();
     private PointerSize(){}
     @Override
-    public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException {
+    public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
         builder.append(NumberInfo.MEMORY.getSize());
         var prevCode = getPrevCode();
         if(prevCode == null){

@@ -8,8 +8,6 @@ import risa.fpl.env.FnSubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
-import risa.fpl.info.InstanceInfo;
-import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.*;
 
@@ -20,6 +18,7 @@ public final class Return implements IFunction{
 		var subEnv = (FnSubEnv)env;
 		var expCode = "";
 		TypeInfo returnType;
+		String returnedVariable = null;
 		if(it.hasNext()){
 			if(subEnv.getReturnType() == TypeInfo.VOID){
 				error(line,tokenNum,"no expression expected");
@@ -35,30 +34,15 @@ public final class Return implements IFunction{
 				error(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
 			}
 			if(returnType != TypeInfo.VOID){
-				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
-				if(subEnv.hasNoDestructorCalls() || (list.size() == 1 && env.getFunction((Atom)list.get(0)) instanceof ValueExp v && !(v instanceof  Variable))){
-					expCode = code;
-				}else{
-					expCode = "tmp";
-					builder.append(returnType.getCname()).append(" tmp=");
-					if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && ((Atom)list.get(0)).getType() != AtomType.STRING){
-						code = i.getCopyConstructorName() + "AndReturn("+ code + ')';
-					}
-					builder.append(code).append(";\n");
-				}
-			}
-			//code of instance variable already starts with copyAndReturn
-			if(!expCode.equals("tmp")){
-				if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !expCode.startsWith(i.getCopyConstructorName())){
-					expCode = i.getCopyConstructorName() + "AndReturn(" + expCode + ')';
-				}else if(returnType instanceof InterfaceInfo i && !expCode.startsWith(i.getCopyName())){
-					expCode = i.getCopyName() + "AndReturn(" + expCode + ')';
+				expCode = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
+				if(!subEnv.hasNoDestructorCalls() && (list.size() != 1 || !(env.getFunction((Atom) list.get(0)) instanceof ValueExp v) || v instanceof Variable)){
+					returnedVariable = expCode;
 				}
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){
 			error(line,tokenNum,"this function doesn't return void");
 		}
-		subEnv.compileDestructorCallsFromWholeFunction(builder);
+		subEnv.compileDestructorCallsForReturn(builder,returnedVariable);
 		if(subEnv.isInMainBlock()){
 			builder.append("_std_system_callOnExitHandlers0();\n");//args is from main module
 		}

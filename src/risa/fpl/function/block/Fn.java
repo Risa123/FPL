@@ -22,7 +22,7 @@ public class Fn extends AFunctionBlock{
         env.checkModifiers(line,tokenNum,Modifier.NATIVE,Modifier.VIRTUAL,Modifier.ABSTRACT,Modifier.OVERRIDE);
 		var returnType = env.getType(it.nextID());
         var fnEnv = new FnEnv(env,returnType);
-        var templateArgs = it.checkTemplate()?IFunction.parseTemplateArguments(it,fnEnv):null;
+        var templateArgs = it.checkTemplate()?parseTemplateArguments(it,fnEnv):null;
 		var id = it.nextID();
         if(env instanceof ModuleEnv e && e.isMain() && id.getValue().equals("main")){
            error(id,"main function can only be declared using built-in function main");

@@ -41,12 +41,8 @@ public interface IFunction{
 	  var first = true;
 	  for(int i = 0; i < count;++i){
 		  var c = id.codePointAt(i);
-		 if(isCIdChar(c,first)){
-		 	b.appendCodePoint(c);
-		 }else{
-			b.append(Character.getName(c).replace(' ','_'));
-		 }
-		 first = false;
+          b.append(isCIdChar(c,first)?(char)c:Character.getName(c).replace(' ','_'));
+		  first = false;
 	  }
 	  return b.toString();
   }
@@ -54,7 +50,7 @@ public interface IFunction{
   default boolean appendSemicolon(){
 	  return true;
   }
-  static LinkedHashMap<String,TypeInfo>parseTemplateArguments(ExpIterator it,AEnv env)throws CompilerException{
+  default LinkedHashMap<String,TypeInfo>parseTemplateArguments(ExpIterator it,AEnv env)throws CompilerException{
      var args = new LinkedHashMap<String,TypeInfo>();
      var lastLine = it.getLastLine();
      var lastChar = it.getLastCharNum();
@@ -64,7 +60,7 @@ public interface IFunction{
           if(exp instanceof Atom typeID){
               if(typeID.getType() == AtomType.ID){
                   if(list.contains(typeID)){
-                      throw new CompilerException(typeID,"duplicate template argument");
+                      error(typeID,"duplicate template argument");
                   }
                   list.add(typeID);
                   it.next();
@@ -72,7 +68,7 @@ public interface IFunction{
                   it.next();
                   break;
               }else{
-                  throw new CompilerException(exp,"template argument or ; expected instead of " + typeID);
+                  error(exp,"template argument or ; expected instead of " + typeID);
               }
           }else{
               break;
@@ -93,16 +89,16 @@ public interface IFunction{
          env.addType(argType);
      }
      if(args.isEmpty()){
-         throw new CompilerException(lastLine,lastChar,"more than one argument expected");
+         error(lastLine,lastChar,"more than one argument expected");
      }
      return args;
   }
 
-  static ArrayList<Object>parseTemplateGeneration(ExpIterator it,AEnv env)throws CompilerException{
+  default ArrayList<Object>parseTemplateGeneration(ExpIterator it,AEnv env)throws CompilerException{
       return parseTemplateGeneration(it,env,false);
   }
   @SuppressWarnings("ConstantConditions")
-  static ArrayList<Object>parseTemplateGeneration(ExpIterator it, AEnv env, boolean classVariable)throws CompilerException{
+  default ArrayList<Object>parseTemplateGeneration(ExpIterator it, AEnv env, boolean classVariable)throws CompilerException{
       var args = new ArrayList<>();
       while(it.hasNext()){
           var exp = it.peek();
@@ -115,7 +111,7 @@ public interface IFunction{
                          it.next();
                          arg = new TemplateArgument(t,parseTemplateGeneration(it,env,classVariable));
                      }else{
-                         throw new CompilerException(typeID,"template arguments expected");
+                         error(typeID,"template arguments expected");
                      }
                   }
                   args.add(arg);
@@ -124,11 +120,11 @@ public interface IFunction{
                   break;
               }else if(typeID.getType() == AtomType.CLASS_SELECTOR){
                   if(!classVariable){
-                      throw new CompilerException(typeID,"; expected");
+                      error(typeID,"; expected");
                   }
                   break;
               }else{
-                  throw new CompilerException(exp,"template argument or ; expected instead of " + typeID);
+                  error(exp,"template argument or ; expected instead of " + typeID);
               }
           }else{
               break;
@@ -136,7 +132,7 @@ public interface IFunction{
       }
       return args;
   }
-  static InstanceInfo generateTypeFor(TypeInfo template,Atom typeAtom,ExpIterator it,AEnv env,boolean classVariable)throws CompilerException{
+  default InstanceInfo generateTypeFor(TypeInfo template,Atom typeAtom,ExpIterator it,AEnv env,boolean classVariable)throws CompilerException{
       if(template instanceof TemplateTypeInfo tType){
           try{
               return tType.generateTypeFor(parseTemplateGeneration(it,env,classVariable),env,it.getLastLine(),it.getLastCharNum());

@@ -42,12 +42,12 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         LinkedHashMap<String,TypeInfo>templateArgs = null;
         if(it.checkTemplate()){
             cEnv = getEnv(modEnv,idV,TemplateStatus.TEMPLATE,tokenNum,line);
-            templateArgs = IFunction.parseTemplateArguments(it,cEnv);
+            templateArgs = parseTemplateArguments(it,cEnv);
         }else{
             cEnv = getEnv(modEnv,idV,TemplateStatus.INSTANCE,tokenNum,line);
         }
 		if(env.hasTypeInCurrentEnv(idV) && cEnv.getFirstLine() != line){
-		    throw new CompilerException(id,"type " + idV + " is already declared");
+		    error(id,"type " + idV + " is already declared");
         }
 		InstanceInfo primaryParent = null;
 		List block = null;
@@ -76,13 +76,13 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                         if(parentType instanceof InstanceInfo t){
                             primaryParent = t;
                             if(t.isFinal()){
-                                throw new CompilerException(typeID,"cannot inherit form final types");
+                                error(typeID,"cannot inherit form final types");
                             }
                             if(primaryParent instanceof TemplateTypeInfo){
                                 if(!it.checkTemplate()){
-                                    throw new CompilerException(exp,"template arguments expected");
+                                    error(exp,"template arguments expected");
                                 }
-                                primaryParent = IFunction.generateTypeFor(t,typeID,it,env,false);
+                                primaryParent = generateTypeFor(t,typeID,it,env,false);
                             }
                         }else{
                             error(typeID,"can only inherit from other classes");

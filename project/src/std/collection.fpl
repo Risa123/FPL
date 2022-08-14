@@ -28,8 +28,8 @@ class ArrayList;T{
    }
  }
  fn void clear{
-  len = 0
   if array != nil{
+    len = 0
     array free[] len
     array = nil
   }

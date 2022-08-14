@@ -60,7 +60,7 @@ public final class InstanceVar extends Function{
         InstanceInfo varType;
         if(type instanceof TemplateTypeInfo tType){
             try{
-                varType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env,true),env,it.getLastLine(),it.getLastCharNum());
+                varType = tType.generateTypeFor(parseTemplateGeneration(it,env,true),env,it.getLastLine(),it.getLastCharNum());
             }catch(IOException e){
                 throw new UncheckedIOException(e);
             }

@@ -2,7 +2,7 @@
 use std.backend
 
 fn void print char c = putchar c cast int
-class String{
+final class String{
   private{
     char* p
     uint len
@@ -287,13 +287,13 @@ class Thread{
       currentEHEntry free
       currentEHEntry = prev
     }
-     fn void freeEHEntries{
-       while currentEHEntry != nil{
-         var prev currentEHEntry prev
-         currentEHEntry free
-         currentEHEntry = prev
-       }
-     }
+    fn void freeEHEntries{
+      while currentEHEntry != nil{
+        var prev currentEHEntry prev
+        currentEHEntry free
+        currentEHEntry = prev
+      }
+    }
  }
  this String name = this name = name
  fn void setName String name = this name = name

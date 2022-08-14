@@ -31,7 +31,7 @@ public final class Typedef implements IFunction{
         }
         var t = env.getType(originalType);
         if(it.checkTemplate()){
-           t =  IFunction.generateTypeFor(t,originalType,it,env,false);
+           t =  generateTypeFor(t,originalType,it,env,false);
         }
         if(t == null){
             throw new CompilerException(originalType,"type " + originalType + " not found");

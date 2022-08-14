@@ -31,7 +31,7 @@ public final class ModuleBlock extends AThreePassBlock{
        this.sourceFile = sourceFile.subpath(srcDir.getNameCount(),sourceFile.getNameCount()).toString();
 	   cPath = FPL.getOutputDirectory() + '/' + this.sourceFile.replace(File.separatorChar,'_') + ".c";
        name = this.sourceFile.replace(File.separatorChar,'.').substring(0,this.sourceFile.lastIndexOf('.'));
-       env = new ModuleEnv(FPL.getEnv(),this,null);
+       env = new ModuleEnv(FPL.getEnv(),this,null);//has to be initialized here to prevent NPE
        try{
            expInfos = createInfoList(new Parser(Files.newBufferedReader(sourceFile)).parse());
 	   }catch(CompilerException e){

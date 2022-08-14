@@ -47,14 +47,14 @@ public final class ClassInfo extends TypeInfo{
         POINTER.addField("getInstanceSize",PointerSize.INSTANCE);
         FUNCTION.addField("getInstanceSize",PointerSize.INSTANCE);
     }
+    public ClassInfo(String name){
+        super(name + " class","");
+    }
     private void init(TypeInfo type){
         type.setClassInfo(this);
         addField("getInstanceSize",new ValueExp(NumberInfo.MEMORY,"sizeof(" + instanceInfo.getCname() + ')'));
         addField("alloc",new Alloc(instanceInfo,false));
         addField("alloc[]",new Alloc(instanceInfo,true));
-    }
-    public ClassInfo(String name){
-        super(name + " class","");
     }
     public TypeInfo getInstanceInfo(){
         return instanceInfo;

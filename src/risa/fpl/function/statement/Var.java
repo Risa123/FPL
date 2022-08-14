@@ -45,9 +45,9 @@ public final class Var implements IFunction{
 		try{
             if(it.checkTemplate()){
                 if(type instanceof TemplateTypeInfo tType){
-                    decType = tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum());
+                    decType = tType.generateTypeFor(parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum());
                 }else if(type instanceof PointerInfo p && p.getType() instanceof TemplateTypeInfo tType){
-                    decType = new PointerInfo(tType.generateTypeFor(IFunction.parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum()));
+                    decType = new PointerInfo(tType.generateTypeFor(parseTemplateGeneration(it,env),env,it.getLastLine(),it.getLastCharNum()));
                 }else{
                     error(line,tokenNum,"template type expected instead of " + type);
                 }

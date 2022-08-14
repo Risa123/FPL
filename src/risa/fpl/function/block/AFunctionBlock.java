@@ -41,7 +41,7 @@ public abstract class AFunctionBlock extends ABlock{
             var argName = it.nextAtom();
             var constant = false;
             if(argName.getType() == AtomType.END_ARGS){
-                argType = IFunction.generateTypeFor(argType,argTypeAtom,it,env,false);
+                argType = generateTypeFor(argType,argTypeAtom,it,env,false);
                 argName = it.nextID();
                 if(argName.getValue().equals("*")){
                     argType = new PointerInfo(argType);

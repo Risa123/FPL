@@ -7,7 +7,7 @@ use{
  risa.fpl.env
  risa.fpl.main
 }
-class ModuleBlock ObjectInfo{
+final class ModuleBlock ObjectInfo{
  private const String name
  this String fplPath{
    Tokenizer tokenizer init FileReader:new fplPath
@@ -29,7 +29,7 @@ class ModuleBlock ObjectInfo{
    }
    name = name substring beginIndex,endIndex
    if getMainModule; == name{
-     addField "main",MainBlock:new #bug is here
+     addField "main",MainBlock:new
    }
    try{
       while tokenizer hasNext{

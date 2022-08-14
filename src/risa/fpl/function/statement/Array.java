@@ -28,7 +28,7 @@ public final class Array implements IFunction{
         }
 		var lenAtom = it.nextAtom();
 		if(lenAtom.getType() == AtomType.END_ARGS){
-		    type = IFunction.generateTypeFor(type,typeAtom,it,env,false);
+		    type = generateTypeFor(type,typeAtom,it,env,false);
 		    lenAtom = it.nextAtom();
         }
         b.append(type.getCname());
