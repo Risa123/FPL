@@ -34,9 +34,13 @@ public final class Return implements IFunction{
 				error(exp,returnType + " cannot be implicitly converted to " + subEnv.getReturnType());
 			}
 			if(returnType != TypeInfo.VOID){
-				expCode = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
-				if(!subEnv.hasNoDestructorCalls() && (list.size() != 1 || !(env.getFunction((Atom) list.get(0)) instanceof ValueExp v) || v instanceof Variable)){
+				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
+				if(list.size() == 1 && env.getFunction((Atom)list.get(0)) instanceof Variable){
+					expCode = code;
 					returnedVariable = expCode;
+				}else{
+					expCode = "tmp";
+					builder.append(returnType.getCname()).append(" tmp=").append(code).append(";\n");
 				}
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){
