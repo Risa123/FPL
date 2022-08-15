@@ -23,8 +23,8 @@ class ArrayList;T{
       array = malloc T:getInstanceSize;cast T*
       array drf= value
    }{
-    array = realloc array cast void*,len * T:getInstanceSize;cast T*
-    memoryCopy value ref cast byte*,array cast byte* + T:getInstanceSize * [ len - 1 ],T:getInstanceSize
+     array = realloc array cast void*,len * T:getInstanceSize;cast T*
+     array set len - 1,value
    }
  }
  fn void clear{
@@ -46,7 +46,9 @@ class ArrayList;T{
    if o array != nil{
      len = o len
      array = malloc T:getInstanceSize;cast T*
-     memoryCopy o array cast byte*,array cast byte*,T:getInstanceSize * len
+     for i,len{
+       array set i,o array get i
+     }
    }
  }
 }

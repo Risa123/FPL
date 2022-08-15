@@ -22,4 +22,4 @@ class Field{
 interface IFunction{
  fn void compile int line int tokenNum ObjectInfo* env IRWriter* writer
 }
-enum AccessModifier PUBLIC PROTECTED PRIVATE
+enum AccessModifier PUBLIC PROTECTED PRIVATE INTERNAL

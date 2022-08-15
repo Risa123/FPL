@@ -8,6 +8,7 @@ import risa.fpl.env.FnSubEnv;
 import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.ValueExp;
 import risa.fpl.function.exp.Variable;
+import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.*;
 
@@ -35,12 +36,15 @@ public final class Return implements IFunction{
 			}
 			if(returnType != TypeInfo.VOID){
 				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
-				if(list.size() == 1 && env.getFunction((Atom)list.get(0)) instanceof Variable){
+				var f = env.getFunction((Atom)list.get(0));
+				if(list.size() == 1 && f instanceof ValueExp){
 					expCode = code;
-					returnedVariable = expCode;
+					if(f instanceof Variable v && v.getType() instanceof InstanceInfo i && i.getDestructorName() != null){
+						returnedVariable = expCode;
+					}
 				}else{
-					expCode = "tmp";
-					builder.append(returnType.getCname()).append(" tmp=").append(code).append(";\n");
+					expCode = "ret";
+					builder.append(returnType.getCname()).append(" ret=").append(code).append(";\n");
 				}
 			}
 		}else if(subEnv.getReturnType() != TypeInfo.VOID){

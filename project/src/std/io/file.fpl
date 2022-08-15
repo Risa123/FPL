@@ -44,6 +44,7 @@ class FileWriter FileHandler Writable{
     fileWrite handle,p,size
     checkError
   }
+  fn void flush = fileFlush handle
 }
 class FileReader FileHandler Readable{
   this String name:super name,READ

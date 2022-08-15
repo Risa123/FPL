@@ -160,7 +160,8 @@ public class Fn extends AFunctionBlock{
                 b.append("return ");
                 //noinspection ConstantConditions
                 var a = (Atom)(codeExp instanceof List l?l.getExps().get(0):codeExp);
-                if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && a.getType() != AtomType.STRING){
+                var strCode = code.toString();
+                if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !strCode.startsWith(i.getCopyConstructorName()) && a.getType() != AtomType.STRING){
                     b.append(i.getCopyConstructorName()).append("AndReturn(").append(code).append(')');
                 }else{
                     b.append(code);

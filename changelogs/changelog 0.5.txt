@@ -36,6 +36,7 @@ copy constructor added to std.collection.ArrayList
 interface copy constructor added
 default exception handler message changed from "exception happened:(exception message)" to "uncaught exception:(exception message)"
 std.lang.String made final
+flush method added to FileWriter
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
