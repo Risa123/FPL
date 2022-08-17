@@ -70,7 +70,7 @@ public final class Array implements IFunction{
 					var buffer = new StringBuilder();
 					var expType = exp.compile(buffer,env,it);
 					if(!expType.equals(type)){
-						throw new CompilerException(exp,type + " expected instead of " + expType);
+						error(exp,type + " expected instead of " + expType);
 					}
 					b.append(expType.ensureCast(type,buffer.toString(),env));
 					count++;

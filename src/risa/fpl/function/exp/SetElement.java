@@ -2,6 +2,8 @@ package risa.fpl.function.exp;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
+import risa.fpl.info.InstanceInfo;
+import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.AtomType;
@@ -28,7 +30,19 @@ public final class SetElement extends AField{
 		if(valueAtom.getType() == AtomType.ARG_SEPARATOR){
 			valueAtom = it.nextAtom();
 		}
-		var valueType = valueAtom.compile(builder,env,it);
+		var tmp = new StringBuilder();
+		var valueType = valueAtom.compile(tmp,env,it);
+		var callCopy = valueType instanceof InstanceInfo i && i.getCopyConstructorName() != null;
+		if(callCopy){
+			builder.append(((InstanceInfo)valueType).getCopyConstructorName()).append("AndReturn(");
+		}else if(valueType instanceof InterfaceInfo i){
+			builder.append(i.getCopyName()).append("AndReturn(");
+			callCopy = true;
+		}
+		builder.append(tmp);
+		if(callCopy){
+			builder.append(')');
+		}
 	    if(!this.valueType.equals(valueType)){
 	    	error(line,beginChar,this.valueType + " return type expected instead of " + valueType);
 		}

@@ -78,14 +78,12 @@ class DirectoryStream{
         IOException:throw "no more files"
       }
     }
-    var i 0
     var nameLen getCStringLen entry name
-    var name char:alloc[] nameLen
-    while i < nameLen{
+    String name init nameLen
+    for i,nameLen{
       name set i,entry name get i
-      i ++
     }
-    return String:new name,nameLen,true
+    return name
   }
   fn bool ready{
     if last == nil{

@@ -294,8 +294,7 @@ public final class Tokenizer implements AutoCloseable{
 				}
 			  	b.appendCodePoint(c);
 			  }
-			  b.append('"');
-			  return atom(b.toString(),AtomType.STRING);
+			  return atom(b.append('"').toString(),AtomType.STRING);
 		  }else if(c == ':'){
 		      return atom(":",AtomType.CLASS_SELECTOR);
           }else  if(notSeparator(c)){
