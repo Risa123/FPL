@@ -17,7 +17,7 @@ public final class Return implements IFunction{
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
 		env.checkModifiers(line,tokenNum);
 		var subEnv = (FnSubEnv)env;
-		var expCode = "";
+		String expCode = null;
 		TypeInfo returnType;
 		String returnedVariable = null;
 		if(it.hasNext()){
@@ -37,7 +37,7 @@ public final class Return implements IFunction{
 			if(returnType != TypeInfo.VOID){
 				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
 				var f = env.getFunction((Atom)list.get(0));
-				if(list.size() == 1 && f instanceof ValueExp){
+				if((list.size() == 1 && f instanceof ValueExp) || subEnv.hasNoDestructorCalls()){
 					expCode = code;
 					if(f instanceof Variable v && v.getType() instanceof InstanceInfo i && i.getDestructorName() != null){
 						returnedVariable = expCode;
@@ -55,7 +55,7 @@ public final class Return implements IFunction{
 			builder.append("_std_system_callOnExitHandlers0();\n");//args is from main module
 		}
 		builder.append("return");
-		if(!expCode.isEmpty()){
+		if(expCode != null){
 			builder.append(' ').append(expCode);
 		}
 		return TypeInfo.VOID;
