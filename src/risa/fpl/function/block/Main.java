@@ -22,7 +22,7 @@ public final class Main implements IFunction{
             throw new CompilerException(line,tokenNum,"this can only be used in main module");
         }
         if(modEnv.multipleMainDeclared()){
-            throw new CompilerException(line,tokenNum,"declaration of multiple main blocks is not allowed");
+            error(line,tokenNum,"declaration of multiple main blocks is not allowed");
         }
         var fnEnv = new MainEnv(env);
         fnEnv.addFunction("argc",new Variable(NumberInfo.INT,"argc","argc"));

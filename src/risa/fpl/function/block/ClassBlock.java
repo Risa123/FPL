@@ -182,12 +182,12 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 }
             }
             internalCode.append(type.getCopyConstructorName() == null?"0":"&" + type.getCopyConstructorName());
-            internalCode.append("};\n");
+            internalCode.append(",sizeof(").append(type.getCname()).append(")};\n");
             internalCode.append(i.getCname()).append(' ');
             internalCode.append(type.getConversionMethod(i)).append('(').append(type.getCname()).append("* this){\n");
             internalCode.append(i.getCname()).append(" tmp;\n");
             internalCode.append("void* malloc(").append(NumberInfo.MEMORY.getCname()).append(");\n");
-            internalCode.append("tmp.instance=(void*)malloc(sizeof(").append(type.getCname()).append("));\n");
+            internalCode.append("tmp.instance=malloc(sizeof(").append(type.getCname()).append("));\n");
             internalCode.append("tmp.impl=&").append(cEnv.getImplOf(i)).append(";\n");
             if(type.getCopyConstructorName() != null){
                 internalCode.append(type.getCopyConstructorName()).append("(tmp.instance,this);");

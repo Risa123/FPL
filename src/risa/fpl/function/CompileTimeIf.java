@@ -64,7 +64,7 @@ public final class CompileTimeIf implements IFunction{
         if(str.equals("x64")){
             str = "amd64";
         }else if(!(str.equals("x86") || str.equals("ia64"))){
-            throw new CompilerException(architecture,"there is no architecture called " + str);
+            error(architecture,"there is no architecture called " + str);
         }
         return System.getProperty("os.arch").equals(str);
     }

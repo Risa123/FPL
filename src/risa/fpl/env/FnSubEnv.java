@@ -72,7 +72,4 @@ public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
     public final void addInterfaceFreeCall(String cname){
         destructorCalls.append("free(").append(cname).append(".instance);\n");
     }
-    public boolean hasDestructorCallFor(String variableCname){
-        return destructorCalls.toString().contains(variableCname);
-    }
 }

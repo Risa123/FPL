@@ -174,7 +174,7 @@ public final class Variable extends ValueExp{
 	    var ret = exp.compile(builder,env,it);
 	    var t = operator.equals("=") && type instanceof PointerInfo p?p.getType():type;
 	    if(!t.equals(ret)){
-	        throw new CompilerException(exp,"expression expected to return  " + t + " instead of " + ret);
+	        error(exp,"expression expected to return  " + t + " instead of " + ret);
         }
     }
     public TypeInfo getType(){

@@ -89,8 +89,7 @@ public final class TryCatchFinally extends ABlock{
             }
         }
         postEntry.append("if(!exceptionCaught){\n_std_lang_Thread_removeEHEntry0(_std_lang_currentThread);\n}\n");
-        postEntry.append(finallyCode);
-        postEntry.append("}\n");
+        postEntry.append(finallyCode).append("}\n");
         if(exDataNames.isEmpty()){
             exDataNames.add(exception.getDataName());
         }

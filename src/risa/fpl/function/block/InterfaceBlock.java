@@ -8,6 +8,7 @@ import risa.fpl.function.IFunction;
 import risa.fpl.function.exp.FunctionType;
 import risa.fpl.info.FunctionInfo;
 import risa.fpl.info.InterfaceInfo;
+import risa.fpl.info.NumberInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -78,7 +79,7 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
                 b.append(p.getPointerVariableDeclaration(v.getCname())).append(";\n");
             }
         }
-        b.append("void(*copyConstructor)(void*,void*);\n");
+        b.append("void(*copyConstructor)(void*,void*);\n").append(NumberInfo.MEMORY.getCname()).append(" instanceSize;\n");
         b.append('}').append(implName).append(";\n");
         b.append("typedef struct ").append(cID).append("{\nvoid* instance;\n");
         b.append(implName).append("* impl;\n}").append(cID).append(";\n");
@@ -87,9 +88,12 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
         type.appendToDeclaration(b.toString());
         type.buildDeclaration();
         mod.appendFunctionCode("void " + type.getCopyName() + '(');
-        mod.appendFunctionCode(cID + "* this," + cID + "* o){\nthis->instance = o->instance;\nthis->impl = o->impl;\n");
-        mod.appendFunctionCode("if(this->impl->copyConstructor != 0){\n");
-        mod.appendFunctionCode("this->impl->copyConstructor(this->instance,this->instance);\n}\n}\n");
+        mod.appendFunctionCode(cID + "* this," + cID + "* o){\nthis->impl=o->impl;\n");
+        mod.appendFunctionCode("void* malloc(" + NumberInfo.MEMORY.getCname() + ");\n");
+        mod.appendFunctionCode("this->instance=malloc(this->impl->instanceSize);\n");
+        mod.appendFunctionCode("if(this->impl->copyConstructor==0){\n");
+        mod.appendFunctionCode("this->instance=o->instance;\n}else{\n");
+        mod.appendFunctionCode("this->impl->copyConstructor(this->instance,o->instance);\n}\n}\n");
         mod.appendFunctionCode(cID + ' ' + type.getCopyName() + "AndReturn(" + cID + " original){\n");
         mod.appendFunctionCode(cID + " instance;\n");
         mod.appendFunctionCode(type.getCopyName() + "(&instance,&original);\nreturn instance;\n}\n");
