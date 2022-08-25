@@ -147,13 +147,6 @@ public class Fn extends AFunctionBlock{
                 f.addTemplateVariant(templateArgs,codeExp,args,env,line);
             }
             argsBuilder.append("{\n");
-            for(var arg:args.entrySet()){
-                if(arg.getValue() instanceof InstanceInfo i){
-                    fnEnv.addInstanceVariable(i,IFunction.toCId(arg.getKey()));
-                }else if(arg.getValue() instanceof InterfaceInfo){
-                    fnEnv.addInterfaceFreeCall(IFunction.toCId(arg.getKey()));
-                }
-            }
 			var code = new StringBuilder();
 			var fReturnType = codeExp.compile(code,fnEnv,it);
             if(oneLine && returnType != TypeInfo.VOID){
@@ -170,7 +163,7 @@ public class Fn extends AFunctionBlock{
                 b.append(code);
             }
 			if(oneLine && fnEnv.getReturnType() != TypeInfo.VOID && !fReturnType.equals(fnEnv.getReturnType())){
-			    throw new CompilerException(codeExp,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
+			    error(codeExp,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
             }
 		    if(oneLine){
                 b.append(";\n");

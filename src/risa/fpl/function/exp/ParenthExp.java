@@ -31,8 +31,7 @@ public final class ParenthExp extends AField{
         var b = new StringBuilder("(");
         var ret = new List(line,tokenNum,list,false).compile(b,env,it);
         if(b.charAt(b.length() - 1) == '\n'){
-            b.setCharAt(b.length() - 1,' ');
-            b.setCharAt(b.length() - 2,' ');
+            b.delete(b.length() - 1,b.length() - 2);
         }
         b.append(')');
         if(ret != TypeInfo.VOID && it.hasNext() && it.peek() instanceof Atom a && a.getType() == AtomType.ID){

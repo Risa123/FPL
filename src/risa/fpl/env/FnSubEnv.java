@@ -59,6 +59,9 @@ public class FnSubEnv extends SubEnv implements IClassOwnedEnv{
         var tmp = new StringBuilder();
         exp.compile(tmp,this,it);
         builder.append(toPointerVars).append(tmp);
+        if(builder.length() > 0 && builder.charAt(builder.length() - 1) != '\n'){
+            builder.append(";\n");//necessary for inline functions
+        }
         if(returnNotUsed){
             builder.append(destructorCalls);
         }
