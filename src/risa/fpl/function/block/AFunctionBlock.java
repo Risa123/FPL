@@ -69,8 +69,8 @@ public abstract class AFunctionBlock extends ABlock{
             env.addFunction(argName.getValue(),v);
             if(argType instanceof InstanceInfo i){
                 env.addInstanceVariable(i,argNameCID);
-            }else if(argType instanceof InterfaceInfo){
-                env.addInterfaceFreeCall(argNameCID);
+            }else if(argType instanceof InterfaceInfo i){
+                env.addInterfaceFreeCall(i.getDestructorName(),argNameCID);
             }
         }
         builder.append(')');

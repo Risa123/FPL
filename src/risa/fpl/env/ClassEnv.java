@@ -81,7 +81,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
                }else if(v.getType().isPrimitive() && !(v.getType() instanceof PointerInfo)){
 			       defaultCopyConstructorCode.append("this->").append(cname).append("=o->").append(cname).append(";\n");
                }else if(v.getType() instanceof InterfaceInfo i){
-                    appendToDestructor("free(this->" + cname + ".instance);\n");
+                    appendToDestructor(i.getDestructorName() + "(&this->" + cname + ");\n");
                     implCopyConstructorCode.append(i.getCopyName()).append("(&this->").append(cname).append(",&o->").append(cname).append(");\n");
                }
             }

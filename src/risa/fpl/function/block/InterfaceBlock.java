@@ -80,10 +80,12 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
             }
         }
         b.append("void(*copyConstructor)(void*,void*);\n").append(NumberInfo.MEMORY.getCname()).append(" instanceSize;\n");
+        b.append("void(*destructor)(void*);\n");
         b.append('}').append(implName).append(";\n");
         b.append("typedef struct ").append(cID).append("{\nvoid* instance;\n");
         b.append(implName).append("* impl;\n}").append(cID).append(";\n");
         b.append("void ").append(type.getCopyName()).append('(').append(cID).append("*,").append(cID).append("*);\n");
+        b.append("void ").append(type.getDestructorName()).append('(').append(cID).append("*);\n");
         b.append(cID).append(' ').append(type.getCopyName()).append("AndReturn(").append(cID).append(");\n");
         type.appendToDeclaration(b.toString());
         type.buildDeclaration();
@@ -97,6 +99,8 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
         mod.appendFunctionCode(cID + ' ' + type.getCopyName() + "AndReturn(" + cID + " original){\n");
         mod.appendFunctionCode(cID + " instance;\n");
         mod.appendFunctionCode(type.getCopyName() + "(&instance,&original);\nreturn instance;\n}\n");
+        mod.appendFunctionCode("void " + type.getDestructorName() + '(' + type.getCname() + "* this){\n");
+        mod.appendFunctionCode("if(this->impl->destructor!=0){\nthis->impl->destructor(this->instance);\nfree(this->instance);\n}\n}\n");
         return TypeInfo.VOID;
     }
 }

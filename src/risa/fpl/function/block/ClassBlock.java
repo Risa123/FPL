@@ -182,7 +182,8 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 }
             }
             internalCode.append(type.getCopyConstructorName() == null?"0":"&" + type.getCopyConstructorName());
-            internalCode.append(",sizeof(").append(type.getCname()).append(")};\n");
+            internalCode.append(",sizeof(").append(type.getCname()).append("),");
+            internalCode.append(type.getDestructorName() == null?"0":"&" + type.getDestructorName()).append("};\n");
             internalCode.append(i.getCname()).append(' ');
             internalCode.append(type.getConversionMethod(i)).append('(').append(type.getCname()).append("* this){\n");
             internalCode.append(i.getCname()).append(" tmp;\n");
