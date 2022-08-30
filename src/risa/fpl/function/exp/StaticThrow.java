@@ -9,7 +9,7 @@ import risa.fpl.parser.ExpIterator;
 
 public final class StaticThrow extends Function{
     public StaticThrow(){
-        super("throw",TypeInfo.VOID,AccessModifier.PUBLIC);
+        super("throw",TypeInfo.VOID,null,AccessModifier.PUBLIC);
     }
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{

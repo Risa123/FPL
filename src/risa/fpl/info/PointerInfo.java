@@ -38,13 +38,13 @@ public class PointerInfo extends TypeInfo{
                 addField("free[]",freeArray.makeMethodFromTemplate(this,new TypeInfo[]{NumberInfo.MEMORY},mod));
             }
         }else{
-            var f = new Function("free[]",TypeInfo.VOID,FunctionType.NATIVE,this,AccessModifier.PUBLIC);
+            var f = new Function("free[]",TypeInfo.VOID,this,AccessModifier.PUBLIC);
             var freeArray = "_std_backend_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET0";
-            f.addVariant(new TypeInfo[]{NumberInfo.MEMORY},freeArray,freeArray);
+            f.addVariant(new TypeInfo[]{NumberInfo.MEMORY},FunctionType.NATIVE,freeArray,freeArray);
             addField("free[]",f);
         }
-        var f = new Function("free",TypeInfo.VOID,FunctionType.NATIVE,this,AccessModifier.PUBLIC);
-        f.addVariant(new TypeInfo[0],cName,cName);
+        var f = new Function("free",TypeInfo.VOID,this,AccessModifier.PUBLIC);
+        f.addVariant(new TypeInfo[0],FunctionType.NATIVE,cName,cName);
         addField("free",f);
         setClassInfo(ClassInfo.POINTER);
 	}

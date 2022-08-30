@@ -19,8 +19,8 @@ public final class FPointer extends AFunctionBlock{
         var id = it.nextID();
         var cID = IFunction.toCId(id.getValue());
         var args = parseArguments(new StringBuilder(),it,new FnEnv(env,returnType),null);
-        var f = new Function(id.getValue(),returnType,FunctionType.NORMAL,null,env.getAccessModifier());
-        f.addVariant(args.values().toArray(new TypeInfo[0]),cID,cID);
+        var f = new Function(id.getValue(),returnType,null,env.getAccessModifier());
+        f.addVariant(args.values().toArray(new TypeInfo[0]),FunctionType.NORMAL,cID,cID);
         env.addType(new FunctionPointerInfo(f));
         return TypeInfo.VOID;
     }

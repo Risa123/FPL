@@ -24,8 +24,8 @@ public class InstanceInfo extends NonTrivialTypeInfo {
         addField("getObjectSize",new GetObjectInfo(NumberInfo.MEMORY,"size",this));
         addField("getClass",new Variable(new PointerInfo(TypeInfo.VOID),"objectData",false,"getClass",true,this,AccessModifier.PUBLIC));
         addField("cast",new Cast(this));
-        getClassInfo().addField("alloc",new Function("alloc",new PointerInfo(this),AccessModifier.PUBLIC));
-        getClassInfo().addField("new",new Function("new",this,AccessModifier.PUBLIC));
+        getClassInfo().addField("alloc",new Function("alloc",new PointerInfo(this),null,AccessModifier.PUBLIC));
+        getClassInfo().addField("new",new Function("new",this,null,AccessModifier.PUBLIC));
     }
     public final String getClassDataType(){
         return getCname() + "_data_type";
@@ -50,11 +50,11 @@ public class InstanceInfo extends NonTrivialTypeInfo {
             appendToDeclaration('}' + getCname() + ";\n");
             var b = new StringBuilder();
             var methods = new HashMap<String,Function>();
-            for(var method:getMethodsOfType(FunctionType.VIRTUAL)){
-                methods.put(method.getName(),method);
+            for(var entry:getMethodVariantsOfType(FunctionType.VIRTUAL).entrySet()){
+                methods.put(entry.getValue().getName(),entry.getValue());
             }
-            for(var method:getMethodsOfType(FunctionType.ABSTRACT)){
-                methods.put(method.getName(),method);
+            for(var entry:getMethodVariantsOfType(FunctionType.ABSTRACT).entrySet()){
+                methods.put(entry.getValue().getName(),entry.getValue());
             }
             for(var method:methods.values()){
                 for(var v:method.getVariants()){

@@ -1,6 +1,7 @@
 package risa.fpl.function.block;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 import risa.fpl.CompilerException;
@@ -165,21 +166,27 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             }
         }
         if(cEnv.notAbstract()){
-            for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
-                var name = method.getName();
-                if(!(type.getField(name,cEnv) instanceof Function f) || f.getType() == FunctionType.ABSTRACT){
-                    error(id,"this class doesn't implement method " + name);
+            for(var entry:type.getMethodVariantsOfType(FunctionType.ABSTRACT).entrySet()){//to get abstract methods from all parents
+                var found = false;
+                for(var implEntry:type.getMethodVariantsOfType(FunctionType.VIRTUAL).entrySet()){
+                    if(implEntry.getValue().getName().equals(entry.getValue().getName())){
+                        if(Arrays.equals(implEntry.getKey().getArgs(),entry.getKey().getArgs())){
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(!found){
+                    error(id,"this class does not implement method " + entry.getValue().getName());
                 }
             }
         }
         var internalCode = new StringBuilder();
         for(var i:interfaces){
             internalCode.append("static ").append(i.getImplName()).append(' ').append(cID).append(i.getCname()).append("_impl={");
-            for(var method:i.getMethodsOfType(FunctionType.ABSTRACT)){
-                for(var v:method.getVariants()){
-                    internalCode.append("(void*)").append(((Function)type.getField(method.getName(),cEnv)).getVariant(v.getArgs()).getCname());
-                    internalCode.append(',');
-                }
+            for(var entry:i.getMethodVariantsOfType(FunctionType.ABSTRACT).entrySet()){
+                internalCode.append("(void*)").append(((Function)type.getField(entry.getValue().getName(),cEnv)).getVariant(entry.getKey().getArgs()).getCname());
+                internalCode.append(',');
             }
             internalCode.append(type.getCopyConstructorName() == null?"0":"&" + type.getCopyConstructorName());
             internalCode.append(",sizeof(").append(type.getCname()).append("),");

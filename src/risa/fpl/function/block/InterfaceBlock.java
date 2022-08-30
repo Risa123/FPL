@@ -73,11 +73,9 @@ public final class InterfaceBlock extends AThreePassBlock implements IFunction{
         compile(builder,iEnv,infos);
         var implName = type.getImplName();
         var b = new StringBuilder("typedef struct ").append(implName).append("{\n");
-        for(var method:type.getMethodsOfType(FunctionType.ABSTRACT)){
-            var p = new FunctionInfo(method);
-            for(var v:method.getVariants()){
-                b.append(p.getPointerVariableDeclaration(v.getCname())).append(";\n");
-            }
+        for(var entry:type.getMethodVariantsOfType(FunctionType.ABSTRACT).entrySet()){
+            var p = new FunctionInfo(entry.getValue());
+            b.append(p.getPointerVariableDeclaration(entry.getKey().getCname())).append(";\n");
         }
         b.append("void(*copyConstructor)(void*,void*);\n").append(NumberInfo.MEMORY.getCname()).append(" instanceSize;\n");
         b.append("void(*destructor)(void*);\n");

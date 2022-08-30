@@ -21,7 +21,7 @@ import risa.fpl.parser.AtomType;
 public final class InstanceVar extends Function{
    private final InstanceInfo type;
    public InstanceVar(InstanceInfo type){
-       super("constructor",TypeInfo.VOID,FunctionType.NORMAL,type,AccessModifier.PUBLIC);
+       super("constructor",TypeInfo.VOID,type,AccessModifier.PUBLIC);
 	   this.type = type;
    }
    private String makeCName(String nameSpace){
@@ -141,7 +141,7 @@ public final class InstanceVar extends Function{
         return classType;
     }
     public FunctionVariant addVariant(TypeInfo[]args,String nameSpace){
-       return addVariant(args,makeCName(nameSpace),makeCName(nameSpace));
+       return addVariant(args,FunctionType.NORMAL,makeCName(nameSpace),makeCName(nameSpace));
     }
     @Override
     public boolean appendSemicolon(){

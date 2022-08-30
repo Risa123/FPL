@@ -59,9 +59,6 @@ public class Fn extends AFunctionBlock{
         if(env.hasFunctionInCurrentEnv(id.getValue())){
             if(env.getFunction(id) instanceof Function ft){
                 f = ft;
-                if(f.getType() != type){
-                    error(line,tokenNum,"all variants require same function type");
-                }
                 if(f.getAccessModifier() != env.getAccessModifier()){
                     error(line,tokenNum,"all variants require same access modifier");
                 }
@@ -69,7 +66,7 @@ public class Fn extends AFunctionBlock{
                 throw new CompilerException(line,tokenNum,"there is already a function called " + id);
             }
         }else{
-            f = new Function(id.getValue(),returnType,type,self,env.getAccessModifier());
+            f = new Function(id.getValue(),returnType,self,env.getAccessModifier());
         }
 		var args = parseArguments(argsBuilder,it,fnEnv,self);
 		var attrCode = new StringBuilder();
@@ -118,7 +115,7 @@ public class Fn extends AFunctionBlock{
         FunctionInfo p = null;
         if(templateArgs == null){
             if(variant == null){
-                variant = f.addVariant(argsArray,cID,implName);
+                variant = f.addVariant(argsArray,type,cID,implName);
                 variant.setLine(line);
             }
             p = new FunctionInfo(f);
@@ -144,7 +141,7 @@ public class Fn extends AFunctionBlock{
                 codeExp = new List(line,a.getTokenNum(),atoms,false);
             }
             if(templateArgs != null){
-                f.addTemplateVariant(templateArgs,codeExp,args,env,line);
+                f.addTemplateVariant(templateArgs,type,codeExp,args,env,line);
             }
             argsBuilder.append("{\n");
 			var code = new StringBuilder();
@@ -209,11 +206,11 @@ public class Fn extends AFunctionBlock{
                 var tmp = new StringBuilder(headBuilder);
                 fnEnv.compileToPointerVars(tmp);
                 tmp.append(b);
-                cEnv.addMethod(f,tmp.toString());
+                cEnv.compileMethodVariant(variant,f,tmp.toString());
             }else if(env instanceof InterfaceEnv){
                 builder.append(p.getPointerVariableDeclaration(variant.getCname()));
             }else if(env instanceof ModuleEnv e){
-                if(f.getType() != FunctionType.NATIVE){
+                if(variant.getType() != FunctionType.NATIVE){
                     var tmp = new StringBuilder(headBuilder);
                     fnEnv.compileToPointerVars(tmp);
                     tmp.append(b);

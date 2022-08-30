@@ -19,7 +19,7 @@ private{
        error value,"string literal expected"
       }
       if tokenizer hasNext; && tokenizer next; getType; != TokenType:NEW_LINE{
-        error value,"end of line expected"
+        error value,"end of line expected instead of " + value getValue
       }
       return value getValue;substring 1,value getValue;getLength; - 2
    }
@@ -39,7 +39,7 @@ private{
      stream close
    }
  }
- fn String getMainModule = mainModule
+fn String getMainModule = mainModule
 main{
  if argc != 2{
    stderr writeString "<project directory> expected"
@@ -47,8 +47,7 @@ main{
  }
  try{
     var project args get 1
-    FileReader reader init project + "/build.bs"
-    Tokenizer tokenizer init reader
+    Tokenizer tokenizer init FileReader:new project + "/build.bs"
     var hasMainModule false;hasOutputFile false
     while tokenizer hasNext{
       var propertyToken tokenizer nextID

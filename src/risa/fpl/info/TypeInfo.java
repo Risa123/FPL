@@ -125,28 +125,32 @@ public class TypeInfo{
   public final ArrayList<TypeInfo>getParents(){
       return parents;
   }
-  public final ArrayList<Function>getMethodsOfType(FunctionType type){
-      var list = new ArrayList<Function>();
+  public final HashMap<FunctionVariant,Function>getMethodVariantsOfType(FunctionType type){
+      var result = new HashMap<FunctionVariant,Function>();
       for(var field:fields.values()){
-          if(field instanceof Function f && f.getType() == type){
-              list.add(f);
+          if(field instanceof Function f){
+              for(var v:f.getVariants()){
+                  if(v.getType() == type){
+                      result.put(v,f);
+                  }
+              }
           }
       }
       for(var parent:parents){
-          for(var field:parent.getMethodsOfType(type)){
-              var found = false;
-              for(var f:list){
-                  if(f.getName().equals(field.getName())){
-                      found = true;
-                      break;
-                  }
-              }
-              if(!found){
-                  list.add(field);
-              }
+          for(var entry:parent.getMethodVariantsOfType(type).entrySet()){
+             var found = false;
+             for(var e:result.entrySet()){
+                 if(e.getValue().getName().equals(entry.getValue().getName())){
+                     found = true;
+                     break;
+                 }
+             }
+             if(!found){
+                 result.put(entry.getKey(),entry.getValue());
+             }
           }
       }
-      return list;
+      return result;
   }
   public boolean notIntegerNumber(){
       return true;

@@ -58,10 +58,10 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         if(templateStatus != TemplateStatus.GENERATING){
             module.addType(instanceInfo);
         }
-        ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_alloc0",prefix + "_alloc0",null));
-        ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().add(new FunctionVariant(new TypeInfo[0],prefix + "_new0",prefix + "_new0",null));
+        ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().add(new FunctionVariant(new TypeInfo[0],FunctionType.NORMAL,prefix + "_alloc0",prefix + "_alloc0",null));
+        ((Function)instanceInfo.getClassInfo().getFieldFromThisType("new")).getVariants().add(new FunctionVariant(new TypeInfo[0],FunctionType.NORMAL,prefix + "_new0",prefix + "_new0",null));
         var name = IFunction.INTERNAL_PREFIX + nameSpace + "_init0";
-        instanceInfo.getConstructor().getVariants().add(new FunctionVariant(new TypeInfo[0],name,name,null));
+        instanceInfo.getConstructor().getVariants().add(new FunctionVariant(new TypeInfo[0],FunctionType.NORMAL,name,name,null));
 	}
 	@Override
 	public void addFunction(String name,IFunction value){
@@ -111,13 +111,13 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         return "void " + header + instanceInfo.getCname() + "* this){\n" + code + getImplicitConstructorCode() + "}\n";
     }
-    public void addMethod(Function method,String code){
-       if(method.getType() != FunctionType.ABSTRACT){
-           if(method.getAccessModifier() == AccessModifier.PRIVATE && method.getType() != FunctionType.NATIVE){
-               appendFunctionCode("static ");
-           }
-           appendFunctionCode(code);
-       }
+    public void compileMethodVariant(FunctionVariant variant,Function method,String code){
+        if(variant.getType() != FunctionType.ABSTRACT){
+            if(method.getAccessModifier() == AccessModifier.PRIVATE && variant.getType() != FunctionType.NATIVE){
+                appendFunctionCode("static ");
+            }
+            appendFunctionCode(code);
+        }
     }
     public void addConstructor(String code,String argsCode,TypeInfo[]args,String parentConstructorCall,int line){
         var constructor = instanceInfo.getConstructor();
@@ -219,10 +219,8 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         var b = new StringBuilder(instanceInfo.getClassDataType());
         b.append(' ').append(instanceInfo.getDataName()).append("={sizeof(").append(instanceInfo.getCname()).append(')');
         if(notAbstract()){
-          for(var method:instanceInfo.getMethodsOfType(FunctionType.VIRTUAL)){
-              for(var v:method.getVariants()){
-                  b.append(",(void*)").append(v.getCname());
-              }
+          for(var entry:instanceInfo.getMethodVariantsOfType(FunctionType.VIRTUAL).entrySet()){
+              b.append(",(void*)").append(entry.getKey().getCname());
           }
         }
         return b.append("};\n").toString();

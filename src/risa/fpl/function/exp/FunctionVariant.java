@@ -6,11 +6,13 @@ public final class FunctionVariant{
     private final String cname,implName,attrCode;
     private final TypeInfo[]args;
     private int line;
-    public FunctionVariant(TypeInfo[]args,String cname,String implName,String attrCode){
+    private final FunctionType type;
+    public FunctionVariant(TypeInfo[]args,FunctionType type,String cname,String implName,String attrCode){
         this.cname = cname;
         this.implName = implName;
         this.args = args;
         this.attrCode = attrCode;
+        this.type = type;
     }
     public String getCname(){
         return cname;
@@ -29,5 +31,11 @@ public final class FunctionVariant{
     }
     public String getAttrCode(){
         return attrCode;
+    }
+    public FunctionType getType(){
+        return type;
+    }
+    public boolean isVirtual(){
+        return type == FunctionType.VIRTUAL || type == FunctionType.ABSTRACT;
     }
 }
