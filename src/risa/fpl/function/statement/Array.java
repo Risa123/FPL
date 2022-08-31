@@ -56,7 +56,7 @@ public final class Array implements IFunction{
 	    var first = true;
 	    var instanceType = env instanceof ClassEnv e?e.getInstanceInfo():null;
 		var len = lenAtom.getType() == AtomType.ULONG?Long.parseUnsignedLong(lenAtom.getValue()):Long.parseLong(lenAtom.getValue());
-	    var v = new Variable(new ArrayInfo(type,len,lenAtom.getType() == AtomType.ULONG),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
+	    var v = new Variable(new ArrayInfo(type,len),cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier());
 	    env.addFunction(id.getValue(),v);
 	    if(it.hasNext()){
 	    	while(it.hasNext()){

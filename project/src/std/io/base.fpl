@@ -29,7 +29,7 @@ class DataWriter Writable{
  this Writable writable = this writable = writable
  override fn void close = writable close
  override fn void write byte* p memory size = writable write p,size
- fn void writeString String str{
+ fn void write String str{
    byte* cstr str toCString;cast byte*
    write cstr,str getLength; + 1
    cstr free

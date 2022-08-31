@@ -105,7 +105,6 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         compileClassBlock(cEnv,modEnv,id,block,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
 		return TypeInfo.VOID;
 	}
-	@SuppressWarnings("ConstantConditions")
     public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,TemplateStatus templateStatus)throws CompilerException{
         var type = cEnv.getInstanceInfo();
         var parentType = type.getPrimaryParent();
@@ -135,7 +134,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
                 }
                 attributes.append(v.getType().getCname()).append(' ').append(v.getCname());
                 if(v.getType() instanceof ArrayInfo i){
-                    attributes.append('[').append(i.isLengthUnsignedLong()?Long.toUnsignedString(i.getLength()):Long.toString(i.getLength())).append(']');
+                    attributes.append('[').append(Long.toUnsignedString(i.getLength())).append(']');
                 }
             }
             attributes.append(";\n");

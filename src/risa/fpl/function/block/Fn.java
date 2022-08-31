@@ -220,7 +220,7 @@ public class Fn extends AFunctionBlock{
             }else{
                 fnEnv.compileToPointerVars(builder);
                 builder.append(b);
-                if(type == FunctionType.NATIVE && !id.getValue().equals("__builtin_longjmp")){//builtin functions cannot have declaration with extern
+                if(type == FunctionType.NATIVE && !id.getValue().startsWith("__builtin")){//builtin functions cannot have declaration with extern
                     builder.append(f.getDeclaration());
                 }
             }

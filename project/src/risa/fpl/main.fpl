@@ -42,7 +42,7 @@ private{
 fn String getMainModule = mainModule
 main{
  if argc != 2{
-   stderr writeString "<project directory> expected"
+   stderr write "<project directory> expected"
    return 2 #1 is reserved for exceptions
  }
  try{
@@ -73,7 +73,7 @@ main{
     compileDirectory project + "/src";,""
     writer close
  }catch CompilerException{
-   stderr writeString ex getMessage
+   stderr write ex getMessage
    return 3
  }
 }

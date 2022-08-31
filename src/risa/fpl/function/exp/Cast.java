@@ -2,7 +2,6 @@ package risa.fpl.function.exp;
 
 import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
-import risa.fpl.function.IFunction;
 import risa.fpl.info.InterfaceInfo;
 import risa.fpl.info.NumberInfo;
 import risa.fpl.info.PointerInfo;

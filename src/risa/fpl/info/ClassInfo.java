@@ -43,6 +43,7 @@ public final class ClassInfo extends TypeInfo{
         LONG.init(NumberInfo.LONG);
         FLOAT.init(NumberInfo.FLOAT);
         DOUBLE.init(NumberInfo.DOUBLE);
+        MEMORY.init(NumberInfo.MEMORY);
         OBJECT.init(TypeInfo.OBJECT);
         POINTER.addField("getInstanceSize",PointerSize.INSTANCE);
         FUNCTION.addField("getInstanceSize",PointerSize.INSTANCE);
