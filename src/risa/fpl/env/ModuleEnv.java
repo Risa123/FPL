@@ -45,7 +45,7 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
             }
         }
-        appendFunctionDeclaration("void free(void*);\n\"void _std_backend_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET0(void*,\"");
+        appendFunctionDeclaration("void free(void*);\nvoid _std_backend_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET0(void*,");
         appendFunctionDeclaration(NumberInfo.MEMORY.getCname() + ");\n");
 	}
 	@Override
