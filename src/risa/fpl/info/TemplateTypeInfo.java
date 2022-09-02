@@ -53,7 +53,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
            var mod = new ModuleEnv(superMod,new ModuleBlock(path,FPL.getSrcDir()),cname);
            Files.delete(path);
            var name = getName() + nameBuilder;
-           var cEnv = new ClassEnv(mod,name,TemplateStatus.GENERATING,false,line);
+           var cEnv = new ClassEnv(mod,name,TemplateStatus.USE,false,line);
            type = cEnv.getInstanceInfo();
            if(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo){
                type.disableWriteTemplateFunctionVariants();
@@ -70,7 +70,7 @@ public final class TemplateTypeInfo extends InstanceInfo{
                    cEnv.addFunction(typeName,instance.getConstructor());
                }
            }
-           new ClassBlock(false).compileClassBlock(cEnv,mod,new Atom(0,0,name,AtomType.ID),block,TemplateStatus.GENERATING);
+           new ClassBlock(false).compileClassBlock(cEnv,mod,new Atom(0,0,name,AtomType.ID),block,TemplateStatus.USE);
            if(!(env instanceof IClassOwnedEnv e && e.getClassInfo() != null && e.getClassInfo().getInstanceInfo() instanceof TemplateTypeInfo)){
                if(env instanceof ANameSpacedEnv e){
                    e.addTemplateInstance(type);

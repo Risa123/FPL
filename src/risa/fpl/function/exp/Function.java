@@ -114,7 +114,7 @@ public class Function extends AField implements ICalledOnPointer{
             if(callCopy){
                 b.append(((InstanceInfo)array[i]).getCopyConstructorName()).append("AndReturn(");
             }else if(array[i] instanceof InterfaceInfo iFace && !returnedData.get(i).code.startsWith(iFace.getCopyName())){
-                b.append(iFace.getCopyName()).append("AndReturn").append('(');
+                b.append(iFace.getCopyName()).append("AndReturn(");
                 callCopy = true;
             }
             b.append(array[i].ensureCast(variant.getArgs()[i],returnedData.get(i).code,array[i] instanceof PointerInfo,returnedData.get(i).notReturnedByFunction,env));

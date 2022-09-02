@@ -35,7 +35,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
     private final ArrayList<String>variableFieldDeclarationOrder = new ArrayList<>();
     private final int firstLine;
 	public ClassEnv(ModuleEnv module,String id,TemplateStatus templateStatus,boolean struct,int firstLine){
-		super(module,module.getNameSpace() + (templateStatus == TemplateStatus.GENERATING?"":IFunction.toCId(id)));
+		super(module,module.getNameSpace() + (templateStatus == TemplateStatus.USE?"":IFunction.toCId(id)));
 		super.addFunction("this",CONSTRUCTOR);
 		super.addFunction("protected",PROTECTED);
 		if(!struct){
@@ -47,7 +47,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 		super.addFunction("=this",COPY_CONSTRUCTOR);
         this.struct = struct;
         this.firstLine = firstLine;
-        if(templateStatus == TemplateStatus.TEMPLATE){
+        if(templateStatus == TemplateStatus.DECLARATION){
             instanceInfo = new TemplateTypeInfo(id,module,nameSpace,((SubEnv)superEnv).hasModifier(Modifier.FINAL));
         }else{
             instanceInfo = new InstanceInfo(id,module,nameSpace,((SubEnv)superEnv).hasModifier(Modifier.FINAL));
@@ -55,7 +55,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
         }
         var prefix = "static" + nameSpace;
         //checking if not generating from template to prevent generated type from displacing the template
-        if(templateStatus != TemplateStatus.GENERATING){
+        if(templateStatus != TemplateStatus.USE){
             module.addType(instanceInfo);
         }
         ((Function)instanceInfo.getClassInfo().getFieldFromThisType("alloc")).getVariants().add(new FunctionVariant(new TypeInfo[0],FunctionType.NORMAL,prefix + "_alloc0",prefix + "_alloc0",null));

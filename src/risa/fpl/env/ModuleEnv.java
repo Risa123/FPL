@@ -45,8 +45,8 @@ public final class ModuleEnv extends ANameSpacedEnv{
                 }
             }
         }
-        appendFunctionDeclaration("void free(void*);\n");
-        appendFunctionDeclaration("void _std_backend_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET0(void*," + NumberInfo.MEMORY.getCname() + ");\n");
+        appendFunctionDeclaration("void free(void*);\n\"void _std_backend_freeLEFT_SQUARE_BRACKETRIGHT_SQUARE_BRACKET0(void*,\"");
+        appendFunctionDeclaration(NumberInfo.MEMORY.getCname() + ");\n");
 	}
 	@Override
 	public TypeInfo getType(Atom name)throws CompilerException{

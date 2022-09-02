@@ -42,10 +42,10 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
         ClassEnv cEnv;
         LinkedHashMap<String,TypeInfo>templateArgs = null;
         if(it.checkTemplate()){
-            cEnv = getEnv(modEnv,idV,TemplateStatus.TEMPLATE,tokenNum,line);
+            cEnv = getEnv(modEnv,idV,TemplateStatus.DECLARATION,tokenNum,line);
             templateArgs = parseTemplateArguments(it,cEnv);
         }else{
-            cEnv = getEnv(modEnv,idV,TemplateStatus.INSTANCE,tokenNum,line);
+            cEnv = getEnv(modEnv,idV,TemplateStatus.NONE,tokenNum,line);
         }
 		if(env.hasTypeInCurrentEnv(idV) && cEnv.getFirstLine() != line){
 		    error(id,"type " + idV + " is already declared");
@@ -102,7 +102,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
 		if(templateArgs != null){
             ((TemplateTypeInfo)type).setDataForGeneration(block,templateArgs);
         }
-        compileClassBlock(cEnv,modEnv,id,block,templateArgs == null?TemplateStatus.INSTANCE:TemplateStatus.TEMPLATE);
+        compileClassBlock(cEnv,modEnv,id,block,templateArgs == null?TemplateStatus.NONE:TemplateStatus.DECLARATION);
 		return TypeInfo.VOID;
 	}
     public void compileClassBlock(ClassEnv cEnv,ModuleEnv modEnv,Atom id,List block,TemplateStatus templateStatus)throws CompilerException{
@@ -217,7 +217,7 @@ public final class ClassBlock extends AThreePassBlock implements IFunction{
             internalCode.append(copyName).append("(&instance,&original);\nreturn instance;\n}\n");
         }
         cEnv.appendFunctionCode(internalCode.toString());
-        if(templateStatus != TemplateStatus.TEMPLATE){
+        if(templateStatus != TemplateStatus.DECLARATION){
             modEnv.appendFunctionDeclaration(cEnv.getFunctionDeclarations());
             modEnv.appendFunctionCode(cEnv.getDestructor());
             if(type.getDestructorName() != null){

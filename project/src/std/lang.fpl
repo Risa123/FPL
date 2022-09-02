@@ -304,7 +304,7 @@ Thread* currentThread #initailized in main block
 fn void defaultExceptionHandler Exception* ex{
   print "uncaught exception:"
   print ex getMessage
-  exit 1
+  abort
 }
 fn void* realloc void* p memory newSize{
   p = std.backend.realloc p,newSize
