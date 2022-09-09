@@ -60,7 +60,10 @@ public class Fn extends AFunctionBlock{
             if(env.getFunction(id) instanceof Function ft){
                 f = ft;
                 if(f.getAccessModifier() != env.getAccessModifier()){
-                    error(line,tokenNum,"all variants require same access modifier");
+                    error(line,tokenNum,"all variants must have same access modifier");
+                }
+                if(!f.getReturnType().equals(returnType)){
+                    error(line,tokenNum,"all variants must have a same return type");
                 }
             }else{
                 throw new CompilerException(line,tokenNum,"there is already a function called " + id);

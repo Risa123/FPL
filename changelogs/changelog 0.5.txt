@@ -36,10 +36,11 @@ copy constructor added to std.collection.ArrayList
 interface copy constructor added
 default exception handler message changed from "exception happened:(exception message)" to "uncaught exception:(exception message)"
 std.lang.String made final
-flush method added to std.io.FileWriter
+flush method added to std.io.file.FileWriter
 std.io.base.DataWriter.writeString renamed to write
 function variants can be of different types
 builtin functions can now be declared without C error
+exceptions are now reported to stderr by default
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
@@ -81,3 +82,4 @@ fix ) inside multiline comment
 fix abstract method C error
 fix no expression next to return in void functions
 fix chained call for getInstanceSize of pointers
+fix gcc error

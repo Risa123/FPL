@@ -121,7 +121,9 @@ public final class ModuleBlock extends AThreePassBlock{
                }
            }
            if(isMain()){//main module is written as last
-               writer.write("_String* args;\nvoid onExit();\nvoid _std_system_addOnExitHandler0(_onExit0);\nint main(int argc,char** argv){\n");
+               //void* used instead of actual function pointer for simplicity
+               writer.write("_String* args;\nvoid onExit();\nvoid _std_system_addOnExitHandler0(void*);void _std_system_callOnExitHandlers0();\n");
+               writer.write("\nint main(int argc,char** argv){\n");
                writer.write(env.getInitializerCode());
                for(var mod:FPL.getModules()){
                    if(!mod.isMain()){

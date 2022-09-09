@@ -19,6 +19,7 @@ native{
  fn void exit int exitCode:noReturn
  fn void* realloc void* p memory newSize
  fn void abort
+ fn int fputs char* str void* file
  private{
     fn memory fwrite void* p memory size memory nmen void* file
     fn bool feof void* file

@@ -61,7 +61,6 @@ public abstract class AFunctionBlock extends ABlock{
             args.put(argName.getValue(),argType);
             var argNameCID = IFunction.toCId(argName.getValue());
             if(constant && argType instanceof PointerInfo p){
-                builder.append("const ");
                 p.makeConstant();
             }
             builder.append(argType.getCname()).append(' ').append(argNameCID);

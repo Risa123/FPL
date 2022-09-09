@@ -62,7 +62,8 @@ public final class FPL{
                 }
             }
             var output = build.getProperty("outputFile");
-            var ccArgs = build.getProperty("ccArgs","").strip().replaceAll("\\s+"," ").split(",");
+            var rawArgs = build.getProperty("ccArgs");
+            var ccArgs = rawArgs == null?new String[]{}:rawArgs.strip().replaceAll("\\s+"," ").split(",");
             outputDirectory = project + "/output";
             mainModule = build.getProperty("mainModule");
             Collections.addAll(flags,build.getProperty("flags","").strip().replaceAll("\\s+"," ").split(","));

@@ -302,8 +302,12 @@ class Thread{
 }
 Thread* currentThread #initailized in main block
 fn void defaultExceptionHandler Exception* ex{
-  print "uncaught exception:"
-  print ex getMessage
+  var cstr "uncaught exception:" toCString
+  fputs cstr,stderr
+  cstr free
+  var cstr1 ex getMessage;toCString;
+  fputs cstr1,stderr
+  cstr1 free
   abort
 }
 fn void* realloc void* p memory newSize{
