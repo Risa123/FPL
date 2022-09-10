@@ -147,14 +147,18 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public boolean multipleMainDeclared(){
 	    return mainDeclared == AThreePassBlock.MAX_PASSES;
     }
-    public void declare(BufferedWriter writer)throws IOException{
-        var declared = new ArrayList<TypeInfo>();
-        var b = new StringBuilder();
-        for(var mod:importedModules){
+    private void addTypes(ModuleEnv module){
+        for(var mod:module.importedModules){
             for(var type:mod.types.values()){
                 addTypesForDeclaration(type);
             }
+            addTypes(mod);
         }
+    }
+    public void declare(BufferedWriter writer)throws IOException{
+        var declared = new ArrayList<TypeInfo>();
+        var b = new StringBuilder();
+        addTypes(this);
         for(var mod:importedModules){
             for(var func:mod.functions.values()){
                 if(func instanceof Function f  && !(func instanceof InstanceVar)  && f.getAccessModifier() != AccessModifier.PRIVATE){
@@ -264,5 +268,13 @@ public final class ModuleEnv extends ANameSpacedEnv{
     }
     public ArrayList<InterfaceEnv>getInterfaceEnvList(){
         return interfaceEnvList;
+    }
+    public boolean notImportedModule(String name){
+        for(var mod:importedModules){
+            if(mod.getModuleBlock().getName().equals(name)){
+                return false;
+            }
+        }
+        return true;
     }
 }

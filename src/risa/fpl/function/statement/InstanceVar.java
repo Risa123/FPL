@@ -86,9 +86,11 @@ public final class InstanceVar extends Function{
         }
         var cID = IFunction.toCId(id.getValue());
         builder.append(typeCname).append(' ').append(cID).append(";\n");
+        var onlyDeclared = true;
         if(it.hasNext()){
             if(it.peek() instanceof Atom a && a.getValue().equals("init")){
                 it.next();
+                onlyDeclared = false;
                 var b = new StringBuilder();
                 if(notPointer){
                     setPrevCode(env instanceof ClassEnv?"this->" + cID:cID);
@@ -107,12 +109,15 @@ public final class InstanceVar extends Function{
                 }else{
                     builder.append(b).append(";\n");
                 }
+            }else if(it.peek() instanceof Atom a && a.getValue().equals("uninit")){
+                onlyDeclared = false;
+                it.next();
             }else{
-                error(id,"init(constructor arguments) or nothing expected");
+                error(id,"init(constructor arguments),uninit or nothing expected");
             }
         }
         var instanceType = env instanceof ClassEnv e?e.getInstanceInfo():null;
-        env.addFunction(id.getValue(),new Variable(varType,cID,false,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
+        env.addFunction(id.getValue(),new Variable(varType,cID,onlyDeclared,id.getValue(),env.hasModifier(Modifier.CONST),instanceType,env.getAccessModifier()));
         return null;
     }
 	public void compileCallInsideOfConstructor(StringBuilder builder,FnSubEnv env,ExpIterator it,int line,int charNum)throws CompilerException{

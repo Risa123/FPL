@@ -37,7 +37,7 @@ public final class Return implements IFunction{
 			if(returnType != TypeInfo.VOID){
 				var code = returnType.ensureCast(subEnv.getReturnType(),buffer.toString(),env);
 				var f = env.getFunction((Atom)list.get(0));
-				if((list.size() == 1 && f instanceof ValueExp) || subEnv.hasNoDestructorCalls()){
+				if((list.size() == 1 && f instanceof ValueExp) || subEnv.hasNoDestructionCallsInThisFunction()){
 					expCode = code;
 					if(f instanceof Variable v && v.getType() instanceof InstanceInfo i && i.getDestructorName() != null){
 						returnedVariable = expCode;

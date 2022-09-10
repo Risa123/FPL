@@ -41,6 +41,7 @@ std.io.base.DataWriter.writeString renamed to write
 function variants can be of different types
 builtin functions can now be declared without C error
 exceptions are now reported to stderr by default
+added uninit to instance variable declaration
 fix instance type variable declaration
 fix arrays with size long than max value of signed long not compiled
 fix array field declared as pointer in C
@@ -83,3 +84,8 @@ fix abstract method C error
 fix no expression next to return in void functions
 fix chained call for getInstanceSize of pointers
 fix gcc error
+fix _std_system_addExitHandler0 C error
+fix unknown type C error
+fix added keywords true,false,nil,break,final and removed null from fpl-udl.xml
+fix { and } are now operators ins fdl-udl.xml so keywords next to them will be highlighted
+fix template constructor not called

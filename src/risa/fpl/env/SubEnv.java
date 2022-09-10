@@ -59,9 +59,6 @@ public class SubEnv extends AEnv{
  public final void compileToPointerVars(StringBuilder builder){
       builder.append(toPointerVars);
  }
- public final boolean hasNoDestructorCalls(){
-      return destructorCalls.isEmpty();
- }
  public final void setAccessModifier(AccessModifier accessModifier){
       this.accessModifier = accessModifier;
  }
