@@ -78,7 +78,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
                    if(copyName != null){
                        implCopyConstructorCode.append(copyName).append("(&this->").append(cname).append(",&o->").append(cname).append(");\n");
                    }
-               }else if(v.getType().isPrimitive() && !(v.getType() instanceof PointerInfo)){
+               }else if((v.getType().isPrimitive() && !(v.getType() instanceof PointerInfo))||v.getType() instanceof FunctionPointerInfo){
 			       defaultCopyConstructorCode.append("this->").append(cname).append("=o->").append(cname).append(";\n");
                }else if(v.getType() instanceof InterfaceInfo i){
                     appendToDestructor(i.getDestructorName() + "(&this->" + cname + ");\n");
@@ -270,7 +270,7 @@ public final class ClassEnv extends ANameSpacedEnv implements IClassOwnedEnv{
 	    return implCopyConstructorCode.toString();
     }
     public String getDefaultCopyConstructorCode(){
-	    return defaultCopyConstructorCode.toString();
+	    return (struct?"":"this->objectData=&" + instanceInfo.getDataName() + ";\n") + defaultCopyConstructorCode;
     }
     public void setBlock(ArrayList<ExpressionInfo>block){
         this.block = block;

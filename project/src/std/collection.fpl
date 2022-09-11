@@ -45,7 +45,7 @@ class ArrayList;T{
  =this{
    if o array != nil{
      len = o len
-     array = malloc T:getInstanceSize;cast T*
+     array = malloc [ T:getInstanceSize * len ];cast T*
      for i,len{
        array set i,o array get i
      }
