@@ -52,7 +52,7 @@ public final class Return implements IFunction{
 		}
 		subEnv.compileDestructorCallsForReturn(builder,returnedVariable);
 		if(subEnv.isInMainBlock()){
-			builder.append("_std_system_callOnExitHandlers0();\n");//args is from main module
+			builder.append("_std_system_callOnExitHandlers0();\n");
 		}
 		builder.append("return");
 		if(expCode != null){
