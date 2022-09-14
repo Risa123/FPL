@@ -147,18 +147,21 @@ public final class ModuleEnv extends ANameSpacedEnv{
     public boolean multipleMainDeclared(){
 	    return mainDeclared == AThreePassBlock.MAX_PASSES;
     }
-    private void addTypes(ModuleEnv module){
+    private void addTypes(ModuleEnv module,ArrayList<ModuleEnv>alreadyAdded){
         for(var mod:module.importedModules){
-            for(var type:mod.types.values()){
-                addTypesForDeclaration(type);
-            }
-            addTypes(mod);
+           if(!alreadyAdded.contains(mod)){
+               alreadyAdded.add(mod);
+               for(var type:mod.types.values()){
+                   addTypesForDeclaration(type);
+               }
+               addTypes(mod,alreadyAdded);
+           }
         }
     }
     public void declare(BufferedWriter writer)throws IOException{
         var declared = new ArrayList<TypeInfo>();
         var b = new StringBuilder();
-        addTypes(this);
+        addTypes(this,new ArrayList<>());
         for(var mod:importedModules){
             for(var func:mod.functions.values()){
                 if(func instanceof Function f  && !(func instanceof InstanceVar)  && f.getAccessModifier() != AccessModifier.PRIVATE){
