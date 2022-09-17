@@ -446,33 +446,43 @@ fn String floatingPointToString double this int precision{
    for i,precision{
      fPart *= 10
    }
-   return sign + integerToString iPart; + "." + integerToString fPart cast long
+   return sign + integerToString iPart; + "."; + integerToString fPart cast long
 }
 fn double floatingPointParse String str{
     if str isEmpty{
       NumberFormatException:throw "invalid number " + str
     }
     double value 0
-    var sign 1
+    var negative false
     var afterFPoint false
+	var afterFPointI 0
     for i,str getLength{
        var c str get i
        if c == $+{
          #ignore
        }if c == $-{
-         sign = -1
+         negative = true
        }if c == $.{
         if afterFPoint{
           NumberFormatException:throw "invalid number " + str
         }
         afterFPoint = true
        }if isDigit c{
-         value = [ afterFPoint ? value / 10,value * 10 ] + c cast double - $0 cast double
+         value = value * 10 + c cast double - $0 cast double
+		 if afterFPoint{
+		  afterFPointI ++
+		 }
        }{
          NumberFormatException:throw "invalid number " + str
        }
     }
-    return sign * value
+	for i,afterFPointI{
+	  value /= 10
+	}
+	if negative{
+	  value = value -
+	}
+    return value
 }
 fn bool isNaN double d{
   for i,double:getInstanceSize{

@@ -87,8 +87,9 @@ fix gcc error
 fix _std_system_addExitHandler0 C error
 fix unknown type C error
 fix added keywords true,false,nil,break,final and removed null from fpl-udl.xml
-fix { and } are now operators ins fdl-udl.xml so keywords next to them will be highlighted
+fix { and } are now operators in fdl-udl.xml so keywords next to them will be highlighted
 fix template constructor not called
 fix function pointer not copied
 fix string added to fpl-udl.xml
 fix copy constructor does not copy objectData
+fix floating point number parse and toString methods

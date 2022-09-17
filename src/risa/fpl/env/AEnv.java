@@ -50,7 +50,7 @@ public abstract class AEnv{
 	  case DOUBLE:
 		 return new ValueExp(NumberInfo.DOUBLE,atom.getValue());
 	  case CHAR:
-		 return new ValueExp(NumberInfo.CHAR,atom.getValue());
+		 return new ValueExp(TypeInfo.CHAR,atom.getValue());
 	  case STRING:
 		 return new ValueExp(FPL.getString(),"static_std_lang_String_new0(" + atom.getValue() + ',' + (atom.getValue().length() - 2) + ",0)");
 	   default:
