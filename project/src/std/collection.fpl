@@ -53,26 +53,20 @@ class ArrayList;T{
  }
 }
 final class Entry;K V{
-  private{
-   K key
-   V value
-  }
+  K key
+  V value
   this K key V value{
     this key = key
     this value = value
   }
-  fn K getKey = key
-  fn V getValue = value
-  fn void setKey K key = this key = key
-  fn void setValue V value = this value = value
 }
 class Map;K V{
   private const ArrayList;Entry;K V;; entries init
   fn void put K key V value{
     for i,entries getSize{
       var entry entries get i
-      if entry getKey; == key{
-        entry setValue value
+      if entry key == key{
+        entry value = value
         return
       }
     }
@@ -80,7 +74,7 @@ class Map;K V{
   }
   fn bool containsKey K key{
     for i,entries getSize{
-      if entries get i;getKey; == key{
+      if entries get i;key == key{
         return true
       }
     }
@@ -89,8 +83,8 @@ class Map;K V{
   fn V get K key{
     for i,entries getSize{
       var entry entries get i
-      if entry getKey; == key{
-        return entry getValue
+      if entry key == key{
+        return entry value
       }
     }
     NoElementException:throw "map has no entry for key"

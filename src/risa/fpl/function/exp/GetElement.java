@@ -4,6 +4,8 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.info.InstanceInfo;
 import risa.fpl.info.TypeInfo;
+import risa.fpl.parser.Atom;
+import risa.fpl.parser.AtomType;
 import risa.fpl.parser.ExpIterator;
 
 public final class GetElement extends AField{
@@ -29,6 +31,9 @@ public final class GetElement extends AField{
 		prev.append(']');
 		if(copyCalled){
 			prev.append(')');
+		}
+		if(it.hasNext() && it.peek() instanceof Atom a && a.getType() == AtomType.END_ARGS){
+			it.nextAtom();
 		}
 		return compileChainedCall(returnType,builder,env,it,prev.toString());
 	}

@@ -4,6 +4,8 @@ import risa.fpl.CompilerException;
 import risa.fpl.env.SubEnv;
 import risa.fpl.function.AccessModifier;
 import risa.fpl.function.IFunction;
+import risa.fpl.info.InstanceInfo;
+import risa.fpl.info.PointerInfo;
 import risa.fpl.info.TypeInfo;
 import risa.fpl.parser.Atom;
 import risa.fpl.parser.ExpIterator;
@@ -40,6 +42,9 @@ public abstract class AField implements IFunction{
            var field = returnType.getField(id.getValue(),env);
            if(field == null){
                throw new CompilerException(id,returnType + " has no field called " + id);
+           }
+           if(field instanceof Variable && (returnType instanceof PointerInfo p?p.getType():returnType) instanceof InstanceInfo){
+               prevCode += (returnType instanceof PointerInfo?"->":".");
            }
            field.setPrevCode(prevCode);
            return field.compile(builder,env,it,id.getLine(),id.getTokenNum());

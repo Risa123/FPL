@@ -87,7 +87,7 @@ final class String{
   }
    fn bool isBlank{
       for i,len{
-        if isWhitespace p get i;!{
+        if isWhitespace p get i;;!{
           return false
         }
       }
@@ -191,14 +191,14 @@ final class String{
   fn String strip{
     var beginIndex 0
     for i,len{
-      if isWhitespace p get i; !{
+      if isWhitespace p get i;; !{
         beginIndex = i
         break
       }
     }
     var endIndex len - 1
     while endIndex > 0{
-      if isWhitespace p get endIndex; !{
+      if isWhitespace p get endIndex;; !{
          break
       }
       endIndex --
@@ -329,7 +329,7 @@ fn void memoryCopy byte* src byte* dest memory size{
      dest set i,src get i
     }
 }
-#these functions will be made inaccessible by compiler
+#everthing after this point will be made inacessible by compiler
 #char methods
 fn bool isDigit char this{
   var c this cast int
@@ -427,6 +427,9 @@ fn long integerParse String str{
   return sign * value
 }
 fn String floatingPointToString double this int precision{
+   if precision > 9{
+     IllegalArgumentException:throw "maximum precision is 9"
+   }
    if isNaN this{
      return STRING_NAN
    }
@@ -452,32 +455,32 @@ fn double floatingPointParse String str{
     if str isEmpty{
       NumberFormatException:throw "invalid number " + str
     }
-    double value 0
     var negative false
-    var afterFPoint false
-	var afterFPointI 0
-    for i,str getLength{
-       var c str get i
-       if c == $+{
-         #ignore
-       }if c == $-{
-         negative = true
-       }if c == $.{
-        if afterFPoint{
-          NumberFormatException:throw "invalid number " + str
-        }
-        afterFPoint = true
-       }if isDigit c{
-         value = value * 10 + c cast double - $0 cast double
-		 if afterFPoint{
-		  afterFPointI ++
-		 }
-       }{
-         NumberFormatException:throw "invalid number " + str
-       }
-    }
-	for i,afterFPointI{
-	  value /= 10
+	var pointPos 0
+	var hasPoint false
+	for i,str getLength{
+	  var c str get i
+	  if c == $+{
+	    #ignore
+	  }if c == $-{
+	    negative = true
+	  }if c == $.{
+	    hasPoint  = true
+	    pointPos = [ i == 0 ] ? i,i - 1
+		break
+	  }
+	}
+	var lastIndex str getLength; - 1
+	if hasPoint !{
+	  pointPos = lastIndex
+	}
+	var value integerParse str substring pointPos;;cast double
+	if pointPos != lastIndex{
+	  var afterPointValue integerParse str substring pointPos + 2,lastIndex;;cast double
+	  while afterPointValue >= 1{
+	    afterPointValue /= 10
+	  }
+	  value += afterPointValue
 	}
 	if negative{
 	  value = value -
@@ -492,7 +495,6 @@ fn bool isNaN double d{
   }
   return true
 }
-#these constants will be removed by the compiler
 const{
   byte BYTE_MIN_VALUE -128B;BYTE_MAX_VALUE 127B
   sbyte SBYTE_MIN_VALUE -128B;SBYTE_MAX_VALUE 127B

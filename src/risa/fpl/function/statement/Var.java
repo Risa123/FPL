@@ -102,7 +102,7 @@ public final class Var implements IFunction{
                         }
                         expType = exp.compile(buffer,env,it);
                         if(decType != null && !decType.equals(expType)){
-                            error(exp,decType + " cannot be implicitly converted to " + expType);
+                            error(exp,expType + " cannot be implicitly converted to " + decType);
                         }
                         expCode = buffer.toString();
                     }

@@ -47,8 +47,5 @@ public class FnEnv extends FnSubEnv{
 			exp = it.nextAtom();
 		}
 		compileBlock(exp,builder,it);
-		if(exp instanceof Atom){
-			builder.append(";\n");
-		}
 	}
 }

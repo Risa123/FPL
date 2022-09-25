@@ -211,6 +211,9 @@ public final class Tokenizer implements AutoCloseable{
 							  error("this is only allowed at start of scientific notation");
 						  }
 						  b.appendCodePoint(c);
+					  }else if(c == -1){//end of file
+						  readNext = false;//solved in notSeparator(c) section of tokenizer
+						  break;
 					  }else{
 						  error("unexpected character " + c + ",printed:" + Character.toString(c));
 					  }
@@ -231,13 +234,13 @@ public final class Tokenizer implements AutoCloseable{
 					 try{
 						 Float.parseFloat(value);
 					 }catch(NumberFormatException e){
-						 error("float number expected");
+						 error("float number expected instead of " + value);
 					 }
 				  }else if(type == AtomType.DOUBLE){
 					  try{
 						  Double.parseDouble(value);
 					  }catch(NumberFormatException e){
-						  error("double number expected");
+						  error("double number expected instead of " + value);
 					  }
 				  }
 			  }else{
@@ -249,19 +252,19 @@ public final class Tokenizer implements AutoCloseable{
 						  error("invalid number " + (hex?"0x" + value:value));
 					  }
 					  if(type == AtomType.SBYTE && (n < Byte.MIN_VALUE || n > Byte.MAX_VALUE)){
-						  error("sbyte numbere expected");
+						  error("sbyte number expected instead of " + value);
 					  }else if(type == AtomType.SSHORT && (n < Short.MIN_VALUE || n > Short.MAX_VALUE)){
-						  error("sshort number expected");
+						  error("sshort number expected instead of " + value);
 					  }else if(type == AtomType.SINT && (n < Integer.MIN_VALUE || n > Integer.MAX_VALUE)){
-						  error("sint number expected");
+						  error("sint number expected instead of " + value);
 					  }else if(type == AtomType.UBYTE &&  n > UBYTE_MAX){
-						  error("ubyte number expected");
+						  error("ubyte number expected instead of " + value);
 					  }else if(type == AtomType.USHORT && n > USHORT_MAX){
-						  error("ushort number expected");
+						  error("ushort number expected instead of " + value);
 					  }else if(type == AtomType.UINT && n > UINT_MAX){
-						  error("uint number expected");
+						  error("uint number expected instead of " + value);
 					  }else if(type == AtomType.SLONG && (n < LONG_MIN || n > LONG_MAX)){
-						  error("slong number expected");
+						  error("slong number expected instead of " + value);
 					  }
 				  }
 			  }
@@ -300,7 +303,7 @@ public final class Tokenizer implements AutoCloseable{
           }else  if(notSeparator(c)){
 			  var b = new StringBuilder();
 			  readNext = false;
-			  if(!Character.isValidCodePoint(c)){
+			  if(c == -1){
 			      forceEnd = true;
 			      return atom("",AtomType.NEW_LINE);
               }

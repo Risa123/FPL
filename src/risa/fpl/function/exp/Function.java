@@ -131,11 +131,18 @@ public class Function extends AField implements ICalledOnPointer{
                    error(id,returnType + " has no field called " + id);
                }
                field.setPrevCode(b.toString());
-               if(returnType instanceof InstanceInfo i){
+               var type = returnType;
+               while(type instanceof PointerInfo p){
+                   type = p.getType();
+               }
+               if(type instanceof InstanceInfo i){
+                   var after = "";
                    if(field instanceof Function f){
                        f.callStatus = CALLED_ON_INSTANCE_R_BY_FUNC;
+                   }else if(field instanceof Variable){
+                       after = ')' + (returnType instanceof PointerInfo?".":"->");
                    }
-                   field.setPrevCode(i.getToPointerName() + '(' + field.prevCodes.pop() + ",&" + env.getToPointerVarName(i));
+                   field.setPrevCode(i.getToPointerName() + '(' + field.prevCodes.pop() + ",&" + env.getToPointerVarName(i) + after);
                }
                return field.compile(builder,env,it,id.getLine(),id.getTokenNum());
            }else if(a.getType() == AtomType.END_ARGS && noPrevCode){

@@ -151,8 +151,7 @@ public class Fn extends AFunctionBlock{
 			var fReturnType = codeExp.compile(code,fnEnv,it);
             if(oneLine && returnType != TypeInfo.VOID){
                 b.append("return ");
-                //noinspection ConstantConditions
-                var a = (Atom)(codeExp instanceof List l?l.getExps().get(0):codeExp);
+                var a = (Atom)(((List)codeExp).getExps().get(0));
                 var strCode = code.toString();
                 if(returnType instanceof InstanceInfo i && i.getCopyConstructorName() != null && !strCode.startsWith(i.getCopyConstructorName()) && a.getType() != AtomType.STRING){
                     b.append(i.getCopyConstructorName()).append("AndReturn(").append(code).append(')');
@@ -162,7 +161,7 @@ public class Fn extends AFunctionBlock{
             }else{
                 b.append(code);
             }
-			if(oneLine && fnEnv.getReturnType() != TypeInfo.VOID && !fReturnType.equals(fnEnv.getReturnType())){
+			if(oneLine && fnEnv.getReturnType() != TypeInfo.VOID && !fnEnv.getReturnType().equals(fReturnType)){
 			    error(codeExp,fReturnType + " cannot be implicitly converted to " + fnEnv.getReturnType());
             }
 		    if(oneLine){
