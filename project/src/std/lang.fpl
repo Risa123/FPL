@@ -426,7 +426,7 @@ fn long integerParse String str{
   }
   return sign * value
 }
-fn String floatingPointToString double this int precision{
+fn String floatingPointToString double this uint precision{
    if precision > 9{
      IllegalArgumentException:throw "maximum precision is 9"
    }
