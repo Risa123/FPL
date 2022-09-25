@@ -7,7 +7,7 @@ abstract class ARandom{
 class Random ARandom{
   protected ulong seed
   this ulong seed = this seed = seed
-  override fn uint nextInt uint bound{
+  override fn int nextInt uint bound{
     seed = seed * 1103515245 + 12345
     return seed / 65536 % bound;cast uint
   }
