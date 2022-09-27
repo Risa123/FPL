@@ -1,5 +1,6 @@
 package risa.fpl.info;
 
+import risa.fpl.env.AEnv;
 import risa.fpl.env.ClassEnv;
 import risa.fpl.env.ModuleEnv;
 import risa.fpl.function.AccessModifier;
@@ -156,5 +157,14 @@ public class InstanceInfo extends NonTrivialTypeInfo {
     }
     public final boolean isFinal(){
         return isFinal;
+    }
+
+    @Override
+    public final AField getField(String name,AEnv from){
+        var field = super.getField(name,from);
+        if(field instanceof Function f && f.getSelf() instanceof InterfaceInfo){
+            return null;//prevent interface methods form being called which would cause C error
+        }
+        return field;
     }
 }
