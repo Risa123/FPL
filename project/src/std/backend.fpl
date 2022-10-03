@@ -20,6 +20,7 @@ native{
  fn void* realloc void* p memory newSize
  fn void abort
  fn int fputs char* str void* file
+ fn double sin double x
  private{
     fn memory fwrite void* p memory size memory nmen void* file
     fn bool feof void* file
@@ -41,6 +42,7 @@ native{
     fn int ferror void* file
     fn int stat char* path FileStatus* status
     fn char* getenv char* name
+    fn void clearerr void* file
  }
 }
 private const int STDIN_INDEX 0;STDOUT_INDEX 1;STDERR_INDEX 2
@@ -102,3 +104,4 @@ alias fileFlush fflush
 alias execute system
 alias fileClose fclose
 alias fileOpen fopen
+alias fileResetError clearerr

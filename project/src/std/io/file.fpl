@@ -18,6 +18,7 @@ abstract class FileHandler Closeable{
         var num fileError handle
         if num != 0{
           var msg getErrorMessage num
+          fileResetError handle
           IOException:throw String:new msg,getCStringLen msg;,false
         }
       }
