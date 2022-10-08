@@ -11,7 +11,7 @@ import risa.fpl.parser.ExpIterator;
 import risa.fpl.parser.List;
 
 public final class CompileTimeIf implements IFunction{
-    private String OS;
+    private String os;
     private boolean noElseIfOrElseIfIsTrue = true;
     @Override
     public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
@@ -69,20 +69,20 @@ public final class CompileTimeIf implements IFunction{
         return System.getProperty("os.arch").equals(str);
     }
     private boolean isOnOS(Atom name)throws CompilerException{
-        if(OS == null){
+        if(os == null){
             var osName = System.getProperty("os.name").toLowerCase();
             if(osName.contains("win")){
-                OS = "WINDOWS";
+                os = "windows";
             }else if(osName.contains("nix") || osName.contains("nux") || osName.contains("aix")){
-                OS = "LINUX";
+                os = "linux";
             }else if(osName.contains("mac")){
-                OS = "OSX";
+                os = "osx";
             }else if(osName.contains("sunos")){
-                OS = "SOLARIS";
+                os = "solaris";
             }else{
                 throw new CompilerException("this operating system is not supported");
             }
         }
-        return name.getValue().equals(OS);
+        return name.getValue().equals(os) || (name.getValue().equals("unixBased") && (os.equals("osx") || os.equals("linus") || os.equals("solaris")));
     }
 }

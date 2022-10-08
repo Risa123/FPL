@@ -95,7 +95,7 @@ public final class Variable extends ValueExp{
 	}
 	@Override
 	public TypeInfo compile(StringBuilder builder,SubEnv env,ExpIterator it,int line,int tokenNum)throws CompilerException{
-		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !a.getValue().endsWith("=") && a.getType() == AtomType.ID){
+		if(onlyDeclared && it.hasNext() && it.peek() instanceof Atom a && !(a.getValue().endsWith("=") || a.getValue().equals("ref")) && a.getType() == AtomType.ID){
 		    error(line,tokenNum,"variable " + id + " not defined");
         }
 		if(instanceType != null && getPrevCode() == null){
