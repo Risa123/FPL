@@ -24,7 +24,7 @@
             <Keywords name="Folders in comment, open"/>
             <Keywords name="Folders in comment, middle"/>
             <Keywords name="Folders in comment, close"/>
-            <Keywords name="Keywords1">if while class int float double bool uint sint&#x000D;&#x000A;char string byte ubyte sbyte ushort short sshort&#x000D;&#x000A;use return var fn void const native slong ulong long memory private protected interface abstract virtual this main override
+            <Keywords name="Keywords1">if while class int float double bool uint sint&#x000D;&#x000A;char string byte ubyte sbyte ushort short sshort&#x000D;&#x000A;use return var fn void const extern slong ulong long memory private protected interface abstract virtual this main override
                 finally catch fpointer struct try asm compIf typedef alias -this for super break true false nil final
             </Keywords>
             <Keywords name="Keywords2"/>

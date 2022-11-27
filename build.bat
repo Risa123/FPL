@@ -11,7 +11,7 @@ rmdir FPL-windows /s /q
 del FPL-other.zip
 del FPL-windows.zip
 "%USERPROFILE%\.jdks\openjdk-18.0.2.1\bin\jpackage" --type app-image --input bin\\artifacts\\FPL --main-jar FPL.jar ^
---main-class risa.fpl.FPL --win-console --app-version 0.5 --vendor Risa123 --description "FPL compiler"
+--main-class risa.fpl.FPL --win-console --app-version 0.6 --vendor Risa123 --description "FPL compiler"
 rename FPL FPL-windows
 mkdir FPL-windows\\std
 mkdir FPL-windows\\gcc

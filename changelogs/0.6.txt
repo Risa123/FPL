@@ -1,2 +1,12 @@
 sin added to std.backend
 fileResetError added to std.backend
+add "os" unixBased to cover unix based systems
+add fact to std.math
+modifier native renamed to extern
+alloc[] added to classes
+stack trace to exceptions added
+fix ref variable "method" can be used on undefined variables
+fix p+ and p- are now prefix operator and actually make a difference
+fix linking libraries using ccArgs not working
+fix lone * causes "function name expected instead of *" instead of "type  not found"
+fix "file not found: (path)" is reported instead of "(path)"
